@@ -1,10 +1,13 @@
 import express from "express";
+import profileApi from "../controllers/profile";
 
 const router = express.Router();
 
-router.get("/", (req, res) => res.send("TODO: profile list"));
-router.post("/signup", (req, res) => res.send("TODO: profile signup"));
-router.post("/login", (req, res) => res.send("TODO: profile login"));
-router.post("/logout", (req, res) => res.send("TODO: profile logout"));
+router.post("/signup", profileApi.signup);
+router.post("/login", profileApi.login);
+router.post("/logout", profileApi.logout);
+router.post("/change-password", profileApi.changePassword);
+router.post("/verify-email", profileApi.verifyEmail);
+router.post("/delete", profileApi.delete);
 
 export default router;
