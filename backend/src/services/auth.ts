@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
+import jwt, { SignOptions } from "jsonwebtoken";
 import prismaClient from "../db/client";
-import jwt from "jsonwebtoken";
 import env from "../util/env";
 
 interface CreateProfileProps {
@@ -17,7 +17,7 @@ export const createProfile = async ({
   const existingEmail = await prismaClient.profile.findUnique({
     where: { email },
   });
-  if (!existingEmail) return null;
+  if (existingEmail) return null;
 
   const passwordHashed = await bcrypt.hash(password, 10);
 
@@ -29,38 +29,25 @@ export const createProfile = async ({
     data: { profileId: profile.id, userAgent },
   });
 
-  const accessToken = jwt.sign(
-    {
-      profileId: profile.id,
-      sessionId: session.id,
-    },
-    env.JWT_SECRET,
-    { expiresIn: "10m", audience: "profile" }
-  );
+  const tokens = createTokens({
+    profileId: profile.id,
+    sessionId: session.id,
+  });
 
-  const refreshToken = jwt.sign(
-    {
-      profileId: profile.id,
-      sessionId: session.id,
-    },
-    env.JWT_REFRESH_SECRET,
-    { expiresIn: "1d", audience: "profile" }
-  );
-
-  return { profile, accessToken, refreshToken };
+  return { profile, ...tokens };
 };
 
-interface GetProfileProps {
+interface LogInProfileProps {
   email: string;
   password: string;
   userAgent?: string;
 }
 
-export const getProfile = async ({
+export const logInProfile = async ({
   email,
   password,
   userAgent,
-}: GetProfileProps) => {
+}: LogInProfileProps) => {
   const profile = await prismaClient.profile.findUnique({
     where: { email },
   });
@@ -73,23 +60,46 @@ export const getProfile = async ({
     data: { profileId: profile.id, userAgent },
   });
 
-  const accessToken = jwt.sign(
-    {
-      profileId: profile.id,
-      sessionId: session.id,
-    },
-    env.JWT_SECRET,
-    { expiresIn: "10m", audience: "profile" }
-  );
+  const tokens = createTokens({
+    profileId: profile.id,
+    sessionId: session.id,
+  });
 
-  const refreshToken = jwt.sign(
-    {
-      profileId: profile.id,
-      sessionId: session.id,
-    },
-    env.JWT_REFRESH_SECRET,
-    { expiresIn: "1d", audience: "profile" }
-  );
+  return { profile, ...tokens };
+};
 
-  return { profile, accessToken, refreshToken };
+interface CreateTokenProps {
+  profileId: number;
+  sessionId: number;
+}
+
+const accessOptions = {
+  expiresIn: "10m",
+  audience: "profile",
+} as SignOptions;
+
+const refreshOptions = {
+  expiresIn: "1d",
+  audience: "profile",
+} as SignOptions;
+
+const createTokens = ({ profileId, sessionId }: CreateTokenProps) => {
+  return {
+    accessToken: jwt.sign(
+      {
+        profileId,
+        sessionId,
+      },
+      env.JWT_SECRET,
+      accessOptions
+    ),
+    refreshToken: jwt.sign(
+      {
+        profileId,
+        sessionId,
+      },
+      env.JWT_REFRESH_SECRET,
+      refreshOptions
+    ),
+  };
 };
