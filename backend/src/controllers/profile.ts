@@ -8,12 +8,13 @@ export const getAuthenticatedProfile: RequestHandler = async (
   next
 ) => {
   try {
-    const { profileId } = req.body;
+    const { profileId, sessionId } = req.body;
 
-    const profile = prismaClient.profile.findUnique({
+    const profile = await prismaClient.profile.findUnique({
       where: {
         id: profileId,
       },
+      omit: { password: true },
     });
     if (!profile) throw createHttpError(404, "Profile not found");
 
@@ -22,8 +23,16 @@ export const getAuthenticatedProfile: RequestHandler = async (
     next(error);
   }
 };
-export const changePassword: RequestHandler = async (req, res, next) => {};
+
+export const changePassword: RequestHandler = async (req, res, next) => {
+  try {
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const verifyEmail: RequestHandler = async (req, res, next) => {};
+
 export const deleteProfile: RequestHandler = async (req, res, next) => {};
 
 const profileApi = {

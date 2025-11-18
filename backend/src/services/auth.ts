@@ -2,6 +2,12 @@ import bcrypt from "bcrypt";
 import jwt, { SignOptions } from "jsonwebtoken";
 import prismaClient from "../db/client";
 import env from "../util/env";
+import {
+  deleteProfileScope,
+  joinScopes,
+  readProfileScope,
+  updateProfileScope,
+} from "./scope";
 
 interface CreateProfileProps {
   email: string;
@@ -29,9 +35,14 @@ export const createProfile = async ({
     data: { profileId: profile.id, userAgent },
   });
 
-  const tokens = createTokens({
+  const tokens = createTokenPair({
     profileId: profile.id,
     sessionId: session.id,
+    scope: joinScopes([
+      readProfileScope,
+      updateProfileScope,
+      deleteProfileScope,
+    ]),
   });
 
   return { profile, ...tokens };
@@ -60,18 +71,18 @@ export const logInProfile = async ({
     data: { profileId: profile.id, userAgent },
   });
 
-  const tokens = createTokens({
+  const tokens = createTokenPair({
     profileId: profile.id,
     sessionId: session.id,
+    scope: joinScopes([
+      readProfileScope,
+      updateProfileScope,
+      deleteProfileScope,
+    ]),
   });
 
   return { profile, ...tokens };
 };
-
-interface CreateTokenProps {
-  profileId: number;
-  sessionId: number;
-}
 
 const accessOptions = {
   expiresIn: "10m",
@@ -83,23 +94,65 @@ const refreshOptions = {
   audience: "profile",
 } as SignOptions;
 
-const createTokens = ({ profileId, sessionId }: CreateTokenProps) => {
+interface TokenPayload {
+  profileId: number;
+  sessionId: number;
+  scope?: string;
+}
+
+interface CreateTokenProps extends TokenPayload {
+  secret: string;
+  options: SignOptions;
+}
+
+export const createTokenPair = ({
+  profileId,
+  sessionId,
+  scope,
+}: TokenPayload) => {
   return {
-    accessToken: jwt.sign(
-      {
-        profileId,
-        sessionId,
-      },
-      env.JWT_SECRET,
-      accessOptions
-    ),
-    refreshToken: jwt.sign(
-      {
-        profileId,
-        sessionId,
-      },
-      env.JWT_REFRESH_SECRET,
-      refreshOptions
-    ),
+    accessToken: createToken({
+      profileId,
+      sessionId,
+      scope,
+      secret: env.JWT_SECRET,
+      options: accessOptions,
+    }),
+    refreshToken: createToken({
+      profileId,
+      sessionId,
+      secret: env.JWT_REFRESH_SECRET,
+      options: refreshOptions,
+    }),
   };
+};
+
+export const createToken = ({
+  profileId,
+  sessionId,
+  scope,
+  secret,
+  options,
+}: CreateTokenProps) => {
+  return jwt.sign(
+    {
+      profileId,
+      sessionId,
+      ...(scope && { scope }),
+    },
+    secret,
+    options
+  );
+};
+
+interface ValidateTokenProps {
+  token: string;
+  secret: string;
+}
+
+export const validateToken = ({
+  token,
+  secret,
+}: ValidateTokenProps): TokenPayload => {
+  return jwt.verify(token, secret) as TokenPayload;
 };
