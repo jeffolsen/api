@@ -3,7 +3,7 @@ export const updateProfileScope = "update:profile";
 export const deleteProfileScope = "delete:profile";
 
 export const readSessionScope = "read:session";
-export const deleteSessionScope = "read:session";
+export const deleteSessionScope = "delete:session";
 
 export type JoinScopesArgs = string[];
 export type SplitScopesArgs = string;
