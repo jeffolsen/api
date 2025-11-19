@@ -1,13 +1,12 @@
 import bcrypt from "bcrypt";
-import jwt, { SignOptions } from "jsonwebtoken";
 import prismaClient from "../db/client";
-import env from "../util/env";
 import {
   deleteProfileScope,
   joinScopes,
   readProfileScope,
   updateProfileScope,
 } from "./scope";
+import { signTokenPair } from "../util/jwt";
 
 interface CreateProfileProps {
   email: string;
@@ -23,6 +22,7 @@ export const createProfile = async ({
   const existingEmail = await prismaClient.profile.findUnique({
     where: { email },
   });
+
   if (existingEmail) return null;
 
   const passwordHashed = await bcrypt.hash(password, 10);
@@ -35,7 +35,7 @@ export const createProfile = async ({
     data: { profileId: profile.id, userAgent },
   });
 
-  const tokens = createTokenPair({
+  const tokens = signTokenPair({
     profileId: profile.id,
     sessionId: session.id,
     scope: joinScopes([
@@ -71,7 +71,7 @@ export const logInProfile = async ({
     data: { profileId: profile.id, userAgent },
   });
 
-  const tokens = createTokenPair({
+  const tokens = signTokenPair({
     profileId: profile.id,
     sessionId: session.id,
     scope: joinScopes([
@@ -82,77 +82,4 @@ export const logInProfile = async ({
   });
 
   return { profile, ...tokens };
-};
-
-const accessOptions = {
-  expiresIn: "10m",
-  audience: "profile",
-} as SignOptions;
-
-const refreshOptions = {
-  expiresIn: "1d",
-  audience: "profile",
-} as SignOptions;
-
-interface TokenPayload {
-  profileId: number;
-  sessionId: number;
-  scope?: string;
-}
-
-interface CreateTokenProps extends TokenPayload {
-  secret: string;
-  options: SignOptions;
-}
-
-export const createTokenPair = ({
-  profileId,
-  sessionId,
-  scope,
-}: TokenPayload) => {
-  return {
-    accessToken: createToken({
-      profileId,
-      sessionId,
-      scope,
-      secret: env.JWT_SECRET,
-      options: accessOptions,
-    }),
-    refreshToken: createToken({
-      profileId,
-      sessionId,
-      secret: env.JWT_REFRESH_SECRET,
-      options: refreshOptions,
-    }),
-  };
-};
-
-export const createToken = ({
-  profileId,
-  sessionId,
-  scope,
-  secret,
-  options,
-}: CreateTokenProps) => {
-  return jwt.sign(
-    {
-      profileId,
-      sessionId,
-      ...(scope && { scope }),
-    },
-    secret,
-    options
-  );
-};
-
-interface ValidateTokenProps {
-  token: string;
-  secret: string;
-}
-
-export const validateToken = ({
-  token,
-  secret,
-}: ValidateTokenProps): TokenPayload => {
-  return jwt.verify(token, secret) as TokenPayload;
 };
