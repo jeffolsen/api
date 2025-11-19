@@ -1,21 +1,22 @@
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
-import { validateToken } from "../services/auth";
 import env from "../util/env";
 import prismaClient from "../db/client";
+import { AccessTokenPayload, validateToken } from "../util/jwt";
 
 const requiresAuth: RequestHandler = async (req, res, next) => {
   try {
-    const { accessToken } = req.cookies;
+    const { accessToken } = req.body;
+
     if (!accessToken) throw createHttpError(401, "Unauthorized");
 
-    const payload = validateToken({
+    const payload = (await validateToken({
       secret: env.JWT_SECRET,
       token: accessToken,
-    });
+    })) as AccessTokenPayload;
     if (!payload) throw createHttpError(401, "Unauthorized");
 
-    const { profileId, sessionId } = payload;
+    const { profileId, sessionId, scope } = payload;
 
     const session = await prismaClient.session.findUnique({
       where: { id: sessionId, profileId },
@@ -24,6 +25,7 @@ const requiresAuth: RequestHandler = async (req, res, next) => {
 
     req.body.profileId = profileId;
     req.body.sessionId = sessionId;
+    req.body.scope = scope;
     next();
   } catch (error) {
     next(error);

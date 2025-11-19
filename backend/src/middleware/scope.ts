@@ -5,7 +5,7 @@ import { splitScopes } from "../services/scope";
 type ScopeProps = string[];
 
 const authorizeScope = (requiredScopes: ScopeProps) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     try {
       const requestScope = splitScopes(req.body.scope);
       const hasScope = requestScope.some((s: string) =>

@@ -31,7 +31,11 @@ export const register: RequestHandler<
     if (passwordRaw !== confirmPassword)
       throw createHttpError(400, "both passwords should match");
 
-    const profile = createProfile({ email, password: passwordRaw, userAgent });
+    const profile = await createProfile({
+      email,
+      password: passwordRaw,
+      userAgent,
+    });
     if (!profile) throw createHttpError(409, "Email already taken");
 
     res.status(201).json(profile);
