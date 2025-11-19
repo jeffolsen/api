@@ -4,6 +4,7 @@
   "main": "dist/server.js",
   "license": "MIT",
   "type": "commonjs",
+  "private": true,
   "scripts": {
     "test": "jest",
     "dev": "prisma generate && nodemon src/server.ts",
