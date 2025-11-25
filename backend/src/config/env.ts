@@ -1,8 +1,10 @@
 import { cleanEnv, port, str } from "envalid";
 
-export default cleanEnv(process.env, {
+const env = cleanEnv(process.env, {
   PORT: port(),
   DATABASE_URL: str(),
   JWT_SECRET: str(),
   JWT_REFRESH_SECRET: str(),
 });
+
+export default env;

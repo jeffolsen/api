@@ -1,28 +1,32 @@
 import jwt, { SignOptions } from "jsonwebtoken";
-import env from "./env";
+import env from "../config/env";
 import {
+  ACCESS_TOKEN_LIFESPAN,
   ACCESS_TOKEN_OPTIONS,
-  REFRESH_TOKEN_OPTIONS,
-} from "../config/settings";
+} from "../config/constants";
 
-export interface TokenPayload {
-  profileId: number;
+export interface RefreshTokenPayload {
   sessionId: number;
 }
 
-export interface AccessTokenPayload extends TokenPayload {
+export interface AccessTokenPayload extends RefreshTokenPayload {
   scope: string;
+  expiresAt: number;
 }
 
-export interface CreateTokenProps {
-  payload: AccessTokenPayload | TokenPayload;
+export interface RefreshToken {
+  payload: RefreshTokenPayload;
   secret: string;
   options: SignOptions;
 }
 
-export const signToken = ({ payload, secret, options }: CreateTokenProps) => {
-  return jwt.sign(payload, secret, options);
-};
+export interface AccessToken {
+  payload: AccessTokenPayload;
+  secret: string;
+  options: SignOptions;
+}
+
+export type CreateTokenProps = RefreshToken | AccessToken;
 
 export interface ValidateTokenProps {
   token: string;
@@ -32,26 +36,23 @@ export interface ValidateTokenProps {
 export const validateToken = ({
   token,
   secret,
-}: ValidateTokenProps): TokenPayload => {
+}: ValidateTokenProps): RefreshTokenPayload | AccessTokenPayload => {
   const payload = jwt.verify(token, secret);
-  return payload as TokenPayload;
+  return payload as RefreshTokenPayload | AccessTokenPayload;
 };
 
-export const signTokenPair = ({
-  profileId,
-  sessionId,
-  scope,
-}: AccessTokenPayload) => {
-  return {
-    accessToken: signToken({
-      payload: { profileId, sessionId, scope },
-      secret: env.JWT_SECRET,
-      options: ACCESS_TOKEN_OPTIONS,
-    }),
-    refreshToken: signToken({
-      payload: { profileId, sessionId },
-      secret: env.JWT_REFRESH_SECRET,
-      options: REFRESH_TOKEN_OPTIONS,
-    }),
-  };
+export const signAccessToken = (sessionId: number, scope: string) => {
+  return jwt.sign(
+    {
+      sessionId,
+      scope,
+      expiresAt: new Date().getDate() + ACCESS_TOKEN_LIFESPAN,
+    },
+    env.JWT_SECRET,
+    ACCESS_TOKEN_OPTIONS
+  );
+};
+
+export const signRefreshToken = (sessionId: number) => {
+  return jwt.sign({ sessionId }, env.JWT_REFRESH_SECRET);
 };
