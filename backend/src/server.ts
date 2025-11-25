@@ -1,22 +1,30 @@
 import "dotenv/config";
 import express from "express";
-import profileRoutes from "./routes/profiles";
-import authRoutes from "./routes/auth";
-import requiresAuth from "./middleware/auth";
-import handleError, { endPointNotFound } from "./middleware/handleError";
-import env from "./util/env";
+import cookieParser from "cookie-parser";
 import cors from "cors";
+import profileRoutes from "./routes/profile";
+import authRoutes from "./routes/auth";
+import sessionRoutes from "./routes/session";
+import requiresAuth from "./middleware/authenticate";
+import errorHandler from "./middleware/errorHandler";
+
+import env from "./config/env";
 
 const app = express();
 const PORT = env.PORT || 5001;
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/profiles", requiresAuth, profileRoutes);
+app.use("/api/sessions", sessionRoutes);
+// app.use("/api/items", requiresAuth, () => console.log("items"));
+// app.use("/api/pages", requiresAuth, () => console.log("pages"));
+// app.use("/api/blocks", requiresAuth, () => console.log("blocks"));
 
-app.use(endPointNotFound);
-app.use(handleError);
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log("server running"));
