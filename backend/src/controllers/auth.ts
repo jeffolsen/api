@@ -1,84 +1,122 @@
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
-import { createProfile, logInProfile } from "../services/auth";
+import {
+  createProfile,
+  logInProfile,
+  logOutOfAllSessions,
+  logOutSession,
+} from "../services/auth";
+import { setAuthCookies } from "../util/cookie";
+import catchErrors from "../util/catchErrors";
+import { BAD_REQUEST, CREATED, OK } from "../config/constants";
 
 interface RegisterBody {
   email: string;
   password: string;
   confirmPassword: string;
-  userAgent?: string;
 }
 
-export const register: RequestHandler<
-  unknown,
-  unknown,
-  RegisterBody,
-  unknown
-> = async (req, res, next) => {
-  try {
-    const {
-      email,
-      password: passwordRaw,
-      confirmPassword,
-      userAgent,
-    } = req.body;
-    if (!email || !passwordRaw || !confirmPassword)
+export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
+  catchErrors(async (req, res, next) => {
+    const { email, password: passwordRaw, confirmPassword } = req.body;
+    const { ["user-agent"]: userAgent } = req.headers;
+
+    if (!email || !passwordRaw || !confirmPassword || !userAgent)
       throw createHttpError(
-        400,
-        "email, password and confirmation of password are required"
+        BAD_REQUEST,
+        "email and password twice are required"
       );
 
     if (passwordRaw !== confirmPassword)
-      throw createHttpError(400, "both passwords should match");
+      throw createHttpError(BAD_REQUEST, "passwords should match");
 
-    const profile = await createProfile({
+    const { profile, ...cookieOptions } = await createProfile({
       email,
       password: passwordRaw,
       userAgent,
     });
-    if (!profile) throw createHttpError(409, "Email already taken");
 
-    res.status(201).json(profile);
-  } catch (error) {
-    next(error);
-  }
-};
+    setAuthCookies({ res, ...cookieOptions })
+      .status(CREATED)
+      .json(profile);
+  });
 
 interface LogInBody {
   email: string;
   password: string;
-  userAgent?: string;
 }
 
-export const login: RequestHandler<
-  unknown,
-  unknown,
-  LogInBody,
-  unknown
-> = async (req, res, next) => {
-  try {
-    const { email, password: passwordRaw, userAgent } = req.body;
-    if (!email || !passwordRaw)
-      throw createHttpError(400, "email and password are required");
+export const login: RequestHandler<unknown, unknown, LogInBody, unknown> =
+  catchErrors(async (req, res, next) => {
+    const { email, password } = req.body;
+    const { ["user-agent"]: userAgent } = req.headers;
 
-    const profile = logInProfile({ email, password: passwordRaw, userAgent });
-    if (!profile) throw createHttpError(401, "Invalid credentials");
+    if (!email || !password || !userAgent)
+      throw createHttpError(BAD_REQUEST, "email and password are required");
 
-    res.status(201).json(profile);
-  } catch (error) {
-    next(error);
+    const { profile, ...cookieOptions } = await logInProfile({
+      email,
+      password,
+      userAgent,
+    });
+
+    setAuthCookies({ res, ...cookieOptions })
+      .status(CREATED)
+      .json(profile);
+  });
+
+export const refreshAccessToken: RequestHandler = catchErrors(
+  async (req, res, next) => {
+    const { refreshToken } = req.cookies;
+
+    if (!refreshToken)
+      throw createHttpError(BAD_REQUEST, "refresh token is required");
+
+    res.sendStatus(OK);
   }
-};
+);
 
-export const refreshToken: RequestHandler = async (req, res, next) => {};
-export const logout: RequestHandler = async (req, res, next) => {};
-export const logoutOfAll: RequestHandler = async (req, res, next) => {};
+export const logout: RequestHandler = catchErrors(async (req, res, next) => {
+  const { refreshToken } = req.cookies;
+
+  if (!refreshToken)
+    throw createHttpError(BAD_REQUEST, "refresh token is required");
+
+  await logOutSession({ refreshToken });
+
+  res.sendStatus(OK);
+});
+
+interface LogOutOfAllBody {
+  email: string;
+  password: string;
+}
+export const logoutOfAll: RequestHandler<
+  unknown,
+  unknown,
+  LogOutOfAllBody,
+  unknown
+> = catchErrors(async (req, res, next) => {
+  const { email, password: passwordRaw } = req.body;
+
+  if (!email || !passwordRaw)
+    throw createHttpError(BAD_REQUEST, "email and password are required");
+
+  await logOutOfAllSessions({ email, password: passwordRaw });
+
+  res.sendStatus(OK);
+});
+
+export const changePassword: RequestHandler = catchErrors(
+  async (req, res, next) => {}
+);
 
 const authApi = {
   register,
   login,
-  refreshToken,
+  refreshAccessToken,
   logout,
   logoutOfAll,
+  changePassword,
 };
 export default authApi;
