@@ -7,4 +7,5 @@ const prismaClient = globalForPrisma.prisma || new PrismaClient();
 if (process.env.NODE_ENV !== "production")
   globalForPrisma.prisma = prismaClient;
 
+export * from "../generated/prisma/client";
 export default prismaClient;
