@@ -1,6 +1,6 @@
 import express from "express";
 import profileApi from "../controllers/profile";
-import authorizeScope from "../middleware/scope";
+import authorizeScope from "../middleware/authorizeScope";
 import {
   deleteProfileScope,
   readProfileScope,
@@ -20,14 +20,14 @@ router.delete(
   profileApi.deleteProfile
 );
 router.post(
-  "/verify-email",
+  "/refresh",
   authorizeScope([updateProfileScope]),
   profileApi.verifyEmail
 );
 router.post(
-  "/change-password",
+  "/verify-email",
   authorizeScope([updateProfileScope]),
-  profileApi.changePassword
+  profileApi.verifyEmail
 );
 
 export default router;
