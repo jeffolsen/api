@@ -13,10 +13,10 @@ import {
   CONFLICT,
   MAX_PROFILE_SESSIONS,
   NOT_FOUND,
-  SESSION_TOKEN_LIFESPAN,
   UNAUTHORIZED,
 } from "../config/constants";
 import env from "../config/env";
+import D, { getNewRefreshTokenExpirationDate } from "../util/date";
 
 interface CreateProfileParams {
   email: string;
@@ -41,7 +41,12 @@ export const createProfile = async ({
   });
 
   const session = await prismaClient.session.create({
-    data: { profileId: profile.id, userAgent, scope: defaultProfileScope() },
+    data: {
+      profileId: profile.id,
+      userAgent,
+      scope: defaultProfileScope(),
+      expiresAt: getNewRefreshTokenExpirationDate(),
+    },
   });
 
   const refreshToken = signRefreshToken(session.id);
@@ -78,7 +83,12 @@ export const logInProfile = async ({
     throw createHttpError(CONFLICT, "Max number of sessions reached");
 
   const session = await prismaClient.session.create({
-    data: { profileId: profile.id, userAgent, scope: defaultProfileScope() },
+    data: {
+      profileId: profile.id,
+      userAgent,
+      scope: defaultProfileScope(),
+      expiresAt: getNewRefreshTokenExpirationDate(),
+    },
   });
 
   const refreshToken = signRefreshToken(session.id);
@@ -157,16 +167,15 @@ export const refreshAccessToken = async ({
   });
   if (!profile) throw createHttpError(BAD_REQUEST, "Invalid token");
 
-  const sessionExpired = expiresAt.getDate() <= new Date().getDate();
+  const sessionExpired = D(expiresAt).isBeforeNow();
   if (sessionExpired && twoFactorRefresh)
     throw createHttpError(UNAUTHORIZED, "Unauthorized");
 
   if (sessionExpired) {
-    const twoDaysFromNow = new Date().getDate() + SESSION_TOKEN_LIFESPAN;
     await prismaClient.session.update({
       where: { id: sessionId },
       data: {
-        expiresAt: new Date(twoDaysFromNow),
+        expiresAt: getNewRefreshTokenExpirationDate(),
       },
     });
   }

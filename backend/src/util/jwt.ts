@@ -1,9 +1,10 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 import env from "../config/env";
 import {
-  ACCESS_TOKEN_LIFESPAN,
   ACCESS_TOKEN_OPTIONS,
+  SESSION_TOKEN_OPTIONS,
 } from "../config/constants";
+import { getNewAccessTokenExpirationDate } from "./date";
 
 export interface RefreshTokenPayload {
   sessionId: number;
@@ -11,7 +12,7 @@ export interface RefreshTokenPayload {
 
 export interface AccessTokenPayload extends RefreshTokenPayload {
   scope: string;
-  expiresAt: number;
+  expiresAt: Date;
 }
 
 export interface RefreshToken {
@@ -45,7 +46,7 @@ export const signAccessToken = (sessionId: number) => {
   return jwt.sign(
     {
       sessionId,
-      expiresAt: new Date().getDate() + ACCESS_TOKEN_LIFESPAN,
+      expiresAt: getNewAccessTokenExpirationDate(),
     },
     env.JWT_SECRET,
     ACCESS_TOKEN_OPTIONS
@@ -53,5 +54,5 @@ export const signAccessToken = (sessionId: number) => {
 };
 
 export const signRefreshToken = (sessionId: number) => {
-  return jwt.sign({ sessionId }, env.JWT_REFRESH_SECRET);
+  return jwt.sign({ sessionId }, env.JWT_REFRESH_SECRET, SESSION_TOKEN_OPTIONS);
 };

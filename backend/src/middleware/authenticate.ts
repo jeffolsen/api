@@ -3,7 +3,8 @@ import createHttpError from "http-errors";
 import env from "../config/env";
 import prismaClient from "../db/client";
 import { AccessTokenPayload, validateToken } from "../util/jwt";
-import { BAD_REQUEST, NOT_FOUND, UNAUTHORIZED } from "../config/constants";
+import { BAD_REQUEST, UNAUTHORIZED } from "../config/constants";
+import D from "../util/date";
 
 const requiresAuth: RequestHandler = async (req, res, next) => {
   const { accessToken } = req.cookies;
@@ -18,7 +19,7 @@ const requiresAuth: RequestHandler = async (req, res, next) => {
 
   const { sessionId, scope, expiresAt } = payload;
 
-  const accessTokenExpired = expiresAt <= new Date().getDate();
+  const accessTokenExpired = D(expiresAt).isBeforeNow();
   if (accessTokenExpired) throw createHttpError(UNAUTHORIZED, "Unauthorized");
 
   const session = await prismaClient.session.findUnique({
@@ -26,7 +27,7 @@ const requiresAuth: RequestHandler = async (req, res, next) => {
   });
   if (!session) throw createHttpError(UNAUTHORIZED, "Unauthorized");
 
-  const sessionExpired = session.expiresAt.getDate() <= new Date().getDate();
+  const sessionExpired = D(session.expiresAt).isBeforeNow();
   if (sessionExpired) throw createHttpError(UNAUTHORIZED, "Unauthorized");
 
   const { profileId } = session;

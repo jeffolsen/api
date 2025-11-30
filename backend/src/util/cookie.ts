@@ -1,9 +1,9 @@
-import { ACCESS_TOKEN_LIFESPAN } from "../config/constants";
 import { session } from "../db/client";
 import { CookieOptions, Response } from "express";
+import { getNewAccessTokenExpirationDate } from "./date";
 
 const getAccessTokenCookieOptions = (): CookieOptions => {
-  return { expires: new Date(Date() + ACCESS_TOKEN_LIFESPAN) };
+  return { expires: getNewAccessTokenExpirationDate() };
 };
 const getRefreshTokenCookieOptions = (expiresAt: Date): CookieOptions => {
   return {
@@ -24,7 +24,7 @@ export const setAuthCookies = ({
   accessToken,
   refreshToken,
 }: SetAuthCookieParams) => {
-  const expiresAt = new Date(session.expiresAt.getDate());
+  const { expiresAt } = session;
   return res
     .cookie("accessToken", accessToken, getAccessTokenCookieOptions())
     .cookie(
