@@ -41,11 +41,10 @@ export const validateToken = ({
   return payload as RefreshTokenPayload | AccessTokenPayload;
 };
 
-export const signAccessToken = (sessionId: number, scope: string) => {
+export const signAccessToken = (sessionId: number) => {
   return jwt.sign(
     {
       sessionId,
-      scope,
       expiresAt: new Date().getDate() + ACCESS_TOKEN_LIFESPAN,
     },
     env.JWT_SECRET,

@@ -77,12 +77,12 @@ export const refreshAccessToken: RequestHandler = catchErrors(
 );
 
 export const logout: RequestHandler = catchErrors(async (req, res, next) => {
-  const { refreshToken } = req.cookies;
+  const { accessToken } = req.cookies;
 
-  if (!refreshToken)
+  if (!accessToken)
     throw createHttpError(BAD_REQUEST, "refresh token is required");
 
-  await logOutSession({ refreshToken });
+  await logOutSession({ accessToken });
 
   res.sendStatus(OK);
 });

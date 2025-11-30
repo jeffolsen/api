@@ -2,6 +2,7 @@ import { SignOptions } from "jsonwebtoken";
 
 export const MAX_PROFILE_SESSIONS = 6;
 
+export const SESSION_TOKEN_LIFESPAN = 48 * 60 * 60 * 1000;
 export const ACCESS_TOKEN_LIFESPAN = 10 * 60 * 1000;
 export const ACCESS_TOKEN_OPTIONS = {
   expiresIn: ACCESS_TOKEN_LIFESPAN,

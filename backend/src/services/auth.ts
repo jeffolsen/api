@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import prismaClient from "../db/client";
+import prismaClient, { session } from "../db/client";
 import {
   deleteProfileScope,
   joinScopes,
@@ -18,9 +18,16 @@ import {
   CONFLICT,
   MAX_PROFILE_SESSIONS,
   NOT_FOUND,
+  SESSION_TOKEN_LIFESPAN,
   UNAUTHORIZED,
 } from "../config/constants";
 import env from "../config/env";
+
+const defaultScope = joinScopes([
+  readProfileScope,
+  updateProfileScope,
+  deleteProfileScope,
+]);
 
 interface CreateProfileParams {
   email: string;
@@ -45,14 +52,11 @@ export const createProfile = async ({
   });
 
   const session = await prismaClient.session.create({
-    data: { profileId: profile.id, userAgent },
+    data: { profileId: profile.id, userAgent, scope: defaultScope },
   });
 
   const refreshToken = signRefreshToken(session.id);
-  const accessToken = signAccessToken(
-    session.id,
-    joinScopes([readProfileScope, updateProfileScope, deleteProfileScope])
-  );
+  const accessToken = signAccessToken(session.id);
 
   return { profile, session, refreshToken, accessToken };
 };
@@ -85,26 +89,23 @@ export const logInProfile = async ({
     throw createHttpError(CONFLICT, "Max number of sessions reached");
 
   const session = await prismaClient.session.create({
-    data: { profileId: profile.id, userAgent },
+    data: { profileId: profile.id, userAgent, scope: defaultScope },
   });
 
   const refreshToken = signRefreshToken(session.id);
-  const accessToken = signAccessToken(
-    session.id,
-    joinScopes([readProfileScope, updateProfileScope, deleteProfileScope])
-  );
+  const accessToken = signAccessToken(session.id);
 
   return { profile, session, refreshToken, accessToken };
 };
 
 interface LogOutSessionParams {
-  refreshToken: string;
+  accessToken: string;
 }
 
-export const logOutSession = async ({ refreshToken }: LogOutSessionParams) => {
+export const logOutSession = async ({ accessToken }: LogOutSessionParams) => {
   const payload = (await validateToken({
     secret: env.JWT_SECRET,
-    token: refreshToken,
+    token: accessToken,
   })) as AccessTokenPayload;
   if (!payload) throw createHttpError(UNAUTHORIZED, "Invalid token");
 
@@ -140,6 +141,48 @@ export const logOutOfAllSessions = async ({
   if (!sessions.count) throw createHttpError(NOT_FOUND, "No sessions found");
 
   return true;
+};
+
+interface RefreshAccessTokenParams {
+  refreshToken: string;
+}
+
+export const refreshAccessToken = async ({
+  refreshToken,
+}: RefreshAccessTokenParams) => {
+  const payload = (await validateToken({
+    secret: env.JWT_REFRESH_SECRET,
+    token: refreshToken,
+  })) as AccessTokenPayload;
+  if (!payload) throw createHttpError(BAD_REQUEST, "Invalid token");
+
+  const { sessionId } = payload;
+  const session = await prismaClient.session.findUnique({
+    where: { id: sessionId },
+  });
+  if (!session) throw createHttpError(BAD_REQUEST, "Invalid token");
+
+  const { profileId, twoFactorRefresh, expiresAt } = session;
+  const profile = await prismaClient.profile.findUnique({
+    where: { id: profileId },
+  });
+  if (!profile) throw createHttpError(BAD_REQUEST, "Invalid token");
+
+  const sessionExpired = expiresAt.getDate() <= new Date().getDate();
+  if (sessionExpired && twoFactorRefresh)
+    throw createHttpError(UNAUTHORIZED, "Unauthorized");
+
+  if (sessionExpired) {
+    const twoDaysFromNow = new Date().getDate() + SESSION_TOKEN_LIFESPAN;
+    await prismaClient.session.update({
+      where: { id: sessionId },
+      data: {
+        expiresAt: new Date(twoDaysFromNow),
+      },
+    });
+  }
+
+  return signAccessToken(sessionId);
 };
 
 interface UpdatePasswordParams {
