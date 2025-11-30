@@ -18,3 +18,9 @@ export const CONFLICT = 409;
 export const UNPROCESSABLE_CONTENT = 422;
 export const TOO_MANY_REQUESTS = 429;
 export const INTERNAL_SERVER_ERROR = 500;
+
+export const READ_PROFILE_SCOPE = "read:profile";
+export const UPDATE_PROFILE_SCOPE = "update:profile";
+export const DELETE_PROFILE_SCOPE = "delete:profile";
+export const READ_SESSION_SCOPE = "read:session";
+export const DELETE_SESSION_SCOPE = "delete:session";

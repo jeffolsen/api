@@ -2,31 +2,31 @@ import express from "express";
 import profileApi from "../controllers/profile";
 import authorizeScope from "../middleware/authorizeScope";
 import {
-  deleteProfileScope,
-  readProfileScope,
-  updateProfileScope,
-} from "../services/scope";
+  DELETE_PROFILE_SCOPE,
+  READ_PROFILE_SCOPE,
+  UPDATE_PROFILE_SCOPE,
+} from "../config/constants";
 
 const router = express.Router();
 
 router.get(
   "/me",
-  authorizeScope([readProfileScope]),
+  authorizeScope([READ_PROFILE_SCOPE]),
   profileApi.getAuthenticatedProfile
 );
 router.delete(
   "/me",
-  authorizeScope([deleteProfileScope]),
+  authorizeScope([DELETE_PROFILE_SCOPE]),
   profileApi.deleteProfile
 );
 router.post(
   "/refresh",
-  authorizeScope([updateProfileScope]),
+  authorizeScope([UPDATE_PROFILE_SCOPE]),
   profileApi.verifyEmail
 );
 router.post(
   "/verify-email",
-  authorizeScope([updateProfileScope]),
+  authorizeScope([UPDATE_PROFILE_SCOPE]),
   profileApi.verifyEmail
 );
 

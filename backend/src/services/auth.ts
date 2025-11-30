@@ -1,11 +1,6 @@
 import bcrypt from "bcrypt";
 import prismaClient, { session } from "../db/client";
-import {
-  deleteProfileScope,
-  joinScopes,
-  readProfileScope,
-  updateProfileScope,
-} from "./scope";
+import { defaultProfileScope } from "./scope";
 import {
   AccessTokenPayload,
   signAccessToken,
@@ -22,12 +17,6 @@ import {
   UNAUTHORIZED,
 } from "../config/constants";
 import env from "../config/env";
-
-const defaultScope = joinScopes([
-  readProfileScope,
-  updateProfileScope,
-  deleteProfileScope,
-]);
 
 interface CreateProfileParams {
   email: string;
@@ -52,7 +41,7 @@ export const createProfile = async ({
   });
 
   const session = await prismaClient.session.create({
-    data: { profileId: profile.id, userAgent, scope: defaultScope },
+    data: { profileId: profile.id, userAgent, scope: defaultProfileScope() },
   });
 
   const refreshToken = signRefreshToken(session.id);
@@ -89,7 +78,7 @@ export const logInProfile = async ({
     throw createHttpError(CONFLICT, "Max number of sessions reached");
 
   const session = await prismaClient.session.create({
-    data: { profileId: profile.id, userAgent, scope: defaultScope },
+    data: { profileId: profile.id, userAgent, scope: defaultProfileScope() },
   });
 
   const refreshToken = signRefreshToken(session.id);
