@@ -15,19 +15,38 @@ datasource db {
 }
 
 model profile {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  password  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  sessions  session[]
+  id                Int                @id @default(autoincrement())
+  email             String             @unique
+  password          String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  sessions          session[]
+  verificationCodes verificationCode[]
 }
 
 model session {
+  id               Int      @id @default(autoincrement())
+  profile          profile  @relation(fields: [profileId], references: [id])
+  profileId        Int
+  userAgent        String
+  twoFactorRefresh Boolean  @default(true)
+  scope            String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  expiresAt        DateTime @default(dbgenerated("NOW() + INTERVAL '2 DAYS'"))
+}
+
+enum codeType {
+  EMAIL
+  PASSWORD_CHANGE
+}
+
+model verificationCode {
   id        Int      @id @default(autoincrement())
-  userAgent String?
   profile   profile  @relation(fields: [profileId], references: [id])
   profileId Int
+  codeType  codeType @default(EMAIL)
   createdAt DateTime @default(now())
-  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '1 DAYS'"))
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '1 HOURS'"))
 }
