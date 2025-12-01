@@ -5,6 +5,7 @@ import cors from "cors";
 import profileRoutes from "./routes/profile";
 import authRoutes from "./routes/auth";
 import sessionRoutes from "./routes/session";
+import verificationCodeRoutes from "./routes/verificationCode";
 import requiresAuth from "./middleware/authenticate";
 import errorHandler from "./middleware/errorHandler";
 
@@ -18,9 +19,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(cookieParser());
 
+app.use("/api/sessions", sessionRoutes);
+app.use("/api/verification-codes", verificationCodeRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/profiles", requiresAuth, profileRoutes);
-app.use("/api/sessions", sessionRoutes);
+
 // app.use("/api/items", requiresAuth, () => console.log("items"));
 // app.use("/api/pages", requiresAuth, () => console.log("pages"));
 // app.use("/api/blocks", requiresAuth, () => console.log("blocks"));
