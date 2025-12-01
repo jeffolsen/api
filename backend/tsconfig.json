@@ -9,7 +9,7 @@
     // See also https://aka.ms/tsconfig/module
     "module": "commonjs",
     "target": "esnext",
-    "types": ["node"],
+    // "types": ["node"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -44,8 +44,9 @@
     // "isolatedModules": true,
     // "noUncheckedSideEffectImports": true,
     // "moduleDetection": "force",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "typeRoots": ["global.d.ts"]
   },
-  "include": ["src/**/*", "prisma/seed.ts"],
+  "include": ["src/**/*", "prisma/seed.ts", "global.d.ts"],
   "exclude": ["node_modules", "dist", "src/**/*.test.ts"]
 }
