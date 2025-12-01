@@ -6,14 +6,14 @@ import { OK } from "../config/constants";
 
 export const getAllSessions: RequestHandler = catchErrors(
   async (req, res, next) => {
-    const sessions = prismaClient.session.findMany();
+    const sessions = await prismaClient.session.findMany();
     res.status(OK).json(sessions);
   }
 );
 
 export const getProfilesSessions: RequestHandler = catchErrors(
   async (req, res, next) => {
-    const { profileId } = req.body;
+    const { profileId } = req;
 
     const sessions = await prismaClient.session.findMany({
       where: {
@@ -23,6 +23,13 @@ export const getProfilesSessions: RequestHandler = catchErrors(
     if (!sessions) throw createHttpError(404, "Sessions not found");
 
     res.status(200).json(sessions);
+  }
+);
+
+export const deleteProfileSession: RequestHandler = catchErrors(
+  async (req, res, next) => {
+    const { profileId, sessionId: currentSessionId } = req;
+    const { sessionId } = req.body;
   }
 );
 

@@ -1,13 +1,13 @@
-import { RequestHandler } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import createHttpError from "http-errors";
 import prismaClient from "../db/client";
 import catchErrors from "../util/catchErrors";
 import { BAD_REQUEST, NOT_FOUND, UNAUTHORIZED } from "../config/constants";
-import bcrypt from "bcrypt";
+import { compareValue } from "../util/bcrypt";
 
 export const getAuthenticatedProfile: RequestHandler = catchErrors(
-  async (req, res, next) => {
-    const { profileId } = req.body;
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { profileId } = req;
 
     const profile = await prismaClient.profile.findUnique({
       where: {
@@ -31,8 +31,9 @@ export const verifyEmail: RequestHandler<
   unknown,
   VerifyEmailBody,
   unknown
-> = catchErrors(async (req, res, next) => {
-  const { profileId, verificationCode } = req.body;
+> = catchErrors(async (req: Request, res: Response, next: NextFunction) => {
+  const { profileId } = req;
+  const { verificationCode } = req.body;
 });
 
 interface DeleteProfilelBody {
@@ -45,8 +46,9 @@ export const deleteProfile: RequestHandler<
   unknown,
   DeleteProfilelBody,
   unknown
-> = catchErrors(async (req, res, next) => {
-  const { profileId, password } = req.body;
+> = catchErrors(async (req: Request, res: Response, next: NextFunction) => {
+  const { profileId } = req;
+  const { password } = req.body;
 
   if (!password) throw createHttpError(BAD_REQUEST, "password is required");
 
@@ -55,13 +57,9 @@ export const deleteProfile: RequestHandler<
   });
   if (!profile) throw createHttpError(NOT_FOUND, "Profile not found");
 
-  const passwordMatch = await bcrypt.compare(password, profile.password);
+  const passwordMatch = await compareValue(password, profile.password);
   if (!passwordMatch)
     throw createHttpError(UNAUTHORIZED, "Invalid credentials");
-
-  await prismaClient.session.deleteMany({
-    where: { profileId },
-  });
 
   await prismaClient.profile.delete({
     where: { id: profileId },

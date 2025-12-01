@@ -1,6 +1,5 @@
-import bcrypt from "bcrypt";
-import prismaClient, { session } from "../db/client";
-import { defaultProfileScope } from "./scope";
+import prismaClient, { codeType } from "../db/client";
+import { defaultProfileScope } from "../util/scope";
 import {
   AccessTokenPayload,
   signAccessToken,
@@ -17,6 +16,7 @@ import {
 } from "../config/constants";
 import env from "../config/env";
 import D, { getNewRefreshTokenExpirationDate } from "../util/date";
+import { compareValue, hashValue } from "../util/bcrypt";
 
 interface CreateProfileParams {
   email: string;
@@ -34,10 +34,14 @@ export const createProfile = async ({
   });
   if (existingEmail) throw createHttpError(CONFLICT, "Email already taken");
 
-  const passwordHashed = await bcrypt.hash(password, 10);
+  const passwordHashed = await hashValue(password);
 
   const profile = await prismaClient.profile.create({
     data: { email, password: passwordHashed },
+  });
+
+  const verificationCode = await prismaClient.verificationCode.create({
+    data: { profileId: profile.id },
   });
 
   const session = await prismaClient.session.create({
@@ -72,7 +76,7 @@ export const logInProfile = async ({
 
   if (!profile) throw createHttpError(UNAUTHORIZED, "Invalid credentials");
 
-  const passwordMatch = await bcrypt.compare(password, profile.password);
+  const passwordMatch = await compareValue(password, profile.password);
   if (!passwordMatch)
     throw createHttpError(UNAUTHORIZED, "Invalid credentials");
 
@@ -81,6 +85,10 @@ export const logInProfile = async ({
   });
   if (sessions.length >= MAX_PROFILE_SESSIONS)
     throw createHttpError(CONFLICT, "Max number of sessions reached");
+
+  const verificationCode = await prismaClient.verificationCode.create({
+    data: { profileId: profile.id },
+  });
 
   const session = await prismaClient.session.create({
     data: {
@@ -130,7 +138,7 @@ export const logOutOfAllSessions = async ({
   });
   if (!profile) throw createHttpError(UNAUTHORIZED, "Invalid credentials");
 
-  const passwordMatch = await bcrypt.compare(password, profile.password);
+  const passwordMatch = await compareValue(password, profile.password);
   if (!passwordMatch)
     throw createHttpError(UNAUTHORIZED, "Invalid credentials");
 
