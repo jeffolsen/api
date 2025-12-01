@@ -26,7 +26,7 @@ model profile {
 
 model session {
   id               Int      @id @default(autoincrement())
-  profile          profile  @relation(fields: [profileId], references: [id])
+  profile          profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId        Int
   userAgent        String
   twoFactorRefresh Boolean  @default(true)
@@ -37,15 +37,15 @@ model session {
 }
 
 enum codeType {
-  EMAIL
-  PASSWORD_CHANGE
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
 }
 
 model verificationCode {
   id        Int      @id @default(autoincrement())
-  profile   profile  @relation(fields: [profileId], references: [id])
+  profile   profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId Int
-  codeType  codeType @default(EMAIL)
+  type      codeType @default(EMAIL_VERIFICATION)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '1 HOURS'"))
