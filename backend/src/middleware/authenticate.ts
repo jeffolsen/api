@@ -1,4 +1,4 @@
-import { RequestHandler } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import createHttpError from "http-errors";
 import env from "../config/env";
 import prismaClient from "../db/client";
@@ -6,7 +6,11 @@ import { AccessTokenPayload, validateToken } from "../util/jwt";
 import { BAD_REQUEST, UNAUTHORIZED } from "../config/constants";
 import D from "../util/date";
 
-const requiresAuth: RequestHandler = async (req, res, next) => {
+const requiresAuth: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { accessToken } = req.cookies;
 
   if (!accessToken) throw createHttpError(BAD_REQUEST, "Invalid token");
@@ -17,7 +21,7 @@ const requiresAuth: RequestHandler = async (req, res, next) => {
   })) as AccessTokenPayload;
   if (!payload) throw createHttpError(BAD_REQUEST, "Invalid token");
 
-  const { sessionId, scope, expiresAt } = payload;
+  const { sessionId, expiresAt } = payload;
 
   const accessTokenExpired = D(expiresAt).isBeforeNow();
   if (accessTokenExpired) throw createHttpError(UNAUTHORIZED, "Unauthorized");
@@ -30,11 +34,11 @@ const requiresAuth: RequestHandler = async (req, res, next) => {
   const sessionExpired = D(session.expiresAt).isBeforeNow();
   if (sessionExpired) throw createHttpError(UNAUTHORIZED, "Unauthorized");
 
-  const { profileId } = session;
+  const { profileId, scope } = session;
 
-  req.body.sessionId = sessionId;
-  req.body.profileId = profileId;
-  req.body.scope = scope;
+  req.sessionId = sessionId;
+  req.profileId = profileId;
+  req.scope = scope;
 
   next();
 };
