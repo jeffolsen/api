@@ -3,6 +3,7 @@ import { SignOptions } from "jsonwebtoken";
 // http codes
 export const OK = 200;
 export const CREATED = 201;
+export const NO_CONTENT = 204;
 export const BAD_REQUEST = 400;
 export const UNAUTHORIZED = 401;
 export const FORBIDDEN = 403;
@@ -33,3 +34,5 @@ export const ACCESS_TOKEN_LIFESPAN = 10 * 60 * 1000;
 export const ACCESS_TOKEN_OPTIONS = {
   expiresIn: ACCESS_TOKEN_LIFESPAN,
 } as SignOptions;
+// 1 hour in ms
+export const VERIFICATION_CODE_LIFESPAN = 60 * 60 * 1000;

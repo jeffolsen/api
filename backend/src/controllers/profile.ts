@@ -2,8 +2,15 @@ import { NextFunction, Request, RequestHandler, Response } from "express";
 import createHttpError from "http-errors";
 import prismaClient from "../db/client";
 import catchErrors from "../util/catchErrors";
-import { BAD_REQUEST, NOT_FOUND, UNAUTHORIZED } from "../config/constants";
+import {
+  BAD_REQUEST,
+  NO_CONTENT,
+  NOT_FOUND,
+  OK,
+  UNAUTHORIZED,
+} from "../config/constants";
 import { compareValue } from "../util/bcrypt";
+import throwError from "../util/throwError";
 
 export const getAuthenticatedProfile: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -15,9 +22,9 @@ export const getAuthenticatedProfile: RequestHandler = catchErrors(
       },
       omit: { password: true },
     });
-    if (!profile) throw createHttpError(404, "Profile not found");
+    throwError(profile, NOT_FOUND, "Profile not found");
 
-    res.status(200).json(profile);
+    res.status(OK).json(profile);
   }
 );
 
@@ -49,23 +56,21 @@ export const deleteProfile: RequestHandler<
 > = catchErrors(async (req: Request, res: Response, next: NextFunction) => {
   const { profileId } = req;
   const { password } = req.body;
-
-  if (!password) throw createHttpError(BAD_REQUEST, "password is required");
+  throwError(password, BAD_REQUEST, "password is required");
 
   const profile = await prismaClient.profile.findUnique({
     where: { id: profileId },
   });
-  if (!profile) throw createHttpError(NOT_FOUND, "Profile not found");
+  throwError(profile, NOT_FOUND, "Profile not found");
 
   const passwordMatch = await compareValue(password, profile.password);
-  if (!passwordMatch)
-    throw createHttpError(UNAUTHORIZED, "Invalid credentials");
+  throwError(passwordMatch, UNAUTHORIZED, "Invalid credentials");
 
   await prismaClient.profile.delete({
     where: { id: profileId },
   });
 
-  res.status(204);
+  res.status(NO_CONTENT);
 });
 
 const profileApi = {

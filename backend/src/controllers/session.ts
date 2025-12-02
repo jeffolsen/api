@@ -2,7 +2,8 @@ import { RequestHandler } from "express";
 import prismaClient, { PrismaClient } from "../db/client";
 import createHttpError from "http-errors";
 import catchErrors from "../util/catchErrors";
-import { OK } from "../config/constants";
+import { NOT_FOUND, OK } from "../config/constants";
+import throwError from "../util/throwError";
 
 export const getAllSessions: RequestHandler = catchErrors(
   async (req, res, next) => {
@@ -20,9 +21,8 @@ export const getProfilesSessions: RequestHandler = catchErrors(
         profileId,
       },
     });
-    if (!sessions) throw createHttpError(404, "Sessions not found");
 
-    res.status(200).json(sessions);
+    res.status(OK).json(sessions);
   }
 );
 

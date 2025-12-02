@@ -15,8 +15,9 @@ import {
   UNAUTHORIZED,
 } from "../config/constants";
 import env from "../config/env";
-import D, { getNewRefreshTokenExpirationDate } from "../util/date";
+import date, { getNewRefreshTokenExpirationDate } from "../util/date";
 import { compareValue, hashValue } from "../util/bcrypt";
+import throwError from "../util/throwError";
 
 interface CreateProfileParams {
   email: string;
@@ -29,10 +30,10 @@ export const createProfile = async ({
   password,
   userAgent,
 }: CreateProfileParams) => {
-  const existingEmail = await prismaClient.profile.findUnique({
+  const emailNotFound = !(await prismaClient.profile.findUnique({
     where: { email },
-  });
-  if (existingEmail) throw createHttpError(CONFLICT, "Email already taken");
+  }));
+  throwError(emailNotFound, CONFLICT, "Email already taken");
 
   const passwordHashed = await hashValue(password);
 
@@ -73,18 +74,19 @@ export const logInProfile = async ({
   const profile = await prismaClient.profile.findUnique({
     where: { email },
   });
-
-  if (!profile) throw createHttpError(UNAUTHORIZED, "Invalid credentials");
+  throwError(profile, NOT_FOUND, "Profile not found");
 
   const passwordMatch = await compareValue(password, profile.password);
-  if (!passwordMatch)
-    throw createHttpError(UNAUTHORIZED, "Invalid credentials");
+  throwError(passwordMatch, UNAUTHORIZED, "Invalid credentials");
 
   const sessions = await prismaClient.session.findMany({
     where: { profileId: profile.id },
   });
-  if (sessions.length >= MAX_PROFILE_SESSIONS)
-    throw createHttpError(CONFLICT, "Max number of sessions reached");
+  throwError(
+    sessions.length <= MAX_PROFILE_SESSIONS,
+    CONFLICT,
+    "Max number of sessions reached"
+  );
 
   const verificationCode = await prismaClient.verificationCode.create({
     data: { profileId: profile.id },
@@ -114,13 +116,13 @@ export const logOutSession = async ({ accessToken }: LogOutSessionParams) => {
     secret: env.JWT_SECRET,
     token: accessToken,
   })) as AccessTokenPayload;
-  if (!payload) throw createHttpError(UNAUTHORIZED, "Invalid token");
+  throwError(payload, UNAUTHORIZED, "Invalid token");
 
   const { sessionId } = payload;
-  if (!sessionId) throw createHttpError(UNAUTHORIZED, "Invalid token");
+  throwError(sessionId, UNAUTHORIZED, "Invalid token");
 
   const session = prismaClient.session.delete({ where: { id: sessionId } });
-  if (!session) throw createHttpError(UNAUTHORIZED, "Invalid token");
+  throwError(session, UNAUTHORIZED, "Invalid token");
 
   return session;
 };
@@ -136,16 +138,15 @@ export const logOutOfAllSessions = async ({
   const profile = await prismaClient.profile.findUnique({
     where: { email },
   });
-  if (!profile) throw createHttpError(UNAUTHORIZED, "Invalid credentials");
+  throwError(profile, UNAUTHORIZED, "Invalid credentials");
 
   const passwordMatch = await compareValue(password, profile.password);
-  if (!passwordMatch)
-    throw createHttpError(UNAUTHORIZED, "Invalid credentials");
+  throwError(passwordMatch, UNAUTHORIZED, "Invalid credentials");
 
   const sessions = await prismaClient.session.deleteMany({
     where: { profileId: profile.id },
   });
-  if (!sessions.count) throw createHttpError(NOT_FOUND, "No sessions found");
+  throwError(sessions.count, NOT_FOUND, "No sessions found");
 
   return true;
 };
@@ -161,23 +162,23 @@ export const refreshAccessToken = async ({
     secret: env.JWT_REFRESH_SECRET,
     token: refreshToken,
   })) as AccessTokenPayload;
-  if (!payload) throw createHttpError(BAD_REQUEST, "Invalid token");
+  throwError(payload, BAD_REQUEST, "Invalid token");
 
   const { sessionId } = payload;
   const session = await prismaClient.session.findUnique({
     where: { id: sessionId },
   });
-  if (!session) throw createHttpError(BAD_REQUEST, "Invalid token");
+  throwError(session, BAD_REQUEST, "Invalid token");
 
   const { profileId, twoFactorRefresh, expiresAt } = session;
   const profile = await prismaClient.profile.findUnique({
     where: { id: profileId },
   });
-  if (!profile) throw createHttpError(BAD_REQUEST, "Invalid token");
+  throwError(profile, BAD_REQUEST, "Invalid token");
 
-  const sessionExpired = D(expiresAt).isBeforeNow();
-  if (sessionExpired && twoFactorRefresh)
-    throw createHttpError(UNAUTHORIZED, "Unauthorized");
+  const sessionExpired = date(expiresAt).isBeforeNow();
+  const needsRefreshCode = sessionExpired && twoFactorRefresh;
+  throwError(!needsRefreshCode, UNAUTHORIZED, "Unauthorized");
 
   if (sessionExpired) {
     await prismaClient.session.update({

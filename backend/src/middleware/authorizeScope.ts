@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import createHttpError from "http-errors";
 import { splitScopes } from "../util/scope";
+import { UNAUTHORIZED } from "../config/constants";
+import throwError from "../util/throwError";
 
 type ScopeParams = string[];
 
@@ -10,7 +12,7 @@ const authorizeScope = (requiredScopes: ScopeParams) => {
     const hasScope = requestScope.some((s: string) =>
       requiredScopes.includes(s)
     );
-    if (!hasScope) throw createHttpError(401, "Unauthorized");
+    throwError(hasScope, UNAUTHORIZED, "Unauthorized");
 
     next();
   };

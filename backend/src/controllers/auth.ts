@@ -9,6 +9,7 @@ import {
 import { setAuthCookies } from "../util/cookie";
 import catchErrors from "../util/catchErrors";
 import { BAD_REQUEST, CREATED, OK } from "../config/constants";
+import throwError from "../util/throwError";
 
 interface RegisterBody {
   email: string;
@@ -21,14 +22,17 @@ export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
     const { email, password: passwordRaw, confirmPassword } = req.body;
     const { ["user-agent"]: userAgent } = req.headers;
 
-    if (!email || !passwordRaw || !confirmPassword || !userAgent)
-      throw createHttpError(
-        BAD_REQUEST,
-        "email and password twice are required"
-      );
+    throwError(
+      email && passwordRaw && confirmPassword && userAgent,
+      BAD_REQUEST,
+      "email and password twice are required"
+    );
 
-    if (passwordRaw !== confirmPassword)
-      throw createHttpError(BAD_REQUEST, "passwords should match");
+    throwError(
+      passwordRaw === confirmPassword,
+      BAD_REQUEST,
+      "passwords should match"
+    );
 
     const { profile, ...cookieOptions } = await createProfile({
       email,
@@ -51,8 +55,11 @@ export const login: RequestHandler<unknown, unknown, LogInBody, unknown> =
     const { email, password } = req.body;
     const { ["user-agent"]: userAgent } = req.headers;
 
-    if (!email || !password || !userAgent)
-      throw createHttpError(BAD_REQUEST, "email and password are required");
+    throwError(
+      email && password && userAgent,
+      BAD_REQUEST,
+      "email and password are required"
+    );
 
     const { profile, ...cookieOptions } = await logInProfile({
       email,
@@ -69,8 +76,7 @@ export const refreshAccessToken: RequestHandler = catchErrors(
   async (req, res, next) => {
     const { refreshToken } = req.cookies;
 
-    if (!refreshToken)
-      throw createHttpError(BAD_REQUEST, "refresh token is required");
+    throwError(refreshToken, BAD_REQUEST, "refresh token is required");
 
     res.sendStatus(OK);
   }
@@ -79,8 +85,7 @@ export const refreshAccessToken: RequestHandler = catchErrors(
 export const logout: RequestHandler = catchErrors(async (req, res, next) => {
   const { accessToken } = req.cookies;
 
-  if (!accessToken)
-    throw createHttpError(BAD_REQUEST, "refresh token is required");
+  throwError(accessToken, BAD_REQUEST, "refresh token is required");
 
   await logOutSession({ accessToken });
 
@@ -99,8 +104,11 @@ export const logoutOfAll: RequestHandler<
 > = catchErrors(async (req, res, next) => {
   const { email, password: passwordRaw } = req.body;
 
-  if (!email || !passwordRaw)
-    throw createHttpError(BAD_REQUEST, "email and password are required");
+  throwError(
+    email && passwordRaw,
+    BAD_REQUEST,
+    "email and password are required"
+  );
 
   await logOutOfAllSessions({ email, password: passwordRaw });
 
