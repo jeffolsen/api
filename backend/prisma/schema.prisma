@@ -46,7 +46,9 @@ model verificationCode {
   profile   profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId Int
   type      codeType @default(EMAIL_VERIFICATION)
+  value     String
+  verified  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '1 HOURS'"))
+  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '8 HOURS'"))
 }
