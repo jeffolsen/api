@@ -34,5 +34,5 @@ export const ACCESS_TOKEN_LIFESPAN = 10 * 60 * 1000;
 export const ACCESS_TOKEN_OPTIONS = {
   expiresIn: ACCESS_TOKEN_LIFESPAN,
 } as SignOptions;
-// 1 hour in ms
-export const VERIFICATION_CODE_LIFESPAN = 60 * 60 * 1000;
+// 8 hours in ms
+export const VERIFICATION_CODE_LIFESPAN = 8 * 60 * 60 * 1000;

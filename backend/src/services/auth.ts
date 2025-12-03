@@ -12,12 +12,18 @@ import {
   CONFLICT,
   MAX_PROFILE_SESSIONS,
   NOT_FOUND,
+  TOO_MANY_REQUESTS,
   UNAUTHORIZED,
 } from "../config/constants";
 import env from "../config/env";
-import date, { getNewRefreshTokenExpirationDate } from "../util/date";
+import date, {
+  getNewRefreshTokenExpirationDate,
+  getNewVerificationCodeExpirationDate,
+} from "../util/date";
 import { compareValue, hashValue } from "../util/bcrypt";
 import throwError from "../util/throwError";
+import generateCode from "../util/generateCode";
+import sendEmail from "../util/sendEmail";
 
 interface CreateProfileParams {
   email: string;
@@ -39,11 +45,12 @@ export const createProfile = async ({
 
   const profile = await prismaClient.profile.create({
     data: { email, password: passwordHashed },
+    omit: {
+      password: true,
+    },
   });
 
-  const verificationCode = await prismaClient.verificationCode.create({
-    data: { profileId: profile.id },
-  });
+  await sendVerificationCode(email, profile.id, "EMAIL_VERIFICATION");
 
   const session = await prismaClient.session.create({
     data: {
@@ -76,7 +83,9 @@ export const logInProfile = async ({
   });
   throwError(profile, NOT_FOUND, "Profile not found");
 
-  const passwordMatch = await compareValue(password, profile.password);
+  const { password: profilePassword, ...profileWithoutPassword } = profile;
+
+  const passwordMatch = await compareValue(password, profilePassword);
   throwError(passwordMatch, UNAUTHORIZED, "Invalid credentials");
 
   const sessions = await prismaClient.session.findMany({
@@ -88,9 +97,7 @@ export const logInProfile = async ({
     "Max number of sessions reached"
   );
 
-  const verificationCode = await prismaClient.verificationCode.create({
-    data: { profileId: profile.id },
-  });
+  await sendVerificationCode(email, profile.id, "EMAIL_VERIFICATION");
 
   const session = await prismaClient.session.create({
     data: {
@@ -104,7 +111,12 @@ export const logInProfile = async ({
   const refreshToken = signRefreshToken(session.id);
   const accessToken = signAccessToken(session.id);
 
-  return { profile, session, refreshToken, accessToken };
+  return {
+    profile: profileWithoutPassword,
+    session,
+    refreshToken,
+    accessToken,
+  };
 };
 
 interface LogOutSessionParams {
@@ -190,6 +202,43 @@ export const refreshAccessToken = async ({
   }
 
   return signAccessToken(sessionId);
+};
+
+type SendVerificationCode = (
+  email: string,
+  profileId: number,
+  codeType: codeType
+) => void;
+
+export const sendVerificationCode: SendVerificationCode = async (
+  email,
+  profileId,
+  codeType
+) => {
+  const activeCodes = await prismaClient.verificationCode.findMany({
+    where: {
+      profileId,
+      expiresAt: {
+        gt: new Date(),
+      },
+    },
+  });
+  throwError(
+    activeCodes.length <= 3,
+    TOO_MANY_REQUESTS,
+    "Too many verification code requests"
+  );
+
+  const verificationCode = await prismaClient.verificationCode.create({
+    data: {
+      profileId,
+      expiresAt: getNewVerificationCodeExpirationDate(),
+      type: codeType,
+      value: generateCode(),
+    },
+  });
+
+  sendEmail(email, verificationCode.value);
 };
 
 interface UpdatePasswordParams {
