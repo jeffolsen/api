@@ -25,15 +25,16 @@ model profile {
 }
 
 model session {
-  id               Int      @id @default(autoincrement())
-  profile          profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  profileId        Int
-  userAgent        String
-  twoFactorRefresh Boolean  @default(true)
-  scope            String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  expiresAt        DateTime @default(dbgenerated("NOW() + INTERVAL '2 DAYS'"))
+  id                Int                @id @default(autoincrement())
+  userAgent         String
+  autoRefresh       Boolean            @default(false)
+  scope             String             @default("")
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  expiresAt         DateTime           @default(dbgenerated("NOW() + INTERVAL '2 DAYS'"))
+  profile           profile            @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId         Int
+  verificationCodes verificationCode[]
 }
 
 enum codeType {
@@ -43,12 +44,14 @@ enum codeType {
 
 model verificationCode {
   id        Int      @id @default(autoincrement())
-  profile   profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  profileId Int
   type      codeType @default(EMAIL_VERIFICATION)
   value     String
-  verified  Boolean  @default(false)
+  used      Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '8 HOURS'"))
+  profile   profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId Int
+  session   session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId Int
 }
