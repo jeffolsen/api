@@ -1,5 +1,4 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import createHttpError from "http-errors";
 import prismaClient from "../db/client";
 import catchErrors from "../util/catchErrors";
 import {
@@ -27,21 +26,6 @@ export const getAuthenticatedProfile: RequestHandler = catchErrors(
     res.status(OK).json(profile);
   }
 );
-
-interface VerifyEmailBody {
-  profileId: number;
-  verificationCode: string;
-}
-
-export const verifyEmail: RequestHandler<
-  unknown,
-  unknown,
-  VerifyEmailBody,
-  unknown
-> = catchErrors(async (req: Request, res: Response, next: NextFunction) => {
-  const { profileId } = req;
-  const { verificationCode } = req.body;
-});
 
 interface DeleteProfilelBody {
   profileId: number;
@@ -75,7 +59,6 @@ export const deleteProfile: RequestHandler<
 
 const profileApi = {
   getAuthenticatedProfile,
-  verifyEmail,
   deleteProfile,
 };
 export default profileApi;

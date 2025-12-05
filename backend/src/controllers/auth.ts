@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
-import createHttpError from "http-errors";
 import {
+  createPasswordResetSession,
   createProfile,
   logInProfile,
   logOutOfAllSessions,
@@ -10,6 +10,8 @@ import { setAuthCookies } from "../util/cookie";
 import catchErrors from "../util/catchErrors";
 import { BAD_REQUEST, CREATED, OK } from "../config/constants";
 import throwError from "../util/throwError";
+import sendEmail from "../util/sendEmail";
+import { createVerificationCode } from "../services/verify";
 
 interface RegisterBody {
   email: string;
@@ -34,13 +36,21 @@ export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
       "passwords should match"
     );
 
-    const { profile, ...cookieOptions } = await createProfile({
+    const { profile, session, ...tokens } = await createProfile({
       email,
       password: passwordRaw,
       userAgent,
     });
 
-    setAuthCookies({ res, ...cookieOptions })
+    const code = await createVerificationCode({
+      codeType: "EMAIL_VERIFICATION",
+      profileId: profile.id,
+      sessionId: session.id,
+    });
+
+    sendEmail(email, code);
+
+    setAuthCookies({ res, session, ...tokens })
       .status(CREATED)
       .json(profile);
   });
@@ -61,35 +71,54 @@ export const login: RequestHandler<unknown, unknown, LogInBody, unknown> =
       "email and password are required"
     );
 
-    const { profile, ...cookieOptions } = await logInProfile({
+    const { profile, session, ...tokens } = await logInProfile({
       email,
       password,
       userAgent,
     });
 
-    setAuthCookies({ res, ...cookieOptions })
+    const code = await createVerificationCode({
+      codeType: "EMAIL_VERIFICATION",
+      profileId: profile.id,
+      sessionId: session.id,
+    });
+
+    sendEmail(email, code);
+
+    setAuthCookies({ res, session, ...tokens })
       .status(CREATED)
       .json(profile);
   });
 
-export const refreshAccessToken: RequestHandler = catchErrors(
-  async (req, res, next) => {
-    const { refreshToken } = req.cookies;
+interface RequestPasswordResetBody {
+  email: string;
+}
+export const requestPasswordReset: RequestHandler<
+  unknown,
+  unknown,
+  RequestPasswordResetBody,
+  unknown
+> = catchErrors(async (req, res, next) => {
+  const { email } = req.body;
+  const { ["user-agent"]: userAgent } = req.headers;
 
-    throwError(refreshToken, BAD_REQUEST, "refresh token is required");
+  throwError(email && userAgent, BAD_REQUEST, "email is required");
 
-    res.sendStatus(OK);
-  }
-);
+  const passwordResetSession = await createPasswordResetSession({
+    email,
+    userAgent,
+  });
+  const { session, ...tokens } = passwordResetSession;
 
-export const logout: RequestHandler = catchErrors(async (req, res, next) => {
-  const { accessToken } = req.cookies;
+  const code = await createVerificationCode({
+    codeType: "EMAIL_VERIFICATION",
+    profileId: session.profileId,
+    sessionId: session.id,
+  });
 
-  throwError(accessToken, BAD_REQUEST, "refresh token is required");
+  sendEmail(email, code);
 
-  await logOutSession({ accessToken });
-
-  res.sendStatus(OK);
+  setAuthCookies({ res, session, ...tokens }).sendStatus(OK);
 });
 
 interface LogOutOfAllBody {
@@ -115,16 +144,21 @@ export const logoutOfAll: RequestHandler<
   res.sendStatus(OK);
 });
 
-export const changePassword: RequestHandler = catchErrors(
-  async (req, res, next) => {}
-);
+export const logout: RequestHandler = catchErrors(async (req, res, next) => {
+  const { accessToken } = req.cookies;
+
+  throwError(accessToken, BAD_REQUEST, "refresh token is required");
+
+  await logOutSession({ accessToken });
+
+  res.sendStatus(OK);
+});
 
 const authApi = {
   register,
   login,
-  refreshAccessToken,
   logout,
   logoutOfAll,
-  changePassword,
+  requestPasswordReset,
 };
 export default authApi;

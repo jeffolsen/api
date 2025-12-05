@@ -1,16 +1,10 @@
 import { RequestHandler } from "express";
-import prismaClient, { PrismaClient } from "../db/client";
-import createHttpError from "http-errors";
+import prismaClient from "../db/client";
 import catchErrors from "../util/catchErrors";
-import { NOT_FOUND, OK } from "../config/constants";
+import { BAD_REQUEST, OK } from "../config/constants";
 import throwError from "../util/throwError";
-
-export const getAllSessions: RequestHandler = catchErrors(
-  async (req, res, next) => {
-    const sessions = await prismaClient.session.findMany();
-    res.status(OK).json(sessions);
-  }
-);
+import { setAuthCookies } from "../util/cookie";
+import { refreshAccessToken } from "../services/token";
 
 export const getProfilesSessions: RequestHandler = catchErrors(
   async (req, res, next) => {
@@ -20,22 +14,28 @@ export const getProfilesSessions: RequestHandler = catchErrors(
       where: {
         profileId,
       },
+      omit: { scope: true },
     });
 
     res.status(OK).json(sessions);
   }
 );
 
-export const deleteProfileSession: RequestHandler = catchErrors(
+export const refreshToken: RequestHandler = catchErrors(
   async (req, res, next) => {
-    const { profileId, sessionId: currentSessionId } = req;
-    const { sessionId } = req.body;
+    const { refreshToken } = req.cookies;
+
+    throwError(refreshToken, BAD_REQUEST, "refresh token is required");
+
+    const refreshedTokenOptions = await refreshAccessToken({ refreshToken });
+
+    setAuthCookies({ res, ...refreshedTokenOptions }).sendStatus(OK);
   }
 );
 
 const sessionApi = {
-  getAllSessions,
   getProfilesSessions,
+  refreshToken,
 };
 
 export default sessionApi;

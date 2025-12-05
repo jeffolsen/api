@@ -1,78 +1,81 @@
 import { RequestHandler } from "express";
 import catchErrors from "../util/catchErrors";
-import prismaClient, { codeType, verificationCode } from "../db/client";
-import { BAD_REQUEST, NOT_FOUND, OK, UNAUTHORIZED } from "../config/constants";
+import prismaClient from "../db/client";
+import { BAD_REQUEST, OK } from "../config/constants";
+import {
+  validateVerificationCode,
+  verifiedUpdatePassword,
+  verifiedUpdateScope,
+} from "../services/verify";
 import throwError from "../util/throwError";
-import { sendVerificationCode } from "../services/auth";
 
-export const getAllVerificationCodes: RequestHandler = catchErrors(
+export const getProfileVerificationCodes: RequestHandler = catchErrors(
   async (req, res, next) => {
-    const codes = await prismaClient.verificationCode.findMany();
+    const { profileId } = req;
+    const codes = await prismaClient.verificationCode.findMany({
+      where: { profileId },
+      omit: { value: true },
+    });
     res.status(OK).json(codes);
   }
 );
 
-interface RequestVerificationCodeBody {
-  type: codeType;
-}
-
-export const requestVerificationCode: RequestHandler<
-  unknown,
-  unknown,
-  RequestVerificationCodeBody,
-  unknown
-> = catchErrors(async (req, res, next) => {
-  const { profileId } = req;
-  const { type: codeType } = req.body;
-
-  const profile = await prismaClient.profile.findUnique({
-    where: { id: profileId },
-  });
-
-  throwError(profile, BAD_REQUEST, "Invalid token");
-
-  sendVerificationCode(profile.email, profileId, codeType);
-
-  res.sendStatus(OK);
-});
-
 interface SubmitVerificationCodeBody {
-  type: codeType;
   value: string;
 }
 
-export const submitVerificationCode: RequestHandler<
+export const submitVerificationCodeForPassword: RequestHandler<
   unknown,
   unknown,
   SubmitVerificationCodeBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { profileId } = req;
-  const { type, value } = req.body;
+  const { profileId, sessionId } = req;
+  const { value } = req.body;
 
-  const verificationCode = await prismaClient.verificationCode.findFirst({
-    where: { profileId, type, verified: false, expiresAt: { gt: new Date() } },
-    orderBy: { createdAt: "desc" },
+  await validateVerificationCode({
+    profileId,
+    sessionId,
+    type: "PASSWORD_RESET",
+    value,
   });
-  throwError(verificationCode, NOT_FOUND, "No pending code found");
+
+  await verifiedUpdateScope({ sessionId });
+
+  res.sendStatus(OK);
+});
+
+export const submitVerificationCodeForEmail: RequestHandler<
+  unknown,
+  unknown,
+  SubmitVerificationCodeBody,
+  unknown
+> = catchErrors(async (req, res, next) => {
+  const { profileId, sessionId } = req;
+  const { value, password, confirmPassword } = req.body;
+
   throwError(
-    verificationCode.value === value,
-    UNAUTHORIZED,
-    "Invalid credentials"
+    value && password && confirmPassword,
+    BAD_REQUEST,
+    "code and password twice are required"
   );
 
-  await prismaClient.verificationCode.update({
-    where: { id: verificationCode.id },
-    data: {
-      verified: true,
-    },
+  await validateVerificationCode({
+    profileId,
+    sessionId,
+    type: "EMAIL_VERIFICATION",
+    value,
   });
+
+  await verifiedUpdatePassword({ profileId, password });
 
   res.sendStatus(OK);
 });
 
 const verificationCodeApi = {
-  getAllVerificationCodes,
+  getProfileVerificationCodes,
+  submitVerificationCodeForEmail,
+  submitVerificationCodeForPassword,
 };
 
 export default verificationCodeApi;
