@@ -19,9 +19,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(cookieParser());
 
-app.use("/api/sessions", sessionRoutes);
-app.use("/api/verification-codes", verificationCodeRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/verify", requiresAuth, verificationCodeRoutes);
+app.use("/api/sessions", requiresAuth, sessionRoutes);
 app.use("/api/profiles", requiresAuth, profileRoutes);
 
 // app.use("/api/items", requiresAuth, () => console.log("items"));

@@ -7,6 +7,6 @@ router.post("/register", authApi.register);
 router.post("/login", authApi.login);
 router.post("/logout", authApi.logout);
 router.post("/logout-all", authApi.logoutOfAll);
-router.post("/change-password", authApi.changePassword);
+router.post("/reset-password", authApi.requestPasswordReset);
 
 export default router;
