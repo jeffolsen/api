@@ -54,7 +54,7 @@ export const deleteProfile: RequestHandler<
     where: { id: profileId },
   });
 
-  res.status(NO_CONTENT);
+  res.sendStatus(NO_CONTENT);
 });
 
 const profileApi = {

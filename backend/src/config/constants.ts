@@ -22,6 +22,7 @@ export const UPDATE_SESSION_SCOPE = "update:session";
 export const DELETE_SESSION_SCOPE = "delete:session";
 export const UPDATE_EMAIL_SCOPE = "update:email";
 export const UPDATE_PASSWORD_SCOPE = "update:password";
+export const READ_VERIFICATION_CODE_SCOPE = "read:verificationCode";
 
 // resource limits
 export const MAX_PROFILE_SESSIONS = 3;

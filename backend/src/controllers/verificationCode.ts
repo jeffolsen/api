@@ -14,41 +14,22 @@ export const getProfileVerificationCodes: RequestHandler = catchErrors(
     const { profileId } = req;
     const codes = await prismaClient.verificationCode.findMany({
       where: { profileId },
-      omit: { value: true },
+      omit: { value: true, sessionId: true },
     });
     res.status(OK).json(codes);
   }
 );
 
-interface SubmitVerificationCodeBody {
+interface SubmitVerificationCodPasswordBody {
   value: string;
+  password: string;
+  confirmPassword: string;
 }
 
 export const submitVerificationCodeForPassword: RequestHandler<
   unknown,
   unknown,
-  SubmitVerificationCodeBody,
-  unknown
-> = catchErrors(async (req, res, next) => {
-  const { profileId, sessionId } = req;
-  const { value } = req.body;
-
-  await validateVerificationCode({
-    profileId,
-    sessionId,
-    type: "PASSWORD_RESET",
-    value,
-  });
-
-  await verifiedUpdateScope({ sessionId });
-
-  res.sendStatus(OK);
-});
-
-export const submitVerificationCodeForEmail: RequestHandler<
-  unknown,
-  unknown,
-  SubmitVerificationCodeBody,
+  SubmitVerificationCodPasswordBody,
   unknown
 > = catchErrors(async (req, res, next) => {
   const { profileId, sessionId } = req;
@@ -63,11 +44,37 @@ export const submitVerificationCodeForEmail: RequestHandler<
   await validateVerificationCode({
     profileId,
     sessionId,
-    type: "EMAIL_VERIFICATION",
+    type: "PASSWORD_RESET",
     value,
   });
 
   await verifiedUpdatePassword({ profileId, password });
+
+  res.sendStatus(OK);
+});
+interface SubmitVerificationCodeEmailBody {
+  value: string;
+}
+
+export const submitVerificationCodeForEmail: RequestHandler<
+  unknown,
+  unknown,
+  SubmitVerificationCodeEmailBody,
+  unknown
+> = catchErrors(async (req, res, next) => {
+  const { profileId, sessionId } = req;
+  const { value } = req.body;
+
+  throwError(value, BAD_REQUEST, "code is required");
+
+  await validateVerificationCode({
+    profileId,
+    sessionId,
+    type: "EMAIL_VERIFICATION",
+    value,
+  });
+
+  await verifiedUpdateScope({ sessionId });
 
   res.sendStatus(OK);
 });

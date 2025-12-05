@@ -1,11 +1,19 @@
 import express from "express";
 import verificationCodeApi from "../controllers/verificationCode";
 import authorizeScope from "../middleware/authorizeScope";
-import { UPDATE_EMAIL_SCOPE, UPDATE_PASSWORD_SCOPE } from "../config/constants";
+import {
+  READ_VERIFICATION_CODE_SCOPE,
+  UPDATE_EMAIL_SCOPE,
+  UPDATE_PASSWORD_SCOPE,
+} from "../config/constants";
 
 const router = express.Router();
 
-router.get("/", verificationCodeApi.getProfileVerificationCodes);
+router.get(
+  "/",
+  authorizeScope([READ_VERIFICATION_CODE_SCOPE]),
+  verificationCodeApi.getProfileVerificationCodes
+);
 router.post(
   "/email",
   authorizeScope([UPDATE_EMAIL_SCOPE]),
