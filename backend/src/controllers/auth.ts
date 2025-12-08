@@ -1,17 +1,16 @@
 import { RequestHandler } from "express";
-import {
-  createPasswordResetSession,
-  createProfile,
-  logInProfile,
-  logOutOfAllSessions,
-  logOutSession,
-} from "../services/auth";
+import { logInProfile } from "../services/auth";
 import { setAuthCookies } from "../util/cookie";
 import catchErrors from "../util/catchErrors";
-import { BAD_REQUEST, CREATED, OK } from "../config/constants";
+import {
+  BAD_REQUEST,
+  CONFLICT,
+  CREATED,
+  NOT_FOUND,
+  OK,
+} from "../config/constants";
 import throwError from "../util/throwError";
-import sendEmail from "../util/sendEmail";
-import { createVerificationCode } from "../services/verify";
+import prismaClient from "../db/client";
 
 interface RegisterBody {
   email: string;
@@ -21,38 +20,36 @@ interface RegisterBody {
 
 export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
   catchErrors(async (req, res, next) => {
-    const { email, password: passwordRaw, confirmPassword } = req.body;
+    const { email, password: passwordSubmit, confirmPassword } = req.body;
     const { ["user-agent"]: userAgent } = req.headers;
 
     throwError(
-      email && passwordRaw && confirmPassword && userAgent,
+      email &&
+        passwordSubmit &&
+        confirmPassword &&
+        userAgent &&
+        passwordSubmit === confirmPassword,
       BAD_REQUEST,
-      "email and password twice are required"
+      "Required fields missing"
     );
 
-    throwError(
-      passwordRaw === confirmPassword,
-      BAD_REQUEST,
-      "passwords should match"
-    );
+    const emailNotFound = !(await prismaClient.profile.findUnique({
+      where: { email },
+    }));
+    throwError(emailNotFound, CONFLICT, "Email already taken");
 
-    const { profile, session, ...tokens } = await createProfile({
-      email,
-      password: passwordRaw,
+    const profile = await prismaClient.profile.create({
+      data: { email, password: passwordSubmit },
+    });
+
+    const { session, ...tokens } = await logInProfile({
+      profile,
       userAgent,
     });
 
-    const code = await createVerificationCode({
-      codeType: "EMAIL_VERIFICATION",
-      profileId: profile.id,
-      sessionId: session.id,
-    });
-
-    sendEmail(email, code);
-
-    setAuthCookies({ res, session, ...tokens })
+    setAuthCookies({ res, sessionExpiresAt: session.expiresAt, ...tokens })
       .status(CREATED)
-      .json(profile);
+      .json(profile.clientSafe());
   });
 
 interface LogInBody {
@@ -62,32 +59,30 @@ interface LogInBody {
 
 export const login: RequestHandler<unknown, unknown, LogInBody, unknown> =
   catchErrors(async (req, res, next) => {
-    const { email, password } = req.body;
+    const { email, password: passwordSubmit } = req.body;
     const { ["user-agent"]: userAgent } = req.headers;
 
     throwError(
-      email && password && userAgent,
+      email && passwordSubmit && userAgent,
       BAD_REQUEST,
       "email and password are required"
     );
 
-    const { profile, session, ...tokens } = await logInProfile({
-      email,
-      password,
+    const profile = await prismaClient.profile.findUnique({ where: { email } });
+    throwError(
+      profile && (await profile.comparePassword(passwordSubmit)),
+      NOT_FOUND,
+      "invalid credentials"
+    );
+
+    const { session, ...tokens } = await logInProfile({
+      profile,
       userAgent,
     });
 
-    const code = await createVerificationCode({
-      codeType: "EMAIL_VERIFICATION",
-      profileId: profile.id,
-      sessionId: session.id,
-    });
-
-    sendEmail(email, code);
-
-    setAuthCookies({ res, session, ...tokens })
+    setAuthCookies({ res, sessionExpiresAt: session.expiresAt, ...tokens })
       .status(CREATED)
-      .json(profile);
+      .json(profile.clientSafe());
   });
 
 interface RequestPasswordResetBody {
@@ -104,61 +99,65 @@ export const requestPasswordReset: RequestHandler<
 
   throwError(email && userAgent, BAD_REQUEST, "email is required");
 
-  const passwordResetSession = await createPasswordResetSession({
-    email,
+  const profile = await prismaClient.profile.findUnique({ where: { email } });
+  throwError(profile, NOT_FOUND, "invalid credentials");
+
+  const { session, ...tokens } = await logInProfile({
+    profile,
     userAgent,
-  });
-  const { session, ...tokens } = passwordResetSession;
-
-  const code = await createVerificationCode({
-    codeType: "EMAIL_VERIFICATION",
-    profileId: session.profileId,
-    sessionId: session.id,
+    codeType: "PASSWORD_RESET",
   });
 
-  sendEmail(email, code);
-
-  setAuthCookies({ res, session, ...tokens }).sendStatus(OK);
+  setAuthCookies({
+    res,
+    sessionExpiresAt: session.expiresAt,
+    ...tokens,
+  }).sendStatus(OK);
 });
 
-interface LogOutOfAllBody {
+interface RequestPasswordResetBody {
   email: string;
   password: string;
 }
-export const logoutOfAll: RequestHandler<
+export const requestLogoutOfAll: RequestHandler<
   unknown,
   unknown,
-  LogOutOfAllBody,
+  RequestPasswordResetBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { email, password: passwordRaw } = req.body;
+  const { email, password: passwordSubmit } = req.body;
+  const { ["user-agent"]: userAgent } = req.headers;
 
   throwError(
-    email && passwordRaw,
+    email && passwordSubmit && userAgent,
     BAD_REQUEST,
     "email and password are required"
   );
 
-  await logOutOfAllSessions({ email, password: passwordRaw });
+  const profile = await prismaClient.profile.findUnique({ where: { email } });
+  throwError(
+    profile && (await profile.comparePassword(passwordSubmit)),
+    NOT_FOUND,
+    "invalid credentials"
+  );
 
-  res.sendStatus(OK);
-});
+  const { session, ...tokens } = await logInProfile({
+    profile,
+    userAgent,
+    codeType: "LOGOUT_ALL",
+  });
 
-export const logout: RequestHandler = catchErrors(async (req, res, next) => {
-  const { accessToken } = req.cookies;
-
-  throwError(accessToken, BAD_REQUEST, "refresh token is required");
-
-  await logOutSession({ accessToken });
-
-  res.sendStatus(OK);
+  setAuthCookies({
+    res,
+    sessionExpiresAt: session.expiresAt,
+    ...tokens,
+  }).sendStatus(OK);
 });
 
 const authApi = {
   register,
   login,
-  logout,
-  logoutOfAll,
+  requestLogoutOfAll,
   requestPasswordReset,
 };
 export default authApi;

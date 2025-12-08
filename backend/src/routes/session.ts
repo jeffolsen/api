@@ -15,5 +15,10 @@ router.post(
   authorizeScope([UPDATE_SESSION_SCOPE]),
   sessionApi.refreshToken
 );
+router.post(
+  "/logout",
+  authorizeScope([UPDATE_SESSION_SCOPE]),
+  sessionApi.logout
+);
 
 export default router;

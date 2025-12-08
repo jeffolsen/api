@@ -25,6 +25,7 @@ export const UPDATE_PASSWORD_SCOPE = "update:password";
 export const READ_VERIFICATION_CODE_SCOPE = "read:verificationCode";
 
 // resource limits
+export const MAX_LOGIN_FAILURES = 4;
 export const MAX_PROFILE_SESSIONS = 3;
 export const MAX_PROFILE_CODES = 4;
 

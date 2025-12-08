@@ -6,6 +6,7 @@ import {
   validateVerificationCode,
   verifiedUpdatePassword,
   verifiedUpdateScope,
+  verifiedLogoutOfAllSessions,
 } from "../services/verify";
 import throwError from "../util/throwError";
 
@@ -19,6 +20,33 @@ export const getProfileVerificationCodes: RequestHandler = catchErrors(
     res.status(OK).json(codes);
   }
 );
+
+interface SubmitVerificationCodeEmailBody {
+  value: string;
+}
+
+export const submitVerificationCodeForEmail: RequestHandler<
+  unknown,
+  unknown,
+  SubmitVerificationCodeEmailBody,
+  unknown
+> = catchErrors(async (req, res, next) => {
+  const { profileId, sessionId } = req;
+  const { value } = req.body;
+
+  throwError(value, BAD_REQUEST, "code is required");
+
+  await validateVerificationCode({
+    profileId,
+    sessionId,
+    type: "EMAIL_VERIFICATION",
+    value,
+  });
+
+  await verifiedUpdateScope({ sessionId });
+
+  res.sendStatus(OK);
+});
 
 interface SubmitVerificationCodPasswordBody {
   value: string;
@@ -52,14 +80,14 @@ export const submitVerificationCodeForPassword: RequestHandler<
 
   res.sendStatus(OK);
 });
-interface SubmitVerificationCodeEmailBody {
+
+interface SubmitVerificationCodeForLogoutBody {
   value: string;
 }
-
-export const submitVerificationCodeForEmail: RequestHandler<
+export const submitVerificationCodeForLogout: RequestHandler<
   unknown,
   unknown,
-  SubmitVerificationCodeEmailBody,
+  SubmitVerificationCodeForLogoutBody,
   unknown
 > = catchErrors(async (req, res, next) => {
   const { profileId, sessionId } = req;
@@ -70,11 +98,11 @@ export const submitVerificationCodeForEmail: RequestHandler<
   await validateVerificationCode({
     profileId,
     sessionId,
-    type: "EMAIL_VERIFICATION",
+    type: "LOGOUT_ALL",
     value,
   });
 
-  await verifiedUpdateScope({ sessionId });
+  await verifiedLogoutOfAllSessions({ profileId });
 
   res.sendStatus(OK);
 });

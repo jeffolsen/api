@@ -1,5 +1,4 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import prismaClient from "../db/client";
 import catchErrors from "../util/catchErrors";
 import {
   BAD_REQUEST,
@@ -8,17 +7,15 @@ import {
   OK,
   UNAUTHORIZED,
 } from "../config/constants";
-import { compareValue } from "../util/bcrypt";
 import throwError from "../util/throwError";
+import prismaClient from "../db/client";
 
 export const getAuthenticatedProfile: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
 
     const profile = await prismaClient.profile.findUnique({
-      where: {
-        id: profileId,
-      },
+      where: { id: profileId },
       omit: { password: true },
     });
     throwError(profile, NOT_FOUND, "Profile not found");
@@ -47,7 +44,7 @@ export const deleteProfile: RequestHandler<
   });
   throwError(profile, NOT_FOUND, "Profile not found");
 
-  const passwordMatch = await compareValue(password, profile.password);
+  const passwordMatch = await profile.comparePassword(password);
   throwError(passwordMatch, UNAUTHORIZED, "Invalid credentials");
 
   await prismaClient.profile.delete({

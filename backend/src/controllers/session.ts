@@ -1,10 +1,11 @@
 import { RequestHandler } from "express";
-import prismaClient from "../db/client";
 import catchErrors from "../util/catchErrors";
 import { BAD_REQUEST, OK } from "../config/constants";
 import throwError from "../util/throwError";
 import { setAuthCookies } from "../util/cookie";
 import { refreshAccessToken } from "../services/token";
+import { logOutSession } from "../services/auth";
+import prismaClient from "../db/client";
 
 export const getProfilesSessions: RequestHandler = catchErrors(
   async (req, res, next) => {
@@ -27,15 +28,30 @@ export const refreshToken: RequestHandler = catchErrors(
 
     throwError(refreshToken, BAD_REQUEST, "refresh token is required");
 
-    const refreshedTokenOptions = await refreshAccessToken({ refreshToken });
+    const { session, ...tokens } = await refreshAccessToken({ refreshToken });
 
-    setAuthCookies({ res, ...refreshedTokenOptions }).sendStatus(OK);
+    setAuthCookies({
+      res,
+      sessionExpiresAt: session.expiresAt,
+      ...tokens,
+    }).sendStatus(OK);
   }
 );
+
+export const logout: RequestHandler = catchErrors(async (req, res, next) => {
+  const { accessToken } = req.cookies;
+
+  throwError(accessToken, BAD_REQUEST, "refresh token is required");
+
+  await logOutSession({ accessToken });
+
+  res.sendStatus(OK);
+});
 
 const sessionApi = {
   getProfilesSessions,
   refreshToken,
+  logout,
 };
 
 export default sessionApi;
