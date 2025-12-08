@@ -14,44 +14,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model profile {
+model Profile {
   id                Int                @id @default(autoincrement())
   email             String             @unique
   password          String
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  sessions          session[]
-  verificationCodes verificationCode[]
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  sessions          Session[]          @relation("ProfileSessions")
+  verificationCodes VerificationCode[] @relation("SessionCodes")
+
+  @@map("profiles")
 }
 
-model session {
+model Session {
   id                Int                @id @default(autoincrement())
-  userAgent         String
-  autoRefresh       Boolean            @default(false)
+  userAgent         String             @map("user_agent")
+  autoRefresh       Boolean            @default(false) @map("auto_refresh")
   scope             String             @default("")
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  expiresAt         DateTime           @default(dbgenerated("NOW() + INTERVAL '2 DAYS'"))
-  profile           profile            @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  profileId         Int
-  verificationCodes verificationCode[]
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  expiresAt         DateTime           @default(dbgenerated("NOW() + INTERVAL '2 DAYS'")) @map("expires_at")
+  profile           Profile            @relation("ProfileSessions", fields: [profileId], references: [id], onDelete: Cascade)
+  profileId         Int                @map("profile_id")
+  verificationCodes VerificationCode[] @relation("SessionCodes")
+
+  @@map("sessions")
 }
 
-enum codeType {
+enum CodeType {
   EMAIL_VERIFICATION
   PASSWORD_RESET
+  LOGOUT_ALL
 }
 
-model verificationCode {
+model VerificationCode {
   id        Int      @id @default(autoincrement())
-  type      codeType @default(EMAIL_VERIFICATION)
+  type      CodeType @default(EMAIL_VERIFICATION)
   value     String
   used      Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '8 HOURS'"))
-  profile   profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  profileId Int
-  session   session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  sessionId Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '8 HOURS'")) @map("expires_at")
+  profile   Profile  @relation("SessionCodes", fields: [profileId], references: [id], onDelete: Cascade)
+  profileId Int      @map("profile_id")
+  session   Session  @relation("SessionCodes", fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId Int      @map("session_id")
+
+  @@map("verification_codes")
 }
