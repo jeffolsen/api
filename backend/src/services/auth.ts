@@ -1,4 +1,4 @@
-import prismaClient from "../db/client";
+import prismaClient, { CodeType } from "../db/client";
 import { preAuthProfileScope } from "../util/scope";
 import {
   AccessTokenPayload,
@@ -14,73 +14,31 @@ import {
 } from "../config/constants";
 import env from "../config/env";
 import { getNewRefreshTokenExpirationDate } from "../util/date";
-import { compareValue, hashValue } from "../util/bcrypt";
+import { compareValue } from "../util/bcrypt";
 import throwError from "../util/throwError";
+import { createVerificationCode } from "./verify";
+import sendEmail from "../util/sendEmail";
+import { ExtendedProfile } from "../extensions/profile";
 
-interface CreateProfileParams {
+interface CheckCredentialsParams {
   email: string;
-  password: string;
-  userAgent: string;
+  password?: string;
 }
 
-export const createProfile = async ({
-  email,
-  password,
-  userAgent,
-}: CreateProfileParams) => {
-  const emailNotFound = !(await prismaClient.profile.findUnique({
-    where: { email },
-  }));
-  throwError(emailNotFound, CONFLICT, "Email already taken");
-
-  const passwordHashed = await hashValue(password);
-
-  const profile = await prismaClient.profile.create({
-    data: { email, password: passwordHashed },
-    omit: {
-      password: true,
-    },
-  });
-
-  const session = await prismaClient.session.create({
-    data: {
-      profileId: profile.id,
-      userAgent,
-      scope: preAuthProfileScope(),
-      expiresAt: getNewRefreshTokenExpirationDate(),
-    },
-  });
-
-  const refreshToken = signRefreshToken(session.id);
-  const accessToken = signAccessToken(session.id);
-
-  return { profile, session, refreshToken, accessToken };
-};
-
 interface LogInProfileParams {
-  email: string;
-  password: string;
+  profile: ExtendedProfile;
   userAgent: string;
+  codeType?: CodeType;
 }
 
 export const logInProfile = async ({
-  email,
-  password,
+  profile,
   userAgent,
+  codeType = "EMAIL_VERIFICATION",
 }: LogInProfileParams) => {
-  const profile = await prismaClient.profile.findUnique({
-    where: { email },
-  });
-  throwError(profile, NOT_FOUND, "Profile not found");
+  const { id: profileId, email } = profile;
 
-  const { password: profilePassword, ...profileWithoutPassword } = profile;
-
-  const passwordMatch = await compareValue(password, profilePassword);
-  throwError(passwordMatch, UNAUTHORIZED, "Invalid credentials");
-
-  const sessions = await prismaClient.session.findMany({
-    where: { profileId: profile.id },
-  });
+  const sessions = await prismaClient.session.findMany({ where: { profile } });
   throwError(
     sessions.length <= MAX_PROFILE_SESSIONS,
     CONFLICT,
@@ -89,49 +47,23 @@ export const logInProfile = async ({
 
   const session = await prismaClient.session.create({
     data: {
-      profileId: profile.id,
+      profileId,
       userAgent,
-      scope: preAuthProfileScope(),
-      expiresAt: getNewRefreshTokenExpirationDate(),
     },
   });
+
+  session.isCurrent();
 
   const refreshToken = signRefreshToken(session.id);
   const accessToken = signAccessToken(session.id);
 
-  return {
-    profile: profileWithoutPassword,
-    session,
-    refreshToken,
-    accessToken,
-  };
-};
-
-interface createPasswordResetSession {
-  email: string;
-  userAgent: string;
-}
-
-export const createPasswordResetSession = async ({
-  email,
-  userAgent,
-}: createPasswordResetSession) => {
-  const profile = await prismaClient.profile.findUnique({
-    where: { email },
-  });
-  throwError(profile, NOT_FOUND, "Profile not found");
-
-  const session = await prismaClient.session.create({
-    data: {
-      profileId: profile.id,
-      userAgent,
-      scope: preAuthProfileScope(),
-      expiresAt: getNewRefreshTokenExpirationDate(),
-    },
+  const code = await createVerificationCode({
+    codeType,
+    profileId,
+    sessionId: session.id,
   });
 
-  const refreshToken = signRefreshToken(session.id);
-  const accessToken = signAccessToken(session.id);
+  sendEmail(email, code);
 
   return {
     session,
@@ -160,14 +92,21 @@ export const logOutSession = async ({ accessToken }: LogOutSessionParams) => {
   return session;
 };
 
-interface LogOutOfAllSessionsParams {
+type LoginCredentials = {
   email: string;
   password: string;
-}
-export const logOutOfAllSessions = async ({
-  email,
-  password,
-}: LogOutOfAllSessionsParams) => {
+};
+type VerificationCode = {
+  code: string;
+};
+type LogOutOfAllSessionsParams = LoginCredentials | VerificationCode;
+
+export const logOutOfAllSessions = async (
+  options: LogOutOfAllSessionsParams
+) => {
+  const { email, password } = options as LoginCredentials;
+  const { code } = options as VerificationCode;
+
   const profile = await prismaClient.profile.findUnique({
     where: { email },
   });

@@ -4,7 +4,7 @@ import {
   TOO_MANY_REQUESTS,
   UNAUTHORIZED,
 } from "../config/constants";
-import prismaClient, { codeType } from "../db/client";
+import prismaClient, { CodeType } from "../db/client";
 import { compareValue, hashValue } from "../util/bcrypt";
 import { getNewVerificationCodeExpirationDate } from "../util/date";
 import generateCode from "../util/generateCode";
@@ -14,7 +14,7 @@ import throwError from "../util/throwError";
 interface CreateVerificationCodeParams {
   profileId: number;
   sessionId: number;
-  codeType: codeType;
+  codeType: CodeType;
 }
 
 export const createVerificationCode = async ({
@@ -56,7 +56,7 @@ interface ValidateVerificationCodeParams {
   profileId: number;
   sessionId: number;
   value: string;
-  type: codeType;
+  type: CodeType;
 }
 
 export const validateVerificationCode = async ({
@@ -88,13 +88,13 @@ export const validateVerificationCode = async ({
   });
 };
 
-interface VerifiedUpdateScope {
+interface VerifiedUpdateScopeParams {
   sessionId: number;
 }
 
 export const verifiedUpdateScope = async ({
   sessionId,
-}: VerifiedUpdateScope) => {
+}: VerifiedUpdateScopeParams) => {
   await prismaClient.session.update({
     where: { id: sessionId },
     data: {
@@ -103,7 +103,7 @@ export const verifiedUpdateScope = async ({
   });
 };
 
-interface VerifiedUpdatePassword {
+interface VerifiedUpdatePasswordParams {
   profileId: number;
   password: string;
 }
@@ -111,7 +111,7 @@ interface VerifiedUpdatePassword {
 export const verifiedUpdatePassword = async ({
   profileId,
   password: passwordRaw,
-}: VerifiedUpdatePassword) => {
+}: VerifiedUpdatePasswordParams) => {
   const password = await hashValue(passwordRaw);
 
   await prismaClient.profile.update({
@@ -120,4 +120,19 @@ export const verifiedUpdatePassword = async ({
       password,
     },
   });
+};
+
+interface verifiedLogoutOfAllSessionsParams {
+  profileId: number;
+}
+
+export const verifiedLogoutOfAllSessions = async ({
+  profileId,
+}: verifiedLogoutOfAllSessionsParams) => {
+  const sessions = await prismaClient.session.deleteMany({
+    where: { profileId },
+  });
+  throwError(sessions.count, NOT_FOUND, "No sessions found");
+
+  return true;
 };

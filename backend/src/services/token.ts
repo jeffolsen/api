@@ -1,7 +1,6 @@
 import { BAD_REQUEST, UNAUTHORIZED } from "../config/constants";
 import env from "../config/env";
 import prismaClient from "../db/client";
-import date, { getNewRefreshTokenExpirationDate } from "../util/date";
 import {
   AccessTokenPayload,
   signAccessToken,
@@ -28,23 +27,16 @@ export const refreshAccessToken = async ({
   });
   throwError(session, BAD_REQUEST, "Invalid token");
 
-  const { profileId, autoRefresh, expiresAt } = session;
   const profile = await prismaClient.profile.findUnique({
-    where: { id: profileId },
+    where: { id: session?.profileId },
   });
   throwError(profile, BAD_REQUEST, "Invalid token");
 
-  const sessionExpired = date(expiresAt).isBeforeNow();
-  throwError(!sessionExpired || autoRefresh, UNAUTHORIZED, "Unauthorized");
+  const doesntNeedManualRefresh = session.autoRefresh || session.isCurrent();
+  throwError(doesntNeedManualRefresh, UNAUTHORIZED, "Unauthorized");
 
-  // if session auto-refreshes and its expired, refresh its expiration now
-  if (sessionExpired && autoRefresh) {
-    session = await prismaClient.session.update({
-      where: { id: sessionId },
-      data: {
-        expiresAt: getNewRefreshTokenExpirationDate(),
-      },
-    });
+  if (session.autoRefresh && !session.isCurrent()) {
+    session = await prismaClient.session.update(session.refresh());
   }
 
   return { session, refreshToken, accessToken: signAccessToken(sessionId) };

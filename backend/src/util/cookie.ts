@@ -1,6 +1,6 @@
-import { session } from "../db/client";
 import { CookieOptions, Response } from "express";
 import { getNewAccessTokenExpirationDate } from "./date";
+import { ExtendedSesion } from "../extensions/session";
 import env from "../config/env";
 
 const secure = env.NODE_ENV !== "development";
@@ -25,23 +25,22 @@ const getRefreshTokenCookieOptions = (expiresAt: Date): CookieOptions => {
 
 interface SetAuthCookieParams {
   res: Response;
-  session: session;
+  sessionExpiresAt: Date;
   accessToken: string;
   refreshToken: string;
 }
 
 export const setAuthCookies = ({
   res,
-  session,
+  sessionExpiresAt,
   accessToken,
   refreshToken,
 }: SetAuthCookieParams) => {
-  const { expiresAt } = session;
   return res
     .cookie("accessToken", accessToken, getAccessTokenCookieOptions())
     .cookie(
       "refreshToken",
       refreshToken,
-      getRefreshTokenCookieOptions(expiresAt)
+      getRefreshTokenCookieOptions(sessionExpiresAt)
     );
 };
