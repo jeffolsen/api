@@ -16,11 +16,10 @@ export const getAuthenticatedProfile: RequestHandler = catchErrors(
 
     const profile = await prismaClient.profile.findUnique({
       where: { id: profileId },
-      omit: { password: true },
     });
     throwError(profile, NOT_FOUND, "Profile not found");
 
-    res.status(OK).json(profile);
+    res.status(OK).json(profile.clientSafe());
   }
 );
 

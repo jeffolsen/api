@@ -1,13 +1,13 @@
 import { RequestHandler } from "express";
 import catchErrors from "../util/catchErrors";
 import prismaClient from "../db/client";
-import { BAD_REQUEST, OK } from "../config/constants";
 import {
-  validateVerificationCode,
-  verifiedUpdatePassword,
-  verifiedUpdateScope,
-  verifiedLogoutOfAllSessions,
-} from "../services/verify";
+  BAD_REQUEST,
+  INTERNAL_SERVER_ERROR,
+  NOT_FOUND,
+  OK,
+} from "../config/constants";
+import { processVerificationCode } from "../services/auth";
 import throwError from "../util/throwError";
 
 export const getProfileVerificationCodes: RequestHandler = catchErrors(
@@ -36,14 +36,15 @@ export const submitVerificationCodeForEmail: RequestHandler<
 
   throwError(value, BAD_REQUEST, "code is required");
 
-  await validateVerificationCode({
+  await processVerificationCode({
     profileId,
     sessionId,
     type: "EMAIL_VERIFICATION",
     value,
   });
 
-  await verifiedUpdateScope({ sessionId });
+  const session = await prismaClient.session.rescope(sessionId);
+  throwError(session, INTERNAL_SERVER_ERROR, "something went wrong");
 
   res.sendStatus(OK);
 });
@@ -69,14 +70,20 @@ export const submitVerificationCodeForPassword: RequestHandler<
     "code and password twice are required"
   );
 
-  await validateVerificationCode({
+  await processVerificationCode({
     profileId,
     sessionId,
     type: "PASSWORD_RESET",
     value,
   });
 
-  await verifiedUpdatePassword({ profileId, password });
+  const profile = await prismaClient.profile.update({
+    where: { id: profileId },
+    data: {
+      password,
+    },
+  });
+  throwError(profile, INTERNAL_SERVER_ERROR, "something went wrong");
 
   res.sendStatus(OK);
 });
@@ -84,6 +91,7 @@ export const submitVerificationCodeForPassword: RequestHandler<
 interface SubmitVerificationCodeForLogoutBody {
   value: string;
 }
+
 export const submitVerificationCodeForLogout: RequestHandler<
   unknown,
   unknown,
@@ -95,14 +103,15 @@ export const submitVerificationCodeForLogout: RequestHandler<
 
   throwError(value, BAD_REQUEST, "code is required");
 
-  await validateVerificationCode({
+  await processVerificationCode({
     profileId,
     sessionId,
     type: "LOGOUT_ALL",
     value,
   });
 
-  await verifiedLogoutOfAllSessions({ profileId });
+  const sessions = await prismaClient.session.logOutAll(profileId);
+  throwError(sessions.count, NOT_FOUND, "No sessions found");
 
   res.sendStatus(OK);
 });

@@ -18,6 +18,9 @@ export const beforeNow = (date: Date): boolean =>
 
 export const afterNow = (date: Date): boolean => !beforeNow(date);
 
+export const twentyFourHoursAgo = (): Date =>
+  new Date(Date.now() - 24 * 60 * 60 * 1000);
+
 const date = (date: Date) => {
   return {
     isBeforeNow: () => beforeNow(date),

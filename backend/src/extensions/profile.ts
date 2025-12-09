@@ -12,64 +12,66 @@ const hashPassword = async (
   return { password: p };
 };
 
-export const profileExtension = Prisma.defineExtension({
-  // client: {},
-  query: {
-    profile: {
-      async create({ model, operation, args, query }) {
-        const passwordOptions = await hashPassword(args.data.password);
+export const profileExtension = Prisma.defineExtension((client) => {
+  return client.$extends({
+    // client: {},
+    query: {
+      profile: {
+        async create({ model, operation, args, query }) {
+          const passwordOptions = await hashPassword(args.data.password);
 
-        const result = await query({
-          ...args,
-          data: {
-            ...args.data,
-            ...(!!passwordOptions.password && passwordOptions),
-          },
-        });
-        return result;
-      },
-      async update({ model, operation, args, query }) {
-        const passwordOptions = await hashPassword(args.data.password);
+          const result = await query({
+            ...args,
+            data: {
+              ...args.data,
+              ...(!!passwordOptions.password && passwordOptions),
+            },
+          });
+          return result;
+        },
+        async update({ model, operation, args, query }) {
+          const passwordOptions = await hashPassword(args.data.password);
 
-        const result = await query({
-          ...args,
-          data: {
-            ...args.data,
-            ...(!!passwordOptions.password && passwordOptions),
-          },
-        });
-        return result;
+          const result = await query({
+            ...args,
+            data: {
+              ...args.data,
+              ...(!!passwordOptions.password && passwordOptions),
+            },
+          });
+          return result;
+        },
       },
     },
-  },
-  model: {
-    profile: {},
-  },
-  result: {
-    profile: {
-      clientSafe: {
-        needs: { id: true, email: true, createdAt: true, updatedAt: true },
-        compute(profile) {
-          return () => {
-            return {
-              id: profile.id,
-              email: profile.email,
-              createdAt: profile.createdAt,
-              updatedAt: profile.updatedAt,
+    model: {
+      profile: {},
+    },
+    result: {
+      profile: {
+        clientSafe: {
+          needs: { id: true, email: true, createdAt: true, updatedAt: true },
+          compute(profile) {
+            return () => {
+              return {
+                id: profile.id,
+                email: profile.email,
+                createdAt: profile.createdAt,
+                updatedAt: profile.updatedAt,
+              };
             };
-          };
+          },
         },
-      },
-      comparePassword: {
-        needs: { password: true },
-        compute(profile) {
-          return async (password: string) => {
-            return await compareValue(profile.password, password);
-          };
+        comparePassword: {
+          needs: { password: true },
+          compute(profile) {
+            return async (password: string) => {
+              return await compareValue(profile.password, password);
+            };
+          },
         },
       },
     },
-  },
+  });
 });
 
 type ClientSafe = () => {

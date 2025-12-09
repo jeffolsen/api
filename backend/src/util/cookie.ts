@@ -1,6 +1,6 @@
 import { CookieOptions, Response } from "express";
 import { getNewAccessTokenExpirationDate } from "./date";
-import { ExtendedSesion } from "../extensions/session";
+import { ExtendedSession } from "../extensions/session";
 import env from "../config/env";
 
 const secure = env.NODE_ENV !== "development";

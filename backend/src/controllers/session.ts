@@ -3,8 +3,7 @@ import catchErrors from "../util/catchErrors";
 import { BAD_REQUEST, OK } from "../config/constants";
 import throwError from "../util/throwError";
 import { setAuthCookies } from "../util/cookie";
-import { refreshAccessToken } from "../services/token";
-import { logOutSession } from "../services/auth";
+import { refreshAccessToken } from "../services/auth";
 import prismaClient from "../db/client";
 
 export const getProfilesSessions: RequestHandler = catchErrors(
@@ -39,11 +38,9 @@ export const refreshToken: RequestHandler = catchErrors(
 );
 
 export const logout: RequestHandler = catchErrors(async (req, res, next) => {
-  const { accessToken } = req.cookies;
+  const { sessionId } = req.cookies;
 
-  throwError(accessToken, BAD_REQUEST, "refresh token is required");
-
-  await logOutSession({ accessToken });
+  const session = await prismaClient.session.logOut(sessionId);
 
   res.sendStatus(OK);
 });

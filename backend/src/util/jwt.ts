@@ -1,45 +1,50 @@
-import jwt, { SignOptions } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import env from "../config/env";
 import {
   ACCESS_TOKEN_OPTIONS,
   SESSION_TOKEN_OPTIONS,
 } from "../config/constants";
 import { getNewAccessTokenExpirationDate } from "./date";
+import throwError from "./throwError";
 
-export interface RefreshTokenPayload {
+// export interface RefreshToken {
+//   payload: RefreshTokenPayload;
+//   secret: string;
+//   options: SignOptions;
+// }
+
+// export interface AccessToken {
+//   payload: AccessTokenPayload;
+//   secret: string;
+//   options: SignOptions;
+// }
+
+// export type CreateTokenProps = RefreshToken | AccessToken;
+
+export interface TokenPayload {
   sessionId: number;
+  expiresAt?: Date;
 }
 
-export interface AccessTokenPayload extends RefreshTokenPayload {
-  scope: string;
-  expiresAt: Date;
-}
+export const verifyAccessToken = (accessToken: string): TokenPayload | null => {
+  const payload = verifyToken(accessToken, env.JWT_SECRET);
+  return payload;
+};
 
-export interface RefreshToken {
-  payload: RefreshTokenPayload;
-  secret: string;
-  options: SignOptions;
-}
+export const verifyRefreshToken = (
+  refreshToken: string
+): TokenPayload | null => {
+  const payload = verifyToken(refreshToken, env.JWT_REFRESH_SECRET);
+  return payload;
+};
 
-export interface AccessToken {
-  payload: AccessTokenPayload;
-  secret: string;
-  options: SignOptions;
-}
-
-export type CreateTokenProps = RefreshToken | AccessToken;
-
-export interface ValidateTokenProps {
-  token: string;
-  secret: string;
-}
-
-export const validateToken = ({
-  token,
-  secret,
-}: ValidateTokenProps): RefreshTokenPayload | AccessTokenPayload => {
-  const payload = jwt.verify(token, secret);
-  return payload as RefreshTokenPayload | AccessTokenPayload;
+const verifyToken = (token: string, secret: string) => {
+  try {
+    const payload = jwt.verify(token, secret);
+    return payload as TokenPayload;
+  } catch (error) {
+    return null;
+  }
 };
 
 export const signAccessToken = (sessionId: number) => {

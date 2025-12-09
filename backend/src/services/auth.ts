@@ -1,29 +1,21 @@
 import prismaClient, { CodeType } from "../db/client";
-import { preAuthProfileScope } from "../util/scope";
 import {
-  AccessTokenPayload,
   signAccessToken,
   signRefreshToken,
-  validateToken,
+  verifyRefreshToken,
 } from "../util/jwt";
 import {
+  BAD_REQUEST,
   CONFLICT,
-  MAX_PROFILE_SESSIONS,
+  INTERNAL_SERVER_ERROR,
   NOT_FOUND,
+  TOO_MANY_REQUESTS,
   UNAUTHORIZED,
 } from "../config/constants";
-import env from "../config/env";
-import { getNewRefreshTokenExpirationDate } from "../util/date";
-import { compareValue } from "../util/bcrypt";
 import throwError from "../util/throwError";
-import { createVerificationCode } from "./verify";
-import sendEmail from "../util/sendEmail";
 import { ExtendedProfile } from "../extensions/profile";
-
-interface CheckCredentialsParams {
-  email: string;
-  password?: string;
-}
+import sendEmail from "../util/sendEmail";
+import generateCode from "../util/generateCode";
 
 interface LogInProfileParams {
   profile: ExtendedProfile;
@@ -38,9 +30,14 @@ export const logInProfile = async ({
 }: LogInProfileParams) => {
   const { id: profileId, email } = profile;
 
-  const sessions = await prismaClient.session.findMany({ where: { profile } });
   throwError(
-    sessions.length <= MAX_PROFILE_SESSIONS,
+    !(await prismaClient.verificationCode.dailyMaxExceeded(profileId)),
+    TOO_MANY_REQUESTS,
+    "Too many verification code requests. Try again later."
+  );
+
+  throwError(
+    !(await prismaClient.session.maxExceeded(profile.id)),
     CONFLICT,
     "Max number of sessions reached"
   );
@@ -52,18 +49,20 @@ export const logInProfile = async ({
     },
   });
 
-  session.isCurrent();
-
   const refreshToken = signRefreshToken(session.id);
   const accessToken = signAccessToken(session.id);
+  const code = generateCode();
 
-  const code = await createVerificationCode({
-    codeType,
-    profileId,
-    sessionId: session.id,
+  await prismaClient.verificationCode.create({
+    data: {
+      profileId,
+      sessionId: session.id,
+      type: codeType,
+      value: code,
+    },
   });
 
-  sendEmail(email, code);
+  sendEmail(email, code, codeType);
 
   return {
     session,
@@ -72,53 +71,69 @@ export const logInProfile = async ({
   };
 };
 
-interface LogOutSessionParams {
-  accessToken: string;
+interface RefreshAccessTokenParams {
+  refreshToken: string;
 }
 
-export const logOutSession = async ({ accessToken }: LogOutSessionParams) => {
-  const payload = (await validateToken({
-    secret: env.JWT_SECRET,
-    token: accessToken,
-  })) as AccessTokenPayload;
-  throwError(payload, UNAUTHORIZED, "Invalid token");
+export const refreshAccessToken = async ({
+  refreshToken,
+}: RefreshAccessTokenParams) => {
+  const payload = verifyRefreshToken(refreshToken);
+  throwError(payload?.sessionId, BAD_REQUEST, "Invalid token");
 
   const { sessionId } = payload;
-  throwError(sessionId, UNAUTHORIZED, "Invalid token");
-
-  const session = prismaClient.session.delete({ where: { id: sessionId } });
-  throwError(session, UNAUTHORIZED, "Invalid token");
-
-  return session;
-};
-
-type LoginCredentials = {
-  email: string;
-  password: string;
-};
-type VerificationCode = {
-  code: string;
-};
-type LogOutOfAllSessionsParams = LoginCredentials | VerificationCode;
-
-export const logOutOfAllSessions = async (
-  options: LogOutOfAllSessionsParams
-) => {
-  const { email, password } = options as LoginCredentials;
-  const { code } = options as VerificationCode;
-
-  const profile = await prismaClient.profile.findUnique({
-    where: { email },
+  const sessionWithProfile = await prismaClient.session.findUnique({
+    where: { id: sessionId },
+    include: { profile: true },
   });
-  throwError(profile, UNAUTHORIZED, "Invalid credentials");
+  throwError(sessionWithProfile?.profile, BAD_REQUEST, "Invalid token");
 
-  const passwordMatch = await compareValue(password, profile.password);
-  throwError(passwordMatch, UNAUTHORIZED, "Invalid credentials");
+  const doesntNeedManualRefresh =
+    sessionWithProfile.autoRefresh || sessionWithProfile.isCurrent();
+  throwError(doesntNeedManualRefresh, UNAUTHORIZED, "Unauthorized");
 
-  const sessions = await prismaClient.session.deleteMany({
-    where: { profileId: profile.id },
+  let { profile, ...session } = sessionWithProfile;
+
+  // attempt session refresh
+  session = (await prismaClient.session.refresh(session.id)) || session;
+
+  return { session, refreshToken, accessToken: signAccessToken(sessionId) };
+};
+
+interface ProcessVerificationCodeParams {
+  profileId: number;
+  sessionId: number;
+  value: string;
+  type: CodeType;
+}
+
+export const processVerificationCode = async ({
+  profileId,
+  sessionId,
+  value,
+  type,
+}: ProcessVerificationCodeParams) => {
+  const verificationCode = await prismaClient.verificationCode.findFirst({
+    where: {
+      profileId,
+      sessionId,
+      type,
+      used: false,
+      expiresAt: { gt: new Date() },
+    },
+    orderBy: { createdAt: "desc" },
   });
-  throwError(sessions.count, NOT_FOUND, "No sessions found");
+  throwError(verificationCode, NOT_FOUND, "No pending code found");
+  throwError(verificationCode.validate(value), UNAUTHORIZED, "Invalid code");
 
-  return true;
+  const usedVerificationCode = await prismaClient.verificationCode.use(
+    verificationCode.id
+  );
+  throwError(
+    usedVerificationCode,
+    INTERNAL_SERVER_ERROR,
+    "Something went wrong"
+  );
+
+  return usedVerificationCode;
 };

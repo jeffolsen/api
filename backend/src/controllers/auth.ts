@@ -47,9 +47,11 @@ export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
       userAgent,
     });
 
-    setAuthCookies({ res, sessionExpiresAt: session.expiresAt, ...tokens })
-      .status(CREATED)
-      .json(profile.clientSafe());
+    setAuthCookies({
+      res,
+      sessionExpiresAt: session.expiresAt,
+      ...tokens,
+    }).sendStatus(CREATED);
   });
 
 interface LogInBody {
@@ -80,9 +82,11 @@ export const login: RequestHandler<unknown, unknown, LogInBody, unknown> =
       userAgent,
     });
 
-    setAuthCookies({ res, sessionExpiresAt: session.expiresAt, ...tokens })
-      .status(CREATED)
-      .json(profile.clientSafe());
+    setAuthCookies({
+      res,
+      sessionExpiresAt: session.expiresAt,
+      ...tokens,
+    }).sendStatus(OK);
   });
 
 interface RequestPasswordResetBody {
@@ -115,14 +119,14 @@ export const requestPasswordReset: RequestHandler<
   }).sendStatus(OK);
 });
 
-interface RequestPasswordResetBody {
+interface RequestLogoutOAllBody {
   email: string;
   password: string;
 }
 export const requestLogoutOfAll: RequestHandler<
   unknown,
   unknown,
-  RequestPasswordResetBody,
+  RequestLogoutOAllBody,
   unknown
 > = catchErrors(async (req, res, next) => {
   const { email, password: passwordSubmit } = req.body;

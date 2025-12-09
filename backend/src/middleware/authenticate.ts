@@ -1,8 +1,6 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import createHttpError from "http-errors";
-import env from "../config/env";
 import prismaClient from "../db/client";
-import { AccessTokenPayload, validateToken } from "../util/jwt";
+import { verifyAccessToken } from "../util/jwt";
 import { BAD_REQUEST, UNAUTHORIZED } from "../config/constants";
 import date from "../util/date";
 import throwError from "../util/throwError";
@@ -13,15 +11,10 @@ const requiresAuth: RequestHandler = async (
   next: NextFunction
 ) => {
   const { accessToken } = req.cookies;
-
   throwError(accessToken, BAD_REQUEST, "Invalid token");
 
-  const payload = (await validateToken({
-    secret: env.JWT_SECRET,
-    token: accessToken,
-  })) as AccessTokenPayload;
-
-  throwError(payload, BAD_REQUEST, "Invalid token");
+  const payload = await verifyAccessToken(accessToken);
+  throwError(payload?.expiresAt, BAD_REQUEST, "Invalid token");
 
   const { sessionId, expiresAt } = payload;
   const accessTokenNotExpired = date(expiresAt).isAfterNow();
