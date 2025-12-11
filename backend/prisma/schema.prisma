@@ -28,9 +28,10 @@ model Profile {
 
 model Session {
   id                Int                @id @default(autoincrement())
+  scope             String
   userAgent         String             @map("user_agent")
   autoRefresh       Boolean            @default(false) @map("auto_refresh")
-  scope             String             @default("")
+  endedAt           DateTime?          @map("ended_at")
   createdAt         DateTime           @default(now()) @map("created_at")
   updatedAt         DateTime           @updatedAt @map("updated_at")
   expiresAt         DateTime           @default(dbgenerated("NOW() + INTERVAL '2 DAYS'")) @map("expires_at")
@@ -42,23 +43,24 @@ model Session {
 }
 
 enum CodeType {
-  EMAIL_VERIFICATION
-  PASSWORD_RESET
+  LOGIN
   LOGOUT_ALL
+  PASSWORD_RESET
+  DELETE_PROFILE
 }
 
 model VerificationCode {
-  id        Int      @id @default(autoincrement())
-  type      CodeType @default(EMAIL_VERIFICATION)
+  id        Int       @id @default(autoincrement())
+  type      CodeType  @default(LOGIN)
   value     String
-  used      Boolean  @default(false)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '8 HOURS'")) @map("expires_at")
-  profile   Profile  @relation("SessionCodes", fields: [profileId], references: [id], onDelete: Cascade)
-  profileId Int      @map("profile_id")
-  session   Session  @relation("SessionCodes", fields: [sessionId], references: [id], onDelete: Cascade)
-  sessionId Int      @map("session_id")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  expiresAt DateTime  @default(dbgenerated("NOW() + INTERVAL '8 HOURS'")) @map("expires_at")
+  profile   Profile?  @relation("SessionCodes", fields: [profileId], references: [id], onDelete: SetNull)
+  profileId Int?      @map("profile_id")
+  session   Session?  @relation("SessionCodes", fields: [sessionId], references: [id], onDelete: SetNull)
+  sessionId Int?      @map("session_id")
 
   @@map("verification_codes")
 }
