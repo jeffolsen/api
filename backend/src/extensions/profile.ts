@@ -31,11 +31,12 @@ export const profileExtension = Prisma.defineExtension((client) => {
         },
         async update({ model, operation, args, query }) {
           const passwordOptions = await hashPassword(args.data.password);
+          const { email, ...data } = args.data;
 
           const result = await query({
             ...args,
             data: {
-              ...args.data,
+              ...data,
               ...(!!passwordOptions.password && passwordOptions),
             },
           });
@@ -74,15 +75,4 @@ export const profileExtension = Prisma.defineExtension((client) => {
   });
 });
 
-type ClientSafe = () => {
-  id: number;
-  email: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
-type ComparePassword = (password: string) => Promise<boolean>;
-export type ExtendedProfile = Profile & {
-  comparePassword: ComparePassword;
-  clientSafe: ClientSafe;
-};
 export default profileExtension;

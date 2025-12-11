@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { logInProfile } from "../services/auth";
+import { initSession } from "../services/auth";
 import { setAuthCookies } from "../util/cookie";
 import catchErrors from "../util/catchErrors";
 import {
@@ -42,7 +42,7 @@ export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
       data: { email, password: passwordSubmit },
     });
 
-    const { session, ...tokens } = await logInProfile({
+    const { session, ...tokens } = await initSession({
       profile,
       userAgent,
     });
@@ -54,40 +54,44 @@ export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
     }).sendStatus(CREATED);
   });
 
-interface LogInBody {
+interface RequestLogInBody {
   email: string;
   password: string;
 }
 
-export const login: RequestHandler<unknown, unknown, LogInBody, unknown> =
-  catchErrors(async (req, res, next) => {
-    const { email, password: passwordSubmit } = req.body;
-    const { ["user-agent"]: userAgent } = req.headers;
+export const requestLogin: RequestHandler<
+  unknown,
+  unknown,
+  RequestLogInBody,
+  unknown
+> = catchErrors(async (req, res, next) => {
+  const { email, password: passwordSubmit } = req.body;
+  const { ["user-agent"]: userAgent } = req.headers;
 
-    throwError(
-      email && passwordSubmit && userAgent,
-      BAD_REQUEST,
-      "email and password are required"
-    );
+  throwError(
+    email && passwordSubmit && userAgent,
+    BAD_REQUEST,
+    "email and password are required"
+  );
 
-    const profile = await prismaClient.profile.findUnique({ where: { email } });
-    throwError(
-      profile && (await profile.comparePassword(passwordSubmit)),
-      NOT_FOUND,
-      "invalid credentials"
-    );
+  const profile = await prismaClient.profile.findUnique({ where: { email } });
+  throwError(
+    profile && (await profile.comparePassword(passwordSubmit)),
+    NOT_FOUND,
+    "invalid credentials"
+  );
 
-    const { session, ...tokens } = await logInProfile({
-      profile,
-      userAgent,
-    });
-
-    setAuthCookies({
-      res,
-      sessionExpiresAt: session.expiresAt,
-      ...tokens,
-    }).sendStatus(OK);
+  const { session, ...tokens } = await initSession({
+    profile,
+    userAgent,
   });
+
+  setAuthCookies({
+    res,
+    sessionExpiresAt: session.expiresAt,
+    ...tokens,
+  }).sendStatus(OK);
+});
 
 interface RequestPasswordResetBody {
   email: string;
@@ -106,7 +110,7 @@ export const requestPasswordReset: RequestHandler<
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(profile, NOT_FOUND, "invalid credentials");
 
-  const { session, ...tokens } = await logInProfile({
+  const { session, ...tokens } = await initSession({
     profile,
     userAgent,
     codeType: "PASSWORD_RESET",
@@ -145,7 +149,7 @@ export const requestLogoutOfAll: RequestHandler<
     "invalid credentials"
   );
 
-  const { session, ...tokens } = await logInProfile({
+  const { session, ...tokens } = await initSession({
     profile,
     userAgent,
     codeType: "LOGOUT_ALL",
@@ -158,10 +162,42 @@ export const requestLogoutOfAll: RequestHandler<
   }).sendStatus(OK);
 });
 
+interface RequestProfileDeletionBody {
+  email: string;
+  password: string;
+}
+export const requestProfileDeletion: RequestHandler<
+  unknown,
+  unknown,
+  RequestProfileDeletionBody,
+  unknown
+> = catchErrors(async (req, res, next) => {
+  const { email } = req.body;
+  const { ["user-agent"]: userAgent } = req.headers;
+
+  throwError(email && userAgent, BAD_REQUEST, "email is required");
+
+  const profile = await prismaClient.profile.findUnique({ where: { email } });
+  throwError(profile, NOT_FOUND, "invalid credentials");
+
+  const { session, ...tokens } = await initSession({
+    profile,
+    userAgent,
+    codeType: "PASSWORD_RESET",
+  });
+
+  setAuthCookies({
+    res,
+    sessionExpiresAt: session.expiresAt,
+    ...tokens,
+  }).sendStatus(OK);
+});
+
 const authApi = {
   register,
-  login,
+  requestLogin,
   requestLogoutOfAll,
   requestPasswordReset,
+  requestProfileDeletion,
 };
 export default authApi;

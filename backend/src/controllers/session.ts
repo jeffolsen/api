@@ -40,7 +40,7 @@ export const refreshToken: RequestHandler = catchErrors(
 export const logout: RequestHandler = catchErrors(async (req, res, next) => {
   const { sessionId } = req.cookies;
 
-  const session = await prismaClient.session.logOut(sessionId);
+  await prismaClient.session.logOut(sessionId);
 
   res.sendStatus(OK);
 });

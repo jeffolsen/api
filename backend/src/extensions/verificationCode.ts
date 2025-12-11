@@ -1,10 +1,11 @@
-import { MAX_PROFILE_CODES } from "../config/constants";
+import { MAX_PROFILE_CODES, MAX_SYSTEM_EMAILS } from "../config/constants";
 import { Prisma, VerificationCode } from "../generated/prisma/client";
 import { StringFieldUpdateOperationsInput } from "../generated/prisma/models";
 import { compareValue, hashValue } from "../util/bcrypt";
 import {
   getNewVerificationCodeExpirationDate,
-  twentyFourHoursAgo,
+  getVerificationCodeExpirationWindow,
+  oneDayAgo,
 } from "../util/date";
 
 const hashCode = async (
@@ -43,20 +44,32 @@ export const verificationCodeExtension = Prisma.defineExtension((client) => {
           return await newClient.verificationCode.update({
             where: { id },
             data: {
-              used: true,
+              usedAt: new Date(Date.now()),
             },
           });
         },
-        async dailyMaxExceeded(profileId: number) {
+        async maxExceeded(profileId: number) {
           const verificationCodes = await newClient.verificationCode.findMany({
             where: {
               profileId,
               createdAt: {
-                gte: twentyFourHoursAgo(),
+                gte: getVerificationCodeExpirationWindow(),
               },
             },
+            take: MAX_PROFILE_CODES,
           });
-          return verificationCodes.length >= MAX_PROFILE_CODES;
+          return verificationCodes.length == MAX_PROFILE_CODES;
+        },
+        async systemMaxExceeded() {
+          const verificationCodes = await newClient.verificationCode.findMany({
+            where: {
+              createdAt: {
+                gte: oneDayAgo(),
+              },
+            },
+            take: MAX_SYSTEM_EMAILS,
+          });
+          return verificationCodes.length == MAX_SYSTEM_EMAILS;
         },
       },
     },
@@ -76,8 +89,4 @@ export const verificationCodeExtension = Prisma.defineExtension((client) => {
   return newClient;
 });
 
-type Validate = (password: string) => Promise<boolean>;
-export type ExtendedVerificationCode = VerificationCode & {
-  validate: Validate;
-};
 export default verificationCodeExtension;

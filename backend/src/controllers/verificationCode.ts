@@ -4,6 +4,7 @@ import prismaClient from "../db/client";
 import {
   BAD_REQUEST,
   INTERNAL_SERVER_ERROR,
+  NO_CONTENT,
   NOT_FOUND,
   OK,
 } from "../config/constants";
@@ -12,7 +13,7 @@ import throwError from "../util/throwError";
 
 export const getProfileVerificationCodes: RequestHandler = catchErrors(
   async (req, res, next) => {
-    const { profileId } = req;
+    const { profileId, sessionId } = req;
     const codes = await prismaClient.verificationCode.findMany({
       where: { profileId },
       omit: { value: true, sessionId: true },
@@ -21,14 +22,14 @@ export const getProfileVerificationCodes: RequestHandler = catchErrors(
   }
 );
 
-interface SubmitVerificationCodeEmailBody {
+interface SubmitVerificationCodeLoginBody {
   value: string;
 }
 
-export const submitVerificationCodeForEmail: RequestHandler<
+export const submitVerificationCodeForLogin: RequestHandler<
   unknown,
   unknown,
-  SubmitVerificationCodeEmailBody,
+  SubmitVerificationCodeLoginBody,
   unknown
 > = catchErrors(async (req, res, next) => {
   const { profileId, sessionId } = req;
@@ -39,7 +40,7 @@ export const submitVerificationCodeForEmail: RequestHandler<
   await processVerificationCode({
     profileId,
     sessionId,
-    type: "EMAIL_VERIFICATION",
+    type: "LOGIN",
     value,
   });
 
@@ -49,16 +50,16 @@ export const submitVerificationCodeForEmail: RequestHandler<
   res.sendStatus(OK);
 });
 
-interface SubmitVerificationCodPasswordBody {
+interface SubmitVerificationCodePasswordResetBody {
   value: string;
   password: string;
   confirmPassword: string;
 }
 
-export const submitVerificationCodeForPassword: RequestHandler<
+export const submitVerificationCodeForPasswordReset: RequestHandler<
   unknown,
   unknown,
-  SubmitVerificationCodPasswordBody,
+  SubmitVerificationCodePasswordResetBody,
   unknown
 > = catchErrors(async (req, res, next) => {
   const { profileId, sessionId } = req;
@@ -88,14 +89,14 @@ export const submitVerificationCodeForPassword: RequestHandler<
   res.sendStatus(OK);
 });
 
-interface SubmitVerificationCodeForLogoutBody {
+interface SubmitVerificationCodeForLogoutAllBody {
   value: string;
 }
 
-export const submitVerificationCodeForLogout: RequestHandler<
+export const submitVerificationCodeForLogoutAll: RequestHandler<
   unknown,
   unknown,
-  SubmitVerificationCodeForLogoutBody,
+  SubmitVerificationCodeForLogoutAllBody,
   unknown
 > = catchErrors(async (req, res, next) => {
   const { profileId, sessionId } = req;
@@ -116,10 +117,40 @@ export const submitVerificationCodeForLogout: RequestHandler<
   res.sendStatus(OK);
 });
 
+interface SubmitVerificationCodeForDeleteProfileBody {
+  value: string;
+}
+
+export const submitVerificationCodeForDeleteProfile: RequestHandler<
+  unknown,
+  unknown,
+  SubmitVerificationCodeForDeleteProfileBody,
+  unknown
+> = catchErrors(async (req, res, next) => {
+  const { profileId, sessionId } = req;
+  const { value } = req.body;
+  throwError(value, BAD_REQUEST, "code is required");
+
+  await processVerificationCode({
+    profileId,
+    sessionId,
+    type: "DELETE_PROFILE",
+    value,
+  });
+
+  await prismaClient.profile.delete({
+    where: { id: profileId },
+  });
+
+  res.sendStatus(NO_CONTENT);
+});
+
 const verificationCodeApi = {
   getProfileVerificationCodes,
-  submitVerificationCodeForEmail,
-  submitVerificationCodeForPassword,
+  submitVerificationCodeForLogin,
+  submitVerificationCodeForPasswordReset,
+  submitVerificationCodeForLogoutAll,
+  submitVerificationCodeForDeleteProfile,
 };
 
 export default verificationCodeApi;

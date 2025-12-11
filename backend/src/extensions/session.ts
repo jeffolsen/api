@@ -1,5 +1,5 @@
 import { MAX_PROFILE_SESSIONS } from "../config/constants";
-import { Prisma, Session } from "../generated/prisma/client";
+import { CodeType, Prisma } from "../generated/prisma/client";
 import date, { getNewRefreshTokenExpirationDate } from "../util/date";
 import { defaultProfileScope, preAuthProfileScope } from "../util/scope";
 
@@ -13,7 +13,7 @@ export const sessionExtension = Prisma.defineExtension((client) => {
             data: {
               ...args.data,
               autoRefresh: false,
-              scope: preAuthProfileScope(),
+              scope: preAuthProfileScope(args.data.scope as CodeType),
               expiresAt: getNewRefreshTokenExpirationDate(),
             },
           });
@@ -52,7 +52,7 @@ export const sessionExtension = Prisma.defineExtension((client) => {
               },
             },
             data: {
-              expiresAt: new Date(Date.now()),
+              endedAt: new Date(Date.now()),
             },
           });
         },
@@ -65,30 +65,33 @@ export const sessionExtension = Prisma.defineExtension((client) => {
               },
             },
             data: {
-              expiresAt: new Date(Date.now()),
+              endedAt: new Date(Date.now()),
             },
           });
         },
-        async maxExceeded(profileId: number) {
+        async maxExceeded(codeType: CodeType, profileId: number) {
+          if (codeType === "LOGOUT_ALL") return false;
           const sessions = await newClient.session.findMany({
             where: {
               profileId,
               expiresAt: {
                 gt: new Date(Date.now()),
               },
+              endedAt: null,
             },
+            take: MAX_PROFILE_SESSIONS,
           });
-          return sessions.length >= MAX_PROFILE_SESSIONS;
+          return sessions.length == MAX_PROFILE_SESSIONS;
         },
       },
     },
     result: {
       session: {
         isCurrent: {
-          needs: { expiresAt: true },
+          needs: { expiresAt: true, endedAt: true },
           compute(session) {
             return () => {
-              return date(session.expiresAt).isAfterNow();
+              return !session.endedAt && date(session.expiresAt).isAfterNow();
             };
           },
         },
@@ -97,10 +100,5 @@ export const sessionExtension = Prisma.defineExtension((client) => {
   });
   return newClient;
 });
-
-type IsCurrent = () => boolean;
-export type ExtendedSession = Session & {
-  isCurrent: IsCurrent;
-};
 
 export default sessionExtension;

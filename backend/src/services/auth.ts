@@ -1,4 +1,4 @@
-import prismaClient, { CodeType } from "../db/client";
+import prismaClient, { CodeType, Profile } from "../db/client";
 import {
   signAccessToken,
   signRefreshToken,
@@ -13,56 +13,63 @@ import {
   UNAUTHORIZED,
 } from "../config/constants";
 import throwError from "../util/throwError";
-import { ExtendedProfile } from "../extensions/profile";
+
 import sendEmail from "../util/sendEmail";
 import generateCode from "../util/generateCode";
 
 interface LogInProfileParams {
-  profile: ExtendedProfile;
+  profile: Profile;
   userAgent: string;
   codeType?: CodeType;
 }
 
-export const logInProfile = async ({
+export const initSession = async ({
   profile,
   userAgent,
-  codeType = "EMAIL_VERIFICATION",
+  codeType = "LOGIN",
 }: LogInProfileParams) => {
   const { id: profileId, email } = profile;
 
   throwError(
-    !(await prismaClient.verificationCode.dailyMaxExceeded(profileId)),
+    !(await prismaClient.verificationCode.systemMaxExceeded()) &&
+      !(await prismaClient.verificationCode.maxExceeded(profileId)),
     TOO_MANY_REQUESTS,
     "Too many verification code requests. Try again later."
   );
 
   throwError(
-    !(await prismaClient.session.maxExceeded(profile.id)),
+    !(await prismaClient.session.maxExceeded(codeType, profile.id)),
     CONFLICT,
     "Max number of sessions reached"
   );
 
-  const session = await prismaClient.session.create({
-    data: {
-      profileId,
-      userAgent,
-    },
-  });
-
-  const refreshToken = signRefreshToken(session.id);
-  const accessToken = signAccessToken(session.id);
   const code = generateCode();
 
-  await prismaClient.verificationCode.create({
+  const verificationCode = await prismaClient.verificationCode.create({
     data: {
       profileId,
-      sessionId: session.id,
       type: codeType,
       value: code,
     },
   });
 
   sendEmail(email, code, codeType);
+
+  const session = await prismaClient.session.create({
+    data: {
+      profileId,
+      userAgent,
+      scope: codeType,
+      verificationCodes: {
+        connect: {
+          id: verificationCode.id,
+        },
+      },
+    },
+  });
+
+  const refreshToken = signRefreshToken(session.id);
+  const accessToken = signAccessToken(session.id);
 
   return {
     session,
@@ -118,7 +125,7 @@ export const processVerificationCode = async ({
       profileId,
       sessionId,
       type,
-      used: false,
+      usedAt: null,
       expiresAt: { gt: new Date() },
     },
     orderBy: { createdAt: "desc" },
