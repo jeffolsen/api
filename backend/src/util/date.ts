@@ -7,6 +7,9 @@ import {
 export const getNewVerificationCodeExpirationDate = (): Date =>
   new Date(Date.now() + VERIFICATION_CODE_LIFESPAN);
 
+export const getVerificationCodeExpirationWindow = (): Date =>
+  new Date(Date.now() - VERIFICATION_CODE_LIFESPAN);
+
 export const getNewAccessTokenExpirationDate = (): Date =>
   new Date(Date.now() + ACCESS_TOKEN_LIFESPAN);
 
@@ -18,8 +21,7 @@ export const beforeNow = (date: Date): boolean =>
 
 export const afterNow = (date: Date): boolean => !beforeNow(date);
 
-export const twentyFourHoursAgo = (): Date =>
-  new Date(Date.now() - 24 * 60 * 60 * 1000);
+export const oneDayAgo = (): Date => new Date(Date.now() - 24 * 60 * 60 * 1000);
 
 const date = (date: Date) => {
   return {

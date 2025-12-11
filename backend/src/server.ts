@@ -10,6 +10,12 @@ import requiresAuth from "./middleware/authenticate";
 import errorHandler from "./middleware/errorHandler";
 
 import env from "./config/env";
+import {
+  AUTH_ROUTES,
+  PROFILE_ROUTES,
+  SESSION_ROUTES,
+  VERIFICATION_CODE_ROUTES,
+} from "./config/constants";
 
 const app = express();
 const PORT = env.PORT || 5001;
@@ -19,10 +25,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(cookieParser());
 
-app.use("/api/auth", authRoutes);
-app.use("/api/verify", requiresAuth, verificationCodeRoutes);
-app.use("/api/sessions", requiresAuth, sessionRoutes);
-app.use("/api/profiles", requiresAuth, profileRoutes);
+app.use(AUTH_ROUTES, authRoutes);
+app.use(VERIFICATION_CODE_ROUTES, requiresAuth, verificationCodeRoutes);
+app.use(SESSION_ROUTES, requiresAuth, sessionRoutes);
+app.use(PROFILE_ROUTES, requiresAuth, profileRoutes);
 
 // app.use("/api/items", requiresAuth, () => console.log("items"));
 // app.use("/api/pages", requiresAuth, () => console.log("pages"));

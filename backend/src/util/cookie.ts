@@ -1,7 +1,7 @@
 import { CookieOptions, Response } from "express";
 import { getNewAccessTokenExpirationDate } from "./date";
-import { ExtendedSession } from "../extensions/session";
 import env from "../config/env";
+import { SESSION_REFRESH_ENDPOINT, SESSION_ROUTES } from "../config/constants";
 
 const secure = env.NODE_ENV !== "development";
 
@@ -20,6 +20,7 @@ const getRefreshTokenCookieOptions = (expiresAt: Date): CookieOptions => {
   return {
     ...defaults,
     expires: expiresAt,
+    path: SESSION_ROUTES + SESSION_REFRESH_ENDPOINT,
   };
 };
 
