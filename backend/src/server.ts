@@ -6,7 +6,7 @@ import profileRoutes from "./routes/profile";
 import authRoutes from "./routes/auth";
 import sessionRoutes from "./routes/session";
 import verificationCodeRoutes from "./routes/verificationCode";
-import requiresAuth from "./middleware/authenticate";
+import authenticate from "./middleware/authenticate";
 import errorHandler from "./middleware/errorHandler";
 
 import env from "./config/env";
@@ -19,16 +19,19 @@ import {
 
 const app = express();
 const PORT = env.PORT || 5001;
+const ORIGIN = env.DOMAIN_WHITELIST.length
+  ? env.DOMAIN_WHITELIST.split(",")
+  : "*";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({ origin: ORIGIN }));
 app.use(cookieParser());
 
 app.use(AUTH_ROUTES, authRoutes);
-app.use(VERIFICATION_CODE_ROUTES, requiresAuth, verificationCodeRoutes);
-app.use(SESSION_ROUTES, requiresAuth, sessionRoutes);
-app.use(PROFILE_ROUTES, requiresAuth, profileRoutes);
+app.use(VERIFICATION_CODE_ROUTES, authenticate, verificationCodeRoutes);
+app.use(SESSION_ROUTES, authenticate, sessionRoutes);
+app.use(PROFILE_ROUTES, authenticate, profileRoutes);
 
 // app.use("/api/items", requiresAuth, () => console.log("items"));
 // app.use("/api/pages", requiresAuth, () => console.log("pages"));

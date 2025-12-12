@@ -3,6 +3,8 @@ import catchErrors from "../util/catchErrors";
 import prismaClient from "../db/client";
 import {
   BAD_REQUEST,
+  CONFLICT,
+  CREATED,
   INTERNAL_SERVER_ERROR,
   NO_CONTENT,
   NOT_FOUND,
@@ -78,13 +80,20 @@ export const submitVerificationCodeForPasswordReset: RequestHandler<
     value,
   });
 
-  const profile = await prismaClient.profile.update({
+  throwError(
+    await prismaClient.profile.findUnique({
+      where: { id: profileId },
+    }),
+    INTERNAL_SERVER_ERROR,
+    "something went wrong"
+  );
+
+  await prismaClient.profile.update({
     where: { id: profileId },
     data: {
       password,
     },
   });
-  throwError(profile, INTERNAL_SERVER_ERROR, "something went wrong");
 
   res.sendStatus(OK);
 });
@@ -112,7 +121,7 @@ export const submitVerificationCodeForLogoutAll: RequestHandler<
   });
 
   const sessions = await prismaClient.session.logOutAll(profileId);
-  throwError(sessions.count, NOT_FOUND, "No sessions found");
+  throwError(sessions?.count, NOT_FOUND, "No sessions found");
 
   res.sendStatus(OK);
 });
@@ -144,6 +153,45 @@ export const submitVerificationCodeForDeleteProfile: RequestHandler<
 
   res.sendStatus(NO_CONTENT);
 });
+
+export const submitVerificationCodeForApiKey: RequestHandler = catchErrors(
+  async (req, res, next) => {
+    const { profileId, sessionId } = req;
+    const { slug, value } = req.body;
+    throwError(slug && value, BAD_REQUEST, "slug and code is required");
+
+    throwError(
+      !(await prismaClient.apiKey.maxExceeded(profileId)),
+      CONFLICT,
+      "Max number of apikeys reached"
+    );
+
+    throwError(
+      await prismaClient.apiKey.checkSlug(slug),
+      BAD_REQUEST,
+      "Slug format not allowed"
+    );
+
+    const slugNotFound = !(await prismaClient.apiKey.findUnique({
+      where: { slug },
+    }));
+    throwError(slugNotFound, CONFLICT, "Slug already taken");
+
+    await processVerificationCode({
+      profileId,
+      sessionId,
+      type: "DELETE_PROFILE",
+      value,
+    });
+    const apiKeyValue = await prismaClient.apiKey.generateKeyValue();
+
+    await prismaClient.apiKey.create({
+      data: { profileId, value: apiKeyValue, slug },
+    });
+
+    res.status(CREATED).json({ apiKey: apiKeyValue });
+  }
+);
 
 const verificationCodeApi = {
   getProfileVerificationCodes,
