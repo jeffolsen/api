@@ -22,6 +22,7 @@ model Profile {
   updatedAt         DateTime           @updatedAt @map("updated_at")
   sessions          Session[]          @relation("ProfileSessions")
   verificationCodes VerificationCode[] @relation("SessionCodes")
+  apiKeys           ApiKey[]           @relation("ProfileApiKeys")
 
   @@map("profiles")
 }
@@ -30,14 +31,15 @@ model Session {
   id                Int                @id @default(autoincrement())
   scope             String
   userAgent         String             @map("user_agent")
-  autoRefresh       Boolean            @default(false) @map("auto_refresh")
+  expiresAt         DateTime?          @map("expires_at")
   endedAt           DateTime?          @map("ended_at")
   createdAt         DateTime           @default(now()) @map("created_at")
   updatedAt         DateTime           @updatedAt @map("updated_at")
-  expiresAt         DateTime           @default(dbgenerated("NOW() + INTERVAL '2 DAYS'")) @map("expires_at")
   profile           Profile            @relation("ProfileSessions", fields: [profileId], references: [id], onDelete: Cascade)
   profileId         Int                @map("profile_id")
   verificationCodes VerificationCode[] @relation("SessionCodes")
+  apiKeyId          Int?               @map("api_key_id")
+  apiKey            ApiKey?            @relation("ApiKeySession")
 
   @@map("sessions")
 }
@@ -54,13 +56,27 @@ model VerificationCode {
   type      CodeType  @default(LOGIN)
   value     String
   usedAt    DateTime? @map("used_at")
+  expiresAt DateTime  @default(dbgenerated("NOW() + INTERVAL '8 HOURS'")) @map("expires_at")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
-  expiresAt DateTime  @default(dbgenerated("NOW() + INTERVAL '8 HOURS'")) @map("expires_at")
   profile   Profile?  @relation("SessionCodes", fields: [profileId], references: [id], onDelete: SetNull)
   profileId Int?      @map("profile_id")
   session   Session?  @relation("SessionCodes", fields: [sessionId], references: [id], onDelete: SetNull)
   sessionId Int?      @map("session_id")
 
   @@map("verification_codes")
+}
+
+model ApiKey {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  value     String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  profile   Profile  @relation("ProfileApiKeys", fields: [profileId], references: [id], onDelete: Cascade)
+  profileId Int      @unique @map("profile_id")
+  session   Session? @relation("ApiKeySession", fields: [sessionId], references: [id], onDelete: SetNull)
+  sessionId Int?     @unique @map("session_id")
+
+  @@map("api_keys")
 }
