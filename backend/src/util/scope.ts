@@ -8,6 +8,7 @@ import {
   READ_SESSION_SCOPE,
   READ_VERIFICATION_CODE_SCOPE,
   UPDATE_SESSION_SCOPE,
+  READ_PAGE_SCOPE,
 } from "../config/constants";
 import { CodeType } from "../db/client";
 
@@ -15,6 +16,7 @@ export type JoinScopesArgs = string[];
 export type SplitScopesArgs = string;
 
 export const preAuthProfileScope = (scopeCode: CodeType) => {
+  console.log("preAuthProfileScope", scopeCode);
   const authScope =
     scopeCode === "LOGIN"
       ? LOGIN_SCOPE
@@ -38,6 +40,8 @@ export const defaultProfileScope = () =>
     READ_SESSION_SCOPE,
     READ_VERIFICATION_CODE_SCOPE,
   ]);
+
+export const defaultApiKeyScope = () => createScopeString([READ_PAGE_SCOPE]);
 
 const DELIMITER = " ";
 

@@ -5,7 +5,7 @@ import { BAD_REQUEST, UNAUTHORIZED } from "../config/constants";
 import date from "../util/date";
 import throwError from "../util/throwError";
 
-const requiresAuth: RequestHandler = async (
+const authenticate: RequestHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -25,7 +25,7 @@ const requiresAuth: RequestHandler = async (
   });
   throwError(session, UNAUTHORIZED, "Unauthorized");
 
-  const sessionStillCurrent = date(session.expiresAt).isAfterNow();
+  const sessionStillCurrent = session.isCurrent();
   throwError(sessionStillCurrent, UNAUTHORIZED, "Unauthorized");
 
   const { profileId, scope } = session;
@@ -37,4 +37,4 @@ const requiresAuth: RequestHandler = async (
   next();
 };
 
-export default requiresAuth;
+export default authenticate;

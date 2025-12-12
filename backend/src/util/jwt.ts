@@ -48,6 +48,7 @@ const verifyToken = (token: string, secret: string) => {
 };
 
 export const signAccessToken = (sessionId: number) => {
+  console.log(getNewAccessTokenExpirationDate(), ACCESS_TOKEN_OPTIONS);
   return jwt.sign(
     {
       sessionId,

@@ -38,7 +38,7 @@ export const initSession = async ({
   );
 
   throwError(
-    !(await prismaClient.session.maxExceeded(codeType, profile.id)),
+    !(await prismaClient.session.maxExceeded(profile.id, codeType)),
     CONFLICT,
     "Max number of sessions reached"
   );
@@ -86,6 +86,8 @@ export const refreshAccessToken = async ({
   refreshToken,
 }: RefreshAccessTokenParams) => {
   const payload = verifyRefreshToken(refreshToken);
+
+  console.log("refreshAccessToken", payload);
   throwError(payload?.sessionId, BAD_REQUEST, "Invalid token");
 
   const { sessionId } = payload;
@@ -94,15 +96,9 @@ export const refreshAccessToken = async ({
     include: { profile: true },
   });
   throwError(sessionWithProfile?.profile, BAD_REQUEST, "Invalid token");
-
-  const doesntNeedManualRefresh =
-    sessionWithProfile.autoRefresh || sessionWithProfile.isCurrent();
-  throwError(doesntNeedManualRefresh, UNAUTHORIZED, "Unauthorized");
+  throwError(sessionWithProfile.isCurrent(), UNAUTHORIZED, "Unauthorized");
 
   let { profile, ...session } = sessionWithProfile;
-
-  // attempt session refresh
-  session = (await prismaClient.session.refresh(session.id)) || session;
 
   return { session, refreshToken, accessToken: signAccessToken(sessionId) };
 };
@@ -130,8 +126,14 @@ export const processVerificationCode = async ({
     },
     orderBy: { createdAt: "desc" },
   });
+  console.log("processVerificationCode", verificationCode);
   throwError(verificationCode, NOT_FOUND, "No pending code found");
-  throwError(verificationCode.validate(value), UNAUTHORIZED, "Invalid code");
+
+  throwError(
+    await verificationCode.validate(value),
+    UNAUTHORIZED,
+    "Invalid code"
+  );
 
   const usedVerificationCode = await prismaClient.verificationCode.use(
     verificationCode.id
@@ -144,3 +146,13 @@ export const processVerificationCode = async ({
 
   return usedVerificationCode;
 };
+
+interface MaintainApiKeySessionParams {
+  slug: string;
+  value: string;
+}
+
+const refreshApiKeySession = async ({
+  slug,
+  value,
+}: MaintainApiKeySessionParams) => {};
