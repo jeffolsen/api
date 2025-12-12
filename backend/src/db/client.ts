@@ -3,6 +3,7 @@ import env from "../config/env";
 import profileExtension from "../extensions/profile";
 import sessionExtension from "../extensions/session";
 import verificationCodeExtension from "../extensions/verificationCode";
+import apiKeyExtension from "../extensions/apikey";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
@@ -15,4 +16,5 @@ export * from "../generated/prisma/client";
 export default prismaClient
   .$extends(profileExtension)
   .$extends(sessionExtension)
-  .$extends(verificationCodeExtension);
+  .$extends(verificationCodeExtension)
+  .$extends(apiKeyExtension);

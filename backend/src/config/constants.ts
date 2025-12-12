@@ -10,8 +10,8 @@ export const AUTH_DELETE_PROFILE_ENDPOINT = "/delete-profile";
 export const PROFILE_ROUTES = "/api/profiles";
 export const PROFILE_SELF_ENDPOINT = "/me";
 export const SESSION_ROUTES = "/api/sessions";
-export const SESSION_REFRESH_ENDPOINT = "/refresh";
-export const SESSION_LOGOUT_ENDPOINT = "/logout";
+export const AUTH_REFRESH_ENDPOINT = "/refresh";
+export const AUTH_LOGOUT_ENDPOINT = "/logout";
 export const VERIFICATION_CODE_ROUTES = "/api/verify";
 export const VERIFICATION_CODE_LOGIN_ENDPOINT = "/login";
 export const VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT = "/logout-all";
@@ -24,6 +24,8 @@ export const UPDATE_PROFILE_SCOPE = "update:profile";
 export const READ_VERIFICATION_CODE_SCOPE = "read:verificationCode";
 export const READ_SESSION_SCOPE = "read:session";
 export const UPDATE_SESSION_SCOPE = "update:session";
+export const READ_PAGE_SCOPE = "read:page";
+
 // auth scopes
 export const LOGIN_SCOPE = "auth:login";
 export const LOGOUT_ALL_SCOPE = "auth:logout-all";
@@ -47,6 +49,7 @@ export const INTERNAL_SERVER_ERROR = 500;
 export const MAX_SYSTEM_EMAILS = 90;
 export const MAX_PROFILE_SESSIONS = 5;
 export const MAX_PROFILE_CODES = 4;
+export const MAX_PROFILE_APIKEYS = 4;
 
 // 4 days in ms
 export const SESSION_TOKEN_LIFESPAN = 4 * 24 * 60 * 60 * 1000;
