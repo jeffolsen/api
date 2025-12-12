@@ -1,4 +1,4 @@
-import { Prisma, Profile } from "../generated/prisma/client";
+import { Prisma } from "../generated/prisma/client";
 import { StringFieldUpdateOperationsInput } from "../generated/prisma/models";
 import { compareValue, hashValue } from "../util/bcrypt";
 
@@ -13,8 +13,7 @@ const hashPassword = async (
 };
 
 export const profileExtension = Prisma.defineExtension((client) => {
-  return client.$extends({
-    // client: {},
+  const newClient = client.$extends({
     query: {
       profile: {
         async create({ model, operation, args, query }) {
@@ -66,13 +65,14 @@ export const profileExtension = Prisma.defineExtension((client) => {
           needs: { password: true },
           compute(profile) {
             return async (password: string) => {
-              return await compareValue(profile.password, password);
+              return await compareValue(password, profile.password);
             };
           },
         },
       },
     },
   });
+  return newClient;
 });
 
 export default profileExtension;

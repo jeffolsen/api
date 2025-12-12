@@ -23,53 +23,53 @@ export const sessionExtension = Prisma.defineExtension((client) => {
     },
     model: {
       session: {
-        async refresh(id: number) {
-          return await newClient.session.update({
-            where: {
-              id,
-              autoRefresh: true,
-              expiresAt: { lte: new Date(Date.now()) },
-            },
-            data: {
-              expiresAt: getNewRefreshTokenExpirationDate(),
-            },
-          });
-        },
         async rescope(id: number) {
-          return await newClient.session.update({
-            where: { id },
-            data: {
-              scope: defaultProfileScope(),
-            },
-          });
+          try {
+            return await newClient.session.update({
+              where: { id },
+              data: {
+                scope: defaultProfileScope(),
+              },
+            });
+          } catch (error) {
+            return undefined;
+          }
         },
         async logOut(id: number) {
-          return await newClient.session.update({
-            where: {
-              id,
-              expiresAt: {
-                gt: new Date(Date.now()),
+          try {
+            return await newClient.session.update({
+              where: {
+                id,
+                expiresAt: {
+                  gt: new Date(Date.now()),
+                },
               },
-            },
-            data: {
-              endedAt: new Date(Date.now()),
-            },
-          });
+              data: {
+                endedAt: new Date(Date.now()),
+              },
+            });
+          } catch (error) {
+            return undefined;
+          }
         },
         async logOutAll(profileId: number) {
-          return await newClient.session.updateMany({
-            where: {
-              profileId,
-              expiresAt: {
-                gt: new Date(Date.now()),
+          try {
+            return await newClient.session.updateMany({
+              where: {
+                profileId,
+                expiresAt: {
+                  gt: new Date(Date.now()),
+                },
               },
-            },
-            data: {
-              endedAt: new Date(Date.now()),
-            },
-          });
+              data: {
+                endedAt: new Date(Date.now()),
+              },
+            });
+          } catch (error) {
+            return undefined;
+          }
         },
-        async maxExceeded(codeType: CodeType, profileId: number) {
+        async maxExceeded(profileId: number, codeType?: CodeType) {
           if (codeType === "LOGOUT_ALL") return false;
           const sessions = await newClient.session.findMany({
             where: {
@@ -78,6 +78,7 @@ export const sessionExtension = Prisma.defineExtension((client) => {
                 gt: new Date(Date.now()),
               },
               endedAt: null,
+              apiKey: null, // dont want to count sessions that are attached to apikeys
             },
             take: MAX_PROFILE_SESSIONS,
           });
@@ -91,7 +92,11 @@ export const sessionExtension = Prisma.defineExtension((client) => {
           needs: { expiresAt: true, endedAt: true },
           compute(session) {
             return () => {
-              return !session.endedAt && date(session.expiresAt).isAfterNow();
+              return (
+                !session.endedAt &&
+                (session.expiresAt === null ||
+                  date(session.expiresAt).isAfterNow())
+              );
             };
           },
         },

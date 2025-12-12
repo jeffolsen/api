@@ -79,7 +79,8 @@ export const verificationCodeExtension = Prisma.defineExtension((client) => {
           needs: { value: true },
           compute(verificationCode) {
             return async (code: string) => {
-              return await compareValue(verificationCode.value, code);
+              console.log("validate", code, verificationCode.value);
+              return await compareValue(code, verificationCode.value);
             };
           },
         },
