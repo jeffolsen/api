@@ -46,7 +46,8 @@ export const TOO_MANY_REQUESTS = 429;
 export const INTERNAL_SERVER_ERROR = 500;
 
 // resource limits
-export const MAX_SYSTEM_EMAILS = 90;
+export const MAX_DAILY_SYSTEM_EMAILS = 2800;
+export const MAX_MONTHLY_SYSTEM_EMAILS = 90;
 export const MAX_PROFILE_SESSIONS = 5;
 export const MAX_PROFILE_CODES = 4;
 export const MAX_PROFILE_APIKEYS = 4;

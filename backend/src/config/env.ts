@@ -1,4 +1,4 @@
-import { cleanEnv, port, str } from "envalid";
+import { cleanEnv, email, port, str } from "envalid";
 
 const env = cleanEnv(process.env, {
   NODE_ENV: str(),
@@ -7,6 +7,8 @@ const env = cleanEnv(process.env, {
   JWT_SECRET: str(),
   JWT_REFRESH_SECRET: str(),
   DOMAIN_WHITELIST: str(),
+  RESEND_API_KEY: str(),
+  EMAIL_SENDER: email(),
 });
 
 export default env;

@@ -31,7 +31,7 @@ export const initSession = async ({
   const { id: profileId, email } = profile;
 
   throwError(
-    !(await prismaClient.verificationCode.systemMaxExceeded()) &&
+    !(await prismaClient.verificationCode.systemDailyMaxExceeded()) &&
       !(await prismaClient.verificationCode.maxExceeded(profileId)),
     TOO_MANY_REQUESTS,
     "Too many verification code requests. Try again later."

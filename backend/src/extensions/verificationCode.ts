@@ -1,5 +1,8 @@
-import { MAX_PROFILE_CODES, MAX_SYSTEM_EMAILS } from "../config/constants";
-import { Prisma, VerificationCode } from "../generated/prisma/client";
+import {
+  MAX_DAILY_SYSTEM_EMAILS,
+  MAX_PROFILE_CODES,
+} from "../config/constants";
+import { Prisma } from "../generated/prisma/client";
 import { StringFieldUpdateOperationsInput } from "../generated/prisma/models";
 import { compareValue, hashValue } from "../util/bcrypt";
 import {
@@ -60,16 +63,16 @@ export const verificationCodeExtension = Prisma.defineExtension((client) => {
           });
           return verificationCodes.length == MAX_PROFILE_CODES;
         },
-        async systemMaxExceeded() {
+        async systemDailyMaxExceeded() {
           const verificationCodes = await newClient.verificationCode.findMany({
             where: {
               createdAt: {
                 gte: oneDayAgo(),
               },
             },
-            take: MAX_SYSTEM_EMAILS,
+            take: MAX_DAILY_SYSTEM_EMAILS,
           });
-          return verificationCodes.length == MAX_SYSTEM_EMAILS;
+          return verificationCodes.length == MAX_DAILY_SYSTEM_EMAILS;
         },
       },
     },
