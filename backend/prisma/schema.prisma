@@ -18,11 +18,12 @@ model Profile {
   id                Int                @id @default(autoincrement())
   email             String             @unique
   password          String
-  createdAt         DateTime           @default(now()) @map("created_at")
-  updatedAt         DateTime           @updatedAt @map("updated_at")
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
   sessions          Session[]          @relation("ProfileSessions")
   verificationCodes VerificationCode[] @relation("SessionCodes")
   apiKeys           ApiKey[]           @relation("ProfileApiKeys")
+  feeds             Feed[]             @relation("ProfileFeeds")
 
   @@map("profiles")
 }
@@ -31,10 +32,10 @@ model Session {
   id                Int                @id @default(autoincrement())
   scope             String
   userAgent         String             @map("user_agent")
-  expiresAt         DateTime           @default(dbgenerated("NOW() + INTERVAL '4 DAYS'")) @map("expires_at")
-  endedAt           DateTime?          @map("ended_at")
-  createdAt         DateTime           @default(now()) @map("created_at")
-  updatedAt         DateTime           @updatedAt @map("updated_at")
+  expiresAt         DateTime           @default(dbgenerated("NOW() + INTERVAL '4 DAYS'")) @map("expires_at") @db.Timestamptz(3)
+  endedAt           DateTime?          @map("ended_at") @db.Timestamptz(3)
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
   profile           Profile            @relation("ProfileSessions", fields: [profileId], references: [id], onDelete: Cascade)
   profileId         Int                @map("profile_id")
   verificationCodes VerificationCode[] @relation("SessionCodes")
@@ -56,10 +57,10 @@ model VerificationCode {
   id        Int       @id @default(autoincrement())
   type      CodeType  @default(LOGIN)
   value     String
-  usedAt    DateTime? @map("used_at")
-  expiresAt DateTime  @default(dbgenerated("NOW() + INTERVAL '8 HOURS'")) @map("expires_at")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  usedAt    DateTime? @map("used_at") @db.Timestamptz(3)
+  expiresAt DateTime  @default(dbgenerated("NOW() + INTERVAL '8 HOURS'")) @map("expires_at") @db.Timestamptz(3)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
   profile   Profile?  @relation("SessionCodes", fields: [profileId], references: [id], onDelete: SetNull)
   profileId Int?      @map("profile_id")
   session   Session?  @relation("SessionCodes", fields: [sessionId], references: [id], onDelete: SetNull)
@@ -72,13 +73,50 @@ model ApiKey {
   id        Int      @id @default(autoincrement())
   slug      String   @unique
   value     String?
-  domains   String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  domain    String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
   profile   Profile  @relation("ProfileApiKeys", fields: [profileId], references: [id], onDelete: Cascade)
   profileId Int      @unique @map("profile_id")
   session   Session? @relation("ApiKeySession", fields: [sessionId], references: [id], onDelete: SetNull)
   sessionId Int?     @unique @map("session_id")
 
   @@map("api_keys")
+}
+
+model Feed {
+  id         Int         @id @default(autoincrement())
+  profileId  Int
+  profile    Profile     @relation("ProfileFeeds", fields: [profileId], references: [id], onDelete: Cascade)
+  components Component[] @relation("FeedComponents")
+
+  @@map("feeds")
+}
+
+enum ComponentType {
+  BASIC_BLOCK
+}
+
+model Component {
+  id        Int           @id @default(autoincrement())
+  type      ComponentType @default(BASIC_BLOCK)
+  title     String?
+  content   String?
+  createdAt DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+  feed      Feed?         @relation("FeedComponents", fields: [feedId], references: [id], onDelete: Cascade)
+  feedId    Int?
+
+  @@map("components")
+}
+
+model Item {
+  id        Int      @id @default(autoincrement())
+  title     String
+  subtitle  String?
+  content   String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("items")
 }
