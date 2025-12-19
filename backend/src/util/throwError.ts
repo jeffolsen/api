@@ -2,9 +2,9 @@ import createHttpError from "http-errors";
 import assert from "node:assert";
 
 type ThrowErrorParams = (
-  condition: any,
+  condition: unknown,
   code: number,
-  message: string
+  message: string,
 ) => asserts condition;
 
 const throwError: ThrowErrorParams = (condition, code, message) =>

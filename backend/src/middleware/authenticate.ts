@@ -8,7 +8,7 @@ import throwError from "../util/throwError";
 const authenticate: RequestHandler = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { accessToken } = req.cookies;
   throwError(accessToken, BAD_REQUEST, "Invalid token");

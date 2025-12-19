@@ -34,13 +34,13 @@ export const initSession = async ({
     !(await prismaClient.verificationCode.systemDailyMaxExceeded()) &&
       !(await prismaClient.verificationCode.maxExceeded(profileId)),
     TOO_MANY_REQUESTS,
-    "Too many verification code requests. Try again later."
+    "Too many verification code requests. Try again later.",
   );
 
   throwError(
     !(await prismaClient.session.maxExceeded(profile.id, codeType)),
     CONFLICT,
-    "Max number of sessions reached"
+    "Max number of sessions reached",
   );
 
   const code = generateCode();
@@ -98,7 +98,7 @@ export const refreshAccessToken = async ({
   throwError(sessionWithProfile?.profile, BAD_REQUEST, "Invalid token");
   throwError(sessionWithProfile.isCurrent(), UNAUTHORIZED, "Unauthorized");
 
-  let { profile, ...session } = sessionWithProfile;
+  const { profile, ...session } = sessionWithProfile;
 
   return { session, refreshToken, accessToken: signAccessToken(sessionId) };
 };
@@ -132,16 +132,16 @@ export const processVerificationCode = async ({
   throwError(
     await verificationCode.validate(value),
     UNAUTHORIZED,
-    "Invalid code"
+    "Invalid code",
   );
 
   const usedVerificationCode = await prismaClient.verificationCode.use(
-    verificationCode.id
+    verificationCode.id,
   );
   throwError(
     usedVerificationCode,
     INTERNAL_SERVER_ERROR,
-    "Something went wrong"
+    "Something went wrong",
   );
 
   return usedVerificationCode;

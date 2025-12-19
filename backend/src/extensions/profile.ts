@@ -3,7 +3,7 @@ import { StringFieldUpdateOperationsInput } from "../generated/prisma/models";
 import { compareValue, hashValue } from "../util/bcrypt";
 
 const hashPassword = async (
-  password: string | StringFieldUpdateOperationsInput | undefined
+  password: string | StringFieldUpdateOperationsInput | undefined,
 ) => {
   let p = "";
   if (typeof password === "string") {

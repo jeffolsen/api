@@ -14,7 +14,7 @@ export const getAuthenticatedProfile: RequestHandler = catchErrors(
     throwError(profile, NOT_FOUND, "Profile not found");
 
     res.status(OK).json(profile.clientSafe());
-  }
+  },
 );
 
 const profileApi = {

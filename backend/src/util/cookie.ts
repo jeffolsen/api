@@ -1,7 +1,7 @@
 import { CookieOptions, Response } from "express";
 import { getNewAccessTokenExpirationDate } from "./date";
-import env from "../config/env";
 import { AUTH_REFRESH_ENDPOINT, AUTH_ROUTES } from "../config/constants";
+import env from "../config/env";
 
 const secure = env.NODE_ENV !== "development";
 
@@ -42,6 +42,6 @@ export const setAuthCookies = ({
     .cookie(
       "refreshToken",
       refreshToken,
-      getRefreshTokenCookieOptions(sessionExpiresAt)
+      getRefreshTokenCookieOptions(sessionExpiresAt),
     );
 };

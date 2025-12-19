@@ -8,7 +8,7 @@ const router = express.Router();
 router.get(
   PROFILE_SELF_ENDPOINT,
   authorizeScope([READ_PROFILE_SCOPE]),
-  profileApi.getAuthenticatedProfile
+  profileApi.getAuthenticatedProfile,
 );
 
 export default router;

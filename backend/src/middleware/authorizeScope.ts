@@ -10,7 +10,7 @@ const authorizeScope = (requiredScopes: ScopeParams) => {
     const requestScope = parseScopeString(req.scope);
     console.log(`USING SCOPE: ${req.scope} TO ACCESS PATH: ${req.path}`);
     const hasScope = requestScope.some((s: string) =>
-      requiredScopes.includes(s)
+      requiredScopes.includes(s),
     );
     throwError(hasScope, UNAUTHORIZED, "Unauthorized");
 

@@ -15,7 +15,7 @@ export const getProfilesSessions: RequestHandler = catchErrors(
     });
 
     res.status(OK).json(sessions);
-  }
+  },
 );
 
 const sessionApi = {

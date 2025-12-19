@@ -1,10 +1,12 @@
-import { RequestHandler } from "express";
+import { RequestHandler, Request } from "express";
 
 const catchErrors =
-  (handler: RequestHandler): RequestHandler<any, any, any, any> =>
+  (
+    handler: RequestHandler,
+  ): RequestHandler<unknown, unknown, unknown, unknown> =>
   async (req, res, next) => {
     try {
-      await handler(req, res, next);
+      await handler(req as Request, res, next);
     } catch (error) {
       next(error);
     }

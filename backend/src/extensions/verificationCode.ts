@@ -12,7 +12,7 @@ import {
 } from "../util/date";
 
 const hashCode = async (
-  code: string | StringFieldUpdateOperationsInput | undefined
+  code: string | StringFieldUpdateOperationsInput | undefined,
 ) => {
   let v = "";
   if (typeof code === "string") {

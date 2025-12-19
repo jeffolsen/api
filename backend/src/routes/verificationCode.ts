@@ -16,27 +16,27 @@ const router = express.Router();
 router.get(
   "/",
   authorizeScope([READ_VERIFICATION_CODE_SCOPE]),
-  verificationCodeApi.getProfileVerificationCodes
+  verificationCodeApi.getProfileVerificationCodes,
 );
 router.post(
   VERIFICATION_CODE_LOGIN_ENDPOINT,
   authorizeScope([LOGIN_SCOPE]),
-  verificationCodeApi.submitVerificationCodeForLogin
+  verificationCodeApi.submitVerificationCodeForLogin,
 );
 router.post(
   VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT,
   authorizeScope([PASSWORD_RESET_SCOPE]),
-  verificationCodeApi.submitVerificationCodeForLogoutAll
+  verificationCodeApi.submitVerificationCodeForLogoutAll,
 );
 router.post(
   VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT,
   authorizeScope([PASSWORD_RESET_SCOPE]),
-  verificationCodeApi.submitVerificationCodeForPasswordReset
+  verificationCodeApi.submitVerificationCodeForPasswordReset,
 );
 router.post(
   VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
   authorizeScope([PASSWORD_RESET_SCOPE]),
-  verificationCodeApi.submitVerificationCodeForDeleteProfile
+  verificationCodeApi.submitVerificationCodeForDeleteProfile,
 );
 
 export default router;

@@ -16,17 +16,16 @@ export type JoinScopesArgs = string[];
 export type SplitScopesArgs = string;
 
 export const preAuthProfileScope = (scopeCode: CodeType) => {
-  console.log("preAuthProfileScope", scopeCode);
   const authScope =
     scopeCode === "LOGIN"
       ? LOGIN_SCOPE
       : scopeCode === "LOGOUT_ALL"
-      ? LOGOUT_ALL_SCOPE
-      : scopeCode === "PASSWORD_RESET"
-      ? PASSWORD_RESET_SCOPE
-      : scopeCode === "DELETE_PROFILE"
-      ? DELETE_PROFILE_SCOPE
-      : "";
+        ? LOGOUT_ALL_SCOPE
+        : scopeCode === "PASSWORD_RESET"
+          ? PASSWORD_RESET_SCOPE
+          : scopeCode === "DELETE_PROFILE"
+            ? DELETE_PROFILE_SCOPE
+            : "";
   return authScope
     ? createScopeString([authScope, UPDATE_SESSION_SCOPE])
     : authScope;

@@ -21,7 +21,7 @@ export const getProfileVerificationCodes: RequestHandler = catchErrors(
       omit: { value: true, sessionId: true },
     });
     res.status(OK).json(codes);
-  }
+  },
 );
 
 interface SubmitVerificationCodeLoginBody {
@@ -70,7 +70,7 @@ export const submitVerificationCodeForPasswordReset: RequestHandler<
   throwError(
     value && password && confirmPassword,
     BAD_REQUEST,
-    "code and password twice are required"
+    "code and password twice are required",
   );
 
   await processVerificationCode({
@@ -85,7 +85,7 @@ export const submitVerificationCodeForPasswordReset: RequestHandler<
       where: { id: profileId },
     }),
     INTERNAL_SERVER_ERROR,
-    "something went wrong"
+    "something went wrong",
   );
 
   await prismaClient.profile.update({
@@ -163,13 +163,13 @@ export const submitVerificationCodeForApiKey: RequestHandler = catchErrors(
     throwError(
       !(await prismaClient.apiKey.maxExceeded(profileId)),
       CONFLICT,
-      "Max number of apikeys reached"
+      "Max number of apikeys reached",
     );
 
     throwError(
       await prismaClient.apiKey.checkSlug(slug),
       BAD_REQUEST,
-      "Slug format not allowed"
+      "Slug format not allowed",
     );
 
     const slugNotFound = !(await prismaClient.apiKey.findUnique({
@@ -190,7 +190,7 @@ export const submitVerificationCodeForApiKey: RequestHandler = catchErrors(
     });
 
     res.status(CREATED).json({ apiKey: apiKeyValue });
-  }
+  },
 );
 
 const verificationCodeApi = {

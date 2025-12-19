@@ -31,7 +31,7 @@ export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
         userAgent &&
         passwordSubmit === confirmPassword,
       BAD_REQUEST,
-      "Required fields missing"
+      "Required fields missing",
     );
 
     const emailNotFound = !(await prismaClient.profile.findUnique({
@@ -72,14 +72,14 @@ export const requestLogin: RequestHandler<
   throwError(
     email && passwordSubmit && userAgent,
     BAD_REQUEST,
-    "email and password are required"
+    "email and password are required",
   );
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(
     profile && (await profile.comparePassword(passwordSubmit)),
     NOT_FOUND,
-    "invalid credentials"
+    "invalid credentials",
   );
 
   const { session, ...tokens } = await initSession({
@@ -140,14 +140,14 @@ export const requestLogoutOfAll: RequestHandler<
   throwError(
     email && passwordSubmit && userAgent,
     BAD_REQUEST,
-    "email and password are required"
+    "email and password are required",
   );
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(
     profile && (await profile.comparePassword(passwordSubmit)),
     NOT_FOUND,
-    "invalid credentials"
+    "invalid credentials",
   );
 
   const { session, ...tokens } = await initSession({
@@ -207,7 +207,7 @@ export const refreshToken: RequestHandler = catchErrors(
       sessionExpiresAt: session.expiresAt,
       ...tokens,
     }).sendStatus(OK);
-  }
+  },
 );
 
 export const logout: RequestHandler = catchErrors(async (req, res, next) => {

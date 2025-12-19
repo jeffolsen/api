@@ -5,21 +5,6 @@ import {
   SESSION_TOKEN_OPTIONS,
 } from "../config/constants";
 import { getNewAccessTokenExpirationDate } from "./date";
-import throwError from "./throwError";
-
-// export interface RefreshToken {
-//   payload: RefreshTokenPayload;
-//   secret: string;
-//   options: SignOptions;
-// }
-
-// export interface AccessToken {
-//   payload: AccessTokenPayload;
-//   secret: string;
-//   options: SignOptions;
-// }
-
-// export type CreateTokenProps = RefreshToken | AccessToken;
 
 export interface TokenPayload {
   sessionId: number;
@@ -32,7 +17,7 @@ export const verifyAccessToken = (accessToken: string): TokenPayload | null => {
 };
 
 export const verifyRefreshToken = (
-  refreshToken: string
+  refreshToken: string,
 ): TokenPayload | null => {
   const payload = verifyToken(refreshToken, env.JWT_REFRESH_SECRET);
   return payload;
@@ -48,14 +33,13 @@ const verifyToken = (token: string, secret: string) => {
 };
 
 export const signAccessToken = (sessionId: number) => {
-  console.log(getNewAccessTokenExpirationDate(), ACCESS_TOKEN_OPTIONS);
   return jwt.sign(
     {
       sessionId,
       expiresAt: getNewAccessTokenExpirationDate(),
     },
     env.JWT_SECRET,
-    ACCESS_TOKEN_OPTIONS
+    ACCESS_TOKEN_OPTIONS,
   );
 };
 
