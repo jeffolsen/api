@@ -1,7 +1,14 @@
 import { RequestHandler } from "express";
 import catchErrors from "../util/catchErrors";
 import prismaClient, { CodeType } from "../db/client";
-import { BAD_REQUEST, CONFLICT, NOT_FOUND, OK } from "../config/constants";
+import {
+  OK,
+  NOT_FOUND,
+  BAD_REQUEST,
+  VERIFICATION_CODE_LOGIN_ENDPOINT,
+  VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT,
+  VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
+} from "../config/constants";
 import { sendVerificationCode } from "../services/auth";
 import throwError from "../util/throwError";
 
@@ -16,28 +23,38 @@ export const getProfileVerificationCodes: RequestHandler = catchErrors(
   },
 );
 
-interface RequestCodeForLogInBody {
+interface RequestCodeForProfileBody {
   email: string;
   password: string;
 }
-
-export const requestCodeForLogin: RequestHandler<
+export const requestVerificationCode: RequestHandler<
   unknown,
   unknown,
-  RequestCodeForLogInBody,
+  RequestCodeForProfileBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { email, password: passwordSubmit } = req.body;
+  const { email, password } = req.body;
+  throwError(email && password, BAD_REQUEST, "Email and password are required");
 
-  throwError(
-    email && passwordSubmit,
-    BAD_REQUEST,
-    "email and password are required",
-  );
+  let codeType;
+  switch (req.path) {
+    case VERIFICATION_CODE_LOGIN_ENDPOINT:
+      codeType = CodeType.LOGIN;
+      break;
+    case VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT:
+      codeType = CodeType.LOGOUT_ALL;
+      break;
+    case VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT:
+      codeType = CodeType.DELETE_PROFILE;
+      break;
+    default:
+      break;
+  }
+  throwError(codeType, BAD_REQUEST, "Bad request");
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(
-    profile && (await profile.comparePassword(passwordSubmit)),
+    profile && (await profile.comparePassword(password)),
     NOT_FOUND,
     "invalid credentials",
   );
@@ -45,7 +62,7 @@ export const requestCodeForLogin: RequestHandler<
   sendVerificationCode({
     profileId: profile.id,
     email: profile.email,
-    codeType: CodeType.LOGIN,
+    codeType,
   });
 
   res.sendStatus(OK);
@@ -61,7 +78,6 @@ export const requestCodeForPasswordReset: RequestHandler<
   unknown
 > = catchErrors(async (req, res, next) => {
   const { email } = req.body;
-
   throwError(email, BAD_REQUEST, "email is required");
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
@@ -76,72 +92,10 @@ export const requestCodeForPasswordReset: RequestHandler<
   res.sendStatus(OK);
 });
 
-interface RequestCodeForLogoutOAllBody {
-  email: string;
-  password: string;
-}
-export const requestCodeForLogoutOfAll: RequestHandler<
-  unknown,
-  unknown,
-  RequestCodeForLogoutOAllBody,
-  unknown
-> = catchErrors(async (req, res, next) => {
-  const { email, password: passwordSubmit } = req.body;
-
-  throwError(
-    email && passwordSubmit,
-    BAD_REQUEST,
-    "email and password are required",
-  );
-
-  const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(
-    profile && (await profile.comparePassword(passwordSubmit)),
-    NOT_FOUND,
-    "invalid credentials",
-  );
-
-  sendVerificationCode({
-    profileId: profile.id,
-    email: profile.email,
-    codeType: CodeType.LOGOUT_ALL,
-  });
-
-  res.sendStatus(OK);
-});
-
-interface RequestCodeForProfileDeletionBody {
-  email: string;
-  password: string;
-}
-export const requestCodeForProfileDeletion: RequestHandler<
-  unknown,
-  unknown,
-  RequestCodeForProfileDeletionBody,
-  unknown
-> = catchErrors(async (req, res, next) => {
-  const { email } = req.body;
-
-  throwError(email, BAD_REQUEST, "email is required");
-
-  const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, NOT_FOUND, "invalid credentials");
-
-  sendVerificationCode({
-    profileId: profile.id,
-    email: profile.email,
-    codeType: CodeType.DELETE_PROFILE,
-  });
-
-  res.sendStatus(OK);
-});
-
 const verificationCodeApi = {
   getProfileVerificationCodes,
-  requestCodeForLogin,
-  requestCodeForLogoutOfAll,
+  requestVerificationCode,
   requestCodeForPasswordReset,
-  requestCodeForProfileDeletion,
 };
 
 export default verificationCodeApi;

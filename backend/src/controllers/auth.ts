@@ -1,9 +1,5 @@
 import { RequestHandler } from "express";
-import {
-  initSession,
-  processVerificationCode,
-  refreshAccessToken,
-} from "../services/auth";
+import { initSession, refreshAccessToken } from "../services/auth";
 import { setAuthCookies } from "../util/cookie";
 import catchErrors from "../util/catchErrors";
 import {
@@ -11,11 +7,15 @@ import {
   CONFLICT,
   CREATED,
   INTERNAL_SERVER_ERROR,
+  NOT_FOUND,
   OK,
+  READ_PAGE_SCOPE,
   UNAUTHORIZED,
 } from "../config/constants";
 import throwError from "../util/throwError";
 import prismaClient from "../db/client";
+import { signAccessToken, signRefreshToken } from "../util/jwt";
+import { getNewRefreshTokenExpirationDate } from "../util/date";
 
 interface RegisterBody {
   email: string;
@@ -68,22 +68,11 @@ export const loginWithVerificationCode: RequestHandler<
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(profile, UNAUTHORIZED, "Invalid credentials");
 
-  await processVerificationCode({
-    profileId: profile.id,
-    type: "LOGIN",
-    value: verificationCode,
-  });
-
   const { session, ...tokens } = await initSession({
     profile,
+    credentials: verificationCode,
     userAgent,
   });
-
-  setAuthCookies({
-    res,
-    sessionExpiresAt: session.expiresAt,
-    ...tokens,
-  }).sendStatus(OK);
 
   setAuthCookies({
     res,
@@ -103,10 +92,49 @@ export const loginWithApiKey: RequestHandler<
   LoginWithApiKeyBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { apiSlug: slug, apiKey: value } = req.body;
+  const { slug, value: apiKeyString } = req.body;
+  throwError(
+    slug && apiKeyString,
+    BAD_REQUEST,
+    "API slug and API key required",
+  );
 
-  throwError(slug && value, BAD_REQUEST, "API slug and API key required");
-  res.sendStatus(OK);
+  const apiKey = await prismaClient.apiKey.findUnique({ where: { slug } });
+  throwError(apiKey, NOT_FOUND, "API slug not found");
+
+  const apiKeyIsValid = await apiKey.validate(apiKeyString);
+  throwError(apiKeyIsValid, UNAUTHORIZED, "Invalid api key");
+
+  let session;
+  if (apiKey.sessionId)
+    session = await prismaClient.session.findUnique({
+      where: { id: apiKey.sessionId },
+    });
+  if (!session)
+    session = await prismaClient.session.create({
+      data: {
+        profileId: apiKey.profileId,
+        userAgent: slug,
+        scope: READ_PAGE_SCOPE,
+      },
+    });
+  if (!session.isCurrent())
+    session = await prismaClient.session.update({
+      where: { id: session.id },
+      data: {
+        expiresAt: getNewRefreshTokenExpirationDate(),
+      },
+    });
+
+  const refreshToken = signRefreshToken(session.id);
+  const accessToken = signAccessToken(session.id);
+
+  setAuthCookies({
+    res,
+    sessionExpiresAt: session.expiresAt,
+    refreshToken,
+    accessToken,
+  }).sendStatus(OK);
 });
 
 export const refreshToken: RequestHandler = catchErrors(

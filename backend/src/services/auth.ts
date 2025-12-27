@@ -19,31 +19,37 @@ import generateCode from "../util/generateCode";
 
 interface LogInProfileParams {
   profile: Profile;
+  credentials: string;
   userAgent?: string;
-  codeType?: CodeType;
 }
 
 export const initSession = async ({
   profile,
+  credentials,
   userAgent,
-  codeType = "LOGIN",
 }: LogInProfileParams) => {
-  const { id: profileId, email } = profile;
+  const { id: profileId } = profile;
+
+  const usedVerificationCode = await processVerificationCode({
+    profileId: profile.id,
+    value: credentials,
+    codeType: CodeType.LOGIN,
+  });
 
   const tooManySessions = await prismaClient.session.maxExceeded(
     profile.id,
-    codeType,
+    usedVerificationCode.type,
   );
   throwError(!tooManySessions, CONFLICT, "Max number of sessions reached");
 
   const session = await prismaClient.session.create({
     data: {
       profileId,
-      userAgent,
-      scope: codeType,
+      userAgent: userAgent || "",
+      scope: usedVerificationCode.type,
       verificationCodes: {
         connect: {
-          id: verificationCode.id,
+          id: usedVerificationCode.id,
         },
       },
     },
@@ -125,18 +131,17 @@ export const sendVerificationCode = async ({
 interface ProcessVerificationCodeParams {
   profileId: number;
   value: string;
-  type: CodeType;
+  codeType: CodeType;
 }
 
 export const processVerificationCode = async ({
   profileId,
   value,
-  type,
+  codeType,
 }: ProcessVerificationCodeParams) => {
   const verificationCode = await prismaClient.verificationCode.findFirst({
     where: {
       profileId,
-      type,
       usedAt: null,
       expiresAt: { gt: new Date() },
     },
@@ -151,9 +156,9 @@ export const processVerificationCode = async ({
     verificationCode.id,
   );
   throwError(
-    usedVerificationCode,
-    INTERNAL_SERVER_ERROR,
-    "Something went wrong",
+    usedVerificationCode?.type === codeType,
+    UNAUTHORIZED,
+    "Invalid credentials",
   );
 
   return usedVerificationCode;

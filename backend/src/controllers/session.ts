@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import catchErrors from "../util/catchErrors";
-import { BAD_REQUEST, NOT_FOUND, OK } from "../config/constants";
+import { BAD_REQUEST, NOT_FOUND, OK, UNAUTHORIZED } from "../config/constants";
 import prismaClient, { CodeType } from "../db/client";
 import throwError from "../util/throwError";
 import { processVerificationCode } from "../services/auth";
@@ -50,10 +50,10 @@ export const logoutAll: RequestHandler<
 
   throwError(verificationCode, BAD_REQUEST, "code is required");
 
-  await processVerificationCode({
+  const usedVerificationCode = await processVerificationCode({
     profileId,
-    type: CodeType.LOGOUT_ALL,
     value: verificationCode,
+    codeType: CodeType.LOGOUT_ALL,
   });
 
   const sessions = await prismaClient.session.logOutAll(profileId);

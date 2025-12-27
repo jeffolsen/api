@@ -22,23 +22,19 @@ router.get(
 );
 router.post(
   VERIFICATION_CODE_LOGIN_ENDPOINT,
-  authorizeScope([LOGIN_SCOPE]),
-  verificationCodeApi.submitVerificationCodeForLogin,
-);
-router.post(
-  VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT,
-  authorizeScope([PASSWORD_RESET_SCOPE]),
-  verificationCodeApi.submitVerificationCodeForLogoutAll,
-);
-router.post(
-  VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT,
-  authorizeScope([PASSWORD_RESET_SCOPE]),
-  verificationCodeApi.submitVerificationCodeForPasswordReset,
+  verificationCodeApi.requestVerificationCode,
 );
 router.post(
   VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
-  authorizeScope([PASSWORD_RESET_SCOPE]),
-  verificationCodeApi.submitVerificationCodeForDeleteProfile,
+  verificationCodeApi.requestVerificationCode,
+);
+router.post(
+  VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT,
+  verificationCodeApi.requestVerificationCode,
+);
+router.post(
+  VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT,
+  verificationCodeApi.requestCodeForPasswordReset,
 );
 
 export default router;

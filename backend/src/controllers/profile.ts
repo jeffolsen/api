@@ -2,10 +2,10 @@ import { NextFunction, Request, RequestHandler, Response } from "express";
 import catchErrors from "../util/catchErrors";
 import {
   BAD_REQUEST,
-  INTERNAL_SERVER_ERROR,
   NO_CONTENT,
   NOT_FOUND,
   OK,
+  UNAUTHORIZED,
 } from "../config/constants";
 import throwError from "../util/throwError";
 import prismaClient, { CodeType } from "../db/client";
@@ -45,27 +45,22 @@ export const resetPassword: RequestHandler<
   } = req.body;
 
   throwError(
-    verificationCode && password && confirmPassword,
+    verificationCode && password && confirmPassword && email,
     BAD_REQUEST,
-    "code and password twice are required",
+    "value, email, password and confirmPassword are required",
   );
 
-  await processVerificationCode({
-    profileId,
-    type: CodeType.PASSWORD_RESET,
+  const profile = await prismaClient.profile.findUnique({ where: { email } });
+  throwError(profile, UNAUTHORIZED, "Invalid credentials");
+
+  const usedVerificationCode = await processVerificationCode({
+    profileId: profile.id,
     value: verificationCode,
+    codeType: CodeType.PASSWORD_RESET,
   });
 
-  throwError(
-    await prismaClient.profile.findUnique({
-      where: { id: profileId },
-    }),
-    INTERNAL_SERVER_ERROR,
-    "something went wrong",
-  );
-
   await prismaClient.profile.update({
-    where: { id: profileId },
+    where: { id: profile.id },
     data: {
       password,
     },
@@ -88,14 +83,23 @@ export const deleteProfile: RequestHandler<
   const { email, value: verificationCode } = req.body;
   throwError(verificationCode, BAD_REQUEST, "code is required");
 
-  await processVerificationCode({
-    profileId,
-    type: CodeType.DELETE_PROFILE,
+  throwError(
+    verificationCode && email,
+    BAD_REQUEST,
+    "value, email, password and confirmPassword are required",
+  );
+
+  const profile = await prismaClient.profile.findUnique({ where: { email } });
+  throwError(profile, UNAUTHORIZED, "Invalid credentials");
+
+  const usedVerificationCode = await processVerificationCode({
+    profileId: profile.id,
     value: verificationCode,
+    codeType: CodeType.DELETE_PROFILE,
   });
 
   await prismaClient.profile.delete({
-    where: { id: profileId },
+    where: { id: profile.id },
   });
 
   res.sendStatus(NO_CONTENT);

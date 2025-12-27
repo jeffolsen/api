@@ -14,6 +14,7 @@ const router = express.Router();
 
 router.post(AUTH_REGISTER_ENDPOINT, authApi.register);
 router.post(AUTH_REFRESH_ENDPOINT, authApi.refreshToken);
-router.post(AUTH_LOGOUT_ENDPOINT, authApi.logout);
+router.post(AUTH_LOGOUT_ENDPOINT, authApi.loginWithVerificationCode);
+router.post(AUTH_LOGOUT_ENDPOINT, authApi.loginWithApiKey);
 
 export default router;
