@@ -13,11 +13,7 @@ import {
 const router = express.Router();
 
 router.post(AUTH_REGISTER_ENDPOINT, authApi.register);
-router.post(AUTH_LOGIN_ENDPOINT, authApi.requestLogin);
 router.post(AUTH_REFRESH_ENDPOINT, authApi.refreshToken);
 router.post(AUTH_LOGOUT_ENDPOINT, authApi.logout);
-router.post(AUTH_LOGOUT_ALL_ENDPOINT, authApi.requestLogoutOfAll);
-router.post(AUTH_PASSWORD_RESET_ENDPOINT, authApi.requestPasswordReset);
-router.post(AUTH_DELETE_PROFILE_ENDPOINT, authApi.requestProfileDeletion);
 
 export default router;

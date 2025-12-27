@@ -1,21 +1,13 @@
 import { RequestHandler } from "express";
 import catchErrors from "../util/catchErrors";
-import prismaClient from "../db/client";
-import {
-  BAD_REQUEST,
-  CONFLICT,
-  CREATED,
-  INTERNAL_SERVER_ERROR,
-  NO_CONTENT,
-  NOT_FOUND,
-  OK,
-} from "../config/constants";
-import { processVerificationCode } from "../services/auth";
+import prismaClient, { CodeType } from "../db/client";
+import { BAD_REQUEST, CONFLICT, NOT_FOUND, OK } from "../config/constants";
+import { sendVerificationCode } from "../services/auth";
 import throwError from "../util/throwError";
 
 export const getProfileVerificationCodes: RequestHandler = catchErrors(
   async (req, res, next) => {
-    const { profileId, sessionId } = req;
+    const { profileId } = req;
     const codes = await prismaClient.verificationCode.findMany({
       where: { profileId },
       omit: { value: true, sessionId: true },
@@ -24,181 +16,132 @@ export const getProfileVerificationCodes: RequestHandler = catchErrors(
   },
 );
 
-interface SubmitVerificationCodeLoginBody {
-  value: string;
-}
-
-export const submitVerificationCodeForLogin: RequestHandler<
-  unknown,
-  unknown,
-  SubmitVerificationCodeLoginBody,
-  unknown
-> = catchErrors(async (req, res, next) => {
-  const { profileId, sessionId } = req;
-  const { value } = req.body;
-
-  throwError(value, BAD_REQUEST, "code is required");
-
-  await processVerificationCode({
-    profileId,
-    sessionId,
-    type: "LOGIN",
-    value,
-  });
-
-  const session = await prismaClient.session.rescope(sessionId);
-  throwError(session, INTERNAL_SERVER_ERROR, "something went wrong");
-
-  res.sendStatus(OK);
-});
-
-interface SubmitVerificationCodePasswordResetBody {
-  value: string;
+interface RequestCodeForLogInBody {
+  email: string;
   password: string;
-  confirmPassword: string;
 }
 
-export const submitVerificationCodeForPasswordReset: RequestHandler<
+export const requestCodeForLogin: RequestHandler<
   unknown,
   unknown,
-  SubmitVerificationCodePasswordResetBody,
+  RequestCodeForLogInBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { profileId, sessionId } = req;
-  const { value, password, confirmPassword } = req.body;
+  const { email, password: passwordSubmit } = req.body;
 
   throwError(
-    value && password && confirmPassword,
+    email && passwordSubmit,
     BAD_REQUEST,
-    "code and password twice are required",
+    "email and password are required",
   );
 
-  await processVerificationCode({
-    profileId,
-    sessionId,
-    type: "PASSWORD_RESET",
-    value,
+  const profile = await prismaClient.profile.findUnique({ where: { email } });
+  throwError(
+    profile && (await profile.comparePassword(passwordSubmit)),
+    NOT_FOUND,
+    "invalid credentials",
+  );
+
+  sendVerificationCode({
+    profileId: profile.id,
+    email: profile.email,
+    codeType: CodeType.LOGIN,
   });
+
+  res.sendStatus(OK);
+});
+
+interface RequestCodeForPasswordResetBody {
+  email: string;
+}
+export const requestCodeForPasswordReset: RequestHandler<
+  unknown,
+  unknown,
+  RequestCodeForPasswordResetBody,
+  unknown
+> = catchErrors(async (req, res, next) => {
+  const { email } = req.body;
+
+  throwError(email, BAD_REQUEST, "email is required");
+
+  const profile = await prismaClient.profile.findUnique({ where: { email } });
+  throwError(profile, NOT_FOUND, "invalid credentials");
+
+  sendVerificationCode({
+    profileId: profile.id,
+    email: profile.email,
+    codeType: CodeType.PASSWORD_RESET,
+  });
+
+  res.sendStatus(OK);
+});
+
+interface RequestCodeForLogoutOAllBody {
+  email: string;
+  password: string;
+}
+export const requestCodeForLogoutOfAll: RequestHandler<
+  unknown,
+  unknown,
+  RequestCodeForLogoutOAllBody,
+  unknown
+> = catchErrors(async (req, res, next) => {
+  const { email, password: passwordSubmit } = req.body;
 
   throwError(
-    await prismaClient.profile.findUnique({
-      where: { id: profileId },
-    }),
-    INTERNAL_SERVER_ERROR,
-    "something went wrong",
+    email && passwordSubmit,
+    BAD_REQUEST,
+    "email and password are required",
   );
 
-  await prismaClient.profile.update({
-    where: { id: profileId },
-    data: {
-      password,
-    },
+  const profile = await prismaClient.profile.findUnique({ where: { email } });
+  throwError(
+    profile && (await profile.comparePassword(passwordSubmit)),
+    NOT_FOUND,
+    "invalid credentials",
+  );
+
+  sendVerificationCode({
+    profileId: profile.id,
+    email: profile.email,
+    codeType: CodeType.LOGOUT_ALL,
   });
 
   res.sendStatus(OK);
 });
 
-interface SubmitVerificationCodeForLogoutAllBody {
-  value: string;
+interface RequestCodeForProfileDeletionBody {
+  email: string;
+  password: string;
 }
-
-export const submitVerificationCodeForLogoutAll: RequestHandler<
+export const requestCodeForProfileDeletion: RequestHandler<
   unknown,
   unknown,
-  SubmitVerificationCodeForLogoutAllBody,
+  RequestCodeForProfileDeletionBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { profileId, sessionId } = req;
-  const { value } = req.body;
+  const { email } = req.body;
 
-  throwError(value, BAD_REQUEST, "code is required");
+  throwError(email, BAD_REQUEST, "email is required");
 
-  await processVerificationCode({
-    profileId,
-    sessionId,
-    type: "LOGOUT_ALL",
-    value,
+  const profile = await prismaClient.profile.findUnique({ where: { email } });
+  throwError(profile, NOT_FOUND, "invalid credentials");
+
+  sendVerificationCode({
+    profileId: profile.id,
+    email: profile.email,
+    codeType: CodeType.DELETE_PROFILE,
   });
-
-  const sessions = await prismaClient.session.logOutAll(profileId);
-  throwError(sessions?.count, NOT_FOUND, "No sessions found");
 
   res.sendStatus(OK);
 });
-
-interface SubmitVerificationCodeForDeleteProfileBody {
-  value: string;
-}
-
-export const submitVerificationCodeForDeleteProfile: RequestHandler<
-  unknown,
-  unknown,
-  SubmitVerificationCodeForDeleteProfileBody,
-  unknown
-> = catchErrors(async (req, res, next) => {
-  const { profileId, sessionId } = req;
-  const { value } = req.body;
-  throwError(value, BAD_REQUEST, "code is required");
-
-  await processVerificationCode({
-    profileId,
-    sessionId,
-    type: "DELETE_PROFILE",
-    value,
-  });
-
-  await prismaClient.profile.delete({
-    where: { id: profileId },
-  });
-
-  res.sendStatus(NO_CONTENT);
-});
-
-export const submitVerificationCodeForApiKey: RequestHandler = catchErrors(
-  async (req, res, next) => {
-    const { profileId, sessionId } = req;
-    const { slug, value } = req.body;
-    throwError(slug && value, BAD_REQUEST, "slug and code is required");
-
-    throwError(
-      !(await prismaClient.apiKey.maxExceeded(profileId)),
-      CONFLICT,
-      "Max number of apikeys reached",
-    );
-
-    throwError(
-      await prismaClient.apiKey.checkSlug(slug),
-      BAD_REQUEST,
-      "Slug format not allowed",
-    );
-
-    const slugNotFound = !(await prismaClient.apiKey.findUnique({
-      where: { slug },
-    }));
-    throwError(slugNotFound, CONFLICT, "Slug already taken");
-
-    await processVerificationCode({
-      profileId,
-      sessionId,
-      type: "DELETE_PROFILE",
-      value,
-    });
-    const apiKeyValue = await prismaClient.apiKey.generateKeyValue();
-
-    await prismaClient.apiKey.create({
-      data: { profileId, value: apiKeyValue, slug },
-    });
-
-    res.status(CREATED).json({ apiKey: apiKeyValue });
-  },
-);
 
 const verificationCodeApi = {
   getProfileVerificationCodes,
-  submitVerificationCodeForLogin,
-  submitVerificationCodeForPasswordReset,
-  submitVerificationCodeForLogoutAll,
-  submitVerificationCodeForDeleteProfile,
+  requestCodeForLogin,
+  requestCodeForLogoutOfAll,
+  requestCodeForPasswordReset,
+  requestCodeForProfileDeletion,
 };
 
 export default verificationCodeApi;

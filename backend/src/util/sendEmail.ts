@@ -13,12 +13,16 @@ const getSubject = (topic: CodeType) => topic;
 const sendEmail = async (email: string, code: string, codeType: CodeType) => {
   console.log(`SENDING CODE: ${code} TO EMAIL: ${email} FOR: ${codeType}`);
   // return;
-  await resend.emails.send({
-    from: getSender(),
-    to: getRecipient(email),
-    subject: getSubject(codeType),
-    html: templates[codeType](codeType, code),
-  });
+  const emailResponse = await resend.emails
+    .send({
+      from: getSender(),
+      to: getRecipient(email),
+      subject: getSubject(codeType),
+      html: templates[codeType](codeType, code),
+    })
+    .catch(() => false);
+
+  return emailResponse;
 };
 
 export default sendEmail;

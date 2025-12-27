@@ -28,8 +28,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: ORIGIN }));
 app.use(cookieParser());
 
+app.use(VERIFICATION_CODE_ROUTES, verificationCodeRoutes);
 app.use(AUTH_ROUTES, authRoutes);
-app.use(VERIFICATION_CODE_ROUTES, authenticate, verificationCodeRoutes);
 app.use(SESSION_ROUTES, authenticate, sessionRoutes);
 app.use(PROFILE_ROUTES, authenticate, profileRoutes);
 

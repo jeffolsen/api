@@ -10,11 +10,13 @@ import {
   VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT,
   VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
 } from "../config/constants";
+import authenticate from "../middleware/authenticate";
 
 const router = express.Router();
 
 router.get(
   "/",
+  authenticate,
   authorizeScope([READ_VERIFICATION_CODE_SCOPE]),
   verificationCodeApi.getProfileVerificationCodes,
 );

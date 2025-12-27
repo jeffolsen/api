@@ -1,10 +1,9 @@
 import { RequestHandler } from "express";
 import catchErrors from "../util/catchErrors";
-import { BAD_REQUEST, NOT_FOUND, OK } from "../config/constants";
+import { BAD_REQUEST, CONFLICT, CREATED, OK } from "../config/constants";
 import prismaClient from "../db/client";
 import throwError from "../util/throwError";
-import { initSession } from "../services/auth";
-import { setAuthCookies } from "../util/cookie";
+import { processVerificationCode } from "../services/auth";
 
 export const getProfilesApiKeys: RequestHandler = catchErrors(
   async (req, res, next) => {
@@ -32,19 +31,43 @@ export const createApiKey: RequestHandler<
   CreateApiKeyBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { slug, domain } = req.body;
   const { profileId, sessionId } = req;
+  const { slug: apiSlug, value: verificationCode } = req.body;
+  throwError(
+    apiSlug && verificationCode,
+    BAD_REQUEST,
+    "Slug and code is required",
+  );
 
-  throwError(slug && domain, BAD_REQUEST, "email is required");
+  const tooManyApiKeys = await prismaClient.apiKey.maxExceeded(profileId);
+  throwError(!tooManyApiKeys, CONFLICT, "Max number of apikeys reached");
 
-  const profile = await prismaClient.profile.findUnique({
-    where: { id: profileId },
+  const validSlug = await prismaClient.apiKey.checkSlug(apiSlug);
+  throwError(!validSlug, BAD_REQUEST, "Slug format not allowed");
+
+  const slugExists = await prismaClient.apiKey.findUnique({
+    where: { slug: apiSlug },
   });
-  throwError(profile, NOT_FOUND, "invalid credentials");
+  throwError(!slugExists, CONFLICT, "Slug already taken");
+
+  await processVerificationCode({
+    profileId,
+    sessionId,
+    type: "CREATE_API_KEY",
+    value: verificationCode,
+  });
+  const apiKeyValue = await prismaClient.apiKey.generateKeyValue();
+
+  await prismaClient.apiKey.create({
+    data: { profileId, value: apiKeyValue, slug: apiSlug },
+  });
+
+  res.status(CREATED).json({ apiKey: apiKeyValue });
 });
 
 const apiKeyApi = {
   getProfilesApiKeys,
+  createApiKey,
 };
 
 export default apiKeyApi;

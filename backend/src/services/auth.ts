@@ -19,7 +19,7 @@ import generateCode from "../util/generateCode";
 
 interface LogInProfileParams {
   profile: Profile;
-  userAgent: string;
+  userAgent?: string;
   codeType?: CodeType;
 }
 
@@ -30,30 +30,11 @@ export const initSession = async ({
 }: LogInProfileParams) => {
   const { id: profileId, email } = profile;
 
-  throwError(
-    !(await prismaClient.verificationCode.systemDailyMaxExceeded()) &&
-      !(await prismaClient.verificationCode.maxExceeded(profileId)),
-    TOO_MANY_REQUESTS,
-    "Too many verification code requests. Try again later.",
+  const tooManySessions = await prismaClient.session.maxExceeded(
+    profile.id,
+    codeType,
   );
-
-  throwError(
-    !(await prismaClient.session.maxExceeded(profile.id, codeType)),
-    CONFLICT,
-    "Max number of sessions reached",
-  );
-
-  const code = generateCode();
-
-  const verificationCode = await prismaClient.verificationCode.create({
-    data: {
-      profileId,
-      type: codeType,
-      value: code,
-    },
-  });
-
-  sendEmail(email, code, codeType);
+  throwError(!tooManySessions, CONFLICT, "Max number of sessions reached");
 
   const session = await prismaClient.session.create({
     data: {
@@ -87,7 +68,6 @@ export const refreshAccessToken = async ({
 }: RefreshAccessTokenParams) => {
   const payload = verifyRefreshToken(refreshToken);
 
-  console.log("refreshAccessToken", payload);
   throwError(payload?.sessionId, BAD_REQUEST, "Invalid token");
 
   const { sessionId } = payload;
@@ -103,37 +83,69 @@ export const refreshAccessToken = async ({
   return { session, refreshToken, accessToken: signAccessToken(sessionId) };
 };
 
+interface SendVerificationCode {
+  profileId: number;
+  email: string;
+  codeType: CodeType;
+}
+
+export const sendVerificationCode = async ({
+  profileId,
+  email,
+  codeType,
+}: SendVerificationCode) => {
+  const tooManyVerifcationCodes =
+    (await prismaClient.verificationCode.systemDailyMaxExceeded()) ||
+    (await prismaClient.verificationCode.maxExceeded(profileId));
+  throwError(
+    !tooManyVerifcationCodes,
+    TOO_MANY_REQUESTS,
+    "Too many verification code requests. Try again later.",
+  );
+
+  const code = generateCode();
+  const validEmail = sendEmail(email, code, codeType);
+  throwError(
+    validEmail,
+    INTERNAL_SERVER_ERROR,
+    "Problem sending email. Try again later.",
+  );
+
+  const verificationCode = await prismaClient.verificationCode.create({
+    data: {
+      profileId,
+      type: codeType,
+      value: code,
+    },
+  });
+
+  return verificationCode;
+};
+
 interface ProcessVerificationCodeParams {
   profileId: number;
-  sessionId: number;
   value: string;
   type: CodeType;
 }
 
 export const processVerificationCode = async ({
   profileId,
-  sessionId,
   value,
   type,
 }: ProcessVerificationCodeParams) => {
   const verificationCode = await prismaClient.verificationCode.findFirst({
     where: {
       profileId,
-      sessionId,
       type,
       usedAt: null,
       expiresAt: { gt: new Date() },
     },
     orderBy: { createdAt: "desc" },
   });
-  console.log("processVerificationCode", verificationCode);
   throwError(verificationCode, NOT_FOUND, "No pending code found");
 
-  throwError(
-    await verificationCode.validate(value),
-    UNAUTHORIZED,
-    "Invalid code",
-  );
+  const verificationCodeIsValid = await verificationCode.validate(value);
+  throwError(verificationCodeIsValid, UNAUTHORIZED, "Invalid code");
 
   const usedVerificationCode = await prismaClient.verificationCode.use(
     verificationCode.id,

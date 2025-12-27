@@ -1,17 +1,21 @@
 import { RequestHandler } from "express";
-import { initSession, refreshAccessToken } from "../services/auth";
+import {
+  initSession,
+  processVerificationCode,
+  refreshAccessToken,
+} from "../services/auth";
 import { setAuthCookies } from "../util/cookie";
 import catchErrors from "../util/catchErrors";
 import {
   BAD_REQUEST,
   CONFLICT,
   CREATED,
-  NOT_FOUND,
+  INTERNAL_SERVER_ERROR,
   OK,
+  UNAUTHORIZED,
 } from "../config/constants";
 import throwError from "../util/throwError";
 import prismaClient from "../db/client";
-import { verifyRefreshToken } from "../util/jwt";
 
 interface RegisterBody {
   email: string;
@@ -42,50 +46,44 @@ export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
     const profile = await prismaClient.profile.create({
       data: { email, password: passwordSubmit },
     });
+    throwError(profile, INTERNAL_SERVER_ERROR, "Something went wrong");
 
-    const { session, ...tokens } = await initSession({
-      profile,
-      userAgent,
-    });
-
-    setAuthCookies({
-      res,
-      sessionExpiresAt: session.expiresAt,
-      ...tokens,
-    }).sendStatus(CREATED);
+    res.sendStatus(CREATED);
   });
 
-interface RequestLogInBody {
-  email: string;
-  password: string;
+interface LoginWithVerificationCodeBody {
+  value: string;
 }
 
-export const requestLogin: RequestHandler<
+export const loginWithVerificationCode: RequestHandler<
   unknown,
   unknown,
-  RequestLogInBody,
+  LoginWithVerificationCodeBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { email, password: passwordSubmit } = req.body;
+  const { email, value: verificationCode } = req.body;
   const { ["user-agent"]: userAgent } = req.headers;
-
-  throwError(
-    email && passwordSubmit && userAgent,
-    BAD_REQUEST,
-    "email and password are required",
-  );
+  throwError(verificationCode, BAD_REQUEST, "code is required");
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(
-    profile && (await profile.comparePassword(passwordSubmit)),
-    NOT_FOUND,
-    "invalid credentials",
-  );
+  throwError(profile, UNAUTHORIZED, "Invalid credentials");
+
+  await processVerificationCode({
+    profileId: profile.id,
+    type: "LOGIN",
+    value: verificationCode,
+  });
 
   const { session, ...tokens } = await initSession({
     profile,
     userAgent,
   });
+
+  setAuthCookies({
+    res,
+    sessionExpiresAt: session.expiresAt,
+    ...tokens,
+  }).sendStatus(OK);
 
   setAuthCookies({
     res,
@@ -94,104 +92,21 @@ export const requestLogin: RequestHandler<
   }).sendStatus(OK);
 });
 
-interface RequestPasswordResetBody {
-  email: string;
+interface LoginWithApiKeyBody {
+  slug: string;
+  value: string;
 }
-export const requestPasswordReset: RequestHandler<
+
+export const loginWithApiKey: RequestHandler<
   unknown,
   unknown,
-  RequestPasswordResetBody,
+  LoginWithApiKeyBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { email } = req.body;
-  const { ["user-agent"]: userAgent } = req.headers;
+  const { apiSlug: slug, apiKey: value } = req.body;
 
-  throwError(email && userAgent, BAD_REQUEST, "email is required");
-
-  const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, NOT_FOUND, "invalid credentials");
-
-  const { session, ...tokens } = await initSession({
-    profile,
-    userAgent,
-    codeType: "PASSWORD_RESET",
-  });
-
-  setAuthCookies({
-    res,
-    sessionExpiresAt: session.expiresAt,
-    ...tokens,
-  }).sendStatus(OK);
-});
-
-interface RequestLogoutOAllBody {
-  email: string;
-  password: string;
-}
-export const requestLogoutOfAll: RequestHandler<
-  unknown,
-  unknown,
-  RequestLogoutOAllBody,
-  unknown
-> = catchErrors(async (req, res, next) => {
-  const { email, password: passwordSubmit } = req.body;
-  const { ["user-agent"]: userAgent } = req.headers;
-
-  throwError(
-    email && passwordSubmit && userAgent,
-    BAD_REQUEST,
-    "email and password are required",
-  );
-
-  const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(
-    profile && (await profile.comparePassword(passwordSubmit)),
-    NOT_FOUND,
-    "invalid credentials",
-  );
-
-  const { session, ...tokens } = await initSession({
-    profile,
-    userAgent,
-    codeType: "LOGOUT_ALL",
-  });
-
-  setAuthCookies({
-    res,
-    sessionExpiresAt: session.expiresAt,
-    ...tokens,
-  }).sendStatus(OK);
-});
-
-interface RequestProfileDeletionBody {
-  email: string;
-  password: string;
-}
-export const requestProfileDeletion: RequestHandler<
-  unknown,
-  unknown,
-  RequestProfileDeletionBody,
-  unknown
-> = catchErrors(async (req, res, next) => {
-  const { email } = req.body;
-  const { ["user-agent"]: userAgent } = req.headers;
-
-  throwError(email && userAgent, BAD_REQUEST, "email is required");
-
-  const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, NOT_FOUND, "invalid credentials");
-
-  const { session, ...tokens } = await initSession({
-    profile,
-    userAgent,
-    codeType: "PASSWORD_RESET",
-  });
-
-  setAuthCookies({
-    res,
-    sessionExpiresAt: session.expiresAt,
-    ...tokens,
-  }).sendStatus(OK);
+  throwError(slug && value, BAD_REQUEST, "API slug and API key required");
+  res.sendStatus(OK);
 });
 
 export const refreshToken: RequestHandler = catchErrors(
@@ -210,37 +125,10 @@ export const refreshToken: RequestHandler = catchErrors(
   },
 );
 
-export const logout: RequestHandler = catchErrors(async (req, res, next) => {
-  const { refreshToken } = req.cookies;
-  const payload = await verifyRefreshToken(refreshToken);
-  throwError(payload?.sessionId, BAD_REQUEST, "Invalid token");
-
-  const session = await prismaClient.session.logOut(payload.sessionId);
-  throwError(session, BAD_REQUEST, "Not logged in.");
-
-  setAuthCookies({
-    res,
-    sessionExpiresAt: new Date(),
-    refreshToken: "invalid",
-    accessToken: "invalid",
-  }).sendStatus(OK);
-});
-
-export const useApiKey: RequestHandler = catchErrors(async (req, res, next) => {
-  const { apiSlug: slug, apiKey: value } = req.body;
-
-  throwError(slug && value, BAD_REQUEST, "API slug and API key required");
-  res.sendStatus(OK);
-});
-
 const authApi = {
   register,
   refreshToken,
-  logout,
-  requestLogin,
-  requestLogoutOfAll,
-  requestPasswordReset,
-  requestProfileDeletion,
-  useApiKey,
+  loginWithVerificationCode,
+  loginWithApiKey,
 };
 export default authApi;
