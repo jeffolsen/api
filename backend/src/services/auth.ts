@@ -84,7 +84,7 @@ export const connectToApiSession = async ({
 
   const apiKeyIsValid = await apiKey.validate(value);
   throwError(apiKeyIsValid, UNAUTHORIZED, "Invalid api key");
-  throwError(apiKey.domain === origin, UNAUTHORIZED, "Invalid api key");
+  throwError(apiKey.origin === origin, UNAUTHORIZED, "Invalid api key");
 
   let session;
   if (apiKey.sessionId)
@@ -107,7 +107,7 @@ export const connectToApiSession = async ({
       },
     });
 
-  const refreshToken = signRefreshToken(session.id, apiKey.domain);
+  const refreshToken = signRefreshToken(session.id, apiKey.origin);
   const accessToken = signAccessToken(session.id);
 
   return {

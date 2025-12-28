@@ -23,7 +23,7 @@ export const getProfilesApiKeys: RequestHandler = catchErrors(
 
 interface GenerateApiKeyBody {
   slug: string;
-  domain: string;
+  origin: string;
   value: string;
 }
 
@@ -34,9 +34,9 @@ export const generate: RequestHandler<
   unknown
 > = catchErrors(async (req, res, next) => {
   const { profileId } = req;
-  const { slug: apiSlug, value: verificationCode, domain } = req.body;
+  const { slug: apiSlug, value: verificationCode, origin } = req.body;
   throwError(
-    apiSlug && verificationCode && domain,
+    apiSlug && verificationCode && origin,
     BAD_REQUEST,
     "Slug and code is required",
   );
@@ -47,8 +47,8 @@ export const generate: RequestHandler<
   const validSlug = await prismaClient.apiKey.checkSlug(apiSlug);
   throwError(validSlug, BAD_REQUEST, "Slug format not allowed");
 
-  const validDomain = await prismaClient.apiKey.checkUrl(domain);
-  throwError(validDomain, BAD_REQUEST, "Domain format not allowed");
+  const validOrigin = await prismaClient.apiKey.checkUrl(origin);
+  throwError(validOrigin, BAD_REQUEST, "Origin format not allowed");
 
   const slugExists = await prismaClient.apiKey.findUnique({
     where: { slug: apiSlug },
@@ -67,7 +67,7 @@ export const generate: RequestHandler<
       profileId,
       value: apiKeyValue,
       slug: apiSlug,
-      domain,
+      origin,
     },
   });
 
