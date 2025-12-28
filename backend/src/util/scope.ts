@@ -23,12 +23,12 @@ export const defaultProfileScope = () =>
 
 export const defaultApiKeyScope = () => createScopeString([READ_PAGE_SCOPE]);
 
-export const CONNECT_API_KEY = "CONNECT_API_KEY";
-export type ScopeCodeType = CodeType | typeof CONNECT_API_KEY;
+export const API_KEY_SESSION = "API_KEY_SESSION";
+export type ScopeCodeType = CodeType | typeof API_KEY_SESSION;
 
 export const getScope = (scopeCode: ScopeCodeType) => {
   const authScope =
-    scopeCode === CONNECT_API_KEY
+    scopeCode === API_KEY_SESSION
       ? defaultApiKeyScope()
       : scopeCode === CodeType.LOGIN
         ? defaultProfileScope()

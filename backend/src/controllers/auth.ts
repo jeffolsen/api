@@ -1,9 +1,5 @@
 import { RequestHandler } from "express";
-import {
-  connectToApiSession,
-  initProfileSession,
-  refreshAccessToken,
-} from "../services/auth";
+import { initProfileSession, refreshAccessToken } from "../services/auth";
 import { setAuthCookies } from "../util/cookie";
 import catchErrors from "../util/catchErrors";
 import {
@@ -55,7 +51,7 @@ interface LoginWithVerificationCodeBody {
   value: string;
 }
 
-export const loginWithVerificationCode: RequestHandler<
+export const login: RequestHandler<
   unknown,
   unknown,
   LoginWithVerificationCodeBody,
@@ -81,28 +77,11 @@ export const loginWithVerificationCode: RequestHandler<
   }).sendStatus(OK);
 });
 
-interface LoginWithApiKeyBody {
-  slug: string;
-  value: string;
-}
+export const refresh: RequestHandler = catchErrors(async (req, res, next) => {
+  const { refreshToken } = req.cookies;
+  throwError(refreshToken, BAD_REQUEST, "refresh token is required");
 
-export const loginWithApiKey: RequestHandler<
-  unknown,
-  unknown,
-  LoginWithApiKeyBody,
-  unknown
-> = catchErrors(async (req, res, next) => {
-  const { slug: apiKeySlug, value: apiKeyString } = req.body;
-  throwError(
-    apiKeySlug && apiKeyString,
-    BAD_REQUEST,
-    "API slug and API key required",
-  );
-
-  const { session, ...tokens } = await connectToApiSession({
-    apiKeySlug,
-    apiKeyString,
-  });
+  const { session, ...tokens } = await refreshAccessToken({ refreshToken });
 
   setAuthCookies({
     res,
@@ -111,25 +90,9 @@ export const loginWithApiKey: RequestHandler<
   }).sendStatus(OK);
 });
 
-export const refreshToken: RequestHandler = catchErrors(
-  async (req, res, next) => {
-    const { refreshToken } = req.cookies;
-    throwError(refreshToken, BAD_REQUEST, "refresh token is required");
-
-    const { session, ...tokens } = await refreshAccessToken({ refreshToken });
-
-    setAuthCookies({
-      res,
-      sessionExpiresAt: session.expiresAt,
-      ...tokens,
-    }).sendStatus(OK);
-  },
-);
-
 const authApi = {
   register,
-  refreshToken,
-  loginWithVerificationCode,
-  loginWithApiKey,
+  refresh,
+  login,
 };
 export default authApi;

@@ -8,6 +8,7 @@ import {
   VERIFICATION_CODE_LOGIN_ENDPOINT,
   VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT,
   VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
+  VERIFICATION_CODE_ROUTES,
 } from "../config/constants";
 import { sendVerificationCode } from "../services/auth";
 import throwError from "../util/throwError";
@@ -38,13 +39,13 @@ export const requestVerificationCode: RequestHandler<
 
   let codeType;
   switch (req.path) {
-    case VERIFICATION_CODE_LOGIN_ENDPOINT:
+    case VERIFICATION_CODE_ROUTES + VERIFICATION_CODE_LOGIN_ENDPOINT:
       codeType = CodeType.LOGIN;
       break;
-    case VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT:
+    case VERIFICATION_CODE_ROUTES + VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT:
       codeType = CodeType.LOGOUT_ALL;
       break;
-    case VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT:
+    case VERIFICATION_CODE_ROUTES + VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT:
       codeType = CodeType.DELETE_PROFILE;
       break;
     default:

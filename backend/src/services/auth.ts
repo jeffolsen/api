@@ -18,7 +18,7 @@ import throwError from "../util/throwError";
 import sendEmail from "../util/sendEmail";
 import generateCode from "../util/generateCode";
 import { getNewRefreshTokenExpirationDate } from "../util/date";
-import { CONNECT_API_KEY } from "../util/scope";
+import { API_KEY_SESSION } from "../util/scope";
 
 interface LogInProfileParams {
   profile: Profile;
@@ -71,17 +71,20 @@ export const initProfileSession = async ({
 interface LogInApiKeyParams {
   apiKeySlug: string;
   apiKeyString: string;
+  origin?: string;
 }
 
 export const connectToApiSession = async ({
   apiKeySlug: slug,
   apiKeyString: value,
+  origin,
 }: LogInApiKeyParams) => {
   const apiKey = await prismaClient.apiKey.findUnique({ where: { slug } });
   throwError(apiKey, NOT_FOUND, "API slug not found");
 
   const apiKeyIsValid = await apiKey.validate(value);
   throwError(apiKeyIsValid, UNAUTHORIZED, "Invalid api key");
+  throwError(apiKey.domain === origin, UNAUTHORIZED, "Invalid api key");
 
   let session;
   if (apiKey.sessionId)
@@ -93,7 +96,7 @@ export const connectToApiSession = async ({
       data: {
         profileId: apiKey.profileId,
         userAgent: slug,
-        scope: CONNECT_API_KEY,
+        scope: API_KEY_SESSION,
       },
     });
   if (!session.isCurrent())
@@ -104,7 +107,7 @@ export const connectToApiSession = async ({
       },
     });
 
-  const refreshToken = signRefreshToken(session.id);
+  const refreshToken = signRefreshToken(session.id, apiKey.domain);
   const accessToken = signAccessToken(session.id);
 
   return {

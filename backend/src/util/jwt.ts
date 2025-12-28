@@ -9,6 +9,7 @@ import { getNewAccessTokenExpirationDate } from "./date";
 export interface TokenPayload {
   sessionId: number;
   expiresAt?: Date;
+  origin?: string;
 }
 
 export const verifyAccessToken = (accessToken: string): TokenPayload | null => {
@@ -43,6 +44,10 @@ export const signAccessToken = (sessionId: number) => {
   );
 };
 
-export const signRefreshToken = (sessionId: number) => {
-  return jwt.sign({ sessionId }, env.JWT_REFRESH_SECRET, SESSION_TOKEN_OPTIONS);
+export const signRefreshToken = (sessionId: number, origin?: string) => {
+  return jwt.sign(
+    { sessionId, ...(origin && { origin }) },
+    env.JWT_REFRESH_SECRET,
+    SESSION_TOKEN_OPTIONS,
+  );
 };

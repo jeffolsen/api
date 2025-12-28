@@ -1,6 +1,7 @@
 import { MAX_PROFILE_APIKEYS } from "../config/constants";
 import { Prisma } from "../generated/prisma/client";
 import { compareValue, hashValue } from "../util/bcrypt";
+import { randomUUID } from "node:crypto";
 
 const hashApiKey = async (apiKey: string | null | undefined) => {
   let v = "";
@@ -39,14 +40,19 @@ export const apiKeyExtension = Prisma.defineExtension((client) => {
           return apiKeys.length == MAX_PROFILE_APIKEYS;
         },
         async checkSlug(slug: string) {
-          return true;
+          const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+          return slugRegex.test(slug);
         },
-        async checkDomain(domain: string) {
-          return true;
+        async checkUrl(val: string) {
+          try {
+            const url = new URL(val);
+            return url.protocol === "http:" || url.protocol === "https:";
+          } catch (err) {
+            return false;
+          }
         },
         async generateKeyValue() {
-          // uuid
-          return "xxx";
+          return randomUUID();
         },
       },
     },

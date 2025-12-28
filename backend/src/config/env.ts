@@ -6,7 +6,7 @@ const env = cleanEnv(process.env, {
   DATABASE_URL: str(),
   JWT_SECRET: str(),
   JWT_REFRESH_SECRET: str(),
-  DOMAIN_WHITELIST: str(),
+  ORIGIN: str(),
   RESEND_API_KEY: str(),
   EMAIL_SENDER: email(),
 });

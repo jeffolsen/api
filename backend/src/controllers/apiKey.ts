@@ -3,7 +3,8 @@ import catchErrors from "../util/catchErrors";
 import { BAD_REQUEST, CONFLICT, CREATED, OK } from "../config/constants";
 import prismaClient, { CodeType } from "../db/client";
 import throwError from "../util/throwError";
-import { processVerificationCode } from "../services/auth";
+import { connectToApiSession, processVerificationCode } from "../services/auth";
+import { setAuthCookies } from "../util/cookie";
 
 export const getProfilesApiKeys: RequestHandler = catchErrors(
   async (req, res, next) => {
@@ -26,7 +27,7 @@ interface GenerateApiKeyBody {
   value: string;
 }
 
-export const generateApiKey: RequestHandler<
+export const generate: RequestHandler<
   unknown,
   unknown,
   GenerateApiKeyBody,
@@ -46,7 +47,7 @@ export const generateApiKey: RequestHandler<
   const validSlug = await prismaClient.apiKey.checkSlug(apiSlug);
   throwError(validSlug, BAD_REQUEST, "Slug format not allowed");
 
-  const validDomain = await prismaClient.apiKey.checkDomain(domain);
+  const validDomain = await prismaClient.apiKey.checkUrl(domain);
   throwError(validDomain, BAD_REQUEST, "Domain format not allowed");
 
   const slugExists = await prismaClient.apiKey.findUnique({
@@ -73,9 +74,42 @@ export const generateApiKey: RequestHandler<
   res.status(CREATED).json({ apiKey: apiKeyValue });
 });
 
+interface LoginWithApiKeyBody {
+  slug: string;
+  value: string;
+}
+
+export const connect: RequestHandler<
+  unknown,
+  unknown,
+  LoginWithApiKeyBody,
+  unknown
+> = catchErrors(async (req, res, next) => {
+  const { slug: apiKeySlug, value: apiKeyString } = req.body;
+  const origin = req.get("origin");
+  throwError(
+    apiKeySlug && apiKeyString,
+    BAD_REQUEST,
+    "API slug and API key required",
+  );
+
+  const { session, ...tokens } = await connectToApiSession({
+    apiKeySlug,
+    apiKeyString,
+    origin,
+  });
+
+  setAuthCookies({
+    res,
+    sessionExpiresAt: session.expiresAt,
+    ...tokens,
+  }).sendStatus(OK);
+});
+
 const apiKeyApi = {
   getProfilesApiKeys,
-  generateApiKey,
+  generate,
+  connect,
 };
 
 export default apiKeyApi;

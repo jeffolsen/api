@@ -73,7 +73,7 @@ model ApiKey {
   id        Int      @id @default(autoincrement())
   slug      String   @unique
   value     String?
-  domain    String?
+  origin    String?
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
   profile   Profile  @relation("ProfileApiKeys", fields: [profileId], references: [id], onDelete: Cascade)
