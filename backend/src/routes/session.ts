@@ -7,12 +7,13 @@ import {
   READ_SESSION_SCOPE,
   AUTH_LOGOUT_ENDPOINT,
   UPDATE_SESSION_SCOPE,
+  COLLECTION_ENDPOINT,
 } from "../config/constants";
 
 const router = express.Router();
 
 router.get(
-  "/",
+  COLLECTION_ENDPOINT,
   authorizeScope([READ_SESSION_SCOPE]),
   sessionApi.getProfilesSessions,
 );

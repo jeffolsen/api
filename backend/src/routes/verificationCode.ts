@@ -3,19 +3,18 @@ import verificationCodeApi from "../controllers/verificationCode";
 import authorizeScope from "../middleware/authorizeScope";
 import {
   READ_VERIFICATION_CODE_SCOPE,
-  LOGIN_SCOPE,
-  PASSWORD_RESET_SCOPE,
   VERIFICATION_CODE_LOGIN_ENDPOINT,
   VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT,
   VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT,
   VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
+  COLLECTION_ENDPOINT,
 } from "../config/constants";
 import authenticate from "../middleware/authenticate";
 
 const router = express.Router();
 
 router.get(
-  "/",
+  COLLECTION_ENDPOINT,
   authenticate,
   authorizeScope([READ_VERIFICATION_CODE_SCOPE]),
   verificationCodeApi.getProfileVerificationCodes,

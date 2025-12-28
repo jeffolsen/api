@@ -1,7 +1,7 @@
 import { MAX_PROFILE_SESSIONS } from "../config/constants";
 import { CodeType, Prisma } from "../generated/prisma/client";
 import date, { getNewRefreshTokenExpirationDate } from "../util/date";
-import { defaultProfileScope, preAuthProfileScope } from "../util/scope";
+import { ScopeCodeType, getScope } from "../util/scope";
 
 export const sessionExtension = Prisma.defineExtension((client) => {
   const newClient = client.$extends({
@@ -13,7 +13,7 @@ export const sessionExtension = Prisma.defineExtension((client) => {
             data: {
               ...args.data,
               autoRefresh: false,
-              scope: preAuthProfileScope(args.data.scope as CodeType),
+              scope: getScope(args.data.scope as ScopeCodeType),
               expiresAt: getNewRefreshTokenExpirationDate(),
             },
           });
@@ -23,18 +23,6 @@ export const sessionExtension = Prisma.defineExtension((client) => {
     },
     model: {
       session: {
-        async rescope(id: number) {
-          try {
-            return await newClient.session.update({
-              where: { id },
-              data: {
-                scope: defaultProfileScope(),
-              },
-            });
-          } catch (error) {
-            return undefined;
-          }
-        },
         async logOut(id: number) {
           try {
             return await newClient.session.update({

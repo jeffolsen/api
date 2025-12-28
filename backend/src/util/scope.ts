@@ -1,5 +1,4 @@
 import {
-  LOGIN_SCOPE,
   LOGOUT_ALL_SCOPE,
   PASSWORD_RESET_SCOPE,
   DELETE_PROFILE_SCOPE,
@@ -9,27 +8,9 @@ import {
   READ_VERIFICATION_CODE_SCOPE,
   UPDATE_SESSION_SCOPE,
   READ_PAGE_SCOPE,
+  CREATE_API_KEY_SCOPE,
 } from "../config/constants";
 import { CodeType } from "../db/client";
-
-export type JoinScopesArgs = string[];
-export type SplitScopesArgs = string;
-
-export const preAuthProfileScope = (scopeCode: CodeType) => {
-  const authScope =
-    scopeCode === "LOGIN"
-      ? LOGIN_SCOPE
-      : scopeCode === "LOGOUT_ALL"
-        ? LOGOUT_ALL_SCOPE
-        : scopeCode === "PASSWORD_RESET"
-          ? PASSWORD_RESET_SCOPE
-          : scopeCode === "DELETE_PROFILE"
-            ? DELETE_PROFILE_SCOPE
-            : "";
-  return authScope
-    ? createScopeString([authScope, UPDATE_SESSION_SCOPE])
-    : authScope;
-};
 
 export const defaultProfileScope = () =>
   createScopeString([
@@ -42,7 +23,30 @@ export const defaultProfileScope = () =>
 
 export const defaultApiKeyScope = () => createScopeString([READ_PAGE_SCOPE]);
 
+export const CONNECT_API_KEY = "CONNECT_API_KEY";
+export type ScopeCodeType = CodeType | typeof CONNECT_API_KEY;
+
+export const getScope = (scopeCode: ScopeCodeType) => {
+  const authScope =
+    scopeCode === CONNECT_API_KEY
+      ? defaultApiKeyScope()
+      : scopeCode === CodeType.LOGIN
+        ? defaultProfileScope()
+        : scopeCode === CodeType.LOGOUT_ALL
+          ? LOGOUT_ALL_SCOPE
+          : scopeCode === CodeType.PASSWORD_RESET
+            ? PASSWORD_RESET_SCOPE
+            : scopeCode === CodeType.DELETE_PROFILE
+              ? DELETE_PROFILE_SCOPE
+              : scopeCode === CodeType.CREATE_API_KEY
+                ? CREATE_API_KEY_SCOPE
+                : "";
+  return authScope ? createScopeString([authScope]) : authScope;
+};
+
 const DELIMITER = " ";
+export type JoinScopesArgs = string[];
+export type SplitScopesArgs = string;
 
 export const createScopeString = (scopes: JoinScopesArgs) =>
   scopes.join(DELIMITER);

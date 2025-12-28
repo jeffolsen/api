@@ -1,21 +1,21 @@
 import { RequestHandler } from "express";
-import { initSession, refreshAccessToken } from "../services/auth";
+import {
+  connectToApiSession,
+  initProfileSession,
+  refreshAccessToken,
+} from "../services/auth";
 import { setAuthCookies } from "../util/cookie";
 import catchErrors from "../util/catchErrors";
 import {
-  BAD_REQUEST,
-  CONFLICT,
-  CREATED,
-  INTERNAL_SERVER_ERROR,
-  NOT_FOUND,
   OK,
-  READ_PAGE_SCOPE,
+  CREATED,
+  CONFLICT,
+  BAD_REQUEST,
   UNAUTHORIZED,
+  INTERNAL_SERVER_ERROR,
 } from "../config/constants";
 import throwError from "../util/throwError";
 import prismaClient from "../db/client";
-import { signAccessToken, signRefreshToken } from "../util/jwt";
-import { getNewRefreshTokenExpirationDate } from "../util/date";
 
 interface RegisterBody {
   email: string;
@@ -68,7 +68,7 @@ export const loginWithVerificationCode: RequestHandler<
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(profile, UNAUTHORIZED, "Invalid credentials");
 
-  const { session, ...tokens } = await initSession({
+  const { session, ...tokens } = await initProfileSession({
     profile,
     credentials: verificationCode,
     userAgent,
@@ -92,55 +92,28 @@ export const loginWithApiKey: RequestHandler<
   LoginWithApiKeyBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { slug, value: apiKeyString } = req.body;
+  const { slug: apiKeySlug, value: apiKeyString } = req.body;
   throwError(
-    slug && apiKeyString,
+    apiKeySlug && apiKeyString,
     BAD_REQUEST,
     "API slug and API key required",
   );
 
-  const apiKey = await prismaClient.apiKey.findUnique({ where: { slug } });
-  throwError(apiKey, NOT_FOUND, "API slug not found");
-
-  const apiKeyIsValid = await apiKey.validate(apiKeyString);
-  throwError(apiKeyIsValid, UNAUTHORIZED, "Invalid api key");
-
-  let session;
-  if (apiKey.sessionId)
-    session = await prismaClient.session.findUnique({
-      where: { id: apiKey.sessionId },
-    });
-  if (!session)
-    session = await prismaClient.session.create({
-      data: {
-        profileId: apiKey.profileId,
-        userAgent: slug,
-        scope: READ_PAGE_SCOPE,
-      },
-    });
-  if (!session.isCurrent())
-    session = await prismaClient.session.update({
-      where: { id: session.id },
-      data: {
-        expiresAt: getNewRefreshTokenExpirationDate(),
-      },
-    });
-
-  const refreshToken = signRefreshToken(session.id);
-  const accessToken = signAccessToken(session.id);
+  const { session, ...tokens } = await connectToApiSession({
+    apiKeySlug,
+    apiKeyString,
+  });
 
   setAuthCookies({
     res,
     sessionExpiresAt: session.expiresAt,
-    refreshToken,
-    accessToken,
+    ...tokens,
   }).sendStatus(OK);
 });
 
 export const refreshToken: RequestHandler = catchErrors(
   async (req, res, next) => {
     const { refreshToken } = req.cookies;
-
     throwError(refreshToken, BAD_REQUEST, "refresh token is required");
 
     const { session, ...tokens } = await refreshAccessToken({ refreshToken });

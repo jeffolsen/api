@@ -20,16 +20,16 @@ export const getProfilesApiKeys: RequestHandler = catchErrors(
   },
 );
 
-interface CreateApiKeyBody {
+interface GenerateApiKeyBody {
   slug: string;
   domain: string;
   value: string;
 }
 
-export const createApiKey: RequestHandler<
+export const generateApiKey: RequestHandler<
   unknown,
   unknown,
-  CreateApiKeyBody,
+  GenerateApiKeyBody,
   unknown
 > = catchErrors(async (req, res, next) => {
   const { profileId } = req;
@@ -62,7 +62,12 @@ export const createApiKey: RequestHandler<
   const apiKeyValue = await prismaClient.apiKey.generateKeyValue();
 
   await prismaClient.apiKey.create({
-    data: { profileId, value: apiKeyValue, slug: apiSlug, domain },
+    data: {
+      profileId,
+      value: apiKeyValue,
+      slug: apiSlug,
+      domain,
+    },
   });
 
   res.status(CREATED).json({ apiKey: apiKeyValue });
@@ -70,7 +75,7 @@ export const createApiKey: RequestHandler<
 
 const apiKeyApi = {
   getProfilesApiKeys,
-  createApiKey,
+  generateApiKey,
 };
 
 export default apiKeyApi;
