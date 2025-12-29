@@ -14,7 +14,7 @@ export const getProfilesApiKeys: RequestHandler = catchErrors(
       where: {
         profileId,
       },
-      omit: { value: true },
+      // omit: { value: true },
     });
 
     res.status(OK).json(apiKeys);
@@ -24,7 +24,7 @@ export const getProfilesApiKeys: RequestHandler = catchErrors(
 interface GenerateApiKeyBody {
   slug: string;
   origin: string;
-  value: string;
+  verificationCode: string;
 }
 
 export const generate: RequestHandler<
@@ -34,7 +34,7 @@ export const generate: RequestHandler<
   unknown
 > = catchErrors(async (req, res, next) => {
   const { profileId } = req;
-  const { slug: apiSlug, value: verificationCode, origin } = req.body;
+  const { slug: apiSlug, verificationCode, origin } = req.body || {};
   throwError(
     apiSlug && verificationCode && origin,
     BAD_REQUEST,
@@ -75,8 +75,8 @@ export const generate: RequestHandler<
 });
 
 interface LoginWithApiKeyBody {
-  slug: string;
-  value: string;
+  apiSlug: string;
+  apiKey: string;
 }
 
 export const connect: RequestHandler<
@@ -85,12 +85,12 @@ export const connect: RequestHandler<
   LoginWithApiKeyBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { slug: apiKeySlug, value: apiKeyString } = req.body;
+  const { apiSlug: apiKeySlug, apiKey: apiKeyString } = req.body;
   const origin = req.get("origin");
   throwError(
     apiKeySlug && apiKeyString,
     BAD_REQUEST,
-    "API slug and API key required",
+    "apiSlug and apiKey required",
   );
 
   const { session, ...tokens } = await connectToApiSession({

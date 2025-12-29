@@ -36,7 +36,8 @@ export const logout: RequestHandler = catchErrors(async (req, res, next) => {
 });
 
 interface logoutAllBody {
-  value: string;
+  verificationCode: string;
+  email: string;
 }
 
 export const logoutAll: RequestHandler<
@@ -45,25 +46,26 @@ export const logoutAll: RequestHandler<
   logoutAllBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { profileId } = req;
-  const { value: verificationCode } = req.body;
-
+  const { email, verificationCode } = req.body || {};
   throwError(verificationCode, BAD_REQUEST, "code is required");
 
+  const profile = await prismaClient.profile.findUnique({ where: { email } });
+  throwError(profile, UNAUTHORIZED, "Invalid credentials");
+
   const usedVerificationCode = await processVerificationCode({
-    profileId,
+    profileId: profile.id,
     value: verificationCode,
     codeType: CodeType.LOGOUT_ALL,
   });
 
-  const sessions = await prismaClient.session.logOutAll(profileId);
+  const sessions = await prismaClient.session.logOutAll(profile.id);
   throwError(sessions?.count, NOT_FOUND, "No sessions found");
 
   setAuthCookies({
     res,
     sessionExpiresAt: new Date(),
-    refreshToken: "invalid",
-    accessToken: "invalid",
+    refreshToken: "expired",
+    accessToken: "expired",
   }).sendStatus(OK);
 });
 

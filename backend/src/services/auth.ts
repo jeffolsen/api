@@ -5,13 +5,12 @@ import {
   verifyRefreshToken,
 } from "../util/jwt";
 import {
-  BAD_REQUEST,
   CONFLICT,
-  INTERNAL_SERVER_ERROR,
   NOT_FOUND,
-  READ_PAGE_SCOPE,
-  TOO_MANY_REQUESTS,
+  BAD_REQUEST,
   UNAUTHORIZED,
+  TOO_MANY_REQUESTS,
+  INTERNAL_SERVER_ERROR,
 } from "../config/constants";
 import throwError from "../util/throwError";
 
@@ -22,20 +21,20 @@ import { API_KEY_SESSION } from "../util/scope";
 
 interface LogInProfileParams {
   profile: Profile;
-  credentials: string;
+  verificationCode: string;
   userAgent?: string;
 }
 
 export const initProfileSession = async ({
   profile,
-  credentials,
+  verificationCode,
   userAgent,
 }: LogInProfileParams) => {
   const { id: profileId } = profile;
 
   const usedVerificationCode = await processVerificationCode({
     profileId,
-    value: credentials,
+    value: verificationCode,
     codeType: CodeType.LOGIN,
   });
 
@@ -82,6 +81,7 @@ export const connectToApiSession = async ({
   const apiKey = await prismaClient.apiKey.findUnique({ where: { slug } });
   throwError(apiKey, NOT_FOUND, "API slug not found");
 
+  console.log("connectToApiSession", value);
   const apiKeyIsValid = await apiKey.validate(value);
   throwError(apiKeyIsValid, UNAUTHORIZED, "Invalid api key");
   throwError(apiKey.origin === origin, UNAUTHORIZED, "Invalid api key");
@@ -154,7 +154,7 @@ export const sendVerificationCode = async ({
 }: SendVerificationCode) => {
   const tooManyVerifcationCodes =
     (await prismaClient.verificationCode.systemDailyMaxExceeded()) ||
-    (await prismaClient.verificationCode.maxExceeded(profileId));
+    (await prismaClient.verificationCode.maxExceeded(profileId, codeType));
   throwError(
     !tooManyVerifcationCodes,
     TOO_MANY_REQUESTS,
@@ -215,13 +215,3 @@ export const processVerificationCode = async ({
 
   return usedVerificationCode;
 };
-
-interface MaintainApiKeySessionParams {
-  slug: string;
-  value: string;
-}
-
-const refreshApiKeySession = async ({
-  slug,
-  value,
-}: MaintainApiKeySessionParams) => {};

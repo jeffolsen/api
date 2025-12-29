@@ -21,8 +21,8 @@ interface RegisterBody {
 
 export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
   catchErrors(async (req, res, next) => {
-    const { email, password: passwordSubmit, confirmPassword } = req.body;
-    const { ["user-agent"]: userAgent } = req.headers;
+    const { email, password: passwordSubmit, confirmPassword } = req.body || {};
+    const { ["user-agent"]: userAgent } = req.headers || {};
 
     throwError(
       email &&
@@ -48,7 +48,8 @@ export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
   });
 
 interface LoginWithVerificationCodeBody {
-  value: string;
+  email: string;
+  verificationCode: string;
 }
 
 export const login: RequestHandler<
@@ -57,8 +58,8 @@ export const login: RequestHandler<
   LoginWithVerificationCodeBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { email, value: verificationCode } = req.body;
-  const { ["user-agent"]: userAgent } = req.headers;
+  const { email, verificationCode } = req.body || {};
+  const { ["user-agent"]: userAgent } = req.headers || {};
   throwError(verificationCode, BAD_REQUEST, "code is required");
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
@@ -66,7 +67,7 @@ export const login: RequestHandler<
 
   const { session, ...tokens } = await initProfileSession({
     profile,
-    credentials: verificationCode,
+    verificationCode,
     userAgent,
   });
 

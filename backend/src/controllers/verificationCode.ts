@@ -8,7 +8,6 @@ import {
   VERIFICATION_CODE_LOGIN_ENDPOINT,
   VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT,
   VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
-  VERIFICATION_CODE_ROUTES,
 } from "../config/constants";
 import { sendVerificationCode } from "../services/auth";
 import throwError from "../util/throwError";
@@ -34,18 +33,18 @@ export const requestVerificationCode: RequestHandler<
   RequestCodeForProfileBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body || {};
   throwError(email && password, BAD_REQUEST, "Email and password are required");
 
   let codeType;
   switch (req.path) {
-    case VERIFICATION_CODE_ROUTES + VERIFICATION_CODE_LOGIN_ENDPOINT:
+    case VERIFICATION_CODE_LOGIN_ENDPOINT:
       codeType = CodeType.LOGIN;
       break;
-    case VERIFICATION_CODE_ROUTES + VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT:
+    case VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT:
       codeType = CodeType.LOGOUT_ALL;
       break;
-    case VERIFICATION_CODE_ROUTES + VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT:
+    case VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT:
       codeType = CodeType.DELETE_PROFILE;
       break;
     default:
@@ -60,7 +59,7 @@ export const requestVerificationCode: RequestHandler<
     "invalid credentials",
   );
 
-  sendVerificationCode({
+  const verificationCode = await sendVerificationCode({
     profileId: profile.id,
     email: profile.email,
     codeType,
@@ -78,16 +77,50 @@ export const requestCodeForPasswordReset: RequestHandler<
   RequestCodeForPasswordResetBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { email } = req.body;
+  const { email } = req.body || {};
   throwError(email, BAD_REQUEST, "email is required");
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(profile, NOT_FOUND, "invalid credentials");
 
-  sendVerificationCode({
+  await sendVerificationCode({
     profileId: profile.id,
     email: profile.email,
     codeType: CodeType.PASSWORD_RESET,
+  });
+
+  res.sendStatus(OK);
+});
+
+interface RequestCodeForApiKeyBody {
+  password: string;
+}
+export const requestCodeForApiKey: RequestHandler<
+  unknown,
+  unknown,
+  RequestCodeForApiKeyBody,
+  unknown
+> = catchErrors(async (req, res, next) => {
+  const { profileId } = req;
+  const { password } = req.body || {};
+
+  console.log("requestCodeForApiKey");
+
+  throwError(password, BAD_REQUEST, "password is required");
+
+  const profile = await prismaClient.profile.findUnique({
+    where: { id: profileId },
+  });
+  throwError(
+    profile && (await profile.comparePassword(password)),
+    NOT_FOUND,
+    "invalid credentials",
+  );
+
+  await sendVerificationCode({
+    profileId: profile.id,
+    email: profile.email,
+    codeType: CodeType.CREATE_API_KEY,
   });
 
   res.sendStatus(OK);
@@ -97,6 +130,7 @@ const verificationCodeApi = {
   getProfileVerificationCodes,
   requestVerificationCode,
   requestCodeForPasswordReset,
+  requestCodeForApiKey,
 };
 
 export default verificationCodeApi;

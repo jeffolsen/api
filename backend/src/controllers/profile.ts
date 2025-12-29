@@ -25,7 +25,7 @@ export const getAuthenticatedProfile: RequestHandler = catchErrors(
 );
 
 interface ResetPasswordBody {
-  value: string;
+  verificationCode: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -37,12 +37,7 @@ export const resetPassword: RequestHandler<
   ResetPasswordBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const {
-    value: verificationCode,
-    email,
-    password,
-    confirmPassword,
-  } = req.body;
+  const { verificationCode, email, password, confirmPassword } = req.body || {};
 
   throwError(
     verificationCode && password && confirmPassword && email,
@@ -70,7 +65,7 @@ export const resetPassword: RequestHandler<
 });
 
 interface deleteProfileBody {
-  value: string;
+  verificationCode: string;
   email: string;
 }
 
@@ -80,13 +75,11 @@ export const deleteProfile: RequestHandler<
   deleteProfileBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { email, value: verificationCode } = req.body;
-  throwError(verificationCode, BAD_REQUEST, "code is required");
-
+  const { email, verificationCode } = req.body || {};
   throwError(
     verificationCode && email,
     BAD_REQUEST,
-    "value, email, password and confirmPassword are required",
+    "verificationCode and email are required",
   );
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });

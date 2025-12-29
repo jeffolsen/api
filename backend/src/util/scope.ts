@@ -9,6 +9,7 @@ import {
   UPDATE_SESSION_SCOPE,
   READ_PAGE_SCOPE,
   CREATE_API_KEY_SCOPE,
+  READ_API_KEY_SCOPE,
 } from "../config/constants";
 import { CodeType } from "../db/client";
 
@@ -19,6 +20,8 @@ export const defaultProfileScope = () =>
     READ_PROFILE_SCOPE,
     READ_SESSION_SCOPE,
     READ_VERIFICATION_CODE_SCOPE,
+    READ_API_KEY_SCOPE,
+    CREATE_API_KEY_SCOPE,
   ]);
 
 export const defaultApiKeyScope = () => createScopeString([READ_PAGE_SCOPE]);

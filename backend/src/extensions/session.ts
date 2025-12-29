@@ -12,7 +12,6 @@ export const sessionExtension = Prisma.defineExtension((client) => {
             ...args,
             data: {
               ...args.data,
-              autoRefresh: false,
               scope: getScope(args.data.scope as ScopeCodeType),
               expiresAt: getNewRefreshTokenExpirationDate(),
             },

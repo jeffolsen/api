@@ -2,7 +2,7 @@ import {
   MAX_DAILY_SYSTEM_EMAILS,
   MAX_PROFILE_CODES,
 } from "../config/constants";
-import { Prisma } from "../generated/prisma/client";
+import { CodeType, Prisma } from "../generated/prisma/client";
 import { StringFieldUpdateOperationsInput } from "../generated/prisma/models";
 import { compareValue, hashValue } from "../util/bcrypt";
 import {
@@ -51,7 +51,12 @@ export const verificationCodeExtension = Prisma.defineExtension((client) => {
             },
           });
         },
-        async maxExceeded(profileId: number) {
+        async maxExceeded(profileId: number, codeType: CodeType) {
+          if (
+            codeType === CodeType.LOGOUT_ALL ||
+            codeType === CodeType.DELETE_PROFILE
+          )
+            return false;
           const verificationCodes = await newClient.verificationCode.findMany({
             where: {
               profileId,
@@ -61,7 +66,7 @@ export const verificationCodeExtension = Prisma.defineExtension((client) => {
             },
             take: MAX_PROFILE_CODES,
           });
-          return verificationCodes.length == MAX_PROFILE_CODES;
+          return verificationCodes.length === MAX_PROFILE_CODES;
         },
         async systemDailyMaxExceeded() {
           const verificationCodes = await newClient.verificationCode.findMany({
@@ -82,7 +87,6 @@ export const verificationCodeExtension = Prisma.defineExtension((client) => {
           needs: { value: true },
           compute(verificationCode) {
             return async (code: string) => {
-              console.log("validate", code, verificationCode.value);
               return await compareValue(code, verificationCode.value);
             };
           },

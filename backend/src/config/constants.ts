@@ -2,6 +2,7 @@ import { SignOptions } from "jsonwebtoken";
 
 // routes
 export const COLLECTION_ENDPOINT = "/";
+export const SELF_ENDPOINT = "/me";
 
 export const AUTH_ROUTES = "/api/auth";
 export const AUTH_REGISTER_ENDPOINT = "/register";
@@ -13,15 +14,15 @@ export const SESSION_LOGOUT_ENDPOINT = "/logout";
 export const SESSION_LOGOUT_ALL_ENDPOINT = "/logout-all";
 
 export const PROFILE_ROUTES = "/api/profiles";
-export const PROFILE_SELF_ENDPOINT = "/me";
 export const PROFILE_PASSWORD_RESET_ENDPOINT = "/password-reset";
-export const PROFILE_DELETE_PROFILE_ENDPOINT = "/delete";
+export const PROFILE_DELETE_PROFILE_ENDPOINT = "/unregister";
 
 export const VERIFICATION_CODE_ROUTES = "/api/codes";
 export const VERIFICATION_CODE_LOGIN_ENDPOINT = "/login";
 export const VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT = "/logout-all";
 export const VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT = "/password-reset";
 export const VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT = "/delete-profile";
+export const VERIFICATION_CREATE_API_KEY_ENDPOINT = "/generate-key";
 
 export const API_KEY_ROUTES = "/api/keys";
 export const API_KEY_GENERATE_ENDPOINT = "/generate";
