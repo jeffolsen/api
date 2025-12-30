@@ -7,6 +7,9 @@ import authRoutes from "./routes/auth";
 import sessionRoutes from "./routes/session";
 import verificationCodeRoutes from "./routes/verificationCode";
 import feedRoutes from "./routes/feed";
+import tagRoutes from "./routes/tag";
+import itemRoutes from "./routes/item";
+import componentRoutes from "./routes/component";
 import apiKeyRoutes from "./routes/apiKey";
 import errorHandler from "./middleware/errorHandler";
 import dynamicCors from "./middleware/cors";
@@ -16,9 +19,12 @@ import authenticate from "./middleware/authenticate";
 import {
   API_KEY_ROUTES,
   AUTH_ROUTES,
+  COMPONENT_ROUTES,
   FEED_ROUTES,
+  ITEM_ROUTES,
   PROFILE_ROUTES,
   SESSION_ROUTES,
+  TAG_ROUTES,
   VERIFICATION_CODE_ROUTES,
 } from "./config/constants";
 
@@ -35,10 +41,11 @@ app.use(AUTH_ROUTES, authRoutes);
 app.use(PROFILE_ROUTES, profileRoutes);
 app.use(API_KEY_ROUTES, apiKeyRoutes);
 app.use(SESSION_ROUTES, sessionRoutes);
-app.use(FEED_ROUTES, authenticate, feedRoutes);
 
-// app.use("/api/items", requiresAuth, () => console.log("items"));
-// app.use("/api/blocks", requiresAuth, () => console.log("blocks"));
+app.use(TAG_ROUTES, authenticate, tagRoutes);
+app.use(ITEM_ROUTES, authenticate, itemRoutes);
+app.use(COMPONENT_ROUTES, authenticate, componentRoutes);
+app.use(FEED_ROUTES, authenticate, feedRoutes);
 
 app.use(errorHandler);
 
