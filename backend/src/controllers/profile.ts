@@ -38,7 +38,6 @@ export const resetPassword: RequestHandler<
   unknown
 > = catchErrors(async (req, res, next) => {
   const { verificationCode, email, password, confirmPassword } = req.body || {};
-
   throwError(
     verificationCode && password && confirmPassword && email,
     BAD_REQUEST,

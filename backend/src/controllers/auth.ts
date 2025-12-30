@@ -22,13 +22,10 @@ interface RegisterBody {
 export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
   catchErrors(async (req, res, next) => {
     const { email, password: passwordSubmit, confirmPassword } = req.body || {};
-    const { ["user-agent"]: userAgent } = req.headers || {};
-
     throwError(
       email &&
         passwordSubmit &&
         confirmPassword &&
-        userAgent &&
         passwordSubmit === confirmPassword,
       BAD_REQUEST,
       "Required fields missing",

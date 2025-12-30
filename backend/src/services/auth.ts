@@ -1,4 +1,4 @@
-import prismaClient, { CodeType, Profile } from "../db/client";
+import prismaClient, { ApiKey, CodeType, Profile } from "../db/client";
 import {
   signAccessToken,
   signRefreshToken,
@@ -11,6 +11,7 @@ import {
   UNAUTHORIZED,
   TOO_MANY_REQUESTS,
   INTERNAL_SERVER_ERROR,
+  FORBIDDEN,
 } from "../config/constants";
 import throwError from "../util/throwError";
 
@@ -42,7 +43,7 @@ export const initProfileSession = async ({
     profileId,
     usedVerificationCode.type,
   );
-  throwError(!tooManySessions, CONFLICT, "Max number of sessions reached");
+  throwError(!tooManySessions, FORBIDDEN, "Max number of sessions reached");
 
   const session = await prismaClient.session.create({
     data: {
@@ -67,54 +68,51 @@ export const initProfileSession = async ({
   };
 };
 
-interface LogInApiKeyParams {
-  apiKeySlug: string;
-  apiKeyString: string;
-  origin?: string;
-}
-
-export const connectToApiSession = async ({
-  apiKeySlug: slug,
-  apiKeyString: value,
-  origin,
-}: LogInApiKeyParams) => {
-  const apiKey = await prismaClient.apiKey.findUnique({ where: { slug } });
-  throwError(apiKey, NOT_FOUND, "API slug not found");
-
-  const apiKeyIsValid = await apiKey.validate(value);
-  throwError(apiKeyIsValid, UNAUTHORIZED, "Invalid api key");
-  // throwError(apiKey.origin, UNAUTHORIZED, "Invalid api key");
-  throwError(apiKey.origin === origin, UNAUTHORIZED, "Invalid api key");
+export const connectToApiSession = async (apiKey: ApiKey) => {
+  const { slug, origin, sessionId, profileId, id: apiKeyId } = apiKey;
+  throwError(slug && origin, BAD_REQUEST, "slug and origin are required");
 
   let session;
-  if (apiKey.sessionId)
+  if (sessionId)
     session = await prismaClient.session.findUnique({
-      where: { id: apiKey.sessionId },
+      where: { id: sessionId },
     });
+
+  const needToExtendTheSession = !session?.isCurrent();
+  throwError(needToExtendTheSession, FORBIDDEN, "session is still current");
+
   if (!session) {
     session = await prismaClient.session.create({
       data: {
-        profileId: apiKey.profileId,
-        apiKeyId: apiKey.id,
+        profileId: profileId,
+        apiKeyId: apiKeyId,
         userAgent: slug,
         scope: API_KEY_SESSION,
       },
     });
-    await prismaClient.apiKey.update({
+    apiKey = await prismaClient.apiKey.update({
       where: { slug },
       data: { sessionId: session.id },
     });
   }
 
-  if (!session.isCurrent())
+  const sessionIsntCurrent = !session.isCurrent();
+  const sessionNeedsApiKeyId = session.apiKeyId !== apiKeyId;
+
+  if (sessionIsntCurrent || sessionNeedsApiKeyId)
     session = await prismaClient.session.update({
       where: { id: session.id },
       data: {
-        expiresAt: getNewRefreshTokenExpirationDate(),
+        ...(sessionIsntCurrent && {
+          expiresAt: getNewRefreshTokenExpirationDate(),
+        }),
+        ...(sessionNeedsApiKeyId && {
+          apiKeyId,
+        }),
       },
     });
 
-  const refreshToken = signRefreshToken(session.id, apiKey.origin);
+  const refreshToken = signRefreshToken(session.id, origin);
   const accessToken = signAccessToken(session.id);
 
   return {

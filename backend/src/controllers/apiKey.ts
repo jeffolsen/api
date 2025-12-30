@@ -1,12 +1,18 @@
 import { RequestHandler } from "express";
 import catchErrors from "../util/catchErrors";
-import { BAD_REQUEST, CONFLICT, CREATED, OK } from "../config/constants";
+import {
+  BAD_REQUEST,
+  CONFLICT,
+  CREATED,
+  FORBIDDEN,
+  NOT_FOUND,
+  OK,
+  UNAUTHORIZED,
+} from "../config/constants";
 import prismaClient, { CodeType } from "../db/client";
 import throwError from "../util/throwError";
 import { connectToApiSession, processVerificationCode } from "../services/auth";
 import { setAuthCookies } from "../util/cookie";
-import { create } from "domain";
-import { API_KEY_SESSION } from "../util/scope";
 
 export const getProfilesApiKeys: RequestHandler = catchErrors(
   async (req, res, next) => {
@@ -44,7 +50,7 @@ export const generate: RequestHandler<
   );
 
   const tooManyApiKeys = await prismaClient.apiKey.maxExceeded(profileId);
-  throwError(!tooManyApiKeys, CONFLICT, "Max number of apikeys reached");
+  throwError(!tooManyApiKeys, FORBIDDEN, "Max number of apikeys reached");
 
   const validSlug = await prismaClient.apiKey.checkSlug(apiSlug);
   throwError(validSlug, BAD_REQUEST, "Slug format not allowed");
@@ -87,19 +93,25 @@ export const connect: RequestHandler<
   LoginWithApiKeyBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { apiSlug: apiKeySlug, apiKey: apiKeyString } = req.body;
+  const { apiSlug, apiKey: apiKeyString } = req.body;
   const origin = req.get("origin");
   throwError(
-    apiKeySlug && apiKeyString,
+    apiSlug && apiKeyString,
     BAD_REQUEST,
     "apiSlug and apiKey required",
   );
-
-  const { session, ...tokens } = await connectToApiSession({
-    apiKeySlug,
-    apiKeyString,
-    origin,
+  const apiKey = await prismaClient.apiKey.findUnique({
+    where: { slug: apiSlug },
   });
+  throwError(apiKey, NOT_FOUND, "API slug not found");
+
+  const originMatch = apiKey.origin === origin;
+  throwError(originMatch, UNAUTHORIZED, "Invalid origin");
+
+  const apiKeyIsValid = await apiKey.validate(apiKeyString);
+  throwError(apiKeyIsValid, UNAUTHORIZED, "Invalid api key");
+
+  const { session, ...tokens } = await connectToApiSession(apiKey);
 
   setAuthCookies({
     res,

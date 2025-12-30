@@ -104,8 +104,6 @@ export const requestCodeForApiKey: RequestHandler<
   const { profileId } = req;
   const { password } = req.body || {};
 
-  console.log("requestCodeForApiKey");
-
   throwError(password, BAD_REQUEST, "password is required");
 
   const profile = await prismaClient.profile.findUnique({
