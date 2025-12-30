@@ -3,6 +3,7 @@ import { SignOptions } from "jsonwebtoken";
 // routes
 export const COLLECTION_ENDPOINT = "/";
 export const SELF_ENDPOINT = "/me";
+export const ID_ENDPOINT = "/:id";
 
 export const AUTH_ROUTES = "/api/auth";
 export const AUTH_REGISTER_ENDPOINT = "/register";
@@ -29,16 +30,40 @@ export const API_KEY_GENERATE_ENDPOINT = "/generate";
 export const API_KEY_PUBLIC_ENDPOINT = "/public";
 
 export const FEED_ROUTES = "/api/feeds";
+export const TAG_ROUTES = "/api/tags";
+export const ITEM_ROUTES = "/api/items";
+export const COMPONENT_ROUTES = "/api/components";
 
-// scopes
+// profile scopes
 export const READ_PROFILE_SCOPE = "read:profile";
 export const UPDATE_PROFILE_SCOPE = "update:profile";
+// verificationCode scopes
 export const READ_VERIFICATION_CODE_SCOPE = "read:verificationCode";
+// session scopes
 export const READ_SESSION_SCOPE = "read:session";
 export const UPDATE_SESSION_SCOPE = "update:session";
-export const READ_FEED_SCOPE = "read:page";
+// api key scopes
 export const READ_API_KEY_SCOPE = "read:apiKey";
-
+// tag scopes
+export const READ_TAG_SCOPE = "read:tag";
+export const CREATE_TAG_SCOPE = "create:tag";
+export const UPDATE_TAG_SCOPE = "update:tag";
+export const DELETE_TAG_SCOPE = "delete:tag";
+// item scopes
+export const READ_ITEM_SCOPE = "read:item";
+export const CREATE_ITEM_SCOPE = "create:item";
+export const UPDATE_ITEM_SCOPE = "update:item";
+export const DELETE_ITEM_SCOPE = "delete:item";
+// component scopes
+export const READ_COMPONENT_SCOPE = "read:component";
+export const CREATE_COMPONENT_SCOPE = "create:component";
+export const UPDATE_COMPONENT_SCOPE = "update:component";
+export const DELETE_COMPONENT_SCOPE = "delete:component";
+// feed scopes
+export const READ_FEED_SCOPE = "read:feed";
+export const CREATE_FEED_SCOPE = "create:feed";
+export const UPDATE_FEED_SCOPE = "update:feed";
+export const DELETE_FEED_SCOPE = "delete:feed";
 // auth scopes
 export const LOGOUT_ALL_SCOPE = "auth:logout-all";
 export const PASSWORD_RESET_SCOPE = "auth:update-password";
