@@ -24,6 +24,7 @@ model Profile {
   verificationCodes VerificationCode[] @relation("SessionCodes")
   apiKeys           ApiKey[]           @relation("ProfileApiKeys")
   feeds             Feed[]             @relation("ProfileFeeds")
+  items             Item[]             @relation("ProfileItems")
 
   @@map("profiles")
 }
@@ -102,11 +103,11 @@ model Component {
   id        Int           @id @default(autoincrement())
   type      ComponentType @default(BASIC_BLOCK)
   title     String?
-  content   String?
+  config    Json          @default("{}")
   createdAt DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
-  feed      Feed?         @relation("FeedComponents", fields: [feedId], references: [id], onDelete: Cascade)
-  feedId    Int?
+  feed      Feed          @relation("FeedComponents", fields: [feedId], references: [id], onDelete: Cascade)
+  feedId    Int
 
   @@map("components")
 }
@@ -118,6 +119,17 @@ model Item {
   content   String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  author    Profile? @relation("ProfileItems", fields: [authorId], references: [id], onDelete: SetNull)
+  authorId  Int?
+  tags      Tag[]
 
   @@map("items")
+}
+
+model Tag {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  items Item[]
+
+  @@map("tags")
 }
