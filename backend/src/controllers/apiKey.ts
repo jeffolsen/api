@@ -5,6 +5,8 @@ import prismaClient, { CodeType } from "../db/client";
 import throwError from "../util/throwError";
 import { connectToApiSession, processVerificationCode } from "../services/auth";
 import { setAuthCookies } from "../util/cookie";
+import { create } from "domain";
+import { API_KEY_SESSION } from "../util/scope";
 
 export const getProfilesApiKeys: RequestHandler = catchErrors(
   async (req, res, next) => {
@@ -14,7 +16,7 @@ export const getProfilesApiKeys: RequestHandler = catchErrors(
       where: {
         profileId,
       },
-      // omit: { value: true },
+      omit: { value: true },
     });
 
     res.status(OK).json(apiKeys);

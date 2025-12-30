@@ -1,4 +1,4 @@
-import { MAX_PROFILE_APIKEYS } from "../config/constants";
+import { MAX_PROFILE_API_KEYS } from "../config/constants";
 import { Prisma } from "../generated/prisma/client";
 import { compareValue, hashValue } from "../util/bcrypt";
 import { randomUUID } from "node:crypto";
@@ -35,9 +35,9 @@ export const apiKeyExtension = Prisma.defineExtension((client) => {
             where: {
               profileId,
             },
-            take: MAX_PROFILE_APIKEYS,
+            take: MAX_PROFILE_API_KEYS,
           });
-          return apiKeys.length == MAX_PROFILE_APIKEYS;
+          return apiKeys.length == MAX_PROFILE_API_KEYS;
         },
         async checkSlug(slug: string) {
           const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -62,6 +62,7 @@ export const apiKeyExtension = Prisma.defineExtension((client) => {
           needs: { value: true },
           compute(apiKey) {
             return async (value: string) => {
+              console.log(value, apiKey?.value);
               return (
                 !!apiKey?.value && (await compareValue(value, apiKey.value))
               );

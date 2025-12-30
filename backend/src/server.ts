@@ -6,13 +6,17 @@ import profileRoutes from "./routes/profile";
 import authRoutes from "./routes/auth";
 import sessionRoutes from "./routes/session";
 import verificationCodeRoutes from "./routes/verificationCode";
+import feedRoutes from "./routes/feed";
 import apiKeyRoutes from "./routes/apiKey";
 import errorHandler from "./middleware/errorHandler";
 import dynamicCors from "./middleware/cors";
 import env from "./config/env";
+import authenticate from "./middleware/authenticate";
+
 import {
   API_KEY_ROUTES,
   AUTH_ROUTES,
+  FEED_ROUTES,
   PROFILE_ROUTES,
   SESSION_ROUTES,
   VERIFICATION_CODE_ROUTES,
@@ -31,9 +35,9 @@ app.use(AUTH_ROUTES, authRoutes);
 app.use(PROFILE_ROUTES, profileRoutes);
 app.use(API_KEY_ROUTES, apiKeyRoutes);
 app.use(SESSION_ROUTES, sessionRoutes);
+app.use(FEED_ROUTES, authenticate, feedRoutes);
 
 // app.use("/api/items", requiresAuth, () => console.log("items"));
-// app.use("/api/pages", requiresAuth, () => console.log("pages"));
 // app.use("/api/blocks", requiresAuth, () => console.log("blocks"));
 
 app.use(errorHandler);

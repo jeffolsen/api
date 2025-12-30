@@ -81,9 +81,9 @@ export const connectToApiSession = async ({
   const apiKey = await prismaClient.apiKey.findUnique({ where: { slug } });
   throwError(apiKey, NOT_FOUND, "API slug not found");
 
-  console.log("connectToApiSession", value);
   const apiKeyIsValid = await apiKey.validate(value);
   throwError(apiKeyIsValid, UNAUTHORIZED, "Invalid api key");
+  // throwError(apiKey.origin, UNAUTHORIZED, "Invalid api key");
   throwError(apiKey.origin === origin, UNAUTHORIZED, "Invalid api key");
 
   let session;
@@ -91,14 +91,21 @@ export const connectToApiSession = async ({
     session = await prismaClient.session.findUnique({
       where: { id: apiKey.sessionId },
     });
-  if (!session)
+  if (!session) {
     session = await prismaClient.session.create({
       data: {
         profileId: apiKey.profileId,
+        apiKeyId: apiKey.id,
         userAgent: slug,
         scope: API_KEY_SESSION,
       },
     });
+    await prismaClient.apiKey.update({
+      where: { slug },
+      data: { sessionId: session.id },
+    });
+  }
+
   if (!session.isCurrent())
     session = await prismaClient.session.update({
       where: { id: session.id },

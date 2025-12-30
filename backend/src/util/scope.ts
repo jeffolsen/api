@@ -7,7 +7,7 @@ import {
   READ_SESSION_SCOPE,
   READ_VERIFICATION_CODE_SCOPE,
   UPDATE_SESSION_SCOPE,
-  READ_PAGE_SCOPE,
+  READ_FEED_SCOPE,
   CREATE_API_KEY_SCOPE,
   READ_API_KEY_SCOPE,
 } from "../config/constants";
@@ -24,7 +24,7 @@ export const defaultProfileScope = () =>
     CREATE_API_KEY_SCOPE,
   ]);
 
-export const defaultApiKeyScope = () => createScopeString([READ_PAGE_SCOPE]);
+export const defaultApiKeyScope = () => createScopeString([READ_FEED_SCOPE]);
 
 export const API_KEY_SESSION = "API_KEY_SESSION";
 export type ScopeCodeType = CodeType | typeof API_KEY_SESSION;

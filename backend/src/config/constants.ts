@@ -28,13 +28,15 @@ export const API_KEY_ROUTES = "/api/keys";
 export const API_KEY_GENERATE_ENDPOINT = "/generate";
 export const API_KEY_PUBLIC_ENDPOINT = "/public";
 
+export const FEED_ROUTES = "/api/feeds";
+
 // scopes
 export const READ_PROFILE_SCOPE = "read:profile";
 export const UPDATE_PROFILE_SCOPE = "update:profile";
 export const READ_VERIFICATION_CODE_SCOPE = "read:verificationCode";
 export const READ_SESSION_SCOPE = "read:session";
 export const UPDATE_SESSION_SCOPE = "update:session";
-export const READ_PAGE_SCOPE = "read:page";
+export const READ_FEED_SCOPE = "read:page";
 export const READ_API_KEY_SCOPE = "read:apiKey";
 
 // auth scopes
@@ -60,8 +62,8 @@ export const INTERNAL_SERVER_ERROR = 500;
 export const MAX_DAILY_SYSTEM_EMAILS = 2800;
 export const MAX_MONTHLY_SYSTEM_EMAILS = 90;
 export const MAX_PROFILE_SESSIONS = 5;
-export const MAX_PROFILE_CODES = 4;
-export const MAX_PROFILE_APIKEYS = 4;
+export const MAX_PROFILE_CODES = 10;
+export const MAX_PROFILE_API_KEYS = 4;
 
 // 4 days in ms
 export const SESSION_TOKEN_LIFESPAN = 4 * 24 * 60 * 60 * 1000;

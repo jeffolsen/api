@@ -86,6 +86,7 @@ model ApiKey {
 
 model Feed {
   id         Int         @id @default(autoincrement())
+  path       String      @unique
   profileId  Int
   profile    Profile     @relation("ProfileFeeds", fields: [profileId], references: [id], onDelete: Cascade)
   components Component[] @relation("FeedComponents")
