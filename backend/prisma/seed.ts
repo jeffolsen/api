@@ -1,16 +1,18 @@
-import prismaClient from "../src/db/client";
+import prismaClient, { TagName } from "../src/db/client";
 
 async function main() {
-  const test = await prismaClient.profile.upsert({
-    where: { email: "test@test.com" },
-    update: {},
-    create: {
-      email: "test@test.com",
-      password: "testword",
-    },
+  const seedTag = async (name: TagName) => {
+    await prismaClient.tag.upsert({
+      where: { name },
+      update: {},
+      create: {
+        name,
+      },
+    });
+  };
+  Object.keys(TagName).forEach((t) => {
+    seedTag(t as TagName);
   });
-
-  console.log(`Seeded profile: ${test.email}`);
 }
 
 main()

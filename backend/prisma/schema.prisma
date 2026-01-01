@@ -126,9 +126,24 @@ model Item {
   @@map("items")
 }
 
+enum TagName {
+  PERSON
+  PLACE
+  THING
+  PAST
+  PRESENT
+  FUTURE
+  RED
+  BLUE
+  GREEN
+  FOO
+  BAR
+  BAZ
+}
+
 model Tag {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
+  id    Int     @id @default(autoincrement())
+  name  TagName @unique
   items Item[]
 
   @@map("tags")
