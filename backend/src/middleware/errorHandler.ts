@@ -1,16 +1,20 @@
 import { ErrorRequestHandler } from "express";
 import { isHttpError } from "http-errors";
-import { INTERNAL_SERVER_ERROR } from "../config/constants";
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../config/constants";
+import { z } from "zod";
 
 const errorHandler: ErrorRequestHandler = async (error, req, res, next) => {
   console.log(`PATH ${req.path}`, error);
-  let message = "internal server error";
+  let errors = [{ message: "internal server error" }];
   let status = INTERNAL_SERVER_ERROR;
 
-  if (isHttpError(error)) {
+  if (error instanceof z.ZodError) {
+    status = BAD_REQUEST;
+    errors = JSON.parse(error.message);
+  } else if (isHttpError(error)) {
     status = error.status;
-    message = error.message;
+    errors = [{ message: error.message }];
   }
-  res.status(status).json({ message });
+  res.status(status).json({ errors });
 };
 export default errorHandler;

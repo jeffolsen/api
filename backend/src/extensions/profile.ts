@@ -1,64 +1,47 @@
 import { EMAIL_REGEX, PASSWORD_REGEX } from "../config/constants";
 import { Prisma } from "../generated/prisma/client";
-import { StringFieldUpdateOperationsInput } from "../generated/prisma/models";
 import { compareValue, hashValue } from "../util/bcrypt";
+import { z } from "zod";
 
-const hashPassword = async (
-  password: string | StringFieldUpdateOperationsInput | undefined,
-) => {
-  let p = "";
-  if (typeof password === "string") {
-    p = await hashValue(password);
-  }
-  return { password: p };
-};
+export const ProfileCreateInput = z.object({
+  email: z.email("Invalid email format"),
+  password: z
+    .string("Invalid password format")
+    .regex(PASSWORD_REGEX, "Invalid password format")
+    .pipe(z.transform(async (val) => await hashValue(val))),
+}) satisfies z.Schema<Prisma.ProfileCreateInput>;
+
+export const ProfileUpdateInput = ProfileCreateInput.pick({
+  password: true,
+});
+
+export const ProfileGetWhere = z.union([
+  z.object({
+    id: z.number("Invalid id"),
+  }),
+  z.object({
+    email: z.email("Invalid email format"),
+  }),
+]);
 
 export const profileExtension = Prisma.defineExtension((client) => {
   const newClient = client.$extends({
     query: {
       profile: {
         async create({ model, operation, args, query }) {
-          const passwordOptions = await hashPassword(args.data.password);
-
-          const result = await query({
-            ...args,
-            data: {
-              ...args.data,
-              ...(!!passwordOptions.password && passwordOptions),
-            },
-          });
+          args.data = await ProfileCreateInput.parseAsync(args.data);
+          const result = await query(args);
           return result;
         },
         async update({ model, operation, args, query }) {
-          const passwordOptions = await hashPassword(args.data.password);
-          const { email, ...data } = args.data;
-
-          const result = await query({
-            ...args,
-            data: {
-              ...data,
-              ...(!!passwordOptions.password && passwordOptions),
-            },
-          });
+          args.data = await ProfileUpdateInput.parseAsync(args.data);
+          const result = await query(args);
           return result;
         },
-      },
-    },
-    model: {
-      profile: {
-        isValidEmailFormat(email: string) {
-          try {
-            return EMAIL_REGEX.test(email);
-          } catch (error) {
-            return false;
-          }
-        },
-        isValidPasswordFormat(password: string) {
-          try {
-            return PASSWORD_REGEX.test(password);
-          } catch (error) {
-            return false;
-          }
+        async findUnique({ model, operation, args, query }) {
+          args.where = ProfileGetWhere.parse(args.where);
+          const result = await query(args);
+          return result;
         },
       },
     },

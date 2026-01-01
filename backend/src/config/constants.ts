@@ -84,6 +84,15 @@ export const UNPROCESSABLE_CONTENT = 422;
 export const TOO_MANY_REQUESTS = 429;
 export const INTERNAL_SERVER_ERROR = 500;
 
+// error messages
+export const INVALID_ID = "invalid id";
+export const INVALID_CODE_TYPE = "invalid code type";
+export const INVALID_CODE_VALUE = "invalid code value";
+export const INVALID_CODE_USED_AT_FORMAT = "invalid code usedAt date";
+export const INVALID_PROFILE_ID = "invalid profile id";
+export const INVALID_SESSION_ID = "invalid session id";
+export const INVALID_SESSION_USER_AGENT = "invalid session user-agent";
+
 // resource limits
 export const MAX_DAILY_SYSTEM_EMAILS = 2800;
 export const MAX_MONTHLY_SYSTEM_EMAILS = 90;

@@ -16,7 +16,6 @@ describe("compareValue", () => {
   it("should return true when comparing original string with hashed string", async () => {
     const password = "password123";
     const hashedPassword = await hashValue(password);
-
     expect(await compareValue(password, hashedPassword)).toBe(true);
   });
   it("should return false when comparing incorrect string with hashed string", async () => {

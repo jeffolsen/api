@@ -1,7 +1,4 @@
 import {
-  LOGOUT_ALL_SCOPE,
-  PASSWORD_RESET_SCOPE,
-  DELETE_PROFILE_SCOPE,
   READ_PROFILE_SCOPE,
   UPDATE_PROFILE_SCOPE,
   READ_SESSION_SCOPE,
@@ -11,7 +8,6 @@ import {
   CREATE_API_KEY_SCOPE,
   READ_API_KEY_SCOPE,
 } from "../config/constants";
-import { CodeType } from "../db/client";
 
 export const defaultProfileScope = () =>
   createScopeString([
@@ -27,23 +23,16 @@ export const defaultProfileScope = () =>
 export const defaultApiKeyScope = () => createScopeString([READ_FEED_SCOPE]);
 
 export const API_KEY_SESSION = "API_KEY_SESSION";
-export type ScopeCodeType = CodeType | typeof API_KEY_SESSION;
+export const PROFILE_SESSION = "PROFILE_SESSION";
+export type ScopeType = typeof API_KEY_SESSION | typeof PROFILE_SESSION;
 
-export const getScope = (scopeCode: ScopeCodeType) => {
+export const getScope = (scopeCode: ScopeType) => {
   const authScope =
     scopeCode === API_KEY_SESSION
       ? defaultApiKeyScope()
-      : scopeCode === CodeType.LOGIN
+      : scopeCode === PROFILE_SESSION
         ? defaultProfileScope()
-        : scopeCode === CodeType.LOGOUT_ALL
-          ? LOGOUT_ALL_SCOPE
-          : scopeCode === CodeType.PASSWORD_RESET
-            ? PASSWORD_RESET_SCOPE
-            : scopeCode === CodeType.DELETE_PROFILE
-              ? DELETE_PROFILE_SCOPE
-              : scopeCode === CodeType.CREATE_API_KEY
-                ? CREATE_API_KEY_SCOPE
-                : "";
+        : "";
   return authScope ? createScopeString([authScope]) : authScope;
 };
 

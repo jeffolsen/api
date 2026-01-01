@@ -49,17 +49,10 @@ export const logoutAll: RequestHandler<
   const { email, verificationCode } = req.body || {};
   throwError(verificationCode, BAD_REQUEST, "code is required");
 
-  const isValidCodeFormat =
-    prismaClient.verificationCode.isValidCodeFormat(verificationCode);
-  throwError(isValidCodeFormat, BAD_REQUEST, "Invalid code format");
-
-  const isValidEmailFormat = prismaClient.profile.isValidEmailFormat(email);
-  throwError(isValidEmailFormat, BAD_REQUEST, "Invalid email format");
-
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(profile, UNAUTHORIZED, "Invalid credentials");
 
-  const usedVerificationCode = await processVerificationCode({
+  await processVerificationCode({
     profileId: profile.id,
     value: verificationCode,
     codeType: CodeType.LOGOUT_ALL,

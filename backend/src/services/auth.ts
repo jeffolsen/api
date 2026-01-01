@@ -18,7 +18,7 @@ import throwError from "../util/throwError";
 import sendEmail from "../util/sendEmail";
 import generateCode from "../util/generateCode";
 import { getNewRefreshTokenExpirationDate } from "../util/date";
-import { API_KEY_SESSION } from "../util/scope";
+import { API_KEY_SESSION, PROFILE_SESSION } from "../util/scope";
 
 interface LogInProfileParams {
   profile: Profile;
@@ -49,7 +49,7 @@ export const initProfileSession = async ({
     data: {
       profileId,
       userAgent: userAgent || "",
-      scope: usedVerificationCode.type,
+      scope: PROFILE_SESSION,
       verificationCodes: {
         connect: {
           id: usedVerificationCode.id,
@@ -200,6 +200,7 @@ export const processVerificationCode = async ({
     where: {
       profileId,
       usedAt: null,
+      type: codeType,
       expiresAt: { gt: new Date() },
     },
     orderBy: { createdAt: "desc" },
@@ -211,11 +212,6 @@ export const processVerificationCode = async ({
 
   const usedVerificationCode = await prismaClient.verificationCode.use(
     verificationCode.id,
-  );
-  throwError(
-    usedVerificationCode?.type === codeType,
-    UNAUTHORIZED,
-    "Invalid credentials",
   );
 
   return usedVerificationCode;

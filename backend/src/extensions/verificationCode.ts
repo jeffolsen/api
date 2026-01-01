@@ -1,42 +1,75 @@
 import {
+  INVALID_CODE_TYPE,
+  INVALID_CODE_VALUE,
+  INVALID_PROFILE_ID,
+  INVALID_CODE_USED_AT_FORMAT,
   MAX_DAILY_SYSTEM_EMAILS,
   MAX_PROFILE_CODES,
   NUMERIC_CODE_REGEX,
 } from "../config/constants";
 import { CodeType, Prisma } from "../generated/prisma/client";
-import { StringFieldUpdateOperationsInput } from "../generated/prisma/models";
 import { compareValue, hashValue } from "../util/bcrypt";
 import {
   getNewVerificationCodeExpirationDate,
   getVerificationCodeExpirationWindow,
   oneDayAgo,
 } from "../util/date";
+import { z } from "zod";
 
-const hashCode = async (
-  code: string | StringFieldUpdateOperationsInput | undefined,
-) => {
-  let v = "";
-  if (typeof code === "string") {
-    v = await hashValue(code);
-  }
-  return { value: v };
-};
+export const VerificationCodeInput = z.object({
+  type: z.enum(CodeType, INVALID_CODE_TYPE).optional(),
+  value: z
+    .string(INVALID_CODE_VALUE)
+    .regex(NUMERIC_CODE_REGEX, INVALID_CODE_VALUE)
+    .pipe(z.transform(async (val) => await hashValue(val))),
+  usedAt: z.date(INVALID_CODE_USED_AT_FORMAT).nullish(),
+  profileId: z.number().nullish(),
+  sessionId: z.number().nullish(),
+}) satisfies z.Schema<Prisma.VerificationCodeCreateInput>;
+
+export const VerificationCodeFindWhere = z.looseObject(
+  (
+    z.object({
+      type: z.enum(CodeType, INVALID_CODE_TYPE).optional(),
+      profileId: z.number(INVALID_PROFILE_ID).optional(),
+    }) satisfies z.Schema<Prisma.VerificationCodeScalarWhereInput>
+  ).shape,
+);
+
+export const VerificationCodeCreateInput = VerificationCodeInput.pick({
+  type: true,
+  value: true,
+  profileId: true,
+  sessionId: true,
+});
+
+export const VerificationCodeUpdateInput = VerificationCodeInput.pick({
+  usedAt: true,
+});
 
 export const verificationCodeExtension = Prisma.defineExtension((client) => {
   const newClient = client.$extends({
     query: {
       verificationCode: {
         async create({ model, operation, args, query }) {
-          const valueOptions = await hashCode(args.data.value);
-
-          const result = await query({
-            ...args,
-            data: {
-              ...args.data,
-              ...(!!valueOptions.value && valueOptions),
-              expiresAt: getNewVerificationCodeExpirationDate(),
-            },
-          });
+          args.data = await VerificationCodeCreateInput.parseAsync(args.data);
+          args.data.expiresAt = getNewVerificationCodeExpirationDate();
+          const result = await query(args);
+          return result;
+        },
+        async update({ model, operation, args, query }) {
+          args.data = await VerificationCodeUpdateInput.parseAsync(args.data);
+          const result = await query(args);
+          return result;
+        },
+        async findFirst({ model, operation, args, query }) {
+          args.where = VerificationCodeFindWhere.parse(args.where);
+          const result = await query(args);
+          return result;
+        },
+        async findMany({ model, operation, args, query }) {
+          args.where = VerificationCodeFindWhere.parse(args.where);
+          const result = await query(args);
           return result;
         },
       },
@@ -78,13 +111,6 @@ export const verificationCodeExtension = Prisma.defineExtension((client) => {
             take: MAX_DAILY_SYSTEM_EMAILS,
           });
           return verificationCodes.length == MAX_DAILY_SYSTEM_EMAILS;
-        },
-        isValidCodeFormat(code: string) {
-          try {
-            return NUMERIC_CODE_REGEX.test(code);
-          } catch (error) {
-            return false;
-          }
         },
       },
     },

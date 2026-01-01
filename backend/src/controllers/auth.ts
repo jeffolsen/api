@@ -8,7 +8,6 @@ import {
   CONFLICT,
   BAD_REQUEST,
   UNAUTHORIZED,
-  INTERNAL_SERVER_ERROR,
 } from "../config/constants";
 import throwError from "../util/throwError";
 import prismaClient from "../db/client";
@@ -28,29 +27,21 @@ export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
       BAD_REQUEST,
       "Required fields missing",
     );
-    const isValidEmailFormat = prismaClient.profile.isValidEmailFormat(email);
-    throwError(isValidEmailFormat, BAD_REQUEST, "Invalid email format");
 
-    const isValidPasswordFormat =
-      prismaClient.profile.isValidPasswordFormat(password);
-    throwError(isValidPasswordFormat, BAD_REQUEST, "Invalid password format");
-
-    const passwordMatch = password === confirmPassword;
     throwError(
-      passwordMatch,
+      password === confirmPassword,
       BAD_REQUEST,
       "Password and confirmPassword must match",
     );
 
-    const emailNotFound = !(await prismaClient.profile.findUnique({
+    const emailFound = await prismaClient.profile.findUnique({
       where: { email },
-    }));
-    throwError(emailNotFound, CONFLICT, "Email already taken");
+    });
+    throwError(!emailFound, CONFLICT, "Email already taken");
 
-    const profile = await prismaClient.profile.create({
+    await prismaClient.profile.create({
       data: { email, password },
     });
-    throwError(profile, INTERNAL_SERVER_ERROR, "Something went wrong");
 
     res.sendStatus(CREATED);
   });
@@ -71,13 +62,6 @@ export const login: RequestHandler<
   const { ["user-agent"]: userAgent } = req.headers || {};
   throwError(verificationCode, BAD_REQUEST, "code is required");
 
-  const isValidEmailFormat = prismaClient.profile.isValidEmailFormat(email);
-  throwError(isValidEmailFormat, BAD_REQUEST, "Invalid email format");
-
-  const isValidCodeFormat =
-    prismaClient.verificationCode.isValidCodeFormat(verificationCode);
-  throwError(isValidCodeFormat, BAD_REQUEST, "Invalid code format");
-
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(profile, UNAUTHORIZED, "Invalid credentials");
 
@@ -96,7 +80,7 @@ export const login: RequestHandler<
 
 export const refresh: RequestHandler = catchErrors(async (req, res, next) => {
   const { refreshToken } = req.cookies;
-  throwError(refreshToken, BAD_REQUEST, "refresh token is required");
+  throwError(refreshToken, UNAUTHORIZED, "unauthorized");
 
   const { session, ...tokens } = await refreshAccessToken({ refreshToken });
 
