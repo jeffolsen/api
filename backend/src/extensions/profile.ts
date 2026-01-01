@@ -1,3 +1,4 @@
+import { EMAIL_REGEX, PASSWORD_REGEX } from "../config/constants";
 import { Prisma } from "../generated/prisma/client";
 import { StringFieldUpdateOperationsInput } from "../generated/prisma/models";
 import { compareValue, hashValue } from "../util/bcrypt";
@@ -44,7 +45,22 @@ export const profileExtension = Prisma.defineExtension((client) => {
       },
     },
     model: {
-      profile: {},
+      profile: {
+        isValidEmailFormat(email: string) {
+          try {
+            return EMAIL_REGEX.test(email);
+          } catch (error) {
+            return false;
+          }
+        },
+        isValidPasswordFormat(password: string) {
+          try {
+            return PASSWORD_REGEX.test(password);
+          } catch (error) {
+            return false;
+          }
+        },
+      },
     },
     result: {
       profile: {

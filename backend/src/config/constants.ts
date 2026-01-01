@@ -31,6 +31,7 @@ export const API_KEY_PUBLIC_ENDPOINT = "/public";
 
 export const FEED_ROUTES = "/api/feeds";
 export const TAG_ROUTES = "/api/tags";
+export const TAG_NAME_ENDPOINT = "/:name";
 export const ITEM_ROUTES = "/api/items";
 export const COMPONENT_ROUTES = "/api/components";
 
@@ -102,3 +103,10 @@ export const ACCESS_TOKEN_OPTIONS = {
 } as SignOptions;
 // 8 hours in ms
 export const VERIFICATION_CODE_LIFESPAN = 8 * 60 * 60 * 1000;
+
+// regex
+export const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+export const PASSWORD_REGEX =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
+export const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+export const NUMERIC_CODE_REGEX = /^\d{6}/;

@@ -1,6 +1,7 @@
 import {
   MAX_DAILY_SYSTEM_EMAILS,
   MAX_PROFILE_CODES,
+  NUMERIC_CODE_REGEX,
 } from "../config/constants";
 import { CodeType, Prisma } from "../generated/prisma/client";
 import { StringFieldUpdateOperationsInput } from "../generated/prisma/models";
@@ -23,7 +24,6 @@ const hashCode = async (
 
 export const verificationCodeExtension = Prisma.defineExtension((client) => {
   const newClient = client.$extends({
-    // client: {},
     query: {
       verificationCode: {
         async create({ model, operation, args, query }) {
@@ -78,6 +78,13 @@ export const verificationCodeExtension = Prisma.defineExtension((client) => {
             take: MAX_DAILY_SYSTEM_EMAILS,
           });
           return verificationCodes.length == MAX_DAILY_SYSTEM_EMAILS;
+        },
+        isValidCodeFormat(code: string) {
+          try {
+            return NUMERIC_CODE_REGEX.test(code);
+          } catch (error) {
+            return false;
+          }
         },
       },
     },
