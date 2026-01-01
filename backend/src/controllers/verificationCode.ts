@@ -36,6 +36,13 @@ export const requestVerificationCode: RequestHandler<
   const { email, password } = req.body || {};
   throwError(email && password, BAD_REQUEST, "Email and password are required");
 
+  const isValidEmailFormat = prismaClient.profile.isValidEmailFormat(email);
+  throwError(isValidEmailFormat, BAD_REQUEST, "Invalid email format");
+
+  const isValidPasswordFormat =
+    prismaClient.profile.isValidPasswordFormat(password);
+  throwError(isValidPasswordFormat, BAD_REQUEST, "Invalid password format");
+
   let codeType;
   switch (req.path) {
     case VERIFICATION_CODE_LOGIN_ENDPOINT:
@@ -80,6 +87,9 @@ export const requestCodeForPasswordReset: RequestHandler<
   const { email } = req.body || {};
   throwError(email, BAD_REQUEST, "email is required");
 
+  const isValidEmailFormat = prismaClient.profile.isValidEmailFormat(email);
+  throwError(isValidEmailFormat, BAD_REQUEST, "Invalid email format");
+
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(profile, NOT_FOUND, "invalid credentials");
 
@@ -105,6 +115,10 @@ export const requestCodeForApiKey: RequestHandler<
   const { password } = req.body || {};
 
   throwError(password, BAD_REQUEST, "password is required");
+
+  const isValidPasswordFormat =
+    prismaClient.profile.isValidPasswordFormat(password);
+  throwError(isValidPasswordFormat, BAD_REQUEST, "Invalid password format");
 
   const profile = await prismaClient.profile.findUnique({
     where: { id: profileId },

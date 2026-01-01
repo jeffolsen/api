@@ -21,14 +21,25 @@ interface RegisterBody {
 
 export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
   catchErrors(async (req, res, next) => {
-    const { email, password: passwordSubmit, confirmPassword } = req.body || {};
+    const { email, password, confirmPassword } =
+      (req.body as RegisterBody) || {};
     throwError(
-      email &&
-        passwordSubmit &&
-        confirmPassword &&
-        passwordSubmit === confirmPassword,
+      email && password && confirmPassword,
       BAD_REQUEST,
       "Required fields missing",
+    );
+    const isValidEmailFormat = prismaClient.profile.isValidEmailFormat(email);
+    throwError(isValidEmailFormat, BAD_REQUEST, "Invalid email format");
+
+    const isValidPasswordFormat =
+      prismaClient.profile.isValidPasswordFormat(password);
+    throwError(isValidPasswordFormat, BAD_REQUEST, "Invalid password format");
+
+    const passwordMatch = password === confirmPassword;
+    throwError(
+      passwordMatch,
+      BAD_REQUEST,
+      "Password and confirmPassword must match",
     );
 
     const emailNotFound = !(await prismaClient.profile.findUnique({
@@ -37,7 +48,7 @@ export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
     throwError(emailNotFound, CONFLICT, "Email already taken");
 
     const profile = await prismaClient.profile.create({
-      data: { email, password: passwordSubmit },
+      data: { email, password },
     });
     throwError(profile, INTERNAL_SERVER_ERROR, "Something went wrong");
 
@@ -55,9 +66,17 @@ export const login: RequestHandler<
   LoginWithVerificationCodeBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { email, verificationCode } = req.body || {};
+  const { email, verificationCode } =
+    (req.body as LoginWithVerificationCodeBody) || {};
   const { ["user-agent"]: userAgent } = req.headers || {};
   throwError(verificationCode, BAD_REQUEST, "code is required");
+
+  const isValidEmailFormat = prismaClient.profile.isValidEmailFormat(email);
+  throwError(isValidEmailFormat, BAD_REQUEST, "Invalid email format");
+
+  const isValidCodeFormat =
+    prismaClient.verificationCode.isValidCodeFormat(verificationCode);
+  throwError(isValidCodeFormat, BAD_REQUEST, "Invalid code format");
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(profile, UNAUTHORIZED, "Invalid credentials");

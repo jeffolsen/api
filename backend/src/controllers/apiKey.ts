@@ -30,7 +30,7 @@ export const getProfilesApiKeys: RequestHandler = catchErrors(
 );
 
 interface GenerateApiKeyBody {
-  slug: string;
+  apiSlug: string;
   origin: string;
   verificationCode: string;
 }
@@ -42,9 +42,13 @@ export const generate: RequestHandler<
   unknown
 > = catchErrors(async (req, res, next) => {
   const { profileId } = req;
-  const { slug: apiSlug, verificationCode, origin } = req.body || {};
+  const {
+    apiSlug: slug,
+    verificationCode,
+    origin,
+  } = (req.body as GenerateApiKeyBody) || {};
   throwError(
-    apiSlug && verificationCode && origin,
+    slug && verificationCode && origin,
     BAD_REQUEST,
     "Slug and code is required",
   );
@@ -52,14 +56,18 @@ export const generate: RequestHandler<
   const tooManyApiKeys = await prismaClient.apiKey.maxExceeded(profileId);
   throwError(!tooManyApiKeys, FORBIDDEN, "Max number of apikeys reached");
 
-  const validSlug = await prismaClient.apiKey.checkSlug(apiSlug);
-  throwError(validSlug, BAD_REQUEST, "Slug format not allowed");
+  const isValidCodeFormat =
+    prismaClient.verificationCode.isValidCodeFormat(verificationCode);
+  throwError(isValidCodeFormat, BAD_REQUEST, "Invalid code format");
 
-  const validOrigin = await prismaClient.apiKey.checkUrl(origin);
-  throwError(validOrigin, BAD_REQUEST, "Origin format not allowed");
+  const isValidSlugFormat = prismaClient.apiKey.isValidSlugFormat(slug);
+  throwError(isValidSlugFormat, BAD_REQUEST, "Invalid slug format");
+
+  const isValidUrlFormat = prismaClient.apiKey.isValidUrlFormat(origin);
+  throwError(isValidUrlFormat, BAD_REQUEST, "Invalid origin format");
 
   const slugExists = await prismaClient.apiKey.findUnique({
-    where: { slug: apiSlug },
+    where: { slug },
   });
   throwError(!slugExists, CONFLICT, "Slug already taken");
 
@@ -68,13 +76,13 @@ export const generate: RequestHandler<
     value: verificationCode,
     codeType: CodeType.CREATE_API_KEY,
   });
-  const apiKeyValue = await prismaClient.apiKey.generateKeyValue();
+  const apiKeyValue = prismaClient.apiKey.generateKeyValue();
 
   await prismaClient.apiKey.create({
     data: {
       profileId,
       value: apiKeyValue,
-      slug: apiSlug,
+      slug,
       origin,
     },
   });
@@ -93,15 +101,16 @@ export const connect: RequestHandler<
   LoginWithApiKeyBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { apiSlug, apiKey: apiKeyString } = req.body;
+  const { apiSlug: slug, apiKey: apiKeyString } =
+    (req.body as LoginWithApiKeyBody) || {};
   const origin = req.get("origin");
-  throwError(
-    apiSlug && apiKeyString,
-    BAD_REQUEST,
-    "apiSlug and apiKey required",
-  );
+  throwError(slug && apiKeyString, BAD_REQUEST, "apiSlug and apiKey required");
+
+  const isValidUrlFormat = prismaClient.apiKey.isValidUrlFormat(origin);
+  throwError(isValidUrlFormat, BAD_REQUEST, "Invalid origin format");
+
   const apiKey = await prismaClient.apiKey.findUnique({
-    where: { slug: apiSlug },
+    where: { slug },
   });
   throwError(apiKey, NOT_FOUND, "API slug not found");
 

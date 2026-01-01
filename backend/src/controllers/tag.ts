@@ -1,50 +1,24 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import catchErrors from "../util/catchErrors";
 import { OK } from "../config/constants";
+import prismaClient from "../db/client";
 
 export const getAllTags: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { profileId } = req;
-    res.sendStatus(OK);
+    const tags = prismaClient.tag.findMany({ select: { name: true } });
+    res.status(OK).json(tags);
   },
 );
 
-export const getTagById: RequestHandler = catchErrors(
+export const getTagByName: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { profileId } = req;
-    const { id } = req.params || {};
-    res.sendStatus(OK);
-  },
-);
-
-export const createTag: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { profileId } = req;
-    res.sendStatus(OK);
-  },
-);
-
-export const updateTag: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { profileId } = req;
-    const { id } = req.params || {};
-    res.sendStatus(OK);
-  },
-);
-
-export const deleteTag: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { profileId } = req;
-    const { id } = req.params || {};
+    const { name } = req.params || {};
     res.sendStatus(OK);
   },
 );
 
 const tagApi = {
   getAllTags,
-  getTagById,
-  createTag,
-  updateTag,
-  deleteTag,
+  getTagByName,
 };
 export default tagApi;

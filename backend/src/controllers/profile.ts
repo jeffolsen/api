@@ -44,6 +44,24 @@ export const resetPassword: RequestHandler<
     "value, email, password and confirmPassword are required",
   );
 
+  const isValidCodeFormat =
+    prismaClient.verificationCode.isValidCodeFormat(verificationCode);
+  throwError(isValidCodeFormat, BAD_REQUEST, "Invalid code format");
+
+  const isValidEmailFormat = prismaClient.profile.isValidEmailFormat(email);
+  throwError(isValidEmailFormat, BAD_REQUEST, "Invalid email format");
+
+  const isValidPasswordFormat =
+    prismaClient.profile.isValidPasswordFormat(password);
+  throwError(isValidPasswordFormat, BAD_REQUEST, "Invalid password format");
+
+  const passwordMatch = password === confirmPassword;
+  throwError(
+    passwordMatch,
+    BAD_REQUEST,
+    "Password and confirmPassword must match",
+  );
+
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(profile, UNAUTHORIZED, "Invalid credentials");
 
@@ -80,6 +98,13 @@ export const deleteProfile: RequestHandler<
     BAD_REQUEST,
     "verificationCode and email are required",
   );
+
+  const isValidCodeFormat =
+    prismaClient.verificationCode.isValidCodeFormat(verificationCode);
+  throwError(isValidCodeFormat, BAD_REQUEST, "Invalid code format");
+
+  const isValidEmailFormat = prismaClient.profile.isValidEmailFormat(email);
+  throwError(isValidEmailFormat, BAD_REQUEST, "Invalid email format");
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(profile, UNAUTHORIZED, "Invalid credentials");

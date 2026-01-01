@@ -6,12 +6,13 @@
   "type": "commonjs",
   "private": true,
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "lint": "eslint",
     "dev": "prisma generate && nodemon --watch src --ext ts --exec ts-node --files src/server.ts",
     "build": "prisma generate && tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "seed": "prisma db seed",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
