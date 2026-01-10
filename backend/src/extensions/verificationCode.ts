@@ -1,51 +1,19 @@
 import {
-  INVALID_CODE_TYPE,
-  INVALID_CODE_VALUE,
-  INVALID_PROFILE_ID,
-  INVALID_CODE_USED_AT_FORMAT,
   MAX_DAILY_SYSTEM_EMAILS,
   MAX_PROFILE_CODES,
-  NUMERIC_CODE_REGEX,
 } from "../config/constants";
 import { CodeType, Prisma } from "../generated/prisma/client";
-import { compareValue, hashValue } from "../util/bcrypt";
+import {
+  VerificationCodeCreateInput,
+  VerificationCodeFindWhere,
+  VerificationCodeUpdateInput,
+} from "../schemas/verificationCode";
+import { compareValue } from "../util/bcrypt";
 import {
   getNewVerificationCodeExpirationDate,
   getVerificationCodeExpirationWindow,
   oneDayAgo,
 } from "../util/date";
-import { z } from "zod";
-
-export const VerificationCodeInput = z.object({
-  type: z.enum(CodeType, INVALID_CODE_TYPE).optional(),
-  value: z
-    .string(INVALID_CODE_VALUE)
-    .regex(NUMERIC_CODE_REGEX, INVALID_CODE_VALUE)
-    .pipe(z.transform(async (val) => await hashValue(val))),
-  usedAt: z.date(INVALID_CODE_USED_AT_FORMAT).nullish(),
-  profileId: z.number().nullish(),
-  sessionId: z.number().nullish(),
-}) satisfies z.Schema<Prisma.VerificationCodeCreateInput>;
-
-export const VerificationCodeFindWhere = z.looseObject(
-  (
-    z.object({
-      type: z.enum(CodeType, INVALID_CODE_TYPE).optional(),
-      profileId: z.number(INVALID_PROFILE_ID).optional(),
-    }) satisfies z.Schema<Prisma.VerificationCodeScalarWhereInput>
-  ).shape,
-);
-
-export const VerificationCodeCreateInput = VerificationCodeInput.pick({
-  type: true,
-  value: true,
-  profileId: true,
-  sessionId: true,
-});
-
-export const VerificationCodeUpdateInput = VerificationCodeInput.pick({
-  usedAt: true,
-});
 
 export const verificationCodeExtension = Prisma.defineExtension((client) => {
   const newClient = client.$extends({
@@ -76,6 +44,15 @@ export const verificationCodeExtension = Prisma.defineExtension((client) => {
     },
     model: {
       verificationCode: {
+        async issue(data: unknown) {
+          const d = await VerificationCodeCreateInput.parseAsync(data);
+          return await newClient.verificationCode.create({
+            data: {
+              ...d,
+              expiresAt: getNewVerificationCodeExpirationDate(),
+            },
+          });
+        },
         async use(id: number) {
           return await newClient.verificationCode.update({
             where: { id },

@@ -1,18 +1,8 @@
-import { MAX_PROFILE_API_KEYS, SLUG_REGEX } from "../config/constants";
+import { MAX_PROFILE_API_KEYS } from "../config/constants";
 import { Prisma } from "../generated/prisma/client";
-import { compareValue, hashValue } from "../util/bcrypt";
+import { ApiKeyCreateWithoutProfileInput } from "../schemas/apikey";
+import { compareValue } from "../util/bcrypt";
 import { randomUUID } from "node:crypto";
-import { z } from "zod";
-
-export const ApiKeyCreateWithoutProfileInput = z.object({
-  slug: z.string("Invalid slug").max(100).regex(SLUG_REGEX),
-  origin: z.url({ protocol: /^https$/, message: "Invalid origin" }).optional(),
-  value: z
-    .uuid()
-    .pipe(z.transform(async (val) => await hashValue(val)))
-    .optional(),
-  profileId: z.number("Invalid profile id"),
-}) satisfies z.Schema<Prisma.ApiKeyCreateWithoutProfileInput>;
 
 export const apiKeyExtension = Prisma.defineExtension((client) => {
   const newClient = client.$extends({
@@ -22,8 +12,7 @@ export const apiKeyExtension = Prisma.defineExtension((client) => {
           args.data = await ApiKeyCreateWithoutProfileInput.parseAsync(
             args.data,
           );
-          const result = await query(args);
-          return result;
+          return await query(args);
         },
       },
     },
