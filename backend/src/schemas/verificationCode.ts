@@ -1,11 +1,10 @@
 import {
   ERROR_CODE_TYPE,
   ERROR_CODE_VALUE,
-  ERROR_CODE_USED_AT_FORMAT,
   NUMERIC_CODE_REGEX,
   ERROR_ID,
 } from "../config/constants";
-import { CodeType, Prisma } from "../generated/prisma/client";
+import { CodeType } from "../generated/prisma/client";
 import { hashValue } from "../util/bcrypt";
 import { z } from "zod";
 import { ProfileDataSchema } from "./profile";

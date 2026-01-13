@@ -1,4 +1,4 @@
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import { createScopeString, parseScopeString } from "../scope";
 
 describe("createScopeString", () => {

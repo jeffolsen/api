@@ -99,6 +99,9 @@ export const ERROR_EMAIL_TAKEN = "Email already taken";
 export const ERROR_ENDPOINT_NOT_FOUND = "Endpoint does not exist";
 export const ERROR_CREDENTIALS = "invalid credentials";
 export const ERROR_UNAUTHORIZED = "unauthorized";
+export const ERROR_API_KEY_SLUG = "Invalid slug";
+export const ERROR_API_KEY_ORIGIN = "Invalid origin";
+export const ERROR_API_KEY_VALUE = "Invalid api key";
 
 // resource limits
 export const MAX_DAILY_SYSTEM_EMAILS = 2800;

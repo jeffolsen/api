@@ -1,21 +1,11 @@
 import { MAX_PROFILE_API_KEYS } from "../config/constants";
 import { Prisma } from "../generated/prisma/client";
-import { ApiKeyCreateWithoutProfileInput } from "../schemas/apikey";
+import { ApiKeyCreateTransform } from "../schemas/apikey";
 import { compareValue } from "../util/bcrypt";
 import { randomUUID } from "node:crypto";
 
 export const apiKeyExtension = Prisma.defineExtension((client) => {
   const newClient = client.$extends({
-    query: {
-      apiKey: {
-        async create({ model, operation, args, query }) {
-          args.data = await ApiKeyCreateWithoutProfileInput.parseAsync(
-            args.data,
-          );
-          return await query(args);
-        },
-      },
-    },
     model: {
       apiKey: {
         async maxExceeded(profileId: number) {
@@ -27,8 +17,14 @@ export const apiKeyExtension = Prisma.defineExtension((client) => {
           });
           return apiKeys.length == MAX_PROFILE_API_KEYS;
         },
-        generateKeyValue() {
-          return randomUUID();
+        async issue(data: Record<string, unknown>) {
+          const value = randomUUID();
+          await newClient.apiKey.create({
+            data: {
+              ...(await ApiKeyCreateTransform.parseAsync({ ...data, value })),
+            },
+          });
+          return value;
         },
       },
     },

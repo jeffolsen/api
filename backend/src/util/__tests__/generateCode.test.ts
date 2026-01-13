@@ -1,4 +1,4 @@
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import generateCode from "../generateCode";
 import { NUMERIC_CODE_REGEX } from "../../config/constants";
 

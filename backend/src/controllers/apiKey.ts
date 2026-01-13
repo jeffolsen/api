@@ -13,6 +13,7 @@ import prismaClient, { CodeType } from "../db/client";
 import throwError from "../util/throwError";
 import { connectToApiSession, processVerificationCode } from "../services/auth";
 import { setAuthCookies } from "../util/cookie";
+import { ApiKeyConnectSchema, ApiKeyGenerateSchema } from "../schemas/apikey";
 
 export const getProfilesApiKeys: RequestHandler = catchErrors(
   async (req, res, next) => {
@@ -46,13 +47,9 @@ export const generate: RequestHandler<
     apiSlug: slug,
     verificationCode,
     origin,
-  } = (req.body as GenerateApiKeyBody) || {};
-  throwError(
-    slug && verificationCode && origin,
-    BAD_REQUEST,
-    "Slug and code is required",
-  );
-
+  } = ApiKeyGenerateSchema.parse({
+    ...(req.body as GenerateApiKeyBody),
+  });
   const tooManyApiKeys = await prismaClient.apiKey.maxExceeded(profileId);
   throwError(!tooManyApiKeys, FORBIDDEN, "Max number of apikeys reached");
 
@@ -66,18 +63,17 @@ export const generate: RequestHandler<
     value: verificationCode,
     codeType: CodeType.CREATE_API_KEY,
   });
-  const apiKeyValue = prismaClient.apiKey.generateKeyValue();
 
-  await prismaClient.apiKey.create({
+  // const value = prismaClient.apiKey.generateKeyValue();
+  const value = await prismaClient.apiKey.issue({
     data: {
       profileId,
-      value: apiKeyValue,
       slug,
       origin,
     },
   });
 
-  res.status(CREATED).json({ apiKey: apiKeyValue });
+  res.status(CREATED).json({ apiKey: value });
 });
 
 interface LoginWithApiKeyBody {
@@ -91,11 +87,10 @@ export const connect: RequestHandler<
   LoginWithApiKeyBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { apiSlug: slug, apiKey: apiKeyString } =
-    (req.body as LoginWithApiKeyBody) || {};
+  const { apiSlug: slug, apiKey: value } = ApiKeyConnectSchema.parse({
+    ...(req.body as LoginWithApiKeyBody),
+  });
   const origin = req.get("origin");
-  throwError(slug && apiKeyString, BAD_REQUEST, "apiSlug and apiKey required");
-
   const apiKey = await prismaClient.apiKey.findUnique({
     where: { slug },
   });
@@ -104,7 +99,7 @@ export const connect: RequestHandler<
   const originMatch = apiKey.origin === origin;
   throwError(originMatch, UNAUTHORIZED, "Invalid origin");
 
-  const apiKeyIsValid = await apiKey.validate(apiKeyString);
+  const apiKeyIsValid = await apiKey.validate(value);
   throwError(apiKeyIsValid, UNAUTHORIZED, "Invalid api key");
 
   const { session, ...tokens } = await connectToApiSession(apiKey);

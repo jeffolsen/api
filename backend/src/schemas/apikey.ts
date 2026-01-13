@@ -1,14 +1,40 @@
 import { z } from "zod";
-import { SLUG_REGEX } from "../config/constants";
+import {
+  ERROR_API_KEY_ORIGIN,
+  ERROR_API_KEY_SLUG,
+  ERROR_API_KEY_VALUE,
+  ERROR_PROFILE_ID,
+  SLUG_REGEX,
+} from "../config/constants";
 import { hashValue } from "../util/bcrypt";
-import { Prisma } from "../db/client";
+import { verificationCodeValueSchema } from "./verificationCode";
 
-export const ApiKeyCreateWithoutProfileInput = z.object({
-  slug: z.string("Invalid slug").max(100).regex(SLUG_REGEX),
-  origin: z.url({ protocol: /^https$/, message: "Invalid origin" }).optional(),
-  value: z
-    .uuid()
-    .pipe(z.transform(async (val) => await hashValue(val)))
-    .optional(),
-  profileId: z.number("Invalid profile id"),
-}) satisfies z.Schema<Prisma.ApiKeyCreateWithoutProfileInput>;
+export const apiKeySlugSchema = z
+  .string(ERROR_API_KEY_SLUG)
+  .max(100, ERROR_API_KEY_SLUG)
+  .regex(SLUG_REGEX, ERROR_API_KEY_SLUG);
+export const apiKeyOriginSchema = z.url({
+  protocol: /^https$/,
+  message: ERROR_API_KEY_ORIGIN,
+});
+export const apiKeyValueSchema = z.uuid(ERROR_API_KEY_VALUE);
+
+export const ApiKeyGenerateSchema = z.object({
+  apiSlug: apiKeySlugSchema,
+  origin: apiKeyOriginSchema,
+  verificationCode: verificationCodeValueSchema,
+});
+
+export const ApiKeyConnectSchema = z.object({
+  apiSlug: apiKeySlugSchema,
+  apiKey: apiKeyValueSchema,
+});
+
+export const ApiKeyCreateTransform = z.object({
+  slug: apiKeySlugSchema,
+  origin: apiKeyOriginSchema,
+  value: apiKeyValueSchema.pipe(
+    z.transform(async (val) => await hashValue(val)),
+  ),
+  profileId: z.number(ERROR_PROFILE_ID),
+});
