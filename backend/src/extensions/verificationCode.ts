@@ -3,11 +3,7 @@ import {
   MAX_PROFILE_CODES,
 } from "../config/constants";
 import { CodeType, Prisma } from "../generated/prisma/client";
-import {
-  VerificationCodeCreateInput,
-  VerificationCodeFindWhere,
-  VerificationCodeUpdateInput,
-} from "../schemas/verificationCode";
+import { VerificationCodeIssueSchema } from "../schemas/verificationCode";
 import { compareValue } from "../util/bcrypt";
 import {
   getNewVerificationCodeExpirationDate,
@@ -17,35 +13,10 @@ import {
 
 export const verificationCodeExtension = Prisma.defineExtension((client) => {
   const newClient = client.$extends({
-    query: {
-      verificationCode: {
-        async create({ model, operation, args, query }) {
-          args.data = await VerificationCodeCreateInput.parseAsync(args.data);
-          args.data.expiresAt = getNewVerificationCodeExpirationDate();
-          const result = await query(args);
-          return result;
-        },
-        async update({ model, operation, args, query }) {
-          args.data = await VerificationCodeUpdateInput.parseAsync(args.data);
-          const result = await query(args);
-          return result;
-        },
-        async findFirst({ model, operation, args, query }) {
-          args.where = VerificationCodeFindWhere.parse(args.where);
-          const result = await query(args);
-          return result;
-        },
-        async findMany({ model, operation, args, query }) {
-          args.where = VerificationCodeFindWhere.parse(args.where);
-          const result = await query(args);
-          return result;
-        },
-      },
-    },
     model: {
       verificationCode: {
         async issue(data: unknown) {
-          const d = await VerificationCodeCreateInput.parseAsync(data);
+          const d = await VerificationCodeIssueSchema.parseAsync(data);
           return await newClient.verificationCode.create({
             data: {
               ...d,

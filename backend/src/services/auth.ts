@@ -174,7 +174,7 @@ export const sendVerificationCode = async ({
     "Problem sending email. Try again later.",
   );
 
-  const verificationCode = await prismaClient.verificationCode.create({
+  const verificationCode = await prismaClient.verificationCode.issue({
     data: {
       profileId,
       type: codeType,

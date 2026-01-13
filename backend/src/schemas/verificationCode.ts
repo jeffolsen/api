@@ -1,41 +1,41 @@
 import {
-  INVALID_CODE_TYPE,
-  INVALID_CODE_VALUE,
-  INVALID_PROFILE_ID,
-  INVALID_CODE_USED_AT_FORMAT,
+  ERROR_CODE_TYPE,
+  ERROR_CODE_VALUE,
+  ERROR_CODE_USED_AT_FORMAT,
   NUMERIC_CODE_REGEX,
+  ERROR_ID,
 } from "../config/constants";
 import { CodeType, Prisma } from "../generated/prisma/client";
 import { hashValue } from "../util/bcrypt";
 import { z } from "zod";
+import { ProfileDataSchema } from "./profile";
 
-export const VerificationCodeInput = z.object({
-  type: z.enum(CodeType, INVALID_CODE_TYPE).optional(),
-  value: z
-    .string(INVALID_CODE_VALUE)
-    .regex(NUMERIC_CODE_REGEX, INVALID_CODE_VALUE)
-    .pipe(z.transform(async (val) => await hashValue(val))),
-  usedAt: z.date(INVALID_CODE_USED_AT_FORMAT).nullish(),
-  profileId: z.number().nullish(),
-  sessionId: z.number().nullish(),
-}) satisfies z.Schema<Prisma.VerificationCodeCreateInput>;
+export const requestVerificationCodeSchema = ProfileDataSchema;
 
-export const VerificationCodeFindWhere = z.looseObject(
-  (
-    z.object({
-      type: z.enum(CodeType, INVALID_CODE_TYPE).optional(),
-      profileId: z.number(INVALID_PROFILE_ID).optional(),
-    }) satisfies z.Schema<Prisma.VerificationCodeScalarWhereInput>
-  ).shape,
-);
+export const requestPasswordResetCodeSchema =
+  requestVerificationCodeSchema.omit({
+    password: true,
+  });
 
-export const VerificationCodeCreateInput = VerificationCodeInput.pick({
-  type: true,
-  value: true,
-  profileId: true,
-  sessionId: true,
-});
+export const requestApiKeyCodeSchema = requestVerificationCodeSchema
+  .omit({
+    email: true,
+  })
+  .extend({ id: z.number(ERROR_ID) });
 
-export const VerificationCodeUpdateInput = VerificationCodeInput.pick({
-  usedAt: true,
+// Model Properties
+export const verificationCodeValueSchema = z
+  .string(ERROR_CODE_VALUE)
+  .regex(NUMERIC_CODE_REGEX, ERROR_CODE_VALUE);
+
+export const verificationCodeTypeSchema = z
+  .enum(CodeType, ERROR_CODE_TYPE)
+  .optional();
+
+export const VerificationCodeIssueSchema = z.object({
+  type: verificationCodeTypeSchema,
+  value: verificationCodeValueSchema.pipe(
+    z.transform(async (val) => await hashValue(val)),
+  ),
+  profileId: z.number(),
 });

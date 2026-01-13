@@ -85,13 +85,20 @@ export const TOO_MANY_REQUESTS = 429;
 export const INTERNAL_SERVER_ERROR = 500;
 
 // error messages
-export const INVALID_ID = "invalid id";
-export const INVALID_CODE_TYPE = "invalid code type";
-export const INVALID_CODE_VALUE = "invalid code value";
-export const INVALID_CODE_USED_AT_FORMAT = "invalid code usedAt date";
-export const INVALID_PROFILE_ID = "invalid profile id";
-export const INVALID_SESSION_ID = "invalid session id";
-export const INVALID_SESSION_USER_AGENT = "invalid session user-agent";
+export const ERROR_ID = "Invalid id";
+export const ERROR_CODE_TYPE = "Invalid code type";
+export const ERROR_CODE_VALUE = "Invalid code value";
+export const ERROR_CODE_USED_AT_FORMAT = "Invalid usedAt date";
+export const ERROR_PROFILE_ID = "Invalid profile id";
+export const ERROR_SESSION_ID = "Invalid session id";
+export const ERROR_SESSION_USER_AGENT = "Invalid session user-agent";
+export const ERROR_EMAIL_FORMAT = "Invalid email format";
+export const ERROR_PASSWORD_FORMAT = "Invalid password format";
+export const ERROR_PASSWORD_MATCH = "Passwords do not match";
+export const ERROR_EMAIL_TAKEN = "Email already taken";
+export const ERROR_ENDPOINT_NOT_FOUND = "Endpoint does not exist";
+export const ERROR_CREDENTIALS = "invalid credentials";
+export const ERROR_UNAUTHORIZED = "unauthorized";
 
 // resource limits
 export const MAX_DAILY_SYSTEM_EMAILS = 2800;

@@ -2,6 +2,7 @@ import { NextFunction, Request, RequestHandler, Response } from "express";
 import catchErrors from "../util/catchErrors";
 import {
   BAD_REQUEST,
+  ERROR_CREDENTIALS,
   NO_CONTENT,
   NOT_FOUND,
   OK,
@@ -51,7 +52,7 @@ export const resetPassword: RequestHandler<
   );
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, UNAUTHORIZED, "Invalid credentials");
+  throwError(profile, UNAUTHORIZED, ERROR_CREDENTIALS);
 
   await processVerificationCode({
     profileId: profile.id,
@@ -88,7 +89,7 @@ export const deleteProfile: RequestHandler<
   );
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, UNAUTHORIZED, "Invalid credentials");
+  throwError(profile, UNAUTHORIZED, ERROR_CREDENTIALS);
 
   await processVerificationCode({
     profileId: profile.id,

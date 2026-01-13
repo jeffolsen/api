@@ -6,11 +6,14 @@ import {
   OK,
   CREATED,
   CONFLICT,
-  BAD_REQUEST,
   UNAUTHORIZED,
+  ERROR_EMAIL_TAKEN,
+  ERROR_CREDENTIALS,
+  ERROR_UNAUTHORIZED,
 } from "../config/constants";
 import throwError from "../util/throwError";
 import prismaClient from "../db/client";
+import { loginSchema, registerSchema } from "../schemas/auth";
 
 interface RegisterBody {
   email: string;
@@ -20,24 +23,14 @@ interface RegisterBody {
 
 export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
   catchErrors(async (req, res, next) => {
-    const { email, password, confirmPassword } =
-      (req.body as RegisterBody) || {};
-    throwError(
-      email && password && confirmPassword,
-      BAD_REQUEST,
-      "Required fields missing",
-    );
-
-    throwError(
-      password === confirmPassword,
-      BAD_REQUEST,
-      "Password and confirmPassword must match",
-    );
+    const { email, password } = registerSchema.parse({
+      ...req.body,
+    });
 
     const emailFound = await prismaClient.profile.findUnique({
       where: { email },
     });
-    throwError(!emailFound, CONFLICT, "Email already taken");
+    throwError(!emailFound, CONFLICT, ERROR_EMAIL_TAKEN);
 
     await prismaClient.profile.create({
       data: { email, password },
@@ -57,13 +50,13 @@ export const login: RequestHandler<
   LoginWithVerificationCodeBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { email, verificationCode } =
-    (req.body as LoginWithVerificationCodeBody) || {};
-  const { ["user-agent"]: userAgent } = req.headers || {};
-  throwError(verificationCode, BAD_REQUEST, "code is required");
+  const { email, verificationCode, userAgent } = loginSchema.parse({
+    ...req.body,
+    userAgent: req.headers["user-agent"],
+  });
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, UNAUTHORIZED, "Invalid credentials");
+  throwError(profile, UNAUTHORIZED, ERROR_CREDENTIALS);
 
   const { session, ...tokens } = await initProfileSession({
     profile,
@@ -80,7 +73,7 @@ export const login: RequestHandler<
 
 export const refresh: RequestHandler = catchErrors(async (req, res, next) => {
   const { refreshToken } = req.cookies;
-  throwError(refreshToken, UNAUTHORIZED, "unauthorized");
+  throwError(refreshToken, UNAUTHORIZED, ERROR_UNAUTHORIZED);
 
   const { session, ...tokens } = await refreshAccessToken({ refreshToken });
 

@@ -1,25 +1,36 @@
-import { PASSWORD_REGEX } from "../config/constants";
+import {
+  ERROR_EMAIL_FORMAT,
+  ERROR_ID,
+  ERROR_PASSWORD_FORMAT,
+  PASSWORD_REGEX,
+} from "../config/constants";
 import { Prisma } from "../db/client";
 import { z } from "zod";
 import { hashValue } from "../util/bcrypt";
 
-export const ProfileCreateInput = z.object({
-  email: z.email("Invalid email format"),
-  password: z
-    .string("Invalid password format")
-    .regex(PASSWORD_REGEX, "Invalid password format")
-    .pipe(z.transform(async (val) => await hashValue(val))),
-}) satisfies z.Schema<Prisma.ProfileCreateInput>;
+export const emailSchema = z.email(ERROR_EMAIL_FORMAT);
 
-export const ProfileUpdateInput = ProfileCreateInput.pick({
-  password: true,
+export const passwordSchema = z
+  .string(ERROR_PASSWORD_FORMAT)
+  .regex(PASSWORD_REGEX, ERROR_PASSWORD_FORMAT);
+
+export const ProfileDataSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
 });
 
-export const ProfileGetWhere = z.union([
+export const ProfileDataTransformer = z.object({
+  email: emailSchema,
+  password: passwordSchema.pipe(
+    z.transform(async (val) => await hashValue(val)),
+  ),
+}) satisfies z.Schema<Prisma.ProfileCreateInput>;
+
+export const ProfileGetSchema = z.union([
   z.object({
-    id: z.number("Invalid id"),
+    id: z.number(ERROR_ID),
   }),
   z.object({
-    email: z.email("Invalid email format"),
+    email: z.email(ERROR_EMAIL_FORMAT),
   }),
 ]);
