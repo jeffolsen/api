@@ -21,7 +21,7 @@ model Profile {
   createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt         DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
   sessions          Session[]          @relation("ProfileSessions")
-  verificationCodes VerificationCode[] @relation("SessionCodes")
+  verificationCodes VerificationCode[] @relation("ProfileCodes")
   apiKeys           ApiKey[]           @relation("ProfileApiKeys")
   feeds             Feed[]             @relation("ProfileFeeds")
   items             Item[]             @relation("ProfileItems")
@@ -30,18 +30,16 @@ model Profile {
 }
 
 model Session {
-  id                Int                @id @default(autoincrement())
-  scope             String
-  userAgent         String             @map("user_agent")
-  expiresAt         DateTime           @default(dbgenerated("NOW() + INTERVAL '4 DAYS'")) @map("expires_at") @db.Timestamptz(3)
-  endedAt           DateTime?          @map("ended_at") @db.Timestamptz(3)
-  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt         DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
-  profile           Profile            @relation("ProfileSessions", fields: [profileId], references: [id], onDelete: Cascade)
-  profileId         Int                @map("profile_id")
-  verificationCodes VerificationCode[] @relation("SessionCodes")
-  apiKeyId          Int?               @map("api_key_id")
-  apiKey            ApiKey?            @relation("ApiKeySession")
+  id        Int       @id @default(autoincrement())
+  scope     String
+  expiresAt DateTime  @default(dbgenerated("NOW() + INTERVAL '4 DAYS'")) @map("expires_at") @db.Timestamptz(3)
+  endedAt   DateTime? @map("ended_at") @db.Timestamptz(3)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  profile   Profile   @relation("ProfileSessions", fields: [profileId], references: [id], onDelete: Cascade)
+  profileId Int       @map("profile_id")
+  apiKeyId  Int?      @map("api_key_id")
+  apiKey    ApiKey?   @relation("ApiKeySession")
 
   @@map("sessions")
 }
@@ -58,14 +56,13 @@ model VerificationCode {
   id        Int       @id @default(autoincrement())
   type      CodeType  @default(LOGIN)
   value     String
+  userAgent String    @map("user_agent")
   usedAt    DateTime? @map("used_at") @db.Timestamptz(3)
   expiresAt DateTime  @default(dbgenerated("NOW() + INTERVAL '8 HOURS'")) @map("expires_at") @db.Timestamptz(3)
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
-  profile   Profile?  @relation("SessionCodes", fields: [profileId], references: [id], onDelete: SetNull)
+  profile   Profile?  @relation("ProfileCodes", fields: [profileId], references: [id], onDelete: SetNull)
   profileId Int?      @map("profile_id")
-  session   Session?  @relation("SessionCodes", fields: [sessionId], references: [id], onDelete: SetNull)
-  sessionId Int?      @map("session_id")
 
   @@map("verification_codes")
 }
