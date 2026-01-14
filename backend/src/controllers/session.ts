@@ -1,10 +1,17 @@
 import { RequestHandler } from "express";
 import catchErrors from "../util/catchErrors";
-import { BAD_REQUEST, NOT_FOUND, OK, UNAUTHORIZED } from "../config/constants";
+import {
+  BAD_REQUEST,
+  ERROR_CREDENTIALS,
+  NOT_FOUND,
+  OK,
+  UNAUTHORIZED,
+} from "../config/constants";
 import prismaClient, { CodeType } from "../db/client";
 import throwError from "../util/throwError";
 import { processVerificationCode } from "../services/auth";
 import { setAuthCookies } from "../util/cookie";
+import { SessionLogoutAllSchema } from "../schemas/session";
 
 export const getProfilesSessions: RequestHandler = catchErrors(
   async (req, res, next) => {
@@ -24,8 +31,7 @@ export const getProfilesSessions: RequestHandler = catchErrors(
 export const logout: RequestHandler = catchErrors(async (req, res, next) => {
   const { sessionId } = req;
 
-  const session = await prismaClient.session.logOut(sessionId);
-  throwError(session, BAD_REQUEST, "Not logged in.");
+  await prismaClient.session.logOut(sessionId);
 
   setAuthCookies({
     res,
@@ -46,11 +52,12 @@ export const logoutAll: RequestHandler<
   logoutAllBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { email, verificationCode } = req.body || {};
-  throwError(verificationCode, BAD_REQUEST, "code is required");
+  const { email, verificationCode } = SessionLogoutAllSchema.parse(
+    req.body as logoutAllBody,
+  );
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, UNAUTHORIZED, "Invalid credentials");
+  throwError(profile, UNAUTHORIZED, ERROR_CREDENTIALS);
 
   await processVerificationCode({
     profileId: profile.id,

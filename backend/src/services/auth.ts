@@ -5,7 +5,6 @@ import {
   verifyRefreshToken,
 } from "../util/jwt";
 import {
-  CONFLICT,
   NOT_FOUND,
   BAD_REQUEST,
   UNAUTHORIZED,
@@ -48,13 +47,7 @@ export const initProfileSession = async ({
   const session = await prismaClient.session.create({
     data: {
       profileId,
-      userAgent: userAgent || "",
       scope: PROFILE_SESSION,
-      verificationCodes: {
-        connect: {
-          id: usedVerificationCode.id,
-        },
-      },
     },
   });
 
@@ -86,7 +79,6 @@ export const connectToApiSession = async (apiKey: ApiKey) => {
       data: {
         profileId: profileId,
         apiKeyId: apiKeyId,
-        userAgent: slug,
         scope: API_KEY_SESSION,
       },
     });

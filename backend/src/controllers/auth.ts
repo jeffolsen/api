@@ -24,7 +24,7 @@ interface RegisterBody {
 export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
   catchErrors(async (req, res, next) => {
     const { email, password } = registerSchema.parse({
-      ...req.body,
+      ...(req.body as RegisterBody),
     });
 
     const emailFound = await prismaClient.profile.findUnique({
@@ -51,8 +51,7 @@ export const login: RequestHandler<
   unknown
 > = catchErrors(async (req, res, next) => {
   const { email, verificationCode, userAgent } = loginSchema.parse({
-    ...req.body,
-    userAgent: req.headers["user-agent"],
+    ...(req.body as LoginWithVerificationCodeBody),
   });
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });

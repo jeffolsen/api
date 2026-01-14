@@ -1,22 +1,20 @@
 import { MAX_PROFILE_SESSIONS } from "../config/constants";
 import { CodeType, Prisma } from "../generated/prisma/client";
-import { SessionCreateInput } from "../schemas/session";
+import { SessionCreateTransform } from "../schemas/session";
 import date, { getNewRefreshTokenExpirationDate } from "../util/date";
 
 export const sessionExtension = Prisma.defineExtension((client) => {
   const newClient = client.$extends({
-    query: {
-      session: {
-        async create({ model, operation, args, query }) {
-          args.data = await SessionCreateInput.parseAsync(args.data);
-          args.data.expiresAt = getNewRefreshTokenExpirationDate();
-          const result = await query(args);
-          return result;
-        },
-      },
-    },
     model: {
       session: {
+        async start(data: Record<string, unknown>) {
+          return await newClient.session.create({
+            data: {
+              ...(await SessionCreateTransform.parseAsync(data)),
+              expiresAt: getNewRefreshTokenExpirationDate(),
+            },
+          });
+        },
         async logOut(id: number) {
           try {
             return await newClient.session.update({

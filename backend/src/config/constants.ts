@@ -102,6 +102,9 @@ export const ERROR_UNAUTHORIZED = "unauthorized";
 export const ERROR_API_KEY_SLUG = "Invalid slug";
 export const ERROR_API_KEY_ORIGIN = "Invalid origin";
 export const ERROR_API_KEY_VALUE = "Invalid api key";
+export const ERROR_API_KEY_LIMIT_REACHED = "Max number of apikeys reached";
+export const ERROR_API_KEY_SLUG_TAKEN = "Slug already taken";
+export const ERROR_API_KEY_SLUG_NOT_FOUND = "API slug not found";
 
 // resource limits
 export const MAX_DAILY_SYSTEM_EMAILS = 2800;

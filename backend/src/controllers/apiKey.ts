@@ -1,18 +1,22 @@
-import { RequestHandler } from "express";
-import catchErrors from "../util/catchErrors";
 import {
-  BAD_REQUEST,
-  CONFLICT,
+  OK,
   CREATED,
+  CONFLICT,
   FORBIDDEN,
   NOT_FOUND,
-  OK,
   UNAUTHORIZED,
+  ERROR_API_KEY_LIMIT_REACHED,
+  ERROR_API_KEY_SLUG_TAKEN,
+  ERROR_API_KEY_SLUG_NOT_FOUND,
+  ERROR_API_KEY_ORIGIN,
+  ERROR_API_KEY_VALUE,
 } from "../config/constants";
-import prismaClient, { CodeType } from "../db/client";
+import { RequestHandler } from "express";
 import throwError from "../util/throwError";
-import { connectToApiSession, processVerificationCode } from "../services/auth";
+import catchErrors from "../util/catchErrors";
 import { setAuthCookies } from "../util/cookie";
+import prismaClient, { CodeType } from "../db/client";
+import { connectToApiSession, processVerificationCode } from "../services/auth";
 import { ApiKeyConnectSchema, ApiKeyGenerateSchema } from "../schemas/apikey";
 
 export const getProfilesApiKeys: RequestHandler = catchErrors(
@@ -51,12 +55,12 @@ export const generate: RequestHandler<
     ...(req.body as GenerateApiKeyBody),
   });
   const tooManyApiKeys = await prismaClient.apiKey.maxExceeded(profileId);
-  throwError(!tooManyApiKeys, FORBIDDEN, "Max number of apikeys reached");
+  throwError(!tooManyApiKeys, FORBIDDEN, ERROR_API_KEY_LIMIT_REACHED);
 
   const slugExists = await prismaClient.apiKey.findUnique({
     where: { slug },
   });
-  throwError(!slugExists, CONFLICT, "Slug already taken");
+  throwError(!slugExists, CONFLICT, ERROR_API_KEY_SLUG_TAKEN);
 
   await processVerificationCode({
     profileId,
@@ -64,12 +68,13 @@ export const generate: RequestHandler<
     codeType: CodeType.CREATE_API_KEY,
   });
 
-  // const value = prismaClient.apiKey.generateKeyValue();
-  const value = await prismaClient.apiKey.issue({
+  const value = prismaClient.apiKey.generateKeyValue();
+  await prismaClient.apiKey.issue({
     data: {
       profileId,
       slug,
       origin,
+      value,
     },
   });
 
@@ -94,13 +99,13 @@ export const connect: RequestHandler<
   const apiKey = await prismaClient.apiKey.findUnique({
     where: { slug },
   });
-  throwError(apiKey, NOT_FOUND, "API slug not found");
+  throwError(apiKey, NOT_FOUND, ERROR_API_KEY_SLUG_NOT_FOUND);
 
   const originMatch = apiKey.origin === origin;
-  throwError(originMatch, UNAUTHORIZED, "Invalid origin");
+  throwError(originMatch, UNAUTHORIZED, ERROR_API_KEY_ORIGIN);
 
   const apiKeyIsValid = await apiKey.validate(value);
-  throwError(apiKeyIsValid, UNAUTHORIZED, "Invalid api key");
+  throwError(apiKeyIsValid, UNAUTHORIZED, ERROR_API_KEY_VALUE);
 
   const { session, ...tokens } = await connectToApiSession(apiKey);
 

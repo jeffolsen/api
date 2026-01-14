@@ -18,13 +18,12 @@ export const apiKeyExtension = Prisma.defineExtension((client) => {
           return apiKeys.length == MAX_PROFILE_API_KEYS;
         },
         async issue(data: Record<string, unknown>) {
-          const value = randomUUID();
-          await newClient.apiKey.create({
-            data: {
-              ...(await ApiKeyCreateTransform.parseAsync({ ...data, value })),
-            },
+          return await newClient.apiKey.create({
+            data: await ApiKeyCreateTransform.parseAsync(data),
           });
-          return value;
+        },
+        generateKeyValue() {
+          return randomUUID();
         },
       },
     },

@@ -1,16 +1,15 @@
-import { RequestHandler } from "express";
-import catchErrors from "../util/catchErrors";
-import prismaClient, { CodeType } from "../db/client";
 import {
   OK,
   NOT_FOUND,
-  BAD_REQUEST,
   VERIFICATION_CODE_LOGIN_ENDPOINT,
   VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT,
   VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
   ERROR_ENDPOINT_NOT_FOUND,
   ERROR_CREDENTIALS,
 } from "../config/constants";
+import { RequestHandler } from "express";
+import catchErrors from "../util/catchErrors";
+import prismaClient, { CodeType } from "../db/client";
 import { sendVerificationCode } from "../services/auth";
 import throwError from "../util/throwError";
 import {
@@ -22,9 +21,10 @@ import {
 export const getProfileVerificationCodes: RequestHandler = catchErrors(
   async (req, res, next) => {
     const { profileId } = req;
+
     const codes = await prismaClient.verificationCode.findMany({
       where: { profileId },
-      omit: { value: true, sessionId: true },
+      omit: { value: true },
     });
     res.status(OK).json(codes);
   },
@@ -42,6 +42,7 @@ export const requestVerificationCode: RequestHandler<
 > = catchErrors(async (req, res, next) => {
   const { email, password } = requestVerificationCodeSchema.parse({
     ...req.body,
+    userAgent: req.headers["user-agent"],
   });
 
   let codeType;
@@ -111,13 +112,13 @@ export const requestCodeForApiKey: RequestHandler<
   unknown
 > = catchErrors(async (req, res, next) => {
   const { profileId } = req;
-  const { password, id } = requestApiKeyCodeSchema.parse({
+
+  const { password } = requestApiKeyCodeSchema.parse({
     ...req.body,
-    id: profileId,
   });
 
   const profile = await prismaClient.profile.findUnique({
-    where: { id },
+    where: { id: profileId },
   });
   throwError(
     profile && (await profile.comparePassword(password)),
