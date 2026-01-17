@@ -8,7 +8,7 @@ import {
 import { CodeType } from "../generated/prisma/client";
 import { hashValue } from "../util/bcrypt";
 import { z } from "zod";
-import { ProfileDataSchema } from "./profile";
+import { passwordSchema, ProfileDataSchema } from "./profile";
 
 // properties
 export const verificationCodeValueSchema = z
@@ -20,12 +20,10 @@ export const verificationCodeTypeSchema = z.enum(CodeType, ERROR_CODE_TYPE);
 export const userAgentSchema = z.string(ERROR_SESSION_USER_AGENT);
 
 // controllers
-export const requestVerificationCodeSchema = ProfileDataSchema;
-
-export const requestPasswordResetCodeSchema =
-  requestVerificationCodeSchema.omit({
-    password: true,
-  });
+export const requestVerificationCodeSchema = ProfileDataSchema.extend({
+  password: passwordSchema.optional(),
+  userAgent: userAgentSchema,
+});
 
 export const requestApiKeyCodeSchema = requestVerificationCodeSchema
   .omit({

@@ -97,14 +97,23 @@ export const ERROR_PASSWORD_FORMAT = "Invalid password format";
 export const ERROR_PASSWORD_MATCH = "Passwords do not match";
 export const ERROR_EMAIL_TAKEN = "Email already taken";
 export const ERROR_ENDPOINT_NOT_FOUND = "Endpoint does not exist";
-export const ERROR_CREDENTIALS = "invalid credentials";
-export const ERROR_UNAUTHORIZED = "unauthorized";
+export const ERROR_CREDENTIALS = "Invalid credentials";
+export const ERROR_UNAUTHORIZED = "Unauthorized";
 export const ERROR_API_KEY_SLUG = "Invalid slug";
 export const ERROR_API_KEY_ORIGIN = "Invalid origin";
 export const ERROR_API_KEY_VALUE = "Invalid api key";
+export const ERROR_INVALID_API_KEY = "Invalid api key";
 export const ERROR_API_KEY_LIMIT_REACHED = "Max number of apikeys reached";
 export const ERROR_API_KEY_SLUG_TAKEN = "Slug already taken";
 export const ERROR_API_KEY_SLUG_NOT_FOUND = "API slug not found";
+export const ERROR_VERIFICATION_CODE_TOO_MANY =
+  "Too many verification code requests. Try again later.";
+export const ERROR_COULD_NOT_SEND_EMAIL =
+  "Problem sending email. Try again later.";
+export const ERROR_INVALID_TOKEN = "Invalid token";
+export const ERROR_SESSION_CANNOT_REFRESH = "Cannot refresh session";
+export const ERROR_SESSION_TOO_MANY = "Max number of sessions reached";
+export const ERROR_SESSIONS_NOT_FOUND = "No sessions found";
 
 // resource limits
 export const MAX_DAILY_SYSTEM_EMAILS = 2800;

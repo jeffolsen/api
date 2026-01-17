@@ -1,8 +1,8 @@
 import { RequestHandler } from "express";
 import catchErrors from "../util/catchErrors";
 import {
-  BAD_REQUEST,
   ERROR_CREDENTIALS,
+  ERROR_SESSIONS_NOT_FOUND,
   NOT_FOUND,
   OK,
   UNAUTHORIZED,
@@ -66,7 +66,7 @@ export const logoutAll: RequestHandler<
   });
 
   const sessions = await prismaClient.session.logOutAll(profile.id);
-  throwError(sessions?.count, NOT_FOUND, "No sessions found");
+  throwError(sessions?.count, NOT_FOUND, ERROR_SESSIONS_NOT_FOUND);
 
   setAuthCookies({
     res,

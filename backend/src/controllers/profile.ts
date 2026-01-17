@@ -3,8 +3,8 @@ import catchErrors from "../util/catchErrors";
 import {
   BAD_REQUEST,
   ERROR_CREDENTIALS,
+  ERROR_PROFILE_ID,
   NO_CONTENT,
-  NOT_FOUND,
   OK,
   UNAUTHORIZED,
 } from "../config/constants";
@@ -19,7 +19,7 @@ export const getAuthenticatedProfile: RequestHandler = catchErrors(
     const profile = await prismaClient.profile.findUnique({
       where: { id: profileId },
     });
-    throwError(profile, NOT_FOUND, "Profile not found");
+    throwError(profile, BAD_REQUEST, ERROR_PROFILE_ID);
 
     res.status(OK).json(profile.clientSafe());
   },

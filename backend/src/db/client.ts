@@ -1,4 +1,4 @@
-import { PrismaClient } from "../generated/prisma/client";
+import { Prisma, PrismaClient } from "../generated/prisma/client";
 import env from "../config/env";
 import profileExtension from "../extensions/profile";
 import sessionExtension from "../extensions/session";
@@ -13,8 +13,16 @@ if (env.NODE_ENV !== "production") globalForPrisma.prisma = prismaClient;
 
 export * from "../generated/prisma/client";
 
-export default prismaClient
+const extendedClient = prismaClient
   .$extends(profileExtension)
   .$extends(sessionExtension)
   .$extends(verificationCodeExtension)
   .$extends(apiKeyExtension);
+
+export type ExtendedProfile = Prisma.Result<
+  typeof extendedClient.profile,
+  { comparePassword: true; clientSafe: true },
+  "findFirstOrThrow"
+>;
+
+export default extendedClient;

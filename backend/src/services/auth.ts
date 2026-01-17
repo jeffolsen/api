@@ -1,4 +1,9 @@
-import prismaClient, { ApiKey, CodeType, Profile } from "../db/client";
+import prismaClient, {
+  ApiKey,
+  CodeType,
+  ExtendedProfile,
+  Profile,
+} from "../db/client";
 import {
   signAccessToken,
   signRefreshToken,
@@ -11,6 +16,13 @@ import {
   TOO_MANY_REQUESTS,
   INTERNAL_SERVER_ERROR,
   FORBIDDEN,
+  ERROR_UNAUTHORIZED,
+  ERROR_VERIFICATION_CODE_TOO_MANY,
+  ERROR_COULD_NOT_SEND_EMAIL,
+  ERROR_INVALID_TOKEN,
+  ERROR_SESSION_CANNOT_REFRESH,
+  ERROR_SESSION_TOO_MANY,
+  ERROR_INVALID_API_KEY,
 } from "../config/constants";
 import throwError from "../util/throwError";
 
@@ -42,7 +54,7 @@ export const initProfileSession = async ({
     profileId,
     usedVerificationCode.type,
   );
-  throwError(!tooManySessions, FORBIDDEN, "Max number of sessions reached");
+  throwError(!tooManySessions, FORBIDDEN, ERROR_SESSION_TOO_MANY);
 
   const session = await prismaClient.session.create({
     data: {
@@ -63,7 +75,7 @@ export const initProfileSession = async ({
 
 export const connectToApiSession = async (apiKey: ApiKey) => {
   const { slug, origin, sessionId, profileId, id: apiKeyId } = apiKey;
-  throwError(slug && origin, BAD_REQUEST, "slug and origin are required");
+  throwError(slug && origin && profileId, UNAUTHORIZED, ERROR_INVALID_API_KEY);
 
   let session;
   if (sessionId)
@@ -72,7 +84,7 @@ export const connectToApiSession = async (apiKey: ApiKey) => {
     });
 
   const needToExtendTheSession = !session?.isCurrent();
-  throwError(needToExtendTheSession, FORBIDDEN, "session is still current");
+  throwError(needToExtendTheSession, FORBIDDEN, ERROR_SESSION_CANNOT_REFRESH);
 
   if (!session) {
     session = await prismaClient.session.create({
@@ -123,15 +135,15 @@ export const refreshAccessToken = async ({
 }: RefreshAccessTokenParams) => {
   const payload = verifyRefreshToken(refreshToken);
 
-  throwError(payload?.sessionId, BAD_REQUEST, "Invalid token");
+  throwError(payload?.sessionId, BAD_REQUEST, ERROR_INVALID_TOKEN);
 
   const { sessionId } = payload;
   const sessionWithProfile = await prismaClient.session.findUnique({
     where: { id: sessionId },
     include: { profile: true },
   });
-  throwError(sessionWithProfile?.profile, BAD_REQUEST, "Invalid token");
-  throwError(sessionWithProfile.isCurrent(), UNAUTHORIZED, "Unauthorized");
+  throwError(sessionWithProfile?.profile, BAD_REQUEST, ERROR_INVALID_TOKEN);
+  throwError(sessionWithProfile.isCurrent(), UNAUTHORIZED, ERROR_UNAUTHORIZED);
 
   const { profile, ...session } = sessionWithProfile;
 
@@ -139,32 +151,40 @@ export const refreshAccessToken = async ({
 };
 
 interface SendVerificationCode {
-  profileId: number;
-  email: string;
+  profile: ExtendedProfile;
   codeType: CodeType;
+  password?: string;
+  userAgent: string;
 }
 
 export const sendVerificationCode = async ({
-  profileId,
-  email,
+  profile,
   codeType,
+  password,
 }: SendVerificationCode) => {
+  const { id: profileId, email } = profile;
   const tooManyVerifcationCodes =
     (await prismaClient.verificationCode.systemDailyMaxExceeded()) ||
     (await prismaClient.verificationCode.maxExceeded(profileId, codeType));
   throwError(
     !tooManyVerifcationCodes,
     TOO_MANY_REQUESTS,
-    "Too many verification code requests. Try again later.",
+    ERROR_VERIFICATION_CODE_TOO_MANY,
+  );
+
+  const passwordResetCredential = codeType === CodeType.PASSWORD_RESET;
+  const hasPasswordCredentials =
+    password && (await profile.comparePassword(password));
+
+  throwError(
+    hasPasswordCredentials || passwordResetCredential,
+    UNAUTHORIZED,
+    ERROR_UNAUTHORIZED,
   );
 
   const code = generateCode();
   const validEmail = sendEmail(email, code, codeType);
-  throwError(
-    validEmail,
-    INTERNAL_SERVER_ERROR,
-    "Problem sending email. Try again later.",
-  );
+  throwError(validEmail, INTERNAL_SERVER_ERROR, ERROR_COULD_NOT_SEND_EMAIL);
 
   const verificationCode = await prismaClient.verificationCode.issue({
     data: {
@@ -197,10 +217,11 @@ export const processVerificationCode = async ({
     },
     orderBy: { createdAt: "desc" },
   });
-  throwError(verificationCode, NOT_FOUND, "No pending code found");
-
-  const verificationCodeIsValid = await verificationCode.validate(value);
-  throwError(verificationCodeIsValid, UNAUTHORIZED, "Invalid code");
+  throwError(
+    verificationCode && (await verificationCode.validate(value)),
+    UNAUTHORIZED,
+    ERROR_UNAUTHORIZED,
+  );
 
   const usedVerificationCode = await prismaClient.verificationCode.use(
     verificationCode.id,

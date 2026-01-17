@@ -25,7 +25,7 @@ router.post(
   VERIFICATION_CREATE_API_KEY_ENDPOINT,
   authenticate,
   authorizeScope([CREATE_API_KEY_SCOPE]),
-  verificationCodeApi.requestCodeForApiKey,
+  verificationCodeApi.requestVerificationCode,
 );
 router.post(
   VERIFICATION_CODE_LOGIN_ENDPOINT,
@@ -41,7 +41,7 @@ router.post(
 );
 router.post(
   VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT,
-  verificationCodeApi.requestCodeForPasswordReset,
+  verificationCodeApi.requestVerificationCode,
 );
 
 export default router;
