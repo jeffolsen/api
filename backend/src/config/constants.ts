@@ -114,6 +114,7 @@ export const ERROR_INVALID_TOKEN = "Invalid token";
 export const ERROR_SESSION_CANNOT_REFRESH = "Cannot refresh session";
 export const ERROR_SESSION_TOO_MANY = "Max number of sessions reached";
 export const ERROR_SESSIONS_NOT_FOUND = "No sessions found";
+export const ERROR_NO_ACCESS = "You do not have access to that resource";
 
 // resource limits
 export const MAX_DAILY_SYSTEM_EMAILS = 2800;

@@ -49,8 +49,7 @@ export const sessionExtension = Prisma.defineExtension((client) => {
             return undefined;
           }
         },
-        async maxExceeded(profileId: number, codeType?: CodeType) {
-          if (codeType === "LOGOUT_ALL") return false;
+        async maxExceeded(profileId: number) {
           const sessions = await newClient.session.findMany({
             where: {
               profileId,
@@ -85,5 +84,9 @@ export const sessionExtension = Prisma.defineExtension((client) => {
   });
   return newClient;
 });
+
+export type sessionExtensionTypeConfig = {
+  isCurrent: true;
+};
 
 export default sessionExtension;

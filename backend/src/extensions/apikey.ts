@@ -45,4 +45,6 @@ export const apiKeyExtension = Prisma.defineExtension((client) => {
   return newClient;
 });
 
+export type apiKeyExtensionTypeConfig = { validate: true };
+
 export default apiKeyExtension;

@@ -77,4 +77,8 @@ export const verificationCodeExtension = Prisma.defineExtension((client) => {
   return newClient;
 });
 
+export type verificationCodeExtensionTypeConfig = {
+  validate: true;
+};
+
 export default verificationCodeExtension;

@@ -44,22 +44,21 @@ export const initProfileSession = async ({
 }: LogInProfileParams) => {
   const { id: profileId } = profile;
 
-  const usedVerificationCode = await processVerificationCode({
+  const tooManySessions = await prismaClient.session.maxExceeded(profileId);
+  throwError(!tooManySessions, FORBIDDEN, ERROR_SESSION_TOO_MANY);
+
+  await processVerificationCode({
     profileId,
     value: verificationCode,
     codeType: CodeType.LOGIN,
+    // userAgent
   });
-
-  const tooManySessions = await prismaClient.session.maxExceeded(
-    profileId,
-    usedVerificationCode.type,
-  );
-  throwError(!tooManySessions, FORBIDDEN, ERROR_SESSION_TOO_MANY);
 
   const session = await prismaClient.session.create({
     data: {
       profileId,
       scope: PROFILE_SESSION,
+      // userAgent
     },
   });
 

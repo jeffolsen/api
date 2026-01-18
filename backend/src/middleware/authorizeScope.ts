@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { parseScopeString } from "../util/scope";
-import { UNAUTHORIZED } from "../config/constants";
+import { ERROR_NO_ACCESS, UNAUTHORIZED } from "../config/constants";
 import throwError from "../util/throwError";
 
 type ScopeParams = string[];
@@ -12,7 +12,7 @@ const authorizeScope = (requiredScopes: ScopeParams) => {
     const hasScope = requestScope.some((s: string) =>
       requiredScopes.includes(s),
     );
-    throwError(hasScope, UNAUTHORIZED, "Unauthorized");
+    throwError(hasScope, UNAUTHORIZED, ERROR_NO_ACCESS);
 
     next();
   };

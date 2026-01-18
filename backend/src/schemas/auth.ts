@@ -11,7 +11,7 @@ export const loginSchema = ProfileDataSchema.omit({
   userAgent: z.string(),
 });
 
-export const registerSchema = ProfileDataSchema.extend({
+export const RegisterSchema = ProfileDataSchema.extend({
   confirmPassword: passwordSchema,
 }).refine(
   (data) => data.password === data.confirmPassword,

@@ -33,4 +33,9 @@ export const profileExtension = Prisma.defineExtension((client) => {
   return newClient;
 });
 
+export type profileExtensionTypeConfig = {
+  comparePassword: true;
+  clientSafe: true;
+};
+
 export default profileExtension;

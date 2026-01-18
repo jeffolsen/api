@@ -1,9 +1,17 @@
 import { Prisma, PrismaClient } from "../generated/prisma/client";
 import env from "../config/env";
-import profileExtension from "../extensions/profile";
-import sessionExtension from "../extensions/session";
-import verificationCodeExtension from "../extensions/verificationCode";
-import apiKeyExtension from "../extensions/apikey";
+import profileExtension, {
+  profileExtensionTypeConfig,
+} from "../extensions/profile";
+import sessionExtension, {
+  sessionExtensionTypeConfig,
+} from "../extensions/session";
+import verificationCodeExtension, {
+  verificationCodeExtensionTypeConfig,
+} from "../extensions/verificationCode";
+import apiKeyExtension, {
+  apiKeyExtensionTypeConfig,
+} from "../extensions/apikey";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
@@ -21,7 +29,25 @@ const extendedClient = prismaClient
 
 export type ExtendedProfile = Prisma.Result<
   typeof extendedClient.profile,
-  { comparePassword: true; clientSafe: true },
+  profileExtensionTypeConfig,
+  "findFirstOrThrow"
+>;
+
+export type ExtendedSession = Prisma.Result<
+  typeof extendedClient.session,
+  sessionExtensionTypeConfig,
+  "findFirstOrThrow"
+>;
+
+export type ExtendedVerificationCode = Prisma.Result<
+  typeof extendedClient.verificationCode,
+  verificationCodeExtensionTypeConfig,
+  "findFirstOrThrow"
+>;
+
+export type ExtendedApiKey = Prisma.Result<
+  typeof extendedClient.apiKey,
+  apiKeyExtensionTypeConfig,
   "findFirstOrThrow"
 >;
 

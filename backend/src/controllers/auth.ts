@@ -13,7 +13,7 @@ import {
 } from "../config/constants";
 import throwError from "../util/throwError";
 import prismaClient from "../db/client";
-import { loginSchema, registerSchema } from "../schemas/auth";
+import { loginSchema, RegisterSchema } from "../schemas/auth";
 
 interface RegisterBody {
   email: string;
@@ -23,7 +23,7 @@ interface RegisterBody {
 
 export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
   catchErrors(async (req, res, next) => {
-    const { email, password } = registerSchema.parse({
+    const { email, password } = RegisterSchema.parse({
       ...(req.body as RegisterBody),
     });
 

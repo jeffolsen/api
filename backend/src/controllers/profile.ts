@@ -11,6 +11,7 @@ import {
 import throwError from "../util/throwError";
 import prismaClient, { CodeType } from "../db/client";
 import { processVerificationCode } from "../services/auth";
+import { DeleteProfileSchema, ResetPasswordSchema } from "../schemas/profile";
 
 export const getAuthenticatedProfile: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -38,18 +39,9 @@ export const resetPassword: RequestHandler<
   ResetPasswordBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { verificationCode, email, password, confirmPassword } = req.body || {};
-  throwError(
-    verificationCode && password && confirmPassword && email,
-    BAD_REQUEST,
-    "value, email, password and confirmPassword are required",
-  );
-
-  throwError(
-    password === confirmPassword,
-    BAD_REQUEST,
-    "Password and confirmPassword must match",
-  );
+  const { verificationCode, email, password } = ResetPasswordSchema.parse({
+    ...(req.body as ResetPasswordBody),
+  });
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(profile, UNAUTHORIZED, ERROR_CREDENTIALS);
@@ -81,12 +73,9 @@ export const deleteProfile: RequestHandler<
   deleteProfileBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { email, verificationCode } = req.body || {};
-  throwError(
-    verificationCode && email,
-    BAD_REQUEST,
-    "verificationCode and email are required",
-  );
+  const { verificationCode, email } = DeleteProfileSchema.parse({
+    ...(req.body as ResetPasswordBody),
+  });
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(profile, UNAUTHORIZED, ERROR_CREDENTIALS);
