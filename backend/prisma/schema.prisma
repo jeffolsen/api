@@ -32,6 +32,7 @@ model Profile {
 model Session {
   id        Int       @id @default(autoincrement())
   scope     String
+  userAgent String    @map("user_agent")
   expiresAt DateTime  @default(dbgenerated("NOW() + INTERVAL '4 DAYS'")) @map("expires_at") @db.Timestamptz(3)
   endedAt   DateTime? @map("ended_at") @db.Timestamptz(3)
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
