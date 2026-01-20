@@ -7,7 +7,10 @@ import {
 } from "../config/constants";
 import { z } from "zod";
 import { hashValue } from "../util/bcrypt";
-import { verificationCodeValueSchema } from "./verificationCode";
+import {
+  userAgentSchema,
+  verificationCodeValueSchema,
+} from "./verificationCode";
 
 // properties
 export const apiKeySlugSchema = z
@@ -27,11 +30,13 @@ export const ApiKeyGenerateSchema = z.object({
   apiSlug: apiKeySlugSchema,
   origin: apiKeyOriginSchema,
   verificationCode: verificationCodeValueSchema,
+  userAgent: userAgentSchema,
 });
 
 export const ApiKeyConnectSchema = z.object({
   apiSlug: apiKeySlugSchema,
   apiKey: apiKeyValueSchema,
+  userAgent: userAgentSchema,
 });
 
 // extensions

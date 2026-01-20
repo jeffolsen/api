@@ -10,7 +10,6 @@ import {
   verifyRefreshToken,
 } from "../util/jwt";
 import {
-  NOT_FOUND,
   BAD_REQUEST,
   UNAUTHORIZED,
   TOO_MANY_REQUESTS,
@@ -34,7 +33,7 @@ import { API_KEY_SESSION, PROFILE_SESSION } from "../util/scope";
 interface LogInProfileParams {
   profile: Profile;
   verificationCode: string;
-  userAgent?: string;
+  userAgent: string;
 }
 
 export const initProfileSession = async ({
@@ -51,15 +50,13 @@ export const initProfileSession = async ({
     profileId,
     value: verificationCode,
     codeType: CodeType.LOGIN,
-    // userAgent
+    userAgent,
   });
 
-  const session = await prismaClient.session.create({
-    data: {
-      profileId,
-      scope: PROFILE_SESSION,
-      // userAgent
-    },
+  const session = await prismaClient.session.start({
+    profileId,
+    scope: PROFILE_SESSION,
+    userAgent,
   });
 
   const refreshToken = signRefreshToken(session.id);
@@ -72,7 +69,15 @@ export const initProfileSession = async ({
   };
 };
 
-export const connectToApiSession = async (apiKey: ApiKey) => {
+interface ConnectToApiSessionParams {
+  apiKey: ApiKey;
+  userAgent: string;
+}
+
+export const connectToApiSession = async ({
+  apiKey,
+  userAgent,
+}: ConnectToApiSessionParams) => {
   const { slug, origin, sessionId, profileId, id: apiKeyId } = apiKey;
   throwError(slug && origin && profileId, UNAUTHORIZED, ERROR_INVALID_API_KEY);
 
@@ -86,12 +91,11 @@ export const connectToApiSession = async (apiKey: ApiKey) => {
   throwError(needToExtendTheSession, FORBIDDEN, ERROR_SESSION_CANNOT_REFRESH);
 
   if (!session) {
-    session = await prismaClient.session.create({
-      data: {
-        profileId: profileId,
-        apiKeyId: apiKeyId,
-        scope: API_KEY_SESSION,
-      },
+    session = await prismaClient.session.start({
+      profileId: profileId,
+      apiKeyId: apiKeyId,
+      scope: API_KEY_SESSION,
+      userAgent,
     });
     apiKey = await prismaClient.apiKey.update({
       where: { slug },
@@ -200,12 +204,14 @@ interface ProcessVerificationCodeParams {
   profileId: number;
   value: string;
   codeType: CodeType;
+  userAgent: string;
 }
 
 export const processVerificationCode = async ({
   profileId,
   value,
   codeType,
+  userAgent,
 }: ProcessVerificationCodeParams) => {
   const verificationCode = await prismaClient.verificationCode.findFirst({
     where: {
@@ -213,6 +219,7 @@ export const processVerificationCode = async ({
       usedAt: null,
       type: codeType,
       expiresAt: { gt: new Date() },
+      userAgent,
     },
     orderBy: { createdAt: "desc" },
   });

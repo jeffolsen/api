@@ -52,6 +52,7 @@ export const login: RequestHandler<
 > = catchErrors(async (req, res, next) => {
   const { email, verificationCode, userAgent } = loginSchema.parse({
     ...(req.body as LoginWithVerificationCodeBody),
+    userAgent: req.headers["user-agent"],
   });
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });

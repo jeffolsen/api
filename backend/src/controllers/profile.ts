@@ -39,9 +39,11 @@ export const resetPassword: RequestHandler<
   ResetPasswordBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { verificationCode, email, password } = ResetPasswordSchema.parse({
-    ...(req.body as ResetPasswordBody),
-  });
+  const { verificationCode, email, password, userAgent } =
+    ResetPasswordSchema.parse({
+      ...(req.body as ResetPasswordBody),
+      userAgent: req.headers["user-agent"],
+    });
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(profile, UNAUTHORIZED, ERROR_CREDENTIALS);
@@ -50,6 +52,7 @@ export const resetPassword: RequestHandler<
     profileId: profile.id,
     value: verificationCode,
     codeType: CodeType.PASSWORD_RESET,
+    userAgent,
   });
 
   await prismaClient.profile.update({
@@ -73,8 +76,9 @@ export const deleteProfile: RequestHandler<
   deleteProfileBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { verificationCode, email } = DeleteProfileSchema.parse({
+  const { verificationCode, email, userAgent } = DeleteProfileSchema.parse({
     ...(req.body as ResetPasswordBody),
+    userAgent: req.headers["user-agent"],
   });
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
@@ -84,6 +88,7 @@ export const deleteProfile: RequestHandler<
     profileId: profile.id,
     value: verificationCode,
     codeType: CodeType.DELETE_PROFILE,
+    userAgent,
   });
 
   await prismaClient.profile.delete({

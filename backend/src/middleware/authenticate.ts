@@ -15,6 +15,7 @@ const authenticate: RequestHandler = async (
   next: NextFunction,
 ) => {
   const { accessToken } = req.cookies;
+  const userAgent = req.headers["user-agent"];
   throwError(accessToken, BAD_REQUEST, ERROR_INVALID_TOKEN);
 
   const payload = await verifyAccessToken(accessToken);
@@ -25,7 +26,7 @@ const authenticate: RequestHandler = async (
   throwError(accessTokenNotExpired, UNAUTHORIZED, ERROR_INVALID_TOKEN);
 
   const session = await prismaClient.session.findUnique({
-    where: { id: sessionId },
+    where: { id: sessionId, userAgent },
   });
   throwError(session, UNAUTHORIZED, ERROR_INVALID_TOKEN);
 

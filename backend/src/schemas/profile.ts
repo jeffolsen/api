@@ -5,7 +5,10 @@ import {
   PASSWORD_REGEX,
 } from "../config/constants";
 import { z } from "zod";
-import { verificationCodeValueSchema } from "./verificationCode";
+import {
+  userAgentSchema,
+  verificationCodeValueSchema,
+} from "./verificationCode";
 
 // properties
 export const emailSchema = z.email(ERROR_EMAIL_FORMAT);
@@ -24,6 +27,7 @@ export const ProfileDataSchema = z.object({
 export const ResetPasswordSchema = ProfileDataSchema.extend({
   confirmPassword: passwordSchema,
   verificationCode: verificationCodeValueSchema,
+  userAgent: userAgentSchema,
 }).refine(
   (data) => data.password === data.confirmPassword,
   ERROR_PASSWORD_MATCH,
@@ -32,4 +36,5 @@ export const ResetPasswordSchema = ProfileDataSchema.extend({
 export const DeleteProfileSchema = z.object({
   email: emailSchema,
   verificationCode: verificationCodeValueSchema,
+  userAgent: userAgentSchema,
 });

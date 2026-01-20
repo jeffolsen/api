@@ -52,9 +52,10 @@ export const logoutAll: RequestHandler<
   logoutAllBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { email, verificationCode } = SessionLogoutAllSchema.parse(
-    req.body as logoutAllBody,
-  );
+  const { email, verificationCode, userAgent } = SessionLogoutAllSchema.parse({
+    ...(req.body as logoutAllBody),
+    userAgent: req.headers["user-agent"],
+  });
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
   throwError(profile, UNAUTHORIZED, ERROR_CREDENTIALS);
@@ -63,6 +64,7 @@ export const logoutAll: RequestHandler<
     profileId: profile.id,
     value: verificationCode,
     codeType: CodeType.LOGOUT_ALL,
+    userAgent,
   });
 
   const sessions = await prismaClient.session.logOutAll(profile.id);

@@ -51,9 +51,12 @@ export const generate: RequestHandler<
     apiSlug: slug,
     verificationCode,
     origin,
+    userAgent,
   } = ApiKeyGenerateSchema.parse({
     ...(req.body as GenerateApiKeyBody),
+    userAgent: req.headers["user-agent"],
   });
+
   const tooManyApiKeys = await prismaClient.apiKey.maxExceeded(profileId);
   throwError(!tooManyApiKeys, FORBIDDEN, ERROR_API_KEY_LIMIT_REACHED);
 
@@ -66,6 +69,7 @@ export const generate: RequestHandler<
     profileId,
     value: verificationCode,
     codeType: CodeType.CREATE_API_KEY,
+    userAgent,
   });
 
   const value = prismaClient.apiKey.generateKeyValue();
@@ -92,8 +96,13 @@ export const connect: RequestHandler<
   LoginWithApiKeyBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { apiSlug: slug, apiKey: value } = ApiKeyConnectSchema.parse({
+  const {
+    apiSlug: slug,
+    apiKey: value,
+    userAgent,
+  } = ApiKeyConnectSchema.parse({
     ...(req.body as LoginWithApiKeyBody),
+    userAgent: req.headers["user-agent"],
   });
   const origin = req.get("origin");
   const apiKey = await prismaClient.apiKey.findUnique({
@@ -107,7 +116,10 @@ export const connect: RequestHandler<
   const apiKeyIsValid = await apiKey.validate(value);
   throwError(apiKeyIsValid, UNAUTHORIZED, ERROR_API_KEY_VALUE);
 
-  const { session, ...tokens } = await connectToApiSession(apiKey);
+  const { session, ...tokens } = await connectToApiSession({
+    apiKey,
+    userAgent,
+  });
 
   setAuthCookies({
     res,
