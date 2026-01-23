@@ -27,6 +27,7 @@ import {
   TAG_ROUTES,
   VERIFICATION_CODE_ROUTES,
 } from "./config/constants";
+import rateLimiter from "./middleware/rateLimit";
 
 const app = express();
 const PORT = env.PORT || 5001;
@@ -35,6 +36,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(dynamicCors));
 app.use(cookieParser());
+app.use(rateLimiter);
 
 app.use(VERIFICATION_CODE_ROUTES, verificationCodeRoutes);
 app.use(AUTH_ROUTES, authRoutes);
