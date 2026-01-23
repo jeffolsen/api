@@ -33,7 +33,7 @@ model Session {
   id        Int       @id @default(autoincrement())
   scope     String
   userAgent String    @map("user_agent")
-  expiresAt DateTime  @default(dbgenerated("NOW() + INTERVAL '4 DAYS'")) @map("expires_at") @db.Timestamptz(3)
+  expiresAt DateTime  @default(dbgenerated("(now() + '4 days'::interval)")) @map("expires_at") @db.Timestamptz(3)
   endedAt   DateTime? @map("ended_at") @db.Timestamptz(3)
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -59,7 +59,7 @@ model VerificationCode {
   value     String
   userAgent String    @map("user_agent")
   usedAt    DateTime? @map("used_at") @db.Timestamptz(3)
-  expiresAt DateTime  @default(dbgenerated("NOW() + INTERVAL '8 HOURS'")) @map("expires_at") @db.Timestamptz(3)
+  expiresAt DateTime  @default(dbgenerated("(now() + '08:00:00'::interval)")) @map("expires_at") @db.Timestamptz(3)
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
   profile   Profile?  @relation("ProfileCodes", fields: [profileId], references: [id], onDelete: SetNull)
