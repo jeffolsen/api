@@ -9,6 +9,7 @@ import {
   userAgentSchema,
   verificationCodeValueSchema,
 } from "./verificationCode";
+import { hashValue } from "../util/bcrypt";
 
 // properties
 export const emailSchema = z.email(ERROR_EMAIL_FORMAT);
@@ -28,13 +29,21 @@ export const ResetPasswordSchema = ProfileDataSchema.extend({
   confirmPassword: passwordSchema,
   verificationCode: verificationCodeValueSchema,
   userAgent: userAgentSchema,
-}).refine(
-  (data) => data.password === data.confirmPassword,
-  ERROR_PASSWORD_MATCH,
-);
+}).refine((data) => data.password === data.confirmPassword, {
+  message: ERROR_PASSWORD_MATCH,
+  path: ["password", "confirmPassword"],
+});
 
 export const DeleteProfileSchema = z.object({
   email: emailSchema,
   verificationCode: verificationCodeValueSchema,
   userAgent: userAgentSchema,
+});
+
+// extensions
+export const ProfileCreateTransform = z.object({
+  email: emailSchema,
+  password: passwordSchema.pipe(
+    z.transform(async (val) => await hashValue(val)),
+  ),
 });

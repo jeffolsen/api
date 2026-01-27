@@ -13,7 +13,7 @@ export const loginSchema = ProfileDataSchema.omit({
 
 export const RegisterSchema = ProfileDataSchema.extend({
   confirmPassword: passwordSchema,
-}).refine(
-  (data) => data.password === data.confirmPassword,
-  ERROR_PASSWORD_MATCH,
-);
+}).refine((data) => data.password === data.confirmPassword, {
+  message: ERROR_PASSWORD_MATCH,
+  path: ["password", "confirmPassword"],
+});

@@ -16,9 +16,13 @@ export const verificationCodeExtension = Prisma.defineExtension((client) => {
     model: {
       verificationCode: {
         async issue(data: Record<string, unknown>) {
+          console.log(data);
+          const codeData =
+            await VerificationCodeCreateTransform.parseAsync(data);
+          console.log(codeData);
           return await newClient.verificationCode.create({
             data: {
-              ...(await VerificationCodeCreateTransform.parseAsync(data)),
+              ...codeData,
               expiresAt: getNewVerificationCodeExpirationDate(),
             },
           });

@@ -63,6 +63,7 @@ export const requestVerificationCode: RequestHandler<
   throwError(codeType, NOT_FOUND, ERROR_ENDPOINT_NOT_FOUND);
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
+  console.log(profile?.email);
   throwError(profile, UNAUTHORIZED, ERROR_CREDENTIALS);
 
   await sendVerificationCode({
