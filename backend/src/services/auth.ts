@@ -24,11 +24,14 @@ import {
   ERROR_INVALID_API_KEY,
 } from "../config/constants";
 import throwError from "../util/throwError";
-
 import sendEmail from "../util/sendEmail";
 import generateCode from "../util/generateCode";
-import { getNewRefreshTokenExpirationDate } from "../util/date";
+import {
+  getNewRefreshTokenExpirationDate,
+  getNewVerificationCodeExpirationDate,
+} from "../util/date";
 import { API_KEY_SESSION, PROFILE_SESSION } from "../util/scope";
+import { VerificationCodeCreateTransform } from "../schemas/verificationCode";
 
 interface LogInProfileParams {
   profile: Profile;
@@ -180,10 +183,6 @@ export const sendVerificationCode = async ({
   const hasPasswordCredentials =
     password && (await profile.comparePassword(password));
 
-  console.log(codeType, password);
-  console.log("passwordResetCredential", passwordResetCredential);
-  console.log("hasPasswordCredentials", hasPasswordCredentials);
-
   throwError(
     hasPasswordCredentials || passwordResetCredential,
     UNAUTHORIZED,
@@ -191,19 +190,23 @@ export const sendVerificationCode = async ({
   );
 
   const code = generateCode();
-  // const validEmail = sendEmail(email, code, codeType);
-  // throwError(validEmail, INTERNAL_SERVER_ERROR, ERROR_COULD_NOT_SEND_EMAIL);
-
-  const verificationCode = await prismaClient.verificationCode.issue({
-    data: {
+  const verificationCodeProps =
+    await VerificationCodeCreateTransform.parseAsync({
       profileId,
-      type: codeType as CodeType,
+      type: codeType,
       value: code,
       userAgent,
+    });
+
+  const validEmail = sendEmail(email, code, codeType);
+  throwError(validEmail, INTERNAL_SERVER_ERROR, ERROR_COULD_NOT_SEND_EMAIL);
+
+  return await prismaClient.verificationCode.create({
+    data: {
+      ...verificationCodeProps,
+      expiresAt: getNewVerificationCodeExpirationDate(),
     },
   });
-
-  return verificationCode;
 };
 
 interface ProcessVerificationCodeParams {

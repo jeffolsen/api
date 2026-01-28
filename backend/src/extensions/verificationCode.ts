@@ -3,30 +3,13 @@ import {
   MAX_PROFILE_CODES,
 } from "../config/constants";
 import { CodeType, Prisma } from "../generated/prisma/client";
-import { VerificationCodeCreateTransform } from "../schemas/verificationCode";
 import { compareValue } from "../util/bcrypt";
-import {
-  getNewVerificationCodeExpirationDate,
-  getVerificationCodeExpirationWindow,
-  oneDayAgo,
-} from "../util/date";
+import { getVerificationCodeExpirationWindow, oneDayAgo } from "../util/date";
 
 export const verificationCodeExtension = Prisma.defineExtension((client) => {
   const newClient = client.$extends({
     model: {
       verificationCode: {
-        async issue(data: Record<string, unknown>) {
-          console.log(data);
-          const codeData =
-            await VerificationCodeCreateTransform.parseAsync(data);
-          console.log(codeData);
-          return await newClient.verificationCode.create({
-            data: {
-              ...codeData,
-              expiresAt: getNewVerificationCodeExpirationDate(),
-            },
-          });
-        },
         async use(id: number) {
           return await newClient.verificationCode.update({
             where: { id },
