@@ -3,6 +3,9 @@ import { getNewAccessTokenExpirationDate } from "./date";
 import { AUTH_REFRESH_ENDPOINT, AUTH_ROUTES } from "../config/constants";
 import env from "../config/env";
 
+export const ACCESS_TOKEN_NAME = "accessToken";
+export const REFRESH_TOKEN_NAME = "refreshToken";
+
 const secure = env.NODE_ENV !== "development";
 
 const defaults: CookieOptions = {
@@ -38,10 +41,13 @@ export const setAuthCookies = ({
   refreshToken,
 }: SetAuthCookieParams) => {
   return res
-    .cookie("accessToken", accessToken, getAccessTokenCookieOptions())
+    .cookie(ACCESS_TOKEN_NAME, accessToken, getAccessTokenCookieOptions())
     .cookie(
-      "refreshToken",
+      REFRESH_TOKEN_NAME,
       refreshToken,
       getRefreshTokenCookieOptions(sessionExpiresAt),
     );
 };
+
+export const clearAuthCookies = (res: Response) =>
+  res.clearCookie(ACCESS_TOKEN_NAME).clearCookie(REFRESH_TOKEN_NAME);

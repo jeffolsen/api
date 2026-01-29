@@ -10,7 +10,7 @@ import {
 import prismaClient, { CodeType } from "../db/client";
 import throwError from "../util/throwError";
 import { processVerificationCode } from "../services/auth";
-import { setAuthCookies } from "../util/cookie";
+import { clearAuthCookies } from "../util/cookie";
 import { SessionLogoutAllSchema } from "../schemas/session";
 
 export const getProfilesSessions: RequestHandler = catchErrors(
@@ -33,12 +33,7 @@ export const logout: RequestHandler = catchErrors(async (req, res, next) => {
 
   await prismaClient.session.logOut(sessionId);
 
-  setAuthCookies({
-    res,
-    sessionExpiresAt: new Date(),
-    refreshToken: "invalid",
-    accessToken: "invalid",
-  }).sendStatus(OK);
+  clearAuthCookies(res).sendStatus(OK);
 });
 
 interface logoutAllBody {
@@ -70,12 +65,7 @@ export const logoutAll: RequestHandler<
   const sessions = await prismaClient.session.logOutAll(profile.id);
   throwError(sessions?.count, NOT_FOUND, ERROR_SESSIONS_NOT_FOUND);
 
-  setAuthCookies({
-    res,
-    sessionExpiresAt: new Date(),
-    refreshToken: "expired",
-    accessToken: "expired",
-  }).sendStatus(OK);
+  clearAuthCookies(res).sendStatus(OK);
 });
 
 const sessionApi = {

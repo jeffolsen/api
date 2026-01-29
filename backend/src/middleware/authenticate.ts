@@ -15,6 +15,7 @@ const authenticate: RequestHandler = async (
   next: NextFunction,
 ) => {
   const { accessToken } = req.cookies;
+
   const userAgent = req.headers["user-agent"];
   throwError(accessToken, BAD_REQUEST, ERROR_INVALID_TOKEN);
 

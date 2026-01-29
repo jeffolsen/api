@@ -34,8 +34,8 @@ const PORT = env.PORT || 5001;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors(dynamicCors));
 app.use(cookieParser());
+app.use(cors(dynamicCors));
 app.use(rateLimiter);
 
 app.use(VERIFICATION_CODE_ROUTES, verificationCodeRoutes);

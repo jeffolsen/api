@@ -243,30 +243,6 @@ describe("setAuthCookies", () => {
       expect(refreshTokenCall[2]).toHaveProperty("secure", true);
     });
 
-    // Note: The secure flag is evaluated at module load time, so we can't easily test
-    // the development environment behavior without restructuring the cookie module.
-    // The production and test environment tests cover the secure flag functionality.
-    // it.skip("should set secure=false in development", () => {
-    //   mockEnv.NODE_ENV = "development";
-    //   const res = createMockResponse();
-    //   const accessToken = "test-access-token";
-    //   const refreshToken = "test-refresh-token";
-
-    //   setAuthCookies({
-    //     res,
-    //     sessionExpiresAt: SESSION_EXPIRY,
-    //     accessToken,
-    //     refreshToken,
-    //   });
-
-    //   const resMock = res as any;
-    //   const accessTokenCall = resMock.cookie.mock.calls[0];
-    //   const refreshTokenCall = resMock.cookie.mock.calls[1];
-
-    //   expect(accessTokenCall[2]).toHaveProperty("secure", false);
-    //   expect(refreshTokenCall[2]).toHaveProperty("secure", false);
-    // });
-
     it("should set secure=true in test environment", () => {
       mockEnv.NODE_ENV = "test";
       const res = createMockResponse();

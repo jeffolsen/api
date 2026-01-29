@@ -1,4 +1,13 @@
-import { describe, expect, it, jest, beforeEach, afterEach } from "@jest/globals";
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
+import {
+  describe,
+  expect,
+  it,
+  jest,
+  beforeEach,
+  afterEach,
+} from "@jest/globals";
 import jwt from "jsonwebtoken";
 
 // Mock date module
@@ -23,7 +32,10 @@ import {
 import * as dateModule from "../date";
 import env from "../../config/env";
 
-const mockGetNewAccessTokenExpirationDate = dateModule.getNewAccessTokenExpirationDate as jest.MockedFunction<typeof dateModule.getNewAccessTokenExpirationDate>;
+const mockGetNewAccessTokenExpirationDate =
+  dateModule.getNewAccessTokenExpirationDate as jest.MockedFunction<
+    typeof dateModule.getNewAccessTokenExpirationDate
+  >;
 
 describe("JWT utilities", () => {
   const TEST_SESSION_ID = 12345;
