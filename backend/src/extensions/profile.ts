@@ -1,5 +1,5 @@
 import { Prisma } from "../generated/prisma/client";
-import {} from "../schemas/profile";
+import { ProfileCreateTransform } from "../schemas/profile";
 import { compareValue } from "../util/bcrypt";
 
 export const profileExtension = Prisma.defineExtension((client) => {

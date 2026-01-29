@@ -9,7 +9,7 @@ describe("createScopeString", () => {
 
     expect(scopeString).toBeDefined();
     expect(typeof scopeString).toBe("string");
-    expect(scopeString.split(delimiter)).toBe(scopeArray);
+    expect(scopeString.split(delimiter)).toEqual(scopeArray);
   });
 });
 

@@ -14,6 +14,7 @@ import {
 import throwError from "../util/throwError";
 import prismaClient from "../db/client";
 import { loginSchema, RegisterSchema } from "../schemas/auth";
+import { ProfileCreateTransform } from "../schemas/profile";
 
 interface RegisterBody {
   email: string;
@@ -33,7 +34,7 @@ export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
     throwError(!emailFound, CONFLICT, ERROR_EMAIL_TAKEN);
 
     await prismaClient.profile.create({
-      data: { email, password },
+      data: await ProfileCreateTransform.parseAsync({ email, password }),
     });
 
     res.sendStatus(CREATED);
