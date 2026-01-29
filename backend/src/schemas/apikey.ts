@@ -8,22 +8,12 @@ import {
 import { z } from "zod";
 import { hashValue } from "../util/bcrypt";
 import {
+  apiKeyOriginSchema,
+  apiKeySlugSchema,
+  apiKeyValueSchema,
   userAgentSchema,
   verificationCodeValueSchema,
-} from "./verificationCode";
-
-// properties
-export const apiKeySlugSchema = z
-  .string(ERROR_API_KEY_SLUG)
-  .max(100, ERROR_API_KEY_SLUG)
-  .regex(SLUG_REGEX, ERROR_API_KEY_SLUG);
-
-export const apiKeyOriginSchema = z.url({
-  protocol: /^https$/,
-  message: ERROR_API_KEY_ORIGIN,
-});
-
-export const apiKeyValueSchema = z.uuid(ERROR_API_KEY_VALUE);
+} from "./properties";
 
 // endpoints
 export const ApiKeyGenerateSchema = z.object({

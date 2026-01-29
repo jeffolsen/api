@@ -1,17 +1,12 @@
 import { ERROR_PROFILE_ID } from "../config/constants";
 import { z } from "zod";
-import { API_KEY_SESSION, PROFILE_SESSION, getScope } from "../util/scope";
+import { getScope } from "../util/scope";
 import {
+  emailSchema,
+  scopeSchema,
   userAgentSchema,
   verificationCodeValueSchema,
-} from "./verificationCode";
-import { emailSchema } from "./profile";
-
-// properties
-export const scopeSchema = z.union([
-  z.literal(API_KEY_SESSION),
-  z.literal(PROFILE_SESSION),
-]);
+} from "./properties";
 
 // endpoints
 export const SessionLogoutAllSchema = z.object({

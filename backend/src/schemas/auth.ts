@@ -1,7 +1,7 @@
 import { ERROR_PASSWORD_MATCH } from "../config/constants";
 import { z } from "zod";
-import { passwordSchema, ProfileDataSchema } from "./profile";
-import { verificationCodeValueSchema } from "./verificationCode";
+import { ProfileDataSchema } from "./profile";
+import { passwordSchema, verificationCodeValueSchema } from "./properties";
 
 // endpoints
 export const loginSchema = ProfileDataSchema.omit({
