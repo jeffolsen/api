@@ -1,9 +1,9 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import catchErrors from "../util/catchErrors";
 import { BAD_REQUEST, NOT_FOUND, OK } from "../config/constants";
-import prismaClient from "../db/client";
+import prismaClient, { TagName } from "../db/client";
 import throwError from "../util/throwError";
-import { isTagArray } from "../util/array";
+import { CreateItemSchema } from "../schemas/item";
 
 export const getAllItems: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -35,12 +35,20 @@ export const getItemById: RequestHandler = catchErrors(
   },
 );
 
+interface CreateItemBody {
+  title: string;
+  subtitle?: string;
+  content: string;
+  tags: TagName[];
+  private: boolean;
+}
+
 export const createItem: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const { title, subtitle, content, tags } = req.body || {};
-    throwError(title && content, BAD_REQUEST, "Title and content are required");
-    throwError(!tags || isTagArray(tags), BAD_REQUEST, "Invalid tags");
+    const { title, subtitle, content, tags } = CreateItemSchema.parse({
+      ...(req.body as CreateItemBody),
+    });
 
     const existingTags = await prismaClient.tag.findMany({
       where: { name: { in: tags } },

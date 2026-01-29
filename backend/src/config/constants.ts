@@ -23,7 +23,7 @@ export const VERIFICATION_CODE_LOGIN_ENDPOINT = "/login";
 export const VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT = "/logout-all";
 export const VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT = "/password-reset";
 export const VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT = "/delete-profile";
-export const VERIFICATION_CREATE_API_KEY_ENDPOINT = "/generate-key";
+export const VERIFICATION_CODE_CREATE_API_KEY_ENDPOINT = "/generate-key";
 
 export const API_KEY_ROUTES = "/api/keys";
 export const API_KEY_GENERATE_ENDPOINT = "/generate";
@@ -142,3 +142,7 @@ export const PASSWORD_REGEX =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
 export const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export const NUMERIC_CODE_REGEX = /^\d{6}/;
+
+// misc
+export const ACCESS_TOKEN_NAME = "accessToken";
+export const REFRESH_TOKEN_NAME = "refreshToken";

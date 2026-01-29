@@ -1,7 +1,7 @@
 import { CodeType } from "../db/client";
 import env from "../config/env";
 import resend from "../config/resend";
-import templates from "./temlates";
+import templates from "./templates";
 
 const getSender = () =>
   env.NODE_ENV !== "production" ? "onboarding@resend.dev" : env.EMAIL_SENDER;

@@ -17,7 +17,11 @@ import catchErrors from "../util/catchErrors";
 import { setAuthCookies } from "../util/cookie";
 import prismaClient, { CodeType } from "../db/client";
 import { connectToApiSession, processVerificationCode } from "../services/auth";
-import { ApiKeyConnectSchema, ApiKeyGenerateSchema } from "../schemas/apikey";
+import {
+  ApiKeyConnectSchema,
+  ApiKeyCreateTransform,
+  ApiKeyGenerateSchema,
+} from "../schemas/apikey";
 
 export const getProfilesApiKeys: RequestHandler = catchErrors(
   async (req, res, next) => {
@@ -73,13 +77,14 @@ export const generate: RequestHandler<
   });
 
   const value = prismaClient.apiKey.generateKeyValue();
-  await prismaClient.apiKey.issue({
-    data: {
-      profileId,
-      slug,
-      origin,
-      value,
-    },
+  const apiKeyData = await ApiKeyCreateTransform.parseAsync({
+    profileId,
+    slug,
+    origin,
+    value,
+  });
+  await prismaClient.apiKey.create({
+    data: apiKeyData,
   });
 
   res.status(CREATED).json({ apiKey: value });

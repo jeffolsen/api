@@ -11,7 +11,12 @@ import {
 import throwError from "../util/throwError";
 import prismaClient, { CodeType } from "../db/client";
 import { processVerificationCode } from "../services/auth";
-import { DeleteProfileSchema, ResetPasswordSchema } from "../schemas/profile";
+import {
+  DeleteProfileSchema,
+  ProfileCreateTransform,
+  ResetPasswordSchema,
+} from "../schemas/profile";
+import { clearAuthCookies } from "../util/cookie";
 
 export const getAuthenticatedProfile: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -39,9 +44,10 @@ export const resetPassword: RequestHandler<
   ResetPasswordBody,
   unknown
 > = catchErrors(async (req, res, next) => {
+  console.log("resetPassword got here", req.body);
   const { verificationCode, email, password, userAgent } =
     ResetPasswordSchema.parse({
-      ...(req.body as ResetPasswordBody),
+      ...req.body,
       userAgent: req.headers["user-agent"],
     });
 
@@ -55,10 +61,15 @@ export const resetPassword: RequestHandler<
     userAgent,
   });
 
+  const { password: newPassword } = await ProfileCreateTransform.parseAsync({
+    email,
+    password,
+  });
+
   await prismaClient.profile.update({
     where: { id: profile.id },
     data: {
-      password,
+      password: newPassword,
     },
   });
 
@@ -95,7 +106,7 @@ export const deleteProfile: RequestHandler<
     where: { id: profile.id },
   });
 
-  res.sendStatus(NO_CONTENT);
+  clearAuthCookies(res).sendStatus(NO_CONTENT);
 });
 
 const profileApi = {

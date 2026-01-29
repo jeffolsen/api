@@ -14,6 +14,7 @@ const dynamicCors = async (
       dynamicOptions = { origin: "*" };
     } else {
       const payload = await verifyRefreshToken(req.cookies.refreshToken || "");
+
       if (payload?.origin) dynamicOptions = { origin: payload.origin };
       else dynamicOptions = { origin: env.ORIGIN };
     }

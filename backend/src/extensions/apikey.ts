@@ -1,6 +1,5 @@
 import { MAX_PROFILE_API_KEYS } from "../config/constants";
 import { Prisma } from "../generated/prisma/client";
-import { ApiKeyCreateTransform } from "../schemas/apikey";
 import { compareValue } from "../util/bcrypt";
 import { randomUUID } from "node:crypto";
 
@@ -16,11 +15,6 @@ export const apiKeyExtension = Prisma.defineExtension((client) => {
             take: MAX_PROFILE_API_KEYS,
           });
           return apiKeys.length == MAX_PROFILE_API_KEYS;
-        },
-        async issue(data: Record<string, unknown>) {
-          return await newClient.apiKey.create({
-            data: await ApiKeyCreateTransform.parseAsync(data),
-          });
         },
         generateKeyValue() {
           return randomUUID();
