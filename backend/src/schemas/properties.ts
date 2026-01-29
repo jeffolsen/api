@@ -15,7 +15,7 @@ import {
   SLUG_REGEX,
 } from "../config/constants";
 import { API_KEY_SESSION, PROFILE_SESSION } from "../util/scope";
-import { CodeType } from "../generated/prisma/client";
+import { CodeType, TagName } from "../generated/prisma/client";
 
 export const verificationCodeTypeSchema = z.enum(
   [
@@ -58,3 +58,34 @@ export const scopeSchema = z.union([
   z.literal(API_KEY_SESSION),
   z.literal(PROFILE_SESSION),
 ]);
+
+export const titleSchema = z.string();
+export const subtitleSchema = z.string();
+export const contentSchema = z.string();
+
+const tagArray = [
+  TagName.BAR,
+  TagName.BAZ,
+  TagName.BLUE,
+  TagName.FOO,
+  TagName.FUTURE,
+  TagName.GREEN,
+  TagName.PAST,
+  TagName.PERSON,
+  TagName.PLACE,
+  TagName.PRESENT,
+  TagName.RED,
+  TagName.THING,
+] as const;
+
+export const tagNameSchema = z.enum(tagArray, ERROR_CODE_TYPE);
+
+export const tagNameArraySchema = z.array(
+  z.union(tagArray.map((val) => z.literal(val))),
+);
+
+export const tagNameUniqueArraySchema = z
+  .union(tagArray.map((val) => z.literal(val)))
+  .refine((items) => {
+    return new Set(items).size === items.length;
+  });
