@@ -16,6 +16,7 @@ import {
   ProfileCreateTransform,
   ResetPasswordSchema,
 } from "../schemas/profile";
+import { clearAuthCookies } from "../util/cookie";
 
 export const getAuthenticatedProfile: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -105,7 +106,7 @@ export const deleteProfile: RequestHandler<
     where: { id: profile.id },
   });
 
-  res.sendStatus(NO_CONTENT);
+  clearAuthCookies(res).sendStatus(NO_CONTENT);
 });
 
 const profileApi = {
