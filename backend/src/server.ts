@@ -15,6 +15,7 @@ import errorHandler from "./middleware/errorHandler";
 import dynamicCors from "./middleware/cors";
 import env from "./config/env";
 import authenticate from "./middleware/authenticate";
+import path from "path";
 
 import {
   API_KEY_ROUTES,
@@ -50,5 +51,12 @@ app.use(COMPONENT_ROUTES, authenticate, componentRoutes);
 app.use(FEED_ROUTES, authenticate, feedRoutes);
 
 app.use(errorHandler);
+
+// if (env.NODE_ENV === "production") {
+app.use(express.static(path.join(__dirname, "../../frontend/dist")));
+app.use(/(.*)/, (req, res) => {
+  res.sendFile(path.join(__dirname, "../../frontend", "dist", "index.html"));
+});
+// }
 
 app.listen(PORT, () => console.log("server running"));
