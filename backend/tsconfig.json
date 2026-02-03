@@ -47,6 +47,10 @@
     "skipLibCheck": true,
     "typeRoots": ["global.d.ts"]
   },
-  "include": ["src/**/*", "prisma/seed.ts", "global.d.ts"],
+  "include": [
+    "src/**/*",
+    // "prisma/seed.ts",
+    "global.d.ts"
+  ],
   "exclude": ["node_modules", "dist", "src/**/*.test.ts"]
 }
