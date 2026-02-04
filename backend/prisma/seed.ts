@@ -10,6 +10,7 @@ async function main() {
       },
     });
   };
+  console.log("seeding tags");
   Object.keys(TagName).forEach((t) => {
     seedTag(t as TagName);
   });
