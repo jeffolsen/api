@@ -1,5 +1,5 @@
 function Footer() {
-  return <footer className="h-32 bg-red-500"></footer>;
+  return <footer className="footer bg-secondary min-h-36"></footer>;
 }
 
 export default Footer;

@@ -1,5 +1,5 @@
 function Header() {
-  return <div className="sticky h-32 bg-red-500"></div>;
+  return <div className="navbar sticky bg-primary"></div>;
 }
 
 export default Header;
