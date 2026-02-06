@@ -1,10 +1,17 @@
-import Form from "./Form";
+import {
+  VERIFICATION_CODE_DEFAULT,
+  VERIFICATION_CODE_INPUT,
+} from "../../network/inputs";
+import { FormWithHeading } from "./Form";
 
 function VerificationCodeForm() {
   return (
-    <Form
-      fields={[{ name: "code", placeholder: "Code", type: "text" }]}
-      defaultValues={{ code: "" }}
+    <FormWithHeading
+      heading="Enter Code"
+      headingSize="lg"
+      headingStyles={"text-center uppercase font-bold"}
+      fields={[VERIFICATION_CODE_INPUT]}
+      defaultValues={{ ...VERIFICATION_CODE_DEFAULT }}
       trySubmit={async (args) => {
         console.log(args);
         // await submitCode(args);

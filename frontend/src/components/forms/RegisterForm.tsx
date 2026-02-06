@@ -1,61 +1,24 @@
-import Form from "./Form";
-
-export type RegisterFormInput = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
-
-const PASSWORD_REGEX =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
-const EMAIL_REGEX =
-  /^(?!\.)(?!.*\.\.)([a-z0-9_'+\-.]*)[a-z0-9_'+-]@([a-z0-9][a-z0-9-]*\.)+[a-z]{2,}$/i;
+import {
+  CONFIRM_PASSWORD_DEFAULT,
+  CONFIRM_PASSWORD_INPUT,
+  EMAIL_DEFAULT,
+  EMAIL_INPUT,
+  PASSWORD_DEFAULT,
+  PASSWORD_INPUT,
+} from "../../network/inputs";
+import { FormWithHeading } from "./Form";
 
 function RegisterForm() {
   return (
-    <Form
-      fields={[
-        {
-          name: "email",
-          placeholder: "Email",
-          type: "text",
-          registerOptions: {
-            required: "Email is required",
-            pattern: {
-              value: EMAIL_REGEX,
-              message: "Invalid Email format",
-            },
-          },
-        },
-        {
-          name: "password",
-          placeholder: "Password",
-          type: "text",
-          registerOptions: {
-            required: "Password is required",
-            pattern: {
-              value: PASSWORD_REGEX,
-              message: "Invalid Password format",
-            },
-          },
-        },
-        {
-          name: "confirmPassword",
-          placeholder: "Confirm Password",
-          type: "text",
-          registerOptions: {
-            required: "Confirm Password is required",
-            pattern: {
-              value: PASSWORD_REGEX,
-              message: "Invalid Password format",
-            },
-          },
-        },
-      ]}
+    <FormWithHeading
+      heading="Register"
+      headingSize="lg"
+      headingStyles={"text-center uppercase font-bold"}
+      fields={[EMAIL_INPUT, PASSWORD_INPUT, CONFIRM_PASSWORD_INPUT]}
       defaultValues={{
-        email: "",
-        password: "",
-        confirmPassword: "",
+        ...EMAIL_DEFAULT,
+        ...PASSWORD_DEFAULT,
+        ...CONFIRM_PASSWORD_DEFAULT,
       }}
       trySubmit={async (args) => {
         console.log(args);

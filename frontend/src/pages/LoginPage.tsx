@@ -1,12 +1,27 @@
 import LoginForm from "../components/forms/LoginForm";
 import RegisterForm from "../components/forms/RegisterForm";
 import VerificationCodeForm from "../components/forms/VerificationCodeForm";
-import Wrapper from "../components/Wrapper";
+import Wrapper from "../components/common/Wrapper";
+import Heading from "../components/common/Heading";
 
 function LoginPage() {
   return (
     <Wrapper width="sm">
-      <h1 className="text-4xl text-accent">Login or Register</h1>
+      <Heading
+        headingSize="lg"
+        headingStyles={"uppercase font-bold text-center text-red-500"}
+        headingDecorator="strike"
+      >
+        Should be level 1
+      </Heading>
+
+      <Heading
+        headingSize="lg"
+        // headingStyles={"uppercase font-bold text-center"}
+        headingDecorator="underline"
+      >
+        Should be level 1
+      </Heading>
       <LoginForm />
       <RegisterForm />
       <VerificationCodeForm />
