@@ -2,6 +2,8 @@ const PASSWORD_REGEX =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
 const EMAIL_REGEX =
   /^(?!\.)(?!.*\.\.)([a-z0-9_'+\-.]*)[a-z0-9_'+-]@([a-z0-9][a-z0-9-]*\.)+[a-z]{2,}$/i;
+export const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+export const NUMERIC_CODE_REGEX = /^\d{6}/;
 
 export const EMAIL_INPUT = {
   name: "email",
@@ -52,7 +54,7 @@ export const VERIFICATION_CODE_INPUT = {
   registerOptions: {
     required: "Verification Code is required",
     pattern: {
-      value: PASSWORD_REGEX,
+      value: NUMERIC_CODE_REGEX,
       message: "Invalid Verification Code format",
     },
   },

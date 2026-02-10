@@ -1,12 +1,21 @@
 import { InputHTMLAttributes } from "react";
-import { RegisterOptions, useForm } from "react-hook-form";
+import {
+  RegisterOptions,
+  useForm,
+  FieldError,
+  FieldErrorsImpl,
+  Merge,
+  UseFormRegister,
+} from "react-hook-form";
 import clsx from "clsx";
 import Heading, { HeadingProps, HeadingLevelProvider } from "../common/Heading";
+import { TextInput } from "../inputs/TextInput";
 
 type SubmitArgs = Record<string, unknown>;
 
 interface Field extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
+  componentName?: string;
   registerOptions?: RegisterOptions;
 }
 
@@ -37,24 +46,13 @@ function Form({ fields, defaultValues, trySubmit }: FormProps) {
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
       {fields.map(({ name, registerOptions = {}, ...props }) => (
         <div key={name}>
-          <input
-            className={clsx([
-              "input input-bordered w-full",
-              "tracking-wider lowercase text-sm font-semibold",
-            ])}
-            {...register(name, registerOptions)}
+          <FormInput
+            name={name}
+            register={register}
+            registerOptions={registerOptions}
             {...props}
           />
-          {errors[name] && (
-            <div
-              className={clsx([
-                "px-4 py-2 mt-1",
-                "bg-error text-error-content",
-              ])}
-            >
-              {errors[name].message}
-            </div>
-          )}
+          <FormError error={errors[name]} />
         </div>
       ))}
       <input
@@ -75,15 +73,20 @@ type FormWithHeadingProps = {
 } & FormProps &
   HeadingProps;
 
-export const FormWithHeading = ({
+const FormWithHeading = ({
   heading,
   headingSize,
   headingStyles,
+  headingDecorator,
   ...props
 }: FormWithHeadingProps) => {
   return (
     <HeadingLevelProvider>
-      <Heading headingSize={headingSize} headingStyles={headingStyles}>
+      <Heading
+        headingSize={headingSize}
+        headingStyles={headingStyles}
+        headingDecorator={headingDecorator}
+      >
         {heading}
       </Heading>
       <Form {...props} />
@@ -91,4 +94,38 @@ export const FormWithHeading = ({
   );
 };
 
+type FormInputProps = {
+  name: string;
+  register: UseFormRegister<Record<string, unknown>>;
+  registerOptions: RegisterOptions;
+};
+
+const FormInput = ({
+  name,
+  register,
+  registerOptions,
+  ...props
+}: FormInputProps) => {
+  return <TextInput register={register(name, registerOptions)} {...props} />;
+};
+
+type FormErrorProps = {
+  error: Merge<FieldError, FieldErrorsImpl<object>> | undefined;
+};
+
+const FormError = ({ error }: FormErrorProps) => {
+  return (
+    <>
+      {error && (
+        <div
+          className={clsx(["px-4 py-2 mt-1", "bg-error text-error-content"])}
+        >
+          {error.message}
+        </div>
+      )}
+    </>
+  );
+};
+
+export { FormWithHeading, FormError, FormInput };
 export default Form;

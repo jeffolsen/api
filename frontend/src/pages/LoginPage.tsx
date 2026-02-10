@@ -9,15 +9,7 @@ function LoginPage() {
     <Wrapper width="sm">
       <Heading
         headingSize="lg"
-        headingStyles={"uppercase font-bold text-center text-red-500"}
-        headingDecorator="strike"
-      >
-        Should be level 1
-      </Heading>
-
-      <Heading
-        headingSize="lg"
-        // headingStyles={"uppercase font-bold text-center"}
+        headingStyles={"uppercase font-bold text-rimary-content"}
         headingDecorator="underline"
       >
         Should be level 1

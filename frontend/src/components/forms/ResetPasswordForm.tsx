@@ -12,8 +12,9 @@ function ResetPasswordForm() {
   return (
     <FormWithHeading
       heading="Reset Password"
-      headingSize="lg"
-      headingStyles={"text-center uppercase font-bold"}
+      headingSize="md"
+      headingStyles={"text-center uppercase font-bold text-accent"}
+      headingDecorator="strike"
       fields={[EMAIL_INPUT, PASSWORD_INPUT, CONFIRM_PASSWORD_INPUT]}
       defaultValues={{
         ...EMAIL_DEFAULT,
