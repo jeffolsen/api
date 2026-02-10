@@ -10,7 +10,9 @@ const dynamicCors = async (
 ) => {
   let dynamicOptions;
   try {
-    if (req.path === AUTH_ROUTES + API_KEY_PUBLIC_ENDPOINT) {
+    if (env.NODE_ENV === "production") {
+      dynamicOptions = { origin: "http://localhost:5173" };
+    } else if (req.path === AUTH_ROUTES + API_KEY_PUBLIC_ENDPOINT) {
       dynamicOptions = { origin: "*" };
     } else {
       const payload = await verifyRefreshToken(req.cookies.refreshToken || "");

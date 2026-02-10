@@ -11,6 +11,17 @@ const getRecipient = (to: string) =>
 const getSubject = (topic: CodeType) => topic;
 
 const sendEmail = async (email: string, code: string, codeType: CodeType) => {
+  console.log(
+    "sendEmail",
+    "from",
+    getSender(),
+    "to",
+    getRecipient(email),
+    codeType,
+    code,
+  );
+  return true;
+
   const emailResponse = await resend.emails
     .send({
       from: getSender(),
