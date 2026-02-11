@@ -37,6 +37,12 @@ export const login = async (data: LoginFormInput) => {
   return response.data;
 };
 
+export type PasswordResetInput = {
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
 const verificationCodePaths = {
   LOGIN: "/codes/login",
   LOGOUT_ALL: "/codes/logout-all",
