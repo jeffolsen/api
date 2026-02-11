@@ -60,3 +60,27 @@ export const VERIFICATION_CODE_INPUT = {
   },
 };
 export const VERIFICATION_CODE_DEFAULT = { code: "" };
+
+export const ORIGIN_INPUT = {
+  name: "origin",
+  placeholder: "origin",
+  type: "text",
+  registerOptions: {
+    required: "App Origin is required",
+  },
+};
+export const ORIGIN_DEFAULT = { code: "" };
+
+export const SLUG_INPUT = {
+  name: "apiSlug",
+  placeholder: "slug",
+  type: "text",
+  registerOptions: {
+    required: "Unique Slug is required",
+    pattern: {
+      value: SLUG_REGEX,
+      message: "Invalid Slug format",
+    },
+  },
+};
+export const SLUG_DEFAULT = { code: "" };
