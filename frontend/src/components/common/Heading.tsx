@@ -4,7 +4,7 @@ import { useHeadingLevel } from "../../contexts/HeadingLevelContext";
 export { HeadingLevelProvider } from "../../contexts/HeadingLevelProvider";
 
 export type HeadingProps = {
-  headingSize?: "sm" | "md" | "lg" | "xl";
+  headingSize?: keyof typeof sizes;
   headingDecorator?: "underline" | "strike" | "none";
   headingStyles?: unknown;
 };

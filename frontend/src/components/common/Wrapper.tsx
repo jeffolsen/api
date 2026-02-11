@@ -2,14 +2,14 @@ import { PropsWithChildren } from "react";
 import clsx from "clsx";
 
 type WrapperProps = {
-  width?: "sm" | "md" | "lg";
+  width?: keyof typeof widths;
 };
 
 const widths = {
   sm: "max-w-2xl",
   md: "max-w-4xl",
   lg: "max-w-6xl",
-};
+} as const;
 
 const Wrapper = ({
   width = "md",
