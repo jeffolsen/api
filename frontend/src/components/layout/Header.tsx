@@ -6,7 +6,6 @@ function Header() {
       <header className="navbar top-0 sticky bg-primary z-10">
         <Heading>Should be level 2</Heading>
       </header>
-      ;
     </HeadingLevelProvider>
   );
 }
