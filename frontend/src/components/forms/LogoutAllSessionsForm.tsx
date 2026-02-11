@@ -7,15 +7,11 @@ import {
   VERIFICATION_CODE_INPUT,
 } from "../../network/inputs";
 import { FormWithHeading } from "./Form";
-import { LoginFormInput } from "../../network/api";
-import { useApi } from "../../network/useApi";
 
-function RequestLoginForm() {
-  const { login } = useApi();
-
+function RequestLogoutAllSessionsForm() {
   return (
     <FormWithHeading
-      heading="Login"
+      heading="Logout of all sessions"
       headingSize="md"
       headingStyles={"text-center uppercase font-bold text-accent"}
       headingDecorator="strike"
@@ -25,27 +21,31 @@ function RequestLoginForm() {
         ...PASSWORD_DEFAULT,
       }}
       trySubmit={async (args) => {
-        await login.mutate(args as LoginFormInput);
+        console.log(args);
+        // await resetPassword(args);
       }}
     />
   );
 }
 
-function LoginWithOTPForm() {
+function LogoutAllSessionsWithOTPForm() {
   return (
     <FormWithHeading
-      heading="Login"
+      heading="Logout of all sessions"
       headingSize="md"
       headingStyles={"text-center uppercase font-bold text-accent"}
       headingDecorator="strike"
       fields={[EMAIL_INPUT, VERIFICATION_CODE_INPUT]}
-      defaultValues={{ ...EMAIL_DEFAULT, ...VERIFICATION_CODE_DEFAULT }}
+      defaultValues={{
+        ...EMAIL_DEFAULT,
+        ...VERIFICATION_CODE_DEFAULT,
+      }}
       trySubmit={async (args) => {
         console.log(args);
-        // await submitCode(args);
+        // await resetPassword(args);
       }}
     />
   );
 }
 
-export { RequestLoginForm, LoginWithOTPForm };
+export { RequestLogoutAllSessionsForm, LogoutAllSessionsWithOTPForm };

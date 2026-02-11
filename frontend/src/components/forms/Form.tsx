@@ -11,7 +11,7 @@ import clsx from "clsx";
 import Heading, { HeadingProps, HeadingLevelProvider } from "../common/Heading";
 import { TextInput } from "../inputs/TextInput";
 
-type SubmitArgs = Record<string, unknown>;
+export type SubmitArgs = Record<string, unknown>;
 
 interface Field extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
@@ -68,7 +68,7 @@ function Form({ fields, defaultValues, trySubmit }: FormProps) {
   );
 }
 
-type FormWithHeadingProps = {
+export type FormWithHeadingProps = {
   heading: string;
 } & FormProps &
   HeadingProps;
