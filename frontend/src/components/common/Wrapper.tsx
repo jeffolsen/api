@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 import clsx from "clsx";
 
-type WrapperProps = {
+export type WrapperProps = {
   width?: keyof typeof widths;
 };
 
@@ -16,7 +16,7 @@ const Wrapper = ({
   children,
 }: PropsWithChildren<WrapperProps>) => {
   return (
-    <div className="flex items-start justify-center px-6">
+    <div className="flex items-start justify-center px-6 w-full">
       <div
         className={clsx(["w-full h-full flex flex-col gap-4", widths[width]])}
       >
