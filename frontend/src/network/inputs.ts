@@ -48,7 +48,7 @@ export const CONFIRM_PASSWORD_INPUT = {
 export const CONFIRM_PASSWORD_DEFAULT = { confirmPassword: "" };
 
 export const VERIFICATION_CODE_INPUT = {
-  name: "code",
+  name: "verificationCode",
   placeholder: "Verification Code",
   type: "text",
   registerOptions: {

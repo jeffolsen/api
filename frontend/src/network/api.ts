@@ -5,9 +5,13 @@ const BASE_URL =
     ? "http://localhost:5002/api"
     : "website/api";
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: BASE_URL,
 });
+
+export type FormData<T> = {
+  [K in keyof T]: T[K];
+};
 
 export { axios };
 
