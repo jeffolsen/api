@@ -1,44 +1,44 @@
 import { RequestLoginForm, LoginWithOTPForm } from "../forms/LoginForm";
+import { RequestResetPasswordForm } from "../forms/ResetPasswordForm";
 import RegisterForm from "../forms/RegisterForm";
 import Block, { BlockProps } from "./Block";
-import { useModalContext } from "../../contexts/ModalContext";
-import FormModal, { FormModalProps } from "../modals/FormModal";
 import Tabs, { TabsProps } from "../common/Tabs";
+import { OTP_STATUS_LOGIN, useOtpStatus } from "../../network/otp";
 
 const tabs: TabsProps["tabs"] = [
   {
     name: "Login",
-    Component: RequestLoginForm,
+    Component: RequestLoginOrLoginWithOtp,
+    getTabClasses: () => ["tab"],
   },
   {
     name: "Register",
     Component: RegisterForm,
+    getTabClasses: () => ["tab"],
+  },
+  {
+    name: "Reset Password",
+    Component: RequestResetPasswordForm,
+    getTabClasses: () => ["flex-none text-sm pt-2 order-last"],
   },
 ];
 
 type LoginOrRegisterBlockProps = BlockProps;
 
 function LoginOrRegisterBlock(props: LoginOrRegisterBlockProps) {
-  const { enqueueModals } = useModalContext();
-
   return (
     <Block {...props}>
-      <Tabs tabs={tabs} />
-      <button
-        className="btn btn-primary btn-block"
-        onClick={() => {
-          enqueueModals([
-            {
-              component: FormModal,
-              props: { children: <LoginWithOTPForm /> } as FormModalProps,
-            },
-          ]);
-        }}
-      >
-        Login
-      </button>
+      <Tabs tabs={tabs} tabListClassName="flex flex-wrap justify-end gap-2" />
     </Block>
   );
+}
+
+function RequestLoginOrLoginWithOtp() {
+  const otpStatus = useOtpStatus();
+  if (otpStatus === OTP_STATUS_LOGIN) {
+    return <LoginWithOTPForm />;
+  }
+  return <RequestLoginForm />;
 }
 
 export default LoginOrRegisterBlock;
