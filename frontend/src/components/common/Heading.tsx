@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import clsx, { ClassValue } from "clsx";
 import { PropsWithChildren } from "react";
 import { useHeadingLevel } from "../../contexts/HeadingLevelContext";
 export { HeadingLevelProvider } from "../../contexts/HeadingLevelProvider";
@@ -6,7 +6,7 @@ export { HeadingLevelProvider } from "../../contexts/HeadingLevelProvider";
 export type HeadingProps = {
   headingSize?: keyof typeof sizes;
   headingDecorator?: "underline" | "strike" | "none";
-  headingStyles?: unknown;
+  headingStyles?: ClassValue;
 };
 
 const levels = ["h1", "h2", "h3", "h4", "h5", "h6", "p"] as const;
