@@ -1,7 +1,8 @@
 import Layout from "./components/layout/Layout";
 import { Route, Routes } from "react-router";
-import LoginPage from "./pages/LoginPage";
+// import LoginPage from "./pages/LoginPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import GenericPage from "./pages/GenericPage";
 
 const queryClient = new QueryClient();
 
@@ -10,7 +11,8 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Layout>
         <Routes>
-          <Route path="/" element={<LoginPage />} />
+          {/* <Route path="/" element={<LoginPage />} /> */}
+          <Route path="*" element={<GenericPage />} />
         </Routes>
       </Layout>
     </QueryClientProvider>
