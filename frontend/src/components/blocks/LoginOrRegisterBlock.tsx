@@ -23,9 +23,7 @@ const tabs: TabsProps["tabs"] = [
   },
 ];
 
-type LoginOrRegisterBlockProps = BlockProps;
-
-function LoginOrRegisterBlock(props: LoginOrRegisterBlockProps) {
+function LoginOrRegisterBlock(props: BlockProps) {
   return (
     <Block {...props}>
       <Tabs tabs={tabs} tabListClassName="flex flex-wrap justify-end gap-2" />

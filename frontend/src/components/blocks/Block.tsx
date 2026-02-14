@@ -4,40 +4,37 @@ import Wrapper, { WrapperProps } from "../common/Wrapper";
 import Heading from "../common/Heading";
 
 export interface BlockProps {
+  path?: string;
   title: string;
-  isprimaryContent?: boolean;
-  wrapperProps?: WrapperProps;
+  settings: {
+    isprimaryContent?: boolean;
+    width?: WrapperProps["width"];
+    theme?: string;
+    contentFilter?: { id?: string; tags?: string[] };
+  };
 }
 
-function Block({
-  title,
-  wrapperProps,
-  isprimaryContent = false,
-  children,
-}: PropsWithChildren<BlockProps>) {
-  if (isprimaryContent) {
-    return (
-      <InnerBlock {...{ title, wrapperProps, isprimaryContent, children }} />
-    );
+function Block({ title, settings, children }: PropsWithChildren<BlockProps>) {
+  if (settings?.isprimaryContent) {
+    return <InnerBlock {...{ title, settings, children }} />;
   }
   return (
     <HeadingLevelProvider>
-      <InnerBlock {...{ title, wrapperProps, children }} />
+      <InnerBlock {...{ title, settings, children }} />
     </HeadingLevelProvider>
   );
 }
 
 function InnerBlock({
   title,
-  wrapperProps,
-  isprimaryContent = false,
+  settings: { isprimaryContent, width } = {},
   children,
 }: PropsWithChildren<BlockProps>) {
   return (
-    <Wrapper width="sm" {...wrapperProps}>
+    <Wrapper width={width || "md"}>
       <Heading
         headingSize="lg"
-        headingStyles={"uppercase font-bold text-rimary-content"}
+        headingStyles={"uppercase font-bold text-primary-content"}
         headingDecorator={isprimaryContent ? "underline" : "none"}
       >
         {title}

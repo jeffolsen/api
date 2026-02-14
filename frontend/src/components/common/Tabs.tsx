@@ -21,8 +21,7 @@ function Tabs({
         {tabs.map(({ name, getTabClasses }) => (
           <Tab as={Fragment} key={name}>
             {({ selected, hover }) => (
-              <a
-                href="#"
+              <button
                 className={clsx([
                   "focus-visible:outline-none flex-1",
                   selected && "tab-active",
@@ -32,7 +31,7 @@ function Tabs({
                 ])}
               >
                 {name}
-              </a>
+              </button>
             )}
           </Tab>
         ))}
@@ -46,17 +45,6 @@ function Tabs({
       </TabList>
     </TabGroup>
   );
-}
-
-{
-  /* 
-          <Tab
-            as="a"
-            key={name}
-            className="focus-visible:outline-none tab tab-bordered tab-lg tab-active"
-          >
-            {name}
-          </Tab> */
 }
 
 export default Tabs;
