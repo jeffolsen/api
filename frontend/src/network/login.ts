@@ -5,7 +5,7 @@ import {
   OtpInput,
   useRequestOtp,
 } from "./otp";
-import { api } from "./api";
+import { api, useLogin } from "./api";
 
 const REQUEST_LOGIN_URL = "/codes/login";
 
@@ -21,11 +21,13 @@ export const requestLogin = async (data: RequestLoginFormInput) => {
 
 export const useRequestLogin = () => {
   const queryClient = useQueryClient();
+  const login = useLogin();
 
   return useMutation({
     mutationFn: requestLogin,
     onSuccess: () => {
       queryClient.setQueryData([OTP_STATUS_KEY], OTP_STATUS_LOGIN);
+      login();
     },
     onError: (error) => {
       console.error("useRequestLogin", error);
@@ -38,7 +40,6 @@ const LOGIN_WITH_OTP_URL = "/auth/login";
 export type LoginWithOTPFormInput = OtpInput;
 
 export const loginWithOTP = async (data: LoginWithOTPFormInput) => {
-  console.log("loginWithOTP", data);
   const response = await api.post(LOGIN_WITH_OTP_URL, data);
   return response.data;
 };

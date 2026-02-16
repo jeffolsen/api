@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useCookies } from "react-cookie";
 
 const BASE_URL =
   import.meta.env.MODE === "development"
@@ -9,42 +10,29 @@ export const api = axios.create({
   baseURL: BASE_URL,
 });
 
-export type FormData<T> = {
-  [K in keyof T]: T[K];
+interface CookieValues {
+  authenticated?: "true";
+}
+
+export const useIsLoggedIn = () => {
+  const [cookies] = useCookies<"authenticated", CookieValues>([
+    "authenticated",
+  ]);
+  return () => cookies.authenticated === "true";
 };
 
-export { axios };
-
-export const getProfile = async () => {
-  const response = await api.post("/profiles/me");
-  return response.data;
+export const useLogin = () => {
+  const [, setCookie] = useCookies<"authenticated", CookieValues>([
+    "authenticated",
+  ]);
+  return () => setCookie("authenticated", "true");
 };
 
-export type RegisterFormInput = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
-
-export const register = async (data: RegisterFormInput) => {
-  const response = await api.post("/auth/register", data);
-  return response.data;
-};
-
-export type LoginFormInput = {
-  email: string;
-  password: string;
-};
-
-export const login = async (data: LoginFormInput) => {
-  const response = await api.post("/codes/login", data);
-  return response.data;
-};
-
-export type PasswordResetInput = {
-  email: string;
-  password: string;
-  confirmPassword: string;
+export const useLogout = () => {
+  const [, , removeCookie] = useCookies<"authenticated", CookieValues>([
+    "authenticated",
+  ]);
+  return () => removeCookie("authenticated");
 };
 
 const verificationCodePaths = {
