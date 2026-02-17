@@ -1,9 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  OTP_STATUS_KEY,
   OTP_STATUS_LOGIN,
+  OTP_STATUS_NONE,
   OtpInput,
-  useRequestOtp,
+  useRequestOrSubmitOtp,
 } from "./otp";
 import { api, useLogin } from "./api";
 
@@ -20,17 +19,11 @@ export const requestLogin = async (data: RequestLoginFormInput) => {
 };
 
 export const useRequestLogin = () => {
-  const queryClient = useQueryClient();
-  const login = useLogin();
-
-  return useMutation({
+  return useRequestOrSubmitOtp({
     mutationFn: requestLogin,
-    onSuccess: () => {
-      queryClient.setQueryData([OTP_STATUS_KEY], OTP_STATUS_LOGIN);
-      login();
-    },
+    status: OTP_STATUS_LOGIN,
     onError: (error) => {
-      console.error("useRequestLogin", error);
+      console.error("useLoginWithOTP", error);
     },
   });
 };
@@ -45,11 +38,15 @@ export const loginWithOTP = async (data: LoginWithOTPFormInput) => {
 };
 
 export const useLoginWithOTP = () => {
-  return useRequestOtp<LoginWithOTPFormInput>(
-    loginWithOTP,
-    OTP_STATUS_LOGIN,
-    (error) => {
+  const login = useLogin();
+  return useRequestOrSubmitOtp({
+    mutationFn: loginWithOTP,
+    status: OTP_STATUS_NONE,
+    onSuccess: () => {
+      login();
+    },
+    onError: (error) => {
       console.error("useLoginWithOTP", error);
     },
-  );
+  });
 };

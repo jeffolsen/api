@@ -32,17 +32,26 @@ export const useOtpStatus = (): OtpStatus => {
   return query.data as OtpStatus;
 };
 
-export const useRequestOtp = <T>(
-  mutationFn: (data: T) => Promise<unknown>,
-  status: OtpStatus,
-  onError?: (error: unknown) => void,
-) => {
+type RequestOrSubmitOtp<T> = {
+  mutationFn: (data: T) => Promise<unknown>;
+  status: OtpStatus;
+  onError?: (error: unknown) => void;
+  onSuccess?: () => void;
+};
+
+export const useRequestOrSubmitOtp = <T>({
+  mutationFn,
+  status,
+  onError,
+  onSuccess,
+}: RequestOrSubmitOtp<T>) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: mutationFn,
+    mutationFn,
     onSuccess: () => {
       queryClient.setQueryData([OTP_STATUS_KEY], status);
+      onSuccess?.();
     },
     onError: (error) => {
       onError?.(error);
