@@ -5,8 +5,12 @@ import {
   useModalLimit,
 } from "../../contexts/ModalContext";
 import AlphaModal, { AlphaModalProps } from "./AlphaModal";
-import { DialogPanel } from "@headlessui/react";
-import { ModalBackButton, ModalGenericButton, ModalNextButton } from "./Modal";
+import {
+  Modal,
+  ModalBackButton,
+  ModalGenericButton,
+  ModalNextButton,
+} from "./Modal";
 
 export type BetaModalProps = ModalComponentType & {
   title?: string;
@@ -19,7 +23,7 @@ const BetaModal = ({ title, content }: BetaModalProps) => {
   useModalLimit(3);
 
   return (
-    <DialogPanel className="modal-box">
+    <Modal>
       {title && <Heading>{title}</Heading>}
       {content && <p>{content}</p>}
 
@@ -42,7 +46,7 @@ const BetaModal = ({ title, content }: BetaModalProps) => {
 
         <ModalNextButton text="Next" />
       </div>
-    </DialogPanel>
+    </Modal>
   );
 };
 export default BetaModal;

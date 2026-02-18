@@ -1,10 +1,10 @@
 import { useModalContext } from "../../contexts/ModalContext";
 import { HeadingLevelProvider } from "../common/Heading";
-import { Dialog } from "@headlessui/react";
+import { Dialog, DialogPanel } from "@headlessui/react";
 import { PropsWithChildren } from "react";
 
 const ModalManager = () => {
-  const { modalState, closeAllModals } = useModalContext();
+  const { modalState } = useModalContext();
   const { queue, index } = modalState;
   const activeModal = queue[index];
 
@@ -13,37 +13,43 @@ const ModalManager = () => {
   const { component: ModalComponent, props } = activeModal;
 
   return (
-    <Modal onClick={() => closeAllModals()}>
-      <HeadingLevelProvider>
-        <ModalComponent {...props} />
-      </HeadingLevelProvider>
-    </Modal>
+    <HeadingLevelProvider>
+      <ModalComponent {...props} />
+    </HeadingLevelProvider>
   );
 };
 
-function Modal({
-  onClick,
+export function Modal({
+  closeConfirm,
+  onClose,
   children,
-}: PropsWithChildren & { onClick: () => void }) {
+}: PropsWithChildren & { closeConfirm?: string; onClose?: () => void }) {
+  const { closeAllModals } = useModalContext();
   return (
-    <Dialog open={true} onClose={() => {}} className="relative z-50">
+    <Dialog open={true} onClose={() => onClose?.()} className="relative z-50">
       <div
         className="fixed inset-0 flex w-screen items-center justify-center p-4 bg-black/30 backdrop-blur-sm"
-        onClick={onClick}
+        onClick={() => closeAllModals(closeConfirm)}
       >
-        {children}
+        <DialogPanel className="modal-box flex flex-col gap-6">
+          {children}
+        </DialogPanel>
       </div>
     </Dialog>
   );
 }
 
-const ModalCloseButton = () => {
+interface ModalCloseButtonProps {
+  confirm?: string;
+}
+
+const ModalCloseButton = ({ confirm }: ModalCloseButtonProps) => {
   const { closeAllModals } = useModalContext();
   return (
     <button
       className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
       onClick={() => {
-        closeAllModals();
+        closeAllModals(confirm);
       }}
     >
       ✕
@@ -53,9 +59,10 @@ const ModalCloseButton = () => {
 
 interface ModalBackButtonProps {
   text: string;
+  confirm?: string;
 }
 
-const ModalBackButton = ({ text = "back" }: ModalBackButtonProps) => {
+const ModalBackButton = ({ text = "back", confirm }: ModalBackButtonProps) => {
   const { removeCurrent, modalState } = useModalContext();
   const { index } = modalState;
   return (
@@ -64,7 +71,7 @@ const ModalBackButton = ({ text = "back" }: ModalBackButtonProps) => {
         <button
           className="btn"
           onClick={() => {
-            removeCurrent();
+            removeCurrent(confirm);
           }}
         >
           {text}

@@ -3,7 +3,7 @@ import { RequestResetPasswordForm } from "../forms/ResetPasswordForm";
 import RegisterForm from "../forms/RegisterForm";
 import Block, { BlockProps } from "./Block";
 import Tabs, { TabsProps } from "../common/Tabs";
-import { OTP_STATUS_LOGIN, useOtpStatus } from "../../network/otp";
+import { OTP_STATUS_LOGIN, useOtpStatus } from "../../network/verificationCode";
 
 const tabs: TabsProps["tabs"] = [
   {

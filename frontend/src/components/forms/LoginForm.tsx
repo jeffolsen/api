@@ -5,14 +5,14 @@ import {
   PASSWORD_INPUT,
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
-} from "../../network/inputs";
+} from "../../config/inputs";
 import { FormWithHeading } from "./Form";
 import {
   useRequestLogin,
-  loginWithOTP,
+  useLoginWithOTP,
   RequestLoginFormInput,
   LoginWithOTPFormInput,
-} from "../../network/login";
+} from "../../network/auth";
 
 function RequestLoginForm() {
   const login = useRequestLogin();
@@ -36,6 +36,8 @@ function RequestLoginForm() {
 }
 
 function LoginWithOTPForm() {
+  const loginWithOTP = useLoginWithOTP();
+
   return (
     <FormWithHeading
       heading="Enter Email Code"
@@ -45,7 +47,7 @@ function LoginWithOTPForm() {
       fields={[EMAIL_INPUT, VERIFICATION_CODE_INPUT]}
       defaultValues={{ ...EMAIL_DEFAULT, ...VERIFICATION_CODE_DEFAULT }}
       trySubmit={async (args) => {
-        await loginWithOTP(args as LoginWithOTPFormInput);
+        await loginWithOTP.mutate(args as LoginWithOTPFormInput);
       }}
     />
   );

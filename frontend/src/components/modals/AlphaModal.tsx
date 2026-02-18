@@ -5,8 +5,12 @@ import {
   useModalLimit,
 } from "../../contexts/ModalContext";
 import BetaModal, { BetaModalProps } from "./BetaModal";
-import { DialogPanel } from "@headlessui/react";
-import { ModalCloseButton, ModalBackButton, ModalGenericButton } from "./Modal";
+import {
+  Modal,
+  ModalCloseButton,
+  ModalBackButton,
+  ModalGenericButton,
+} from "./Modal";
 
 export type AlphaModalProps = ModalComponentType & {
   title?: string;
@@ -19,7 +23,7 @@ const AlphaModal = ({ title, content }: AlphaModalProps) => {
   useModalLimit(3);
 
   return (
-    <DialogPanel className="modal-box">
+    <Modal>
       <ModalCloseButton />
 
       {title && <Heading>{title}</Heading>}
@@ -42,7 +46,7 @@ const AlphaModal = ({ title, content }: AlphaModalProps) => {
           }}
         />
       </div>
-    </DialogPanel>
+    </Modal>
   );
 };
 export default AlphaModal;

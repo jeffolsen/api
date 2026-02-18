@@ -150,7 +150,10 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
     });
   }, []);
 
-  const removeCurrent = useCallback(() => {
+  const removeCurrent = useCallback((confirm?: string) => {
+    if (confirm && !window.confirm(confirm)) {
+      return;
+    }
     setModalState((prevState) => {
       const { queue, index, lastUpdated } = prevState;
       if (index === 0) {
@@ -167,29 +170,25 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
     });
   }, []);
 
-  const removeAllPrev = useCallback(() => {
+  const removePrev = useCallback((buffer = 0) => {
     setModalState((prevState) => {
       const { queue, index, lastIndex, lastUpdated } = prevState;
       if (index === 0) return { queue, index, lastIndex, lastUpdated };
-      return { queue: queue.slice(index), index: 0, lastIndex, lastUpdated };
-    });
-  }, []);
-
-  const removeAllNext = useCallback(() => {
-    setModalState((prevState) => {
-      const { queue, index, lastIndex, lastUpdated } = prevState;
-      if (index === queue.length - 1)
-        return { queue, index, lastIndex, lastUpdated };
+      const newQueue = [...queue];
+      const bufferIndex = Math.max(0, index - buffer);
       return {
-        queue: queue.slice(0, index + 1),
-        index,
-        lastIndex,
+        queue: newQueue.slice(bufferIndex),
+        index: buffer,
+        lastIndex: buffer,
         lastUpdated,
       };
     });
   }, []);
 
-  const closeAllModals = useCallback(() => {
+  const closeAllModals = useCallback((confirm?: string) => {
+    if (confirm && !window.confirm(confirm)) {
+      return;
+    }
     setModalState({
       queue: [],
       index: 0,
@@ -225,8 +224,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
     insertNextOne,
     removeNextOne,
     removeCurrent,
-    removeAllPrev,
-    removeAllNext,
+    removePrev,
   } as ModalContextType;
 
   return (

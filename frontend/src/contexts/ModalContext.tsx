@@ -33,7 +33,7 @@ export interface ModalContextType {
       options?: ShouldEnqueueOptions;
     }[],
   ) => void;
-  closeAllModals: () => void;
+  closeAllModals: (confirm?: string) => void;
   openNextModal: () => void;
   openPrevModal: () => void;
   insertNextOne: <P>(
@@ -41,10 +41,9 @@ export interface ModalContextType {
     props?: P,
     open?: boolean,
   ) => void;
-  removeCurrent: () => void;
+  removePrev: (buffer?: number) => void;
+  removeCurrent: (confirm?: string) => void;
   removeNextOne: () => void;
-  removeAllPrev: () => void;
-  removeAllNext: () => void;
 
   modalState: ModalState;
 }
@@ -62,11 +61,7 @@ export const useModalContext = () => {
 };
 
 export const useModalLimit = (limit: number) => {
-  const { modalState, removeAllPrev } = useModalContext();
+  const { removePrev } = useModalContext();
 
-  const { index, lastIndex } = modalState;
-
-  if (index > limit && lastIndex > limit) {
-    removeAllPrev();
-  }
+  removePrev(limit);
 };

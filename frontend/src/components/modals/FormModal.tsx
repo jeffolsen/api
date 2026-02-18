@@ -1,15 +1,15 @@
-import { DialogPanel } from "@headlessui/react";
 import { PropsWithChildren } from "react";
-import { ModalCloseButton } from "./Modal";
+import { Modal, ModalCloseButton } from "./Modal";
 
 export type FormModalProps = PropsWithChildren;
 
 function FormModal({ children }: FormModalProps) {
+  const confirm = "Are you sure you want to quit login?";
   return (
-    <DialogPanel className="modal-box">
-      <ModalCloseButton />
+    <Modal closeConfirm={confirm}>
+      <ModalCloseButton confirm={confirm} />
       {children}
-    </DialogPanel>
+    </Modal>
   );
 }
 

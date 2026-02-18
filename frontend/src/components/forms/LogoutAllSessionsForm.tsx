@@ -5,7 +5,7 @@ import {
   PASSWORD_INPUT,
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
-} from "../../network/inputs";
+} from "../../config/inputs";
 import { FormWithHeading } from "./Form";
 
 function RequestLogoutAllSessionsForm() {

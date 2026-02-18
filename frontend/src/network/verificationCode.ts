@@ -1,4 +1,10 @@
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+
+export const REQUEST_LOGIN_URL = "/codes/login";
+export const REQUEST_PASSWORD_RESET_URL = "/codes/password-reset";
+export const REQUEST_LOGOUT_ALL_URL = "/codes/logout-all";
+export const REQUEST_DELETE_PROFILE_URL = "/codes/unregister";
+export const REQUEST_CREATE_API_KEY_URL = "/codes/generate-key";
 
 export const OTP_STATUS_KEY = "pendingOtp" as const;
 
@@ -30,31 +36,4 @@ export const useOtpStatus = (): OtpStatus => {
     initialData: "NONE",
   });
   return query.data as OtpStatus;
-};
-
-type RequestOrSubmitOtp<T> = {
-  mutationFn: (data: T) => Promise<unknown>;
-  status: OtpStatus;
-  onError?: (error: unknown) => void;
-  onSuccess?: () => void;
-};
-
-export const useRequestOrSubmitOtp = <T>({
-  mutationFn,
-  status,
-  onError,
-  onSuccess,
-}: RequestOrSubmitOtp<T>) => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn,
-    onSuccess: () => {
-      queryClient.setQueryData([OTP_STATUS_KEY], status);
-      onSuccess?.();
-    },
-    onError: (error) => {
-      onError?.(error);
-    },
-  });
 };

@@ -5,7 +5,7 @@ import {
   EMAIL_INPUT,
   PASSWORD_DEFAULT,
   PASSWORD_INPUT,
-} from "../../network/inputs";
+} from "../../config/inputs";
 import { FormWithHeading } from "./Form";
 import { RegisterFormInput } from "../../network/api";
 import { useApi } from "../../network/useApi";

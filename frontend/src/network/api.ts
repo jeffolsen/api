@@ -34,24 +34,3 @@ export const useLogout = () => {
   ]);
   return () => removeCookie("authenticated");
 };
-
-const verificationCodePaths = {
-  LOGIN: "/codes/login",
-  LOGOUT_ALL: "/codes/logout-all",
-  PASSWORD_RESET: "/codes/password-reset",
-  DELETE_PROFILE: "/codes/delete-profile",
-  CREATE_API_KEY: "/codes/generate-key",
-} as const;
-
-export type CodeType = keyof typeof verificationCodePaths;
-
-export type VerificationCodeFormInput = {
-  code: string;
-  codeType: CodeType;
-};
-
-export const submitOTP = async (data: VerificationCodeFormInput) => {
-  const { codeType, ...d } = data;
-  const response = await api.post(verificationCodePaths[codeType], d);
-  return response.data;
-};
