@@ -1,4 +1,4 @@
-import "dotenv/config";
+import env from "./config/env";
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -12,8 +12,6 @@ import itemRoutes from "./routes/item";
 import componentRoutes from "./routes/component";
 import apiKeyRoutes from "./routes/apiKey";
 import errorHandler from "./middleware/errorHandler";
-import dynamicCors from "./middleware/cors";
-import env from "./config/env";
 import authenticate from "./middleware/authenticate";
 import path from "path";
 
@@ -35,9 +33,9 @@ const PORT = env.PORT || 5001;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors({ origin: env.ALLOWED_ORIGIN, credentials: true }));
 app.use(cookieParser());
-app.use(cors(dynamicCors));
-app.use(rateLimiter);
+// app.use(rateLimiter);
 
 app.use(VERIFICATION_CODE_ROUTES, verificationCodeRoutes);
 app.use(AUTH_ROUTES, authRoutes);
@@ -59,4 +57,4 @@ app.use(/(.*)/, (req, res) => {
 });
 // }
 
-app.listen(PORT, () => console.log("server running"));
+app.listen(PORT, () => console.log("server running yo"));
