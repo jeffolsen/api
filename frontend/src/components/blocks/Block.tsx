@@ -8,6 +8,7 @@ export interface BlockProps {
   title: string;
   settings: {
     isprimaryContent?: boolean;
+    showOnLoggedinState?: "LOGGED_IN" | "LOGGED_OUT" | "BOTH";
     width?: WrapperProps["width"];
     theme?: string;
     contentFilter?: { id?: string; tags?: string[] };

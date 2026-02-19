@@ -1,5 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
+import { api } from "./api";
 
+const VERIFICATION_CODES_KEY = "verificationCodes" as const;
+const VERIFICATION_CODE_ENDPOINT = "/codes";
 export const REQUEST_LOGIN_URL = "/codes/login";
 export const REQUEST_PASSWORD_RESET_URL = "/codes/password-reset";
 export const REQUEST_LOGOUT_ALL_URL = "/codes/logout-all";
@@ -36,4 +39,18 @@ export const useOtpStatus = (): OtpStatus => {
     initialData: "NONE",
   });
   return query.data as OtpStatus;
+};
+
+const getProfileVerificationCodes = async () => {
+  const response = await api.get(VERIFICATION_CODE_ENDPOINT);
+  return response.data;
+};
+
+export const useGetProfileVerificationCodes = () => {
+  const query = useQuery({
+    queryKey: [VERIFICATION_CODES_KEY],
+    queryFn: getProfileVerificationCodes,
+  });
+
+  return query;
 };

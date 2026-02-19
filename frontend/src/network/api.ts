@@ -8,6 +8,7 @@ const BASE_URL =
 
 export const api = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true,
 });
 
 interface CookieValues {
@@ -18,7 +19,7 @@ export const useIsLoggedIn = () => {
   const [cookies] = useCookies<"authenticated", CookieValues>([
     "authenticated",
   ]);
-  return () => cookies.authenticated === "true";
+  return cookies.authenticated;
 };
 
 export const useLogin = () => {

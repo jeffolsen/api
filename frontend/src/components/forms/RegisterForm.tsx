@@ -7,11 +7,10 @@ import {
   PASSWORD_INPUT,
 } from "../../config/inputs";
 import { FormWithHeading } from "./Form";
-import { RegisterFormInput } from "../../network/api";
-import { useApi } from "../../network/useApi";
+import { RegisterFormInput, useRegister } from "../../network/auth";
 
 function RegisterForm() {
-  const { register } = useApi();
+  const register = useRegister();
   return (
     <FormWithHeading
       heading="Register"

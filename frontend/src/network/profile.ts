@@ -8,6 +8,7 @@ import {
   OtpInput,
 } from "./verificationCode";
 import { api } from "./api";
+import { useRefresh } from "./auth";
 
 const PROFILE_URL = "/profiles/me";
 const PASSWORD_RESET_WITH_OTP_URL = "/profile/password-reset";
@@ -21,10 +22,18 @@ export const getAuthenticatedProfile = async () => {
 };
 
 export const useGetAuthenticatedProfile = () => {
-  return useQuery({
+  const refresh = useRefresh();
+  const query = useQuery({
     queryKey: [PROFILE_KEY],
     queryFn: getAuthenticatedProfile,
   });
+
+  if (query.error) {
+    console.error("useGetAuthenticatedProfile", query.error);
+    refresh.mutate();
+  }
+
+  return query;
 };
 
 export type RequestPasswordResetInput = {
