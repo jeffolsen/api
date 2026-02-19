@@ -22,8 +22,6 @@ export const getAuthenticatedProfile: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
 
-    console.log("getAuthenticatedProfile got here", { profileId });
-
     const profile = await prismaClient.profile.findUnique({
       where: { id: profileId },
     });
