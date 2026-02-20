@@ -9,6 +9,7 @@ export const REFRESH_TOKEN_NAME = "refreshToken";
 const secure = env.NODE_ENV !== "development";
 
 const defaults: CookieOptions = {
+  httpOnly: true,
   sameSite: "none",
   secure,
 };

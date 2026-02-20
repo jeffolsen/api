@@ -17,10 +17,10 @@ const authenticate: RequestHandler = async (
   const { accessToken } = req.cookies;
 
   const userAgent = req.headers["user-agent"];
-  throwError(accessToken, BAD_REQUEST, ERROR_INVALID_TOKEN);
+  throwError(accessToken, UNAUTHORIZED, ERROR_INVALID_TOKEN);
 
   const payload = await verifyAccessToken(accessToken);
-  throwError(payload?.expiresAt, BAD_REQUEST, ERROR_INVALID_TOKEN);
+  throwError(payload?.expiresAt, UNAUTHORIZED, ERROR_INVALID_TOKEN);
 
   const { sessionId, expiresAt } = payload;
   const accessTokenNotExpired = date(expiresAt).isAfterNow();
