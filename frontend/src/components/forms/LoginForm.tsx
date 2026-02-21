@@ -7,12 +7,11 @@ import {
   VERIFICATION_CODE_INPUT,
 } from "../../config/inputs";
 import { FormWithHeading } from "./Form";
+import { useLoginWithOTP, LoginWithOTPFormInput } from "../../network/auth";
 import {
   useRequestLogin,
-  useLoginWithOTP,
   RequestLoginFormInput,
-  LoginWithOTPFormInput,
-} from "../../network/auth";
+} from "../../network/verificationCode";
 
 function RequestLoginForm() {
   const login = useRequestLogin();

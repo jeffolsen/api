@@ -1,5 +1,5 @@
 import LoginOrRegisterBlock from "./LoginOrRegisterBlock";
 import FourOhFourBlock from "./FourOhFourBlock";
-import ProfileInfoBlock from "./ProfileInfoBlock";
+import ProfileActivityBlock from "./ProfileActivityBlock";
 
-export { LoginOrRegisterBlock, FourOhFourBlock, ProfileInfoBlock };
+export { LoginOrRegisterBlock, FourOhFourBlock, ProfileActivityBlock };

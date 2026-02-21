@@ -26,13 +26,13 @@ const pages = {
         },
       },
       {
-        type: "profileInfo",
+        type: "profileActivity",
         data: {
           title: "Your Profile",
           settings: {
             // isprimaryContent: true,
             showOnLoggedinState: "LOGGED_IN",
-            width: "sm",
+            width: "lg",
           },
         },
       },

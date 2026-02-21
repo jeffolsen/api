@@ -1,46 +1,21 @@
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { OTP_STATUS_CREATE_API_KEY, OTP_STATUS_KEY } from "./verificationCode";
-import { api } from "./api";
-
-export const GENERATE_API_KEY_URL = "/keys/generate";
-export const CONNECT_API_KEY_URL = "/keys/public";
-export const GET_PROFILES_API_KEYS_URL = "/keys";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  GENERATE_API_KEY_ENDPOINT,
+  CONNECT_API_KEY_ENDPOINT,
+  GET_PROFILES_API_KEYS_ENDPOINT,
+} from "./api";
+import { useAuthState } from "../contexts/AuthContext";
 
 const API_KEYS_KEY = "profile" as const;
 
-export const getProfilesApiKeys = async () => {
-  const response = await api.get(GET_PROFILES_API_KEYS_URL);
-  return response.data;
-};
-
 export const useGetProfilesApiKeys = () => {
+  const { api } = useAuthState();
+
   return useQuery({
     queryKey: [API_KEYS_KEY],
-    queryFn: getProfilesApiKeys,
-  });
-};
-
-export type RequestGenerateApiKeyInput = {
-  email: string;
-  password: string;
-};
-
-export const requestGenerateApiKey = async (
-  data: RequestGenerateApiKeyInput,
-) => {
-  const response = await api.post(GENERATE_API_KEY_URL, data);
-  return response.data;
-};
-
-export const useRequestGenerateApiKey = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: requestGenerateApiKey,
-    onSuccess: () => {
-      queryClient.setQueryData([OTP_STATUS_KEY], OTP_STATUS_CREATE_API_KEY);
-    },
-    onError: (error) => {
-      console.error("useRequestGenerateApiKey", error);
+    queryFn: async () => {
+      const response = await api.get(GET_PROFILES_API_KEYS_ENDPOINT);
+      return response.data;
     },
   });
 };
@@ -51,14 +26,14 @@ export type GenerateApiKeyInput = {
   verificationCode: string;
 };
 
-export const generate = async (data: GenerateApiKeyInput) => {
-  const response = await api.post(GENERATE_API_KEY_URL, data);
-  return response.data;
-};
-
 export const useGenerate = () => {
+  const { api } = useAuthState();
+
   return useMutation({
-    mutationFn: generate,
+    mutationFn: async (data: GenerateApiKeyInput) => {
+      const response = await api.post(GENERATE_API_KEY_ENDPOINT, data);
+      return response.data;
+    },
     onSuccess: () => {
       console.log("congrats you generated an api key");
     },
@@ -73,14 +48,14 @@ type ConnectApiKeyInput = {
   apiKey: string;
 };
 
-export const connect = async (data: ConnectApiKeyInput) => {
-  const response = await api.post(CONNECT_API_KEY_URL, data);
-  return response.data;
-};
-
 export const useConnect = () => {
+  const { api } = useAuthState();
+
   return useMutation({
-    mutationFn: connect,
+    mutationFn: async (data: ConnectApiKeyInput) => {
+      const response = await api.post(CONNECT_API_KEY_ENDPOINT, data);
+      return response.data;
+    },
     onSuccess: () => {
       console.log("congrats you connected with an api key");
     },

@@ -124,12 +124,14 @@ export const MAX_PROFILE_CODES = 10;
 export const MAX_PROFILE_API_KEYS = 4;
 
 // 4 days in ms
-export const SESSION_TOKEN_LIFESPAN = 4 * 24 * 60 * 60 * 1000;
+// export const SESSION_TOKEN_LIFESPAN = 4 * 24 * 60 * 60 * 1000;
+export const SESSION_TOKEN_LIFESPAN = 4 * 60 * 1000;
 export const SESSION_TOKEN_OPTIONS = {
   expiresIn: SESSION_TOKEN_LIFESPAN,
 } as SignOptions;
 // 15 minutes in ms
-export const ACCESS_TOKEN_LIFESPAN = 15 * 60 * 1000;
+// export const ACCESS_TOKEN_LIFESPAN = 15 * 60 * 1000;
+export const ACCESS_TOKEN_LIFESPAN = 1 * 60 * 1000;
 export const ACCESS_TOKEN_OPTIONS = {
   expiresIn: ACCESS_TOKEN_LIFESPAN,
 } as SignOptions;

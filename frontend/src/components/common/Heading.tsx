@@ -12,10 +12,12 @@ export type HeadingProps = {
 const levels = ["h1", "h2", "h3", "h4", "h5", "h6", "p"] as const;
 
 const sizes = {
+  xs: "text-base tracking-widest",
   sm: "text-lg tracking-widest",
   md: "text-2xl tracking-widest",
   lg: "text-4xl tracking-widest",
   xl: "text-6xl tracking-widest",
+  xxl: "text-9xl tracking-widest",
 };
 
 function Heading({

@@ -35,8 +35,8 @@ function InnerBlock({
     <Wrapper width={width || "md"}>
       <Heading
         headingSize="lg"
-        headingStyles={"uppercase font-bold text-primary-content"}
-        headingDecorator={isprimaryContent ? "underline" : "none"}
+        headingStyles={"uppercase font-bold text-primary-content text-center"}
+        headingDecorator={isprimaryContent ? "strike" : "none"}
       >
         {title}
       </Heading>

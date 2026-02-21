@@ -3,9 +3,7 @@ import Heading, { HeadingLevelProvider } from "../common/Heading";
 function Footer() {
   return (
     <HeadingLevelProvider>
-      <footer className="footer bg-secondary min-h-36">
-        <Heading>Should be level 2</Heading>
-      </footer>
+      <footer className="footer bg-base-200 min-h-36"></footer>
     </HeadingLevelProvider>
   );
 }
