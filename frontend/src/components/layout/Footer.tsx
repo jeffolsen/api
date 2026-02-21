@@ -1,4 +1,4 @@
-import Heading, { HeadingLevelProvider } from "../common/Heading";
+import { HeadingLevelProvider } from "../common/Heading";
 
 function Footer() {
   return (
