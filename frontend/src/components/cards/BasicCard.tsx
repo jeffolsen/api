@@ -1,4 +1,5 @@
 import Heading, { HeadingLevelProvider } from "../common/Heading";
+import Text from "../common/Text";
 
 function BasicCard({
   title,
@@ -11,10 +12,15 @@ function BasicCard({
     <div className="card card-side bg-secondary shadow-xl h-full w-full text-secondary-content">
       <div className="card-body">
         <HeadingLevelProvider>
-          <Heading headingSize="xs" headingStyles="capitalize line-clamp-1">
+          <Heading
+            headingSize="xs"
+            headingStyles="capitalize line-clamp-1 text-secondary-content/70"
+          >
             {title}
           </Heading>
-          <p className="text-xs">{description}</p>
+          <Text textSize="xs" className="line-clamp-1">
+            {description}
+          </Text>
         </HeadingLevelProvider>
       </div>
     </div>
