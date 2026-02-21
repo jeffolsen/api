@@ -6,6 +6,7 @@ export type WrapperProps = {
 };
 
 const widths = {
+  xs: "max-w-md",
   sm: "max-w-2xl",
   md: "max-w-4xl",
   lg: "max-w-6xl",
