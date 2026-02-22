@@ -190,6 +190,7 @@ export const sendVerificationCode = async ({
   );
 
   const code = generateCode();
+
   const verificationCodeProps =
     await VerificationCodeCreateTransform.parseAsync({
       profileId,

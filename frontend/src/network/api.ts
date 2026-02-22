@@ -1,10 +1,8 @@
 import axios from "axios";
 import jsCookie from "js-cookie";
 
-const BASE_URL =
-  import.meta.env.MODE === "development"
-    ? "http://localhost:5002/api"
-    : "website/api";
+// these should match the backend routes, may need website url in front of them in production
+const BASE_URL = `${import.meta.env.MODE === "development" ? import.meta.env.API_BASE_URL : "" /* website.com */}/api`;
 
 export const REFRESH_ENDPOINT = "/auth/refresh";
 export const REGISTER_ENDPOINT = "/auth/register";

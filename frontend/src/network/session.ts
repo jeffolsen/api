@@ -19,7 +19,7 @@ export const useGetProfilesSessions = () => {
 };
 
 export const useLogout = () => {
-  const { api } = useAuthState();
+  const { api, setIsAuthenticated } = useAuthState();
 
   return useMutation({
     mutationFn: async () => {
@@ -27,7 +27,7 @@ export const useLogout = () => {
       return response.data;
     },
     onSuccess: () => {
-      // setIsAuthenticated(false);
+      setIsAuthenticated(false);
       console.log("congrats you logged out");
     },
     onError: (error) => {
@@ -42,7 +42,7 @@ interface LogoutAllInput {
 }
 
 export const useLogoutAll = () => {
-  const { api } = useAuthState();
+  const { api, setIsAuthenticated } = useAuthState();
 
   return useMutation({
     mutationFn: async (data: LogoutAllInput) => {
@@ -50,7 +50,7 @@ export const useLogoutAll = () => {
       return response.data;
     },
     onSuccess: () => {
-      // setIsAuthenticated(false);
+      setIsAuthenticated(false);
       console.log("congrats you logged out of all sessions");
     },
     onError: (error) => {

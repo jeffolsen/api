@@ -26,14 +26,19 @@ import {
   TAG_ROUTES,
   VERIFICATION_CODE_ROUTES,
 } from "./config/constants";
-import rateLimiter from "./middleware/rateLimit";
+// import rateLimiter from "./middleware/rateLimit";
 
 const app = express();
 const PORT = env.PORT || 5001;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: env.ALLOWED_ORIGIN, credentials: true }));
+
+if (env.NODE_ENV !== "production") {
+  app.use(cors({ origin: env.ALLOWED_ORIGIN, credentials: true }));
+} else {
+  app.use(cors({ credentials: true }));
+}
 app.use(cookieParser());
 // app.use(rateLimiter);
 
@@ -50,11 +55,11 @@ app.use(FEED_ROUTES, authenticate, feedRoutes);
 
 app.use(errorHandler);
 
-// if (env.NODE_ENV === "production") {
-app.use(express.static(path.join(__dirname, "../../frontend/dist")));
-app.use(/(.*)/, (req, res) => {
-  res.sendFile(path.join(__dirname, "../../frontend", "dist", "index.html"));
-});
-// }
+if (env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../../frontend/dist")));
+  app.use(/(.*)/, (req, res) => {
+    res.sendFile(path.join(__dirname, "../../frontend", "dist", "index.html"));
+  });
+}
 
 app.listen(PORT, () => console.log("server running yo"));
