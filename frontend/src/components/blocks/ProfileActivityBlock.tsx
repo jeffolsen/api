@@ -1,86 +1,48 @@
 import { useGetAuthenticatedProfile } from "../../network/profile";
-import { useGetProfilesSessions } from "../../network/session";
-import { useGetProfileVerificationCodes } from "../../network/verificationCode";
-import Grid from "../common/Grid";
-import BasicCard from "../cards/BasicCard";
 import Block, { BlockProps } from "./Block";
 import Heading, { HeadingLevelProvider } from "../common/Heading";
+import Loading from "../common/Loading";
+import dayjs, { longFormat, techFormat } from "../../utils/dayjs";
+import Text from "../common/Text";
+import LoggedInSessionSection from "../partials/LoggedInSessionSection";
+import LoggedInApiKeySection from "../partials/LoggedInApiKeySection";
+import LoggedInCodesSection from "../partials/LoggedInCodesSection";
 
 function ProfileInfoBlock(props: BlockProps) {
   const getProfile = useGetAuthenticatedProfile();
-  const getSessions = useGetProfilesSessions();
-  const getVerificationCodes = useGetProfileVerificationCodes();
-
-  if (getProfile.isLoading) {
-    return <Block {...props}>Loading...</Block>;
-  }
-
   const profile = getProfile.data;
-  const sessions = getSessions.data;
-  const verificationCodes = getVerificationCodes.data;
 
-  console.log(
-    "profile",
-    profile,
-    "sessions",
-    sessions,
-    "verificationCodes",
-    verificationCodes,
-  );
+  if (getProfile.isLoading || !profile?.email) {
+    return (
+      <Block {...props}>
+        <Loading />
+      </Block>
+    );
+  }
 
   return (
     <Block {...props}>
       <HeadingLevelProvider>
         <Heading
-          headingSize="md"
+          headingSize="lg"
           headingDecorator="none"
-          headingStyles="text-center uppercase bold text-primary-content"
+          headingStyles="text-center bold mt-8 text-accent tracking-widest italic"
         >
           {profile?.email}
         </Heading>
+        <div className="flex flex-col items-center gap-2">
+          <Text textSize="lg" className="text-center text-primary-content/90">
+            Member since {dayjs(profile?.createdAt).format(longFormat)}
+          </Text>
+          <Text textSize="sm" className="text-center text-primary-content/70">
+            Last updated: {dayjs(profile?.updatedAt).format(techFormat)}
+          </Text>
+        </div>
+
         <HeadingLevelProvider>
-          <Heading
-            headingSize="md"
-            headingDecorator="none"
-            headingStyles="text-center uppercase bold text-primary-content"
-          >
-            Current Sessions
-          </Heading>
-          {sessions && (
-            <Grid
-              columns={{ base: "2", sm: "2", md: "3", lg: "4", xl: "5" }}
-              items={sessions?.map(
-                (session: { userAgent: string; createdAt: string }) => (
-                  <BasicCard
-                    title={session.userAgent}
-                    description={new Date(session.createdAt).toLocaleString()}
-                  />
-                ),
-              )}
-            />
-          )}
-          <Heading
-            headingSize="md"
-            headingDecorator="none"
-            headingStyles="text-center uppercase bold text-primary-content"
-          >
-            History
-          </Heading>
-          {verificationCodes && (
-            <Grid
-              // columns={{ sm: 2, md: 3, lg: 3 }}
-              items={verificationCodes?.map(
-                (verificationCodes: { type: string; createdAt: string }) => (
-                  <BasicCard
-                    title={verificationCodes.type}
-                    description={new Date(
-                      verificationCodes.createdAt,
-                    ).toLocaleString()}
-                  />
-                ),
-              )}
-            />
-          )}
+          <LoggedInApiKeySection />
+          <LoggedInSessionSection />
+          <LoggedInCodesSection />
         </HeadingLevelProvider>
       </HeadingLevelProvider>
     </Block>
