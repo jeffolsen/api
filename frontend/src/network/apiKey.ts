@@ -6,7 +6,7 @@ import {
 } from "./api";
 import { useAuthState } from "../contexts/AuthContext";
 
-const API_KEYS_KEY = "profile" as const;
+const API_KEYS_KEY = "apiKeys" as const;
 
 export const useGetProfilesApiKeys = () => {
   const { api } = useAuthState();
