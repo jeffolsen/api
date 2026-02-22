@@ -1,6 +1,5 @@
 import { PropsWithChildren } from "react";
 import clsx, { ClassValue } from "clsx";
-
 import { sizeClasses } from "./helpers/contentStyles";
 
 type As = "p" | "span" | "div";
