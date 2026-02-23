@@ -12,10 +12,10 @@ import {
 } from "../../config/inputs";
 import { FormWithHeading } from "./Form";
 
-function RequestResetPasswordForm() {
+function RequestGenerateApiKeyForm() {
   return (
     <FormWithHeading
-      heading="Reset Password"
+      heading="Generate API Key"
       headingSize="md"
       headingStyles={"text-center uppercase font-bold text-accent"}
       headingDecorator="strike"
@@ -32,10 +32,10 @@ function RequestResetPasswordForm() {
   );
 }
 
-function ResetPasswordWithOTPForm() {
+function GenerateApiKeyWithOTPForm() {
   return (
     <FormWithHeading
-      heading="Reset Password"
+      heading="Generate API Key"
       headingSize="md"
       headingStyles={"text-center uppercase font-bold text-accent"}
       headingDecorator="strike"
@@ -54,4 +54,4 @@ function ResetPasswordWithOTPForm() {
   );
 }
 
-export { RequestResetPasswordForm, ResetPasswordWithOTPForm };
+export { RequestGenerateApiKeyForm, GenerateApiKeyWithOTPForm };

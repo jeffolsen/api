@@ -28,7 +28,7 @@ function RequestLoginForm() {
         ...PASSWORD_DEFAULT,
       }}
       trySubmit={async (args) => {
-        await login.mutate(args as RequestLoginFormInput);
+        await login.mutateAsync(args as RequestLoginFormInput);
       }}
     />
   );
@@ -46,7 +46,7 @@ function LoginWithOTPForm() {
       fields={[EMAIL_INPUT, VERIFICATION_CODE_INPUT]}
       defaultValues={{ ...EMAIL_DEFAULT, ...VERIFICATION_CODE_DEFAULT }}
       trySubmit={async (args) => {
-        await loginWithOTP.mutate(args as LoginWithOTPFormInput);
+        await loginWithOTP.mutateAsync(args as LoginWithOTPFormInput);
       }}
     />
   );

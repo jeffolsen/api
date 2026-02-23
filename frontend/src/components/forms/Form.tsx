@@ -10,6 +10,7 @@ import {
 import clsx from "clsx";
 import Heading, { HeadingProps, HeadingLevelProvider } from "../common/Heading";
 import { TextInput } from "../inputs/TextInput";
+import toast from "react-hot-toast";
 
 export type SubmitArgs = Record<string, unknown>;
 
@@ -23,9 +24,17 @@ type FormProps = {
   fields: Field[];
   defaultValues: Record<string, unknown>;
   trySubmit: (args: SubmitArgs) => Promise<void>;
+  submitButtonText?: string;
+  submitButtonStyles?: string;
 };
 
-function Form({ fields, defaultValues, trySubmit }: FormProps) {
+function Form({
+  fields,
+  defaultValues,
+  trySubmit,
+  submitButtonText,
+  submitButtonStyles,
+}: FormProps) {
   const {
     register,
     handleSubmit,
@@ -38,7 +47,10 @@ function Form({ fields, defaultValues, trySubmit }: FormProps) {
     try {
       await trySubmit(args);
     } catch (error) {
-      console.log(error);
+      const errorData = JSON.parse((error as Error).message);
+      errorData?.errors?.forEach((err: { message: string }) => {
+        toast.error(err.message);
+      });
     }
   };
 
@@ -57,9 +69,10 @@ function Form({ fields, defaultValues, trySubmit }: FormProps) {
       ))}
       <input
         type="submit"
-        value="Submit"
+        value={submitButtonText || "Submit"}
         className={clsx([
-          "btn btn-primary btn-block",
+          "btn",
+          submitButtonStyles || "btn-primary btn-block",
           "uppercase tracking-widest text-sm font-semibold",
           { disabled: isSubmitting },
         ])}
@@ -69,7 +82,7 @@ function Form({ fields, defaultValues, trySubmit }: FormProps) {
 }
 
 export type FormWithHeadingProps = {
-  heading: string;
+  heading?: string;
 } & FormProps &
   HeadingProps;
 
@@ -82,13 +95,15 @@ const FormWithHeading = ({
 }: FormWithHeadingProps) => {
   return (
     <HeadingLevelProvider>
-      <Heading
-        headingSize={headingSize}
-        headingStyles={headingStyles}
-        headingDecorator={headingDecorator}
-      >
-        {heading}
-      </Heading>
+      {heading && (
+        <Heading
+          headingSize={headingSize}
+          headingStyles={headingStyles}
+          headingDecorator={headingDecorator}
+        >
+          {heading}
+        </Heading>
+      )}
       <Form {...props} />
     </HeadingLevelProvider>
   );

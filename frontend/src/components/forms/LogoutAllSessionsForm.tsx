@@ -11,10 +11,8 @@ import { FormWithHeading } from "./Form";
 function RequestLogoutAllSessionsForm() {
   return (
     <FormWithHeading
-      heading="Logout of all sessions"
-      headingSize="md"
-      headingStyles={"text-center uppercase font-bold text-accent"}
-      headingDecorator="strike"
+      submitButtonText="Logout of all sessions"
+      submitButtonStyles="btn-error btn-block"
       fields={[EMAIL_INPUT, PASSWORD_INPUT]}
       defaultValues={{
         ...EMAIL_DEFAULT,
@@ -31,10 +29,8 @@ function RequestLogoutAllSessionsForm() {
 function LogoutAllSessionsWithOTPForm() {
   return (
     <FormWithHeading
-      heading="Logout of all sessions"
-      headingSize="md"
-      headingStyles={"text-center uppercase font-bold text-accent"}
-      headingDecorator="strike"
+      submitButtonText="Logout of all sessions with OTP"
+      submitButtonStyles="btn-error btn-block"
       fields={[EMAIL_INPUT, VERIFICATION_CODE_INPUT]}
       defaultValues={{
         ...EMAIL_DEFAULT,

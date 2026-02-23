@@ -8,9 +8,13 @@ import {
 } from "../../config/inputs";
 import { FormWithHeading } from "./Form";
 import { RegisterFormInput, useRegister } from "../../network/auth";
+import { useModalContext } from "../../contexts/ModalContext";
+import SuccessModal, { SuccessModalProps } from "../modals/SuccessModal";
 
 function RegisterForm() {
   const register = useRegister();
+  const { enqueueModals } = useModalContext();
+
   return (
     <FormWithHeading
       heading="Register"
@@ -24,7 +28,16 @@ function RegisterForm() {
         ...CONFIRM_PASSWORD_DEFAULT,
       }}
       trySubmit={async (args) => {
-        await register.mutate(args as RegisterFormInput);
+        await register.mutateAsync(args as RegisterFormInput);
+        enqueueModals([
+          {
+            component: SuccessModal,
+            props: {
+              title: "Registration Successful!",
+              content: "You have been successfully registered.",
+            } as SuccessModalProps,
+          },
+        ]);
       }}
     />
   );
