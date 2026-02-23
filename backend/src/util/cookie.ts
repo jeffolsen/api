@@ -7,7 +7,7 @@ export const ACCESS_TOKEN_NAME = "accessToken";
 export const REFRESH_TOKEN_NAME = "refreshToken";
 
 const secure = env.NODE_ENV === "production";
-const sameSite = secure ? "lax" : "none";
+const sameSite = "lax";
 
 const defaults: CookieOptions = {
   httpOnly: true,
