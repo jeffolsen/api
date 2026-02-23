@@ -10,6 +10,7 @@ import {
   ERROR_EMAIL_TAKEN,
   ERROR_CREDENTIALS,
   ERROR_UNAUTHORIZED,
+  NOT_FOUND,
 } from "../config/constants";
 import throwError from "../util/throwError";
 import prismaClient from "../db/client";
@@ -57,7 +58,7 @@ export const login: RequestHandler<
   });
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, UNAUTHORIZED, ERROR_CREDENTIALS);
+  throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
 
   const { session, ...tokens } = await initProfileSession({
     profile,

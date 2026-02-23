@@ -22,6 +22,8 @@ import {
   ERROR_SESSION_CANNOT_REFRESH,
   ERROR_SESSION_TOO_MANY,
   ERROR_INVALID_API_KEY,
+  NOT_FOUND,
+  ERROR_CREDENTIALS,
 } from "../config/constants";
 import throwError from "../util/throwError";
 import sendEmail from "../util/sendEmail";
@@ -185,7 +187,7 @@ export const sendVerificationCode = async ({
 
   throwError(
     hasPasswordCredentials || passwordResetCredential,
-    UNAUTHORIZED,
+    BAD_REQUEST,
     ERROR_UNAUTHORIZED,
   );
 
@@ -235,8 +237,8 @@ export const processVerificationCode = async ({
   });
   throwError(
     verificationCode && (await verificationCode.validate(value)),
-    UNAUTHORIZED,
-    ERROR_UNAUTHORIZED,
+    NOT_FOUND,
+    ERROR_CREDENTIALS,
   );
 
   const usedVerificationCode = await prismaClient.verificationCode.use(
