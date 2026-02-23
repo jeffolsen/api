@@ -1,4 +1,6 @@
+import clsx, { ClassValue } from "clsx";
 import { useModalContext } from "../../contexts/ModalContext";
+import { Button } from "../common/Button";
 import { HeadingLevelProvider } from "../common/Heading";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { PropsWithChildren } from "react";
@@ -19,19 +21,33 @@ const ModalManager = () => {
   );
 };
 
+type ModalProps = {
+  closeConfirm?: string;
+  onClose?: () => void;
+  modalStyles?: ClassValue;
+  backgroundStyles?: ClassValue;
+};
+
 export function Modal({
   closeConfirm,
   onClose,
+  modalStyles,
+  backgroundStyles,
   children,
-}: PropsWithChildren & { closeConfirm?: string; onClose?: () => void }) {
+}: PropsWithChildren<ModalProps>) {
   const { closeAllModals } = useModalContext();
   return (
     <Dialog open={true} onClose={() => onClose?.()} className="relative z-50">
       <div
-        className="fixed inset-0 flex w-screen items-center justify-center p-4 bg-black/30 backdrop-blur-sm"
+        className={clsx(
+          "fixed inset-0 flex w-screen items-center justify-center p-4 bg-black/30 backdrop-blur-sm",
+          backgroundStyles,
+        )}
         onClick={() => closeAllModals(closeConfirm)}
       >
-        <DialogPanel className="modal-box flex flex-col gap-6">
+        <DialogPanel
+          className={clsx("modal-box flex flex-col gap-6", modalStyles)}
+        >
           {children}
         </DialogPanel>
       </div>
@@ -39,21 +55,45 @@ export function Modal({
   );
 }
 
-interface ModalCloseButtonProps {
+interface ModalCloseXButtonProps {
   confirm?: string;
 }
 
-const ModalCloseButton = ({ confirm }: ModalCloseButtonProps) => {
+const ModalCloseXButton = ({ confirm }: ModalCloseXButtonProps) => {
   const { closeAllModals } = useModalContext();
   return (
-    <button
-      className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+    <Button
+      size="xs"
+      className="btn-circle btn-ghost absolute right-2 top-2"
       onClick={() => {
         closeAllModals(confirm);
       }}
     >
       ✕
-    </button>
+    </Button>
+  );
+};
+
+interface ModalCloseButtonProps {
+  text?: string;
+  confirm?: string;
+}
+
+const ModalCloseButton = ({
+  text = "close",
+  confirm,
+}: ModalCloseButtonProps) => {
+  const { closeAllModals } = useModalContext();
+  return (
+    <Button
+      color="primary"
+      size="md"
+      onClick={() => {
+        closeAllModals(confirm);
+      }}
+    >
+      {text}
+    </Button>
   );
 };
 
@@ -68,14 +108,13 @@ const ModalBackButton = ({ text = "back", confirm }: ModalBackButtonProps) => {
   return (
     <>
       {index > 0 && (
-        <button
-          className="btn"
+        <Button
           onClick={() => {
             removeCurrent(confirm);
           }}
         >
           {text}
-        </button>
+        </Button>
       )}
     </>
   );
@@ -91,14 +130,13 @@ const ModalNextButton = ({ text = "next" }: ModalNextButtonProps) => {
   return (
     <>
       {index < queue.length - 1 && (
-        <button
-          className="btn"
+        <Button
           onClick={() => {
             openNextModal();
           }}
         >
           {text}
-        </button>
+        </Button>
       )}
     </>
   );
@@ -110,14 +148,11 @@ interface ModalGenericButtonProps {
 }
 
 const ModalGenericButton = ({ text, onClick }: ModalGenericButtonProps) => {
-  return (
-    <button className="btn" onClick={onClick}>
-      {text}
-    </button>
-  );
+  return <Button onClick={onClick}>{text}</Button>;
 };
 
 export {
+  ModalCloseXButton,
   ModalCloseButton,
   ModalBackButton,
   ModalNextButton,
