@@ -1,6 +1,10 @@
 import { OTP_STATUS_KEY, OTP_STATUS_NONE, OtpInput } from "./verificationCode";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { REGISTER_ENDPOINT, LOGIN_WITH_OTP_ENDPOINT } from "./api";
+import {
+  REGISTER_ENDPOINT,
+  LOGIN_WITH_OTP_ENDPOINT,
+  withErrorHandling,
+} from "./api";
 import { useAuthState } from "../contexts/AuthContext";
 
 export type RegisterFormInput = {
@@ -13,15 +17,13 @@ export const useRegister = () => {
   const { api } = useAuthState();
 
   return useMutation({
-    mutationFn: async (data: RegisterFormInput) => {
-      const response = await api.post(REGISTER_ENDPOINT, data);
-      return response.data;
-    },
+    mutationFn: async (data: RegisterFormInput) =>
+      withErrorHandling(async () => {
+        const response = await api.post(REGISTER_ENDPOINT, data);
+        return response.data;
+      }),
     onSuccess: () => {
       console.log("congrats you registered");
-    },
-    onError: (error) => {
-      console.error("useRegister", error);
     },
   });
 };
@@ -33,17 +35,17 @@ export const useLoginWithOTP = () => {
   const { api, setIsAuthenticated } = useAuthState();
 
   return useMutation({
-    mutationFn: async (data: LoginWithOTPFormInput) => {
-      const response = await api.post(LOGIN_WITH_OTP_ENDPOINT, data);
-      return response.data;
-    },
+    mutationFn: (data: LoginWithOTPFormInput) =>
+      withErrorHandling(
+        async () => {
+          const response = await api.post(LOGIN_WITH_OTP_ENDPOINT, data);
+          return response.data;
+        },
+        () => setIsAuthenticated(false),
+      ),
     onSuccess: () => {
       queryClient.setQueryData([OTP_STATUS_KEY], OTP_STATUS_NONE);
       setIsAuthenticated(true);
-    },
-    onError: (error) => {
-      console.error("useLoginWithOTP", error);
-      setIsAuthenticated(false);
     },
   });
 };

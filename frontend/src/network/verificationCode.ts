@@ -5,6 +5,7 @@ import {
   PASSWORD_RESET_WITH_OTP_ENDPOINT,
   REQUEST_DELETE_PROFILE_ENDPOINT,
   GENERATE_API_KEY_ENDPOINT,
+  withErrorHandling,
 } from "./api";
 import { useAuthState } from "../contexts/AuthContext";
 
@@ -55,24 +56,21 @@ export const useGetProfileVerificationCodes = () => {
   return query;
 };
 
-type RequestOrSubmitOtp<T> = {
-  mutationFn: (data: T) => Promise<unknown>;
+type RequestVerificationCodeInput<TData, TResponse> = {
+  mutationFn: (data: TData) => Promise<TResponse>;
   status: OtpStatus;
 };
 
-export const useRequestVerificationCode = <T>({
+const useRequestVerificationCode = <TData, TResponse = unknown>({
   mutationFn,
   status,
-}: RequestOrSubmitOtp<T>) => {
+}: RequestVerificationCodeInput<TData, TResponse>) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn,
+    mutationFn: (data: TData) => withErrorHandling(() => mutationFn(data)),
     onSuccess: () => {
       queryClient.setQueryData([OTP_STATUS_KEY], status);
-    },
-    onError: (error) => {
-      console.error("useRequestVerificationCode", error);
     },
   });
 };

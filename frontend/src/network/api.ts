@@ -1,8 +1,11 @@
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import jsCookie from "js-cookie";
 
 // these should match the backend routes, may need website url in front of them in production
-const BASE_URL = `${import.meta.env.MODE === "development" ? import.meta.env.API_BASE_URL : "" /* website.com */}/api`;
+const BASE_URL =
+  import.meta.env.MODE === "development"
+    ? import.meta.env.VITE_API_BASE_URL + "/api"
+    : "/api";
 
 export const REFRESH_ENDPOINT = "/auth/refresh";
 export const REGISTER_ENDPOINT = "/auth/register";
@@ -35,11 +38,53 @@ export const isAuthenticated = () => {
   return jsCookie.get("authenticated") === "true";
 };
 
+export const fetcher = (
+  path: string,
+  method: "GET" | "POST" | "PUT" | "DELETE",
+  data?: Record<string, unknown>,
+): Promise<unknown> =>
+  fetch(BASE_URL + path, { method, body: JSON.stringify(data) });
+
 export const setIsAuthenticated = (value: boolean) => {
   if (value) {
     jsCookie.set("authenticated", "true");
   } else {
     jsCookie.remove("authenticated");
+  }
+};
+
+export type CustomError = Error & { errors?: Array<{ message: string }> };
+
+export const handleAxiosErrorForMutation = async (
+  mutationFn: (data: unknown) => unknown,
+  data: unknown,
+) => {
+  try {
+    return mutationFn(data);
+  } catch (error) {
+    if (isAxiosError(error)) {
+      throw new Error(JSON.stringify(error.response?.data));
+    }
+    throw error;
+  }
+};
+
+export const transformAxiosError = (error: unknown): never => {
+  if (isAxiosError(error)) {
+    throw new Error(JSON.stringify(error.response?.data));
+  }
+  throw error;
+};
+
+export const withErrorHandling = async <T>(
+  fn: () => Promise<T>,
+  onError?: (error: unknown) => void
+): Promise<T> => {
+  try {
+    return await fn();
+  } catch (error) {
+    onError?.(error);
+    return transformAxiosError(error);
   }
 };
 
