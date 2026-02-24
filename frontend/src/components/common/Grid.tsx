@@ -11,9 +11,11 @@ type ColumnProps = {
 function Grid({
   items,
   columns,
+  onEmpty,
 }: {
   items: React.ReactNode[];
   columns?: ColumnProps;
+  onEmpty: () => React.ReactNode;
 }) {
   const mergedColumns = {
     ...{
@@ -25,6 +27,10 @@ function Grid({
     },
     ...columns,
   };
+
+  if (items.length === 0) {
+    return <>{onEmpty()}</>;
+  }
 
   return (
     <div
