@@ -6,10 +6,8 @@ import {
   OK,
   CREATED,
   CONFLICT,
-  UNAUTHORIZED,
   ERROR_EMAIL_TAKEN,
   ERROR_CREDENTIALS,
-  ERROR_UNAUTHORIZED,
   NOT_FOUND,
 } from "../config/constants";
 import throwError from "../util/throwError";
@@ -75,7 +73,7 @@ export const login: RequestHandler<
 
 export const refresh: RequestHandler = catchErrors(async (req, res, next) => {
   const { refreshToken } = req.cookies;
-  throwError(refreshToken, UNAUTHORIZED, ERROR_UNAUTHORIZED);
+  throwError(refreshToken, NOT_FOUND, ERROR_CREDENTIALS);
 
   const { session, ...tokens } = await refreshAccessToken({ refreshToken });
 

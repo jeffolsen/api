@@ -1,11 +1,7 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import prismaClient from "../db/client";
 import { verifyAccessToken } from "../util/jwt";
-import {
-  BAD_REQUEST,
-  ERROR_INVALID_TOKEN,
-  UNAUTHORIZED,
-} from "../config/constants";
+import { ERROR_INVALID_TOKEN, UNAUTHORIZED } from "../config/constants";
 import date from "../util/date";
 import throwError from "../util/throwError";
 
@@ -20,15 +16,18 @@ const authenticate: RequestHandler = async (
   throwError(accessToken, UNAUTHORIZED, ERROR_INVALID_TOKEN);
 
   const payload = await verifyAccessToken(accessToken);
+
   throwError(payload?.expiresAt, UNAUTHORIZED, ERROR_INVALID_TOKEN);
 
   const { sessionId, expiresAt } = payload;
   const accessTokenNotExpired = date(expiresAt).isAfterNow();
+
   throwError(accessTokenNotExpired, UNAUTHORIZED, ERROR_INVALID_TOKEN);
 
   const session = await prismaClient.session.findUnique({
     where: { id: sessionId, userAgent },
   });
+
   throwError(session, UNAUTHORIZED, ERROR_INVALID_TOKEN);
 
   const sessionStillCurrent = session.isCurrent();

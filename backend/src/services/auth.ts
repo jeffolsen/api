@@ -11,7 +11,6 @@ import {
 } from "../util/jwt";
 import {
   BAD_REQUEST,
-  UNAUTHORIZED,
   TOO_MANY_REQUESTS,
   INTERNAL_SERVER_ERROR,
   FORBIDDEN,
@@ -49,7 +48,7 @@ export const initProfileSession = async ({
   const { id: profileId } = profile;
 
   const tooManySessions = await prismaClient.session.maxExceeded(profileId);
-  throwError(!tooManySessions, FORBIDDEN, ERROR_SESSION_TOO_MANY);
+  throwError(!tooManySessions, TOO_MANY_REQUESTS, ERROR_SESSION_TOO_MANY);
 
   await processVerificationCode({
     profileId,
@@ -84,7 +83,7 @@ export const connectToApiSession = async ({
   userAgent,
 }: ConnectToApiSessionParams) => {
   const { slug, origin, sessionId, profileId, id: apiKeyId } = apiKey;
-  throwError(slug && origin && profileId, UNAUTHORIZED, ERROR_INVALID_API_KEY);
+  throwError(slug && origin && profileId, BAD_REQUEST, ERROR_INVALID_API_KEY);
 
   let session;
   if (sessionId)
@@ -151,7 +150,7 @@ export const refreshAccessToken = async ({
     include: { profile: true },
   });
   throwError(sessionWithProfile?.profile, BAD_REQUEST, ERROR_INVALID_TOKEN);
-  throwError(sessionWithProfile.isCurrent(), UNAUTHORIZED, ERROR_UNAUTHORIZED);
+  throwError(sessionWithProfile.isCurrent(), FORBIDDEN, ERROR_UNAUTHORIZED);
 
   const { profile, ...session } = sessionWithProfile;
 

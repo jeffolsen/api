@@ -5,7 +5,6 @@ import {
   ERROR_SESSIONS_NOT_FOUND,
   NOT_FOUND,
   OK,
-  UNAUTHORIZED,
 } from "../config/constants";
 import prismaClient, { CodeType } from "../db/client";
 import throwError from "../util/throwError";
@@ -20,7 +19,10 @@ export const getProfilesSessions: RequestHandler = catchErrors(
     const sessions = await prismaClient.session.findMany({
       where: {
         profileId,
+        expiresAt: { gt: new Date() },
+        endedAt: null,
       },
+      orderBy: { createdAt: "desc" },
       omit: { scope: true },
     });
 
@@ -53,7 +55,7 @@ export const logoutAll: RequestHandler<
   });
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, UNAUTHORIZED, ERROR_CREDENTIALS);
+  throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
 
   await processVerificationCode({
     profileId: profile.id,

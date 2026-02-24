@@ -7,7 +7,6 @@ import {
   ERROR_ENDPOINT_NOT_FOUND,
   ERROR_CREDENTIALS,
   VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT,
-  UNAUTHORIZED,
   VERIFICATION_CODE_CREATE_API_KEY_ENDPOINT,
 } from "../config/constants";
 import { RequestHandler } from "express";
@@ -23,6 +22,7 @@ export const getProfileVerificationCodes: RequestHandler = catchErrors(
 
     const codes = await prismaClient.verificationCode.findMany({
       where: { profileId },
+      orderBy: { createdAt: "desc" },
       omit: { value: true },
     });
     res.status(OK).json(codes);

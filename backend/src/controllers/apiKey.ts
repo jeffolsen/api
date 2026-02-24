@@ -4,7 +4,6 @@ import {
   CONFLICT,
   FORBIDDEN,
   NOT_FOUND,
-  UNAUTHORIZED,
   ERROR_API_KEY_LIMIT_REACHED,
   ERROR_API_KEY_SLUG_TAKEN,
   ERROR_API_KEY_SLUG_NOT_FOUND,
@@ -116,10 +115,10 @@ export const connect: RequestHandler<
   throwError(apiKey, NOT_FOUND, ERROR_API_KEY_SLUG_NOT_FOUND);
 
   const originMatch = apiKey.origin === origin;
-  throwError(originMatch, UNAUTHORIZED, ERROR_API_KEY_ORIGIN);
+  throwError(originMatch, NOT_FOUND, ERROR_API_KEY_ORIGIN);
 
   const apiKeyIsValid = await apiKey.validate(value);
-  throwError(apiKeyIsValid, UNAUTHORIZED, ERROR_API_KEY_VALUE);
+  throwError(apiKeyIsValid, NOT_FOUND, ERROR_API_KEY_VALUE);
 
   const { session, ...tokens } = await connectToApiSession({
     apiKey,

@@ -6,7 +6,7 @@ import {
   ERROR_PROFILE_ID,
   NO_CONTENT,
   OK,
-  UNAUTHORIZED,
+  NOT_FOUND,
 } from "../config/constants";
 import throwError from "../util/throwError";
 import prismaClient, { CodeType } from "../db/client";
@@ -44,7 +44,6 @@ export const resetPassword: RequestHandler<
   ResetPasswordBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  console.log("resetPassword got here", req.body);
   const { verificationCode, email, password, userAgent } =
     ResetPasswordSchema.parse({
       ...req.body,
@@ -52,7 +51,7 @@ export const resetPassword: RequestHandler<
     });
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, UNAUTHORIZED, ERROR_CREDENTIALS);
+  throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
 
   await processVerificationCode({
     profileId: profile.id,
@@ -93,7 +92,7 @@ export const deleteProfile: RequestHandler<
   });
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, UNAUTHORIZED, ERROR_CREDENTIALS);
+  throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
 
   await processVerificationCode({
     profileId: profile.id,
