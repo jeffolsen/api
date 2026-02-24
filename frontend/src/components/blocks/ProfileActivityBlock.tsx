@@ -2,7 +2,7 @@ import { useGetAuthenticatedProfile } from "../../network/profile";
 import Block, { BlockProps } from "./Block";
 import Heading, { HeadingLevelProvider } from "../common/Heading";
 import Loading from "../common/Loading";
-import dayjs, { longFormat, techFormat } from "../../utils/dayjs";
+import dayjs, { longDatetime, techDatetime } from "../../utils/dayjs";
 import Text from "../common/Text";
 import LoggedInSessionSection from "../partials/LoggedInSessionSection";
 import LoggedInApiKeySection from "../partials/LoggedInApiKeySection";
@@ -32,10 +32,10 @@ function ProfileInfoBlock(props: BlockProps) {
         </Heading>
         <div className="flex flex-col items-center gap-2">
           <Text textSize="lg" className="text-center text-primary-content/90">
-            Member since {dayjs(profile?.createdAt).format(longFormat)}
+            Member since {dayjs(profile?.createdAt).format(longDatetime)}
           </Text>
           <Text textSize="sm" className="text-center text-primary-content/70">
-            Last updated: {dayjs(profile?.updatedAt).format(techFormat)}
+            Last updated: {dayjs(profile?.updatedAt).format(techDatetime)}
           </Text>
         </div>
 

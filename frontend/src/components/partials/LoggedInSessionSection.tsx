@@ -15,13 +15,16 @@ function LoggedInSessionSection() {
   const [showLogoutAllSessions, setShowLogoutAllSessions] =
     useState<boolean>(false);
 
+  const tooltipText =
+    "This lists all your active sessions across devices. If you see any unfamiliar sessions, consider logging out of all sessions and changing your password.";
+
   return (
     <div className="flex flex-col gap-4">
-      <SectionHeading text="Current Sessions">
+      <SectionHeading text="Current Sessions" tooltipText={tooltipText}>
         <Button
           color="error"
           onClick={() => {
-            logout.mutate();
+            logout.mutateAsync();
           }}
         >
           Logout This Session
@@ -37,6 +40,9 @@ function LoggedInSessionSection() {
                 description={new Date(session.createdAt).toLocaleString()}
               />
             ),
+          )}
+          onEmpty={() => (
+            <BasicCard title="No active sessions found." description="" />
           )}
         />
       )}
