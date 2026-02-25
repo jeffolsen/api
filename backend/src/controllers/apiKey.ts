@@ -9,6 +9,7 @@ import {
   ERROR_API_KEY_SLUG_NOT_FOUND,
   ERROR_API_KEY_ORIGIN,
   ERROR_API_KEY_VALUE,
+  ERROR_NO_ACCESS,
 } from "../config/constants";
 import { RequestHandler } from "express";
 import throwError from "../util/throwError";
@@ -19,6 +20,7 @@ import { connectToApiSession, processVerificationCode } from "../services/auth";
 import {
   ApiKeyConnectSchema,
   ApiKeyCreateTransform,
+  ApiKeyDestroySchema,
   ApiKeyGenerateSchema,
 } from "../schemas/apikey";
 
@@ -132,10 +134,52 @@ export const connect: RequestHandler<
   }).sendStatus(OK);
 });
 
+interface DestroyApiKeyBody {
+  apiSlug: string;
+  verificationCode: string;
+}
+
+export const destroy: RequestHandler<
+  unknown,
+  unknown,
+  DestroyApiKeyBody,
+  unknown
+> = catchErrors(async (req, res, next) => {
+  const { profileId } = req;
+  const {
+    apiSlug: slug,
+    verificationCode,
+    userAgent,
+  } = ApiKeyDestroySchema.parse({
+    ...(req.body as DestroyApiKeyBody),
+    userAgent: req.headers["user-agent"],
+  });
+
+  const apiKey = await prismaClient.apiKey.findUnique({
+    where: { slug },
+  });
+  throwError(apiKey, NOT_FOUND, ERROR_API_KEY_SLUG_NOT_FOUND);
+  throwError(apiKey?.profileId === profileId, FORBIDDEN, ERROR_NO_ACCESS);
+
+  await processVerificationCode({
+    profileId,
+    value: verificationCode,
+    codeType: CodeType.CREATE_API_KEY,
+    userAgent,
+  });
+
+  await prismaClient.apiKey.delete({
+    where: { id: apiKey.id },
+  });
+
+  res.sendStatus(OK);
+});
+
 const apiKeyApi = {
   getProfilesApiKeys,
   generate,
   connect,
+  destroy,
 };
 
 export default apiKeyApi;

@@ -23,6 +23,12 @@ export const ApiKeyGenerateSchema = z.object({
   userAgent: userAgentSchema,
 });
 
+export const ApiKeyDestroySchema = z.object({
+  apiSlug: apiKeySlugSchema,
+  verificationCode: verificationCodeValueSchema,
+  userAgent: userAgentSchema,
+});
+
 export const ApiKeyConnectSchema = z.object({
   apiSlug: apiKeySlugSchema,
   apiKey: apiKeyValueSchema,

@@ -7,7 +7,7 @@ import {
   ERROR_ENDPOINT_NOT_FOUND,
   ERROR_CREDENTIALS,
   VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT,
-  VERIFICATION_CODE_CREATE_API_KEY_ENDPOINT,
+  VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT,
 } from "../config/constants";
 import { RequestHandler } from "express";
 import catchErrors from "../util/catchErrors";
@@ -58,7 +58,7 @@ export const requestVerificationCode: RequestHandler<
     case VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT:
       codeType = CodeType.DELETE_PROFILE;
       break;
-    case VERIFICATION_CODE_CREATE_API_KEY_ENDPOINT:
+    case VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT:
       codeType = CodeType.CREATE_API_KEY;
       break;
     default:

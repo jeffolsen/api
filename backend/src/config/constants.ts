@@ -23,11 +23,12 @@ export const VERIFICATION_CODE_LOGIN_ENDPOINT = "/login";
 export const VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT = "/logout-all";
 export const VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT = "/password-reset";
 export const VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT = "/delete-profile";
-export const VERIFICATION_CODE_CREATE_API_KEY_ENDPOINT = "/generate-key";
+export const VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT = "/manage-api-key";
 
 export const API_KEY_ROUTES = "/api/keys";
 export const API_KEY_GENERATE_ENDPOINT = "/generate";
 export const API_KEY_PUBLIC_ENDPOINT = "/public";
+export const API_KEY_DESTROY_ENDPOINT = "/destroy";
 
 export const FEED_ROUTES = "/api/feeds";
 export const TAG_ROUTES = "/api/tags";
@@ -119,9 +120,9 @@ export const ERROR_NO_ACCESS = "You do not have access to that resource";
 // resource limits
 export const MAX_DAILY_SYSTEM_EMAILS = 2800;
 export const MAX_MONTHLY_SYSTEM_EMAILS = 90;
-export const MAX_PROFILE_SESSIONS = 5;
-export const MAX_PROFILE_CODES = 10;
-export const MAX_PROFILE_API_KEYS = 4;
+export const MAX_PROFILE_SESSIONS = 1;
+export const MAX_PROFILE_CODES = 15;
+export const MAX_PROFILE_API_KEYS = 2;
 
 // 4 days in ms
 export const SESSION_TOKEN_LIFESPAN = 4 * 24 * 60 * 60 * 1000;

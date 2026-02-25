@@ -4,6 +4,7 @@ import authorizeScope from "../middleware/authorizeScope";
 import {
   API_KEY_GENERATE_ENDPOINT,
   API_KEY_PUBLIC_ENDPOINT,
+  API_KEY_DESTROY_ENDPOINT,
   COLLECTION_ENDPOINT,
   CREATE_API_KEY_SCOPE,
   READ_API_KEY_SCOPE,
@@ -25,5 +26,12 @@ router.post(
   apiKeyApi.generate,
 );
 router.post(API_KEY_PUBLIC_ENDPOINT, apiKeyApi.connect);
+
+router.post(
+  API_KEY_DESTROY_ENDPOINT,
+  authenticate,
+  authorizeScope([CREATE_API_KEY_SCOPE]),
+  apiKeyApi.destroy,
+);
 
 export default router;
