@@ -1,6 +1,12 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { SESSIONS_ENDPOINT, LOGOUT_ENDPOINT, withErrorHandling } from "./api";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import {
+  SESSIONS_ENDPOINT,
+  LOGOUT_ENDPOINT,
+  LOGOUT_ALL_ENDPOINT,
+  withErrorHandling,
+} from "./api";
 import { useAuthState } from "../contexts/AuthContext";
+import { OTP_STATUS_KEY, OTP_STATUS_NONE, OtpInput } from "./verificationCode";
 
 const SESSION_KEY = "sessions" as const;
 
@@ -34,21 +40,20 @@ export const useLogout = () => {
   });
 };
 
-interface LogoutAllInput {
-  verificationCode: string;
-  email: string;
-}
+export type LogoutAllWithOTPFormInput = OtpInput;
 
-export const useLogoutAll = () => {
+export const useLogoutAllWithOTP = () => {
   const { api, setIsAuthenticated } = useAuthState();
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: LogoutAllInput) =>
+    mutationFn: async (data: LogoutAllWithOTPFormInput) =>
       withErrorHandling(async () => {
-        const response = await api.post(LOGOUT_ENDPOINT, data);
+        const response = await api.post(LOGOUT_ALL_ENDPOINT, data);
         return response.data;
       }),
     onSuccess: () => {
+      queryClient.setQueryData([OTP_STATUS_KEY], OTP_STATUS_NONE);
       setIsAuthenticated(false);
       console.log("congrats you logged out of all sessions");
     },

@@ -3,6 +3,7 @@ import {
   GENERATE_API_KEY_ENDPOINT,
   CONNECT_API_KEY_ENDPOINT,
   GET_PROFILES_API_KEYS_ENDPOINT,
+  DESTROY_API_KEY_ENDPOINT,
   withErrorHandling,
 } from "./api";
 import { useAuthState } from "../contexts/AuthContext";
@@ -27,7 +28,7 @@ export type GenerateApiKeyInput = {
   verificationCode: string;
 };
 
-export const useGenerate = () => {
+export const useGenerateApiKey = () => {
   const { api } = useAuthState();
 
   return useMutation({
@@ -47,7 +48,7 @@ type ConnectApiKeyInput = {
   apiKey: string;
 };
 
-export const useConnect = () => {
+export const useConnectApiKey = () => {
   const { api } = useAuthState();
 
   return useMutation({
@@ -59,5 +60,22 @@ export const useConnect = () => {
     onSuccess: () => {
       console.log("congrats you connected with an api key");
     },
+  });
+};
+
+type DestroyApiKeyInput = {
+  apiSlug: string;
+};
+
+export const useDestroyApiKey = () => {
+  const { api } = useAuthState();
+
+  return useMutation({
+    mutationFn: async (data: DestroyApiKeyInput) =>
+      withErrorHandling(async () => {
+        console.log("destroying api key with slug:", data.apiSlug);
+        const response = await api.post(DESTROY_API_KEY_ENDPOINT, data);
+        return response.data;
+      }),
   });
 };

@@ -1,5 +1,7 @@
 import axios, { isAxiosError } from "axios";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import jsCookie from "js-cookie";
+import { EMAIL_DEFAULT } from "../config/inputs";
 
 // these should match the backend routes, may need website url in front of them in production
 const BASE_URL =
@@ -23,11 +25,14 @@ export const REQUEST_LOGIN_ENDPOINT = "/codes/login";
 export const REQUEST_PASSWORD_RESET_ENDPOINT = "/codes/password-reset";
 export const REQUEST_LOGOUT_ALL_ENDPOINT = "/codes/logout-all";
 export const REQUEST_DELETE_PROFILE_ENDPOINT = "/codes/unregister";
-export const REQUEST_CREATE_API_KEY_ENDPOINT = "/codes/generate-key";
+export const REQUEST_MANAGE_API_KEY_ENDPOINT = "/codes/manage-api-key";
 
 export const GET_PROFILES_API_KEYS_ENDPOINT = "/keys";
 export const GENERATE_API_KEY_ENDPOINT = "/keys/generate";
 export const CONNECT_API_KEY_ENDPOINT = "/keys/public";
+export const DESTROY_API_KEY_ENDPOINT = "/keys/destroy";
+
+export const EMAIL_KEY = "email" as const;
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -53,8 +58,6 @@ export const setIsAuthenticated = (value: boolean) => {
   }
 };
 
-export type CustomError = Error & { errors?: Array<{ message: string }> };
-
 export const handleAxiosErrorForMutation = async (
   mutationFn: (data: unknown) => unknown,
   data: unknown,
@@ -71,14 +74,16 @@ export const handleAxiosErrorForMutation = async (
 
 export const transformAxiosError = (error: unknown): never => {
   if (isAxiosError(error)) {
-    throw new Error(JSON.stringify(error.response?.data));
+    throw new Error(JSON.stringify(error.response?.data), {
+      cause: error.response?.status,
+    });
   }
   throw error;
 };
 
 export const withErrorHandling = async <T>(
   fn: () => Promise<T>,
-  onError?: (error: unknown) => void
+  onError?: (error: unknown) => void,
 ): Promise<T> => {
   try {
     return await fn();
@@ -86,6 +91,31 @@ export const withErrorHandling = async <T>(
     onError?.(error);
     return transformAxiosError(error);
   }
+};
+
+export const useEmail = () => {
+  const queryClient = useQueryClient();
+  useQuery({
+    queryKey: [EMAIL_KEY],
+    queryFn: () => "NONE",
+    enabled: false,
+    initialData: "NONE",
+  });
+
+  return {
+    setEmail: (email: string = "NONE") => {
+      console.log("Setting email in queryClient:", email);
+      queryClient.setQueryData([EMAIL_KEY], email);
+    },
+    getEmail: () => {
+      const email = queryClient.getQueryData([EMAIL_KEY]) as string | undefined;
+      return email === undefined
+        ? EMAIL_DEFAULT
+        : email === "NONE"
+          ? EMAIL_DEFAULT
+          : { email };
+    },
+  };
 };
 
 export default api;

@@ -2,9 +2,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   VERIFICATION_CODE_ENDPOINT,
   REQUEST_LOGIN_ENDPOINT,
-  PASSWORD_RESET_WITH_OTP_ENDPOINT,
+  REQUEST_LOGOUT_ALL_ENDPOINT,
+  REQUEST_PASSWORD_RESET_ENDPOINT,
   REQUEST_DELETE_PROFILE_ENDPOINT,
-  GENERATE_API_KEY_ENDPOINT,
+  REQUEST_MANAGE_API_KEY_ENDPOINT,
   withErrorHandling,
 } from "./api";
 import { useAuthState } from "../contexts/AuthContext";
@@ -18,6 +19,7 @@ export const OTP_STATUS_LOGOUT_ALL = "LOGOUT_ALL";
 export const OTP_STATUS_PASSWORD_RESET = "PASSWORD_RESET";
 export const OTP_STATUS_DELETE_PROFILE = "DELETE_PROFILE";
 export const OTP_STATUS_CREATE_API_KEY = "CREATE_API_KEY";
+export const OTP_STATUS_DESTROY_API_KEY = "DESTROY_API_KEY";
 
 export type OtpStatus =
   | typeof OTP_STATUS_NONE
@@ -25,7 +27,8 @@ export type OtpStatus =
   | typeof OTP_STATUS_LOGOUT_ALL
   | typeof OTP_STATUS_PASSWORD_RESET
   | typeof OTP_STATUS_DELETE_PROFILE
-  | typeof OTP_STATUS_CREATE_API_KEY;
+  | typeof OTP_STATUS_CREATE_API_KEY
+  | typeof OTP_STATUS_DESTROY_API_KEY;
 
 export type OtpInput = {
   email: string;
@@ -91,6 +94,22 @@ export const useRequestLogin = () => {
   });
 };
 
+export type RequestLogoutAllSessionsInput = {
+  email: string;
+  password: string;
+};
+
+export const useRequestLogoutAllSessions = () => {
+  const { api } = useAuthState();
+  return useRequestVerificationCode({
+    mutationFn: async (data: RequestLogoutAllSessionsInput) => {
+      const response = await api.post(REQUEST_LOGOUT_ALL_ENDPOINT, data);
+      return response.data;
+    },
+    status: OTP_STATUS_LOGOUT_ALL,
+  });
+};
+
 export type RequestPasswordResetInput = {
   email: string;
 };
@@ -99,7 +118,7 @@ export const useRequestPasswordReset = () => {
   const { api } = useAuthState();
   return useRequestVerificationCode({
     mutationFn: async (data: RequestPasswordResetInput) => {
-      const response = await api.post(PASSWORD_RESET_WITH_OTP_ENDPOINT, data);
+      const response = await api.post(REQUEST_PASSWORD_RESET_ENDPOINT, data);
       return response.data;
     },
     status: OTP_STATUS_PASSWORD_RESET,
@@ -131,9 +150,25 @@ export const useRequestGenerateApiKey = () => {
   const { api } = useAuthState();
   return useRequestVerificationCode({
     mutationFn: async (data: RequestGenerateApiKeyInput) => {
-      const response = await api.post(GENERATE_API_KEY_ENDPOINT, data);
+      const response = await api.post(REQUEST_MANAGE_API_KEY_ENDPOINT, data);
       return response.data;
     },
     status: OTP_STATUS_CREATE_API_KEY,
+  });
+};
+
+export type RequestDestroyApiKeyInput = {
+  email: string;
+  password: string;
+};
+
+export const useRequestDestroyApiKey = () => {
+  const { api } = useAuthState();
+  return useRequestVerificationCode({
+    mutationFn: async (data: RequestDestroyApiKeyInput) => {
+      const response = await api.post(REQUEST_MANAGE_API_KEY_ENDPOINT, data);
+      return response.data;
+    },
+    status: OTP_STATUS_DESTROY_API_KEY,
   });
 };

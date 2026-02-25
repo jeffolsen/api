@@ -22,9 +22,6 @@ export const useRegister = () => {
         const response = await api.post(REGISTER_ENDPOINT, data);
         return response.data;
       }),
-    onSuccess: () => {
-      console.log("congrats you registered");
-    },
   });
 };
 
