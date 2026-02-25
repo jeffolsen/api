@@ -1,29 +1,39 @@
-import Heading, { HeadingLevelProvider } from "../common/Heading";
+import Heading from "../common/Heading";
 import Text from "../common/Text";
+import EmptyCard from "./EmptyCard";
+import { PropsWithChildren } from "react";
+
+export type BasicCardProps = {
+  title?: string;
+  description?: string;
+};
 
 function BasicCard({
   title,
   description,
-}: {
-  title: string;
-  description: string;
-}) {
+  children,
+}: PropsWithChildren<BasicCardProps>) {
   return (
-    <div className="card card-side bg-secondary shadow-xl h-full w-full text-secondary-content">
-      <div className="card-body">
-        <HeadingLevelProvider>
-          <Heading
-            headingSize="xs"
-            headingStyles="capitalize line-clamp-1 text-secondary-content/70"
-          >
-            {title}
-          </Heading>
-          <Text textSize="xs" className="line-clamp-1">
-            {description}
-          </Text>
-        </HeadingLevelProvider>
-      </div>
-    </div>
+    <EmptyCard>
+      {title || description ? (
+        <div className="card-body flex-grow">
+          {title && (
+            <Heading
+              headingSize="xs"
+              headingStyles="capitalize line-clamp-1 text-secondary-content/70"
+            >
+              {title}
+            </Heading>
+          )}
+          {description && (
+            <Text textSize="xs" className="line-clamp-1">
+              {description}
+            </Text>
+          )}
+        </div>
+      ) : null}
+      {children}
+    </EmptyCard>
   );
 }
 
