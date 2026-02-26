@@ -1,5 +1,4 @@
 import {
-  EMAIL_DEFAULT,
   EMAIL_INPUT,
   ORIGIN_DEFAULT,
   ORIGIN_INPUT,
@@ -10,29 +9,47 @@ import {
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
 } from "../../config/inputs";
-import { FormWithHeading } from "./Form";
+import { FormWithHeading, FormWrapperProps } from "./Form";
+import { useEmail } from "../../network/api";
 
-function RequestGenerateApiKeyForm() {
+function RequestGenerateApiKeyForm({
+  handleError,
+  handleSuccess,
+}: FormWrapperProps) {
+  const { setEmail, getEmail } = useEmail();
   return (
     <FormWithHeading
-      heading="Generate API Key"
-      headingSize="md"
-      headingStyles={"text-center uppercase font-bold text-accent"}
-      headingDecorator="strike"
       fields={[EMAIL_INPUT, PASSWORD_INPUT]}
+      submitButtonText="Generate API Key"
+      submitButtonColor="success"
       defaultValues={{
-        ...EMAIL_DEFAULT,
+        ...getEmail(),
         ...PASSWORD_DEFAULT,
       }}
       trySubmit={async (args) => {
-        console.log(args);
-        // await resetPassword(args);
+        try {
+          console.log(args);
+          if (args.email) {
+            setEmail(args.email as string);
+          }
+          handleSuccess?.();
+        } catch (error) {
+          if (handleError) {
+            handleError(error as Error);
+          } else {
+            throw error;
+          }
+        }
       }}
     />
   );
 }
 
-function GenerateApiKeyWithOTPForm() {
+function GenerateApiKeyWithOTPForm({
+  handleError,
+  handleSuccess,
+}: FormWrapperProps) {
+  const { getEmail } = useEmail();
   return (
     <FormWithHeading
       heading="Generate API Key"
@@ -41,14 +58,22 @@ function GenerateApiKeyWithOTPForm() {
       headingDecorator="strike"
       fields={[EMAIL_INPUT, VERIFICATION_CODE_INPUT, SLUG_INPUT, ORIGIN_INPUT]}
       defaultValues={{
-        ...EMAIL_DEFAULT,
+        ...getEmail(),
         ...VERIFICATION_CODE_DEFAULT,
         ...SLUG_DEFAULT,
         ...ORIGIN_DEFAULT,
       }}
       trySubmit={async (args) => {
-        console.log(args);
-        // await resetPassword(args);
+        try {
+          console.log(args);
+          handleSuccess?.();
+        } catch (error) {
+          if (handleError) {
+            handleError(error as Error);
+          } else {
+            throw error;
+          }
+        }
       }}
     />
   );

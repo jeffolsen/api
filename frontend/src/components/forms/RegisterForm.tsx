@@ -1,19 +1,17 @@
 import {
   CONFIRM_PASSWORD_DEFAULT,
   CONFIRM_PASSWORD_INPUT,
-  EMAIL_DEFAULT,
   EMAIL_INPUT,
   PASSWORD_DEFAULT,
   PASSWORD_INPUT,
 } from "../../config/inputs";
-import { FormWithHeading } from "./Form";
+import { FormWithHeading, FormWrapperProps } from "./Form";
 import { RegisterFormInput, useRegister } from "../../network/auth";
-import { useModalContext } from "../../contexts/ModalContext";
-import SuccessModal, { SuccessModalProps } from "../modals/SuccessModal";
+import { useEmail } from "../../network/api";
 
-function RegisterForm() {
+function RegisterForm({ handleSuccess, handleError }: FormWrapperProps) {
   const register = useRegister();
-  const { enqueueModals } = useModalContext();
+  const { setEmail, getEmail } = useEmail();
 
   return (
     <FormWithHeading
@@ -23,21 +21,24 @@ function RegisterForm() {
       headingDecorator="strike"
       fields={[EMAIL_INPUT, PASSWORD_INPUT, CONFIRM_PASSWORD_INPUT]}
       defaultValues={{
-        ...EMAIL_DEFAULT,
+        ...getEmail(),
         ...PASSWORD_DEFAULT,
         ...CONFIRM_PASSWORD_DEFAULT,
       }}
       trySubmit={async (args) => {
-        await register.mutateAsync(args as RegisterFormInput);
-        enqueueModals([
-          {
-            component: SuccessModal,
-            props: {
-              title: "Registration Successful!",
-              content: "You have been successfully registered.",
-            } as SuccessModalProps,
-          },
-        ]);
+        try {
+          await register.mutateAsync(args as RegisterFormInput);
+          if (args.email) {
+            setEmail(args.email as string);
+          }
+          handleSuccess?.();
+        } catch (error) {
+          if (handleError) {
+            handleError(error as Error);
+          } else {
+            throw error;
+          }
+        }
       }}
     />
   );

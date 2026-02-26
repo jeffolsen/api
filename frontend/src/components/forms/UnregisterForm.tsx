@@ -1,14 +1,18 @@
 import {
-  EMAIL_DEFAULT,
   EMAIL_INPUT,
   PASSWORD_DEFAULT,
   PASSWORD_INPUT,
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
 } from "../../config/inputs";
-import { FormWithHeading } from "./Form";
+import { FormWithHeading, FormWrapperProps } from "./Form";
+import { useEmail } from "../../network/api";
 
-function RequestUnregisterForm() {
+function RequestUnregisterForm({
+  handleSuccess,
+  handleError,
+}: FormWrapperProps) {
+  const { getEmail, setEmail } = useEmail();
   return (
     <FormWithHeading
       heading="Unregister Email"
@@ -17,18 +21,33 @@ function RequestUnregisterForm() {
       headingDecorator="strike"
       fields={[EMAIL_INPUT, PASSWORD_INPUT]}
       defaultValues={{
-        ...EMAIL_DEFAULT,
+        ...getEmail(),
         ...PASSWORD_DEFAULT,
       }}
       trySubmit={async (args) => {
-        console.log(args);
-        // await resetPassword(args);
+        try {
+          console.log(args);
+          if (args.email) {
+            setEmail(args.email as string);
+          }
+          handleSuccess?.();
+        } catch (error) {
+          if (handleError) {
+            handleError(error as Error);
+          } else {
+            throw error;
+          }
+        }
       }}
     />
   );
 }
 
-function UnregisterWithOTPForm() {
+function UnregisterWithOTPForm({
+  handleSuccess,
+  handleError,
+}: FormWrapperProps) {
+  const { getEmail } = useEmail();
   return (
     <FormWithHeading
       heading="Unregister Email"
@@ -37,12 +56,20 @@ function UnregisterWithOTPForm() {
       headingDecorator="strike"
       fields={[EMAIL_INPUT, VERIFICATION_CODE_INPUT]}
       defaultValues={{
-        ...EMAIL_DEFAULT,
+        ...getEmail(),
         ...VERIFICATION_CODE_DEFAULT,
       }}
       trySubmit={async (args) => {
-        console.log(args);
-        // await resetPassword(args);
+        try {
+          console.log(args);
+          handleSuccess?.();
+        } catch (error) {
+          if (handleError) {
+            handleError(error as Error);
+          } else {
+            throw error;
+          }
+        }
       }}
     />
   );

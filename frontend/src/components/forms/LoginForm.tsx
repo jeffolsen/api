@@ -1,20 +1,21 @@
 import {
-  EMAIL_DEFAULT,
   EMAIL_INPUT,
   PASSWORD_DEFAULT,
   PASSWORD_INPUT,
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
 } from "../../config/inputs";
-import { FormWithHeading } from "./Form";
+import { FormWithHeading, FormWrapperProps } from "./Form";
 import { useLoginWithOTP, LoginWithOTPFormInput } from "../../network/auth";
 import {
   useRequestLogin,
   RequestLoginFormInput,
 } from "../../network/verificationCode";
+import { useEmail } from "../../network/api";
 
-function RequestLoginForm() {
+function RequestLoginForm({ handleError, handleSuccess }: FormWrapperProps) {
   const login = useRequestLogin();
+  const { setEmail, getEmail } = useEmail();
 
   return (
     <FormWithHeading
@@ -24,18 +25,31 @@ function RequestLoginForm() {
       headingDecorator="strike"
       fields={[EMAIL_INPUT, PASSWORD_INPUT]}
       defaultValues={{
-        ...EMAIL_DEFAULT,
+        ...getEmail(),
         ...PASSWORD_DEFAULT,
       }}
       trySubmit={async (args) => {
-        await login.mutateAsync(args as RequestLoginFormInput);
+        try {
+          await login.mutateAsync(args as RequestLoginFormInput);
+          if (args.email) {
+            setEmail(args.email as string);
+          }
+          handleSuccess?.();
+        } catch (error) {
+          if (handleError) {
+            handleError(error as Error);
+          } else {
+            throw error;
+          }
+        }
       }}
     />
   );
 }
 
-function LoginWithOTPForm() {
+function LoginWithOTPForm({ handleError, handleSuccess }: FormWrapperProps) {
   const loginWithOTP = useLoginWithOTP();
+  const { getEmail } = useEmail();
 
   return (
     <FormWithHeading
@@ -44,9 +58,21 @@ function LoginWithOTPForm() {
       headingStyles={"text-center uppercase font-bold text-accent"}
       headingDecorator="none"
       fields={[EMAIL_INPUT, VERIFICATION_CODE_INPUT]}
-      defaultValues={{ ...EMAIL_DEFAULT, ...VERIFICATION_CODE_DEFAULT }}
+      defaultValues={{
+        ...getEmail(),
+        ...VERIFICATION_CODE_DEFAULT,
+      }}
       trySubmit={async (args) => {
-        await loginWithOTP.mutateAsync(args as LoginWithOTPFormInput);
+        try {
+          await loginWithOTP.mutateAsync(args as LoginWithOTPFormInput);
+          handleSuccess?.();
+        } catch (error) {
+          if (handleError) {
+            handleError(error as Error);
+          } else {
+            throw error;
+          }
+        }
       }}
     />
   );
