@@ -22,7 +22,7 @@ export const EMAIL_DEFAULT = { email: "" };
 export const PASSWORD_INPUT = {
   name: "password",
   placeholder: "Password",
-  type: "text",
+  type: "password",
   registerOptions: {
     required: "Password is required",
     pattern: {
@@ -36,7 +36,7 @@ export const PASSWORD_DEFAULT = { password: "" };
 export const CONFIRM_PASSWORD_INPUT = {
   name: "confirmPassword",
   placeholder: "Confirm Password",
-  type: "text",
+  type: "password",
   registerOptions: {
     required: "Confirm Password is required",
     pattern: {
