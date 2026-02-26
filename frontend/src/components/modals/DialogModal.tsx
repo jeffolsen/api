@@ -3,12 +3,12 @@ import { Modal, ModalCloseXButton, ModalCloseButton } from "./Modal";
 import Heading from "../common/Heading";
 import Text from "../common/Text";
 
-export type SuccessModalProps = ModalComponentType & {
+export type DialogModalProps = ModalComponentType & {
   title?: string;
   content?: string;
 };
 
-function SuccessModal({ title, content }: SuccessModalProps) {
+function DialogModal({ title, content }: DialogModalProps) {
   return (
     <Modal modalStyles="bg-secondary text-secondary-content w-full text-center max-w-xl">
       <ModalCloseXButton />
@@ -27,4 +27,4 @@ function SuccessModal({ title, content }: SuccessModalProps) {
   );
 }
 
-export default SuccessModal;
+export default DialogModal;
