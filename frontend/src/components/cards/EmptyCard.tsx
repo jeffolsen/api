@@ -3,7 +3,7 @@ import { HeadingLevelProvider } from "../common/Heading";
 function EmptyCard({ children }: { children: React.ReactNode }) {
   return (
     <HeadingLevelProvider>
-      <div className="card md:card-side bg-secondary shadow-xl h-full w-full text-secondary-content">
+      <div className="card card-bordered md:card-side shadow-xl h-full w-full bg-neutral">
         {children}
       </div>
     </HeadingLevelProvider>
