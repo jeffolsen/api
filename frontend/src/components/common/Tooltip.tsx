@@ -18,7 +18,7 @@ function Tooltip({
       className={clsx(
         "tooltip",
         className ||
-          "tooltip-right tooltip-secondary font-light text-left normal-case",
+          "tooltip-right tooltip-secondary font-light text-left text-sm tracking-normal normal-case",
       )}
       data-tip={text}
     >

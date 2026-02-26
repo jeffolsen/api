@@ -2,19 +2,22 @@ import clsx from "clsx";
 import { UseFormRegisterReturn } from "react-hook-form";
 
 export const TextInput = ({
+  required = false,
   register,
   ...props
 }: {
+  required?: boolean;
   register: UseFormRegisterReturn<string>;
 }) => {
   return (
-    <input
+    <label
       className={clsx([
-        "input input-bordered w-full",
-        "tracking-wider lowercase text-sm font-semibold",
+        "input input-bordered flex gap-2 items-center",
+        "tracking-wider text-sm font-semibold",
       ])}
-      {...register}
-      {...props}
-    />
+    >
+      <span className="text-error w-2 text-left"> {required && <>*</>}</span>
+      <input className="flex-grow" {...register} {...props} />
+    </label>
   );
 };

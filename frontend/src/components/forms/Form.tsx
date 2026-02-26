@@ -11,8 +11,16 @@ import clsx from "clsx";
 import Heading, { HeadingProps, HeadingLevelProvider } from "../common/Heading";
 import { TextInput } from "../inputs/TextInput";
 import toast from "react-hot-toast";
+import { useEffect } from "react";
+import { Button } from "../common/Button";
+import { ButtonColor } from "../common/helpers/contentStyles";
 
 export type SubmitArgs = Record<string, unknown>;
+
+export type FormWrapperProps = {
+  handleError?: (error: Error) => void;
+  handleSuccess?: () => void;
+};
 
 interface Field extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
@@ -25,7 +33,8 @@ type FormProps = {
   defaultValues: Record<string, unknown>;
   trySubmit: (args: SubmitArgs) => Promise<void>;
   submitButtonText?: string;
-  submitButtonStyles?: string;
+  submitButtonColor?: ButtonColor;
+  formStyles?: string;
 };
 
 function Form({
@@ -33,15 +42,22 @@ function Form({
   defaultValues,
   trySubmit,
   submitButtonText,
-  submitButtonStyles,
+  submitButtonColor = "primary",
+  formStyles,
 }: FormProps) {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues,
   });
+
+  useEffect(() => {
+    console.log("Resetting form with defaultValues:", defaultValues);
+    reset(defaultValues);
+  }, [defaultValues, reset]);
 
   const onSubmit = async (args: SubmitArgs) => {
     try {
@@ -55,7 +71,10 @@ function Form({
   };
 
   return (
-    <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className={clsx(formStyles || "flex flex-col gap-4 w-full")}
+      onSubmit={handleSubmit(onSubmit)}
+    >
       {fields.map(({ name, registerOptions = {}, ...props }) => (
         <div key={name}>
           <FormInput
@@ -67,15 +86,12 @@ function Form({
           <FormError error={errors[name]} />
         </div>
       ))}
-      <input
-        type="submit"
+      <Button
+        as="submit"
+        color={submitButtonColor}
+        disabled={isSubmitting}
         value={submitButtonText || "Submit"}
-        className={clsx([
-          "btn",
-          submitButtonStyles || "btn-primary btn-block",
-          "uppercase tracking-widest text-sm font-semibold",
-          { disabled: isSubmitting },
-        ])}
+        className={clsx(["sm:self-end", { disabled: isSubmitting }])}
       />
     </form>
   );
@@ -121,7 +137,14 @@ const FormInput = ({
   registerOptions,
   ...props
 }: FormInputProps) => {
-  return <TextInput register={register(name, registerOptions)} {...props} />;
+  const required = !!registerOptions.required;
+  return (
+    <TextInput
+      register={register(name, registerOptions)}
+      required={required}
+      {...props}
+    />
+  );
 };
 
 type FormErrorProps = {

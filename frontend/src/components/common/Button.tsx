@@ -42,7 +42,7 @@ export const Button = forwardRef<
   ButtonProps
 >(({ as = "button", color, size, className, ...props }, ref) => {
   const classes = clsx(
-    "btn btn-block flex-1 whitespace-nowrap",
+    "btn whitespace-nowrap",
     buttonSizeClasses[size || "none"],
     buttonColorClasses[color || "none"],
     className,
@@ -83,5 +83,18 @@ export const Button = forwardRef<
     />
   );
 });
+
+export const XButton = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ ...props }, ref) => {
+    const classes = clsx(
+      "btn btn-circle  btn-ghost border-white/50 btn-xs absolute right-2 top-2",
+    );
+    return (
+      <Button as="button" ref={ref} className={classes} {...props}>
+        ✕
+      </Button>
+    );
+  },
+);
 
 Button.displayName = "Button";

@@ -44,12 +44,15 @@ const DropDownMenu = ({
       }}
     >
       <ListboxButton as="div">
-        <Button color={buttonColor}>{selectedItem?.label}</Button>
+        <Button className="w-full" color={buttonColor}>
+          {selectedItem?.label}
+        </Button>
       </ListboxButton>
       <ListboxOptions anchor="bottom">
         {items.map((item) => (
           <ListboxOption as="div" key={item.id} value={item}>
             <Button
+              className="w-full"
               color={item === selectedItem ? selectedOptionColor : optionsColor}
             >
               {item.label}
