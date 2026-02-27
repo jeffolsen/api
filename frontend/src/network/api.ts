@@ -93,6 +93,25 @@ export const withErrorHandling = async <T>(
   }
 };
 
+export const withFormHandling = async <T>(
+  fn: () => Promise<T>,
+  options?: {
+    onSuccess?: () => void;
+    onError?: (error: Error) => void;
+  },
+): Promise<void> => {
+  try {
+    await fn();
+    options?.onSuccess?.();
+  } catch (error) {
+    if (options?.onError) {
+      options.onError(error as Error);
+    } else {
+      throw error;
+    }
+  }
+};
+
 export const useEmail = () => {
   const queryClient = useQueryClient();
   useQuery({

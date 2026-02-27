@@ -5,6 +5,14 @@ import {
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
 } from "../../config/inputs";
+import {
+  useDeleteProfileWithOTP,
+  DeleteProfileWithOTPFormInput,
+} from "../../network/profile";
+import {
+  useRequestDeleteProfile,
+  RequestDeleteProfileInput,
+} from "../../network/verificationCode";
 import { FormWithHeading, FormWrapperProps } from "./Form";
 import { useEmail } from "../../network/api";
 
@@ -13,12 +21,11 @@ function RequestUnregisterForm({
   handleError,
 }: FormWrapperProps) {
   const { getEmail, setEmail } = useEmail();
+  const requestUnregister = useRequestDeleteProfile();
   return (
     <FormWithHeading
-      heading="Unregister Email"
-      headingSize="md"
-      headingStyles={"text-center uppercase font-bold text-accent"}
-      headingDecorator="strike"
+      submitButtonColor="error"
+      submitButtonText="Delete Profile"
       fields={[EMAIL_INPUT, PASSWORD_INPUT]}
       defaultValues={{
         ...getEmail(),
@@ -26,7 +33,9 @@ function RequestUnregisterForm({
       }}
       trySubmit={async (args) => {
         try {
-          console.log(args);
+          await requestUnregister.mutateAsync(
+            args as RequestDeleteProfileInput,
+          );
           if (args.email) {
             setEmail(args.email as string);
           }
@@ -48,6 +57,7 @@ function UnregisterWithOTPForm({
   handleError,
 }: FormWrapperProps) {
   const { getEmail } = useEmail();
+  const unregisterWithOTP = useDeleteProfileWithOTP();
   return (
     <FormWithHeading
       heading="Unregister Email"
@@ -61,7 +71,9 @@ function UnregisterWithOTPForm({
       }}
       trySubmit={async (args) => {
         try {
-          console.log(args);
+          await unregisterWithOTP.mutateAsync(
+            args as DeleteProfileWithOTPFormInput,
+          );
           handleSuccess?.();
         } catch (error) {
           if (handleError) {

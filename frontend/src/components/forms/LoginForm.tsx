@@ -11,7 +11,7 @@ import {
   useRequestLogin,
   RequestLoginFormInput,
 } from "../../network/verificationCode";
-import { useEmail } from "../../network/api";
+import { useEmail, withFormHandling } from "../../network/api";
 
 function RequestLoginForm({ handleError, handleSuccess }: FormWrapperProps) {
   const login = useRequestLogin();
@@ -28,21 +28,20 @@ function RequestLoginForm({ handleError, handleSuccess }: FormWrapperProps) {
         ...getEmail(),
         ...PASSWORD_DEFAULT,
       }}
-      trySubmit={async (args) => {
-        try {
-          await login.mutateAsync(args as RequestLoginFormInput);
-          if (args.email) {
-            setEmail(args.email as string);
-          }
-          handleSuccess?.();
-        } catch (error) {
-          if (handleError) {
-            handleError(error as Error);
-          } else {
-            throw error;
-          }
-        }
-      }}
+      trySubmit={async (args) =>
+        withFormHandling(
+          async () => {
+            await login.mutateAsync(args as RequestLoginFormInput);
+            if (args.email) {
+              setEmail(args.email as string);
+            }
+          },
+          {
+            onSuccess: handleSuccess,
+            onError: handleError,
+          },
+        )
+      }
     />
   );
 }
@@ -62,18 +61,15 @@ function LoginWithOTPForm({ handleError, handleSuccess }: FormWrapperProps) {
         ...getEmail(),
         ...VERIFICATION_CODE_DEFAULT,
       }}
-      trySubmit={async (args) => {
-        try {
-          await loginWithOTP.mutateAsync(args as LoginWithOTPFormInput);
-          handleSuccess?.();
-        } catch (error) {
-          if (handleError) {
-            handleError(error as Error);
-          } else {
-            throw error;
-          }
-        }
-      }}
+      trySubmit={async (args) =>
+        withFormHandling(
+          async () => loginWithOTP.mutateAsync(args as LoginWithOTPFormInput),
+          {
+            onSuccess: handleSuccess,
+            onError: handleError,
+          },
+        )
+      }
     />
   );
 }
