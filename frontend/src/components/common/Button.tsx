@@ -12,6 +12,8 @@ import {
   ButtonSize,
 } from "./helpers/contentStyles";
 import clsx, { ClassValue } from "clsx";
+import { LinkProps } from "react-router";
+import { CustomLink } from "./Link";
 
 type ButtonBaseProps = {
   color?: ButtonColor;
@@ -29,13 +31,16 @@ type ButtonAsSubmit = {
   type?: never;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, "type">;
 
+type ButtonAsLink = {
+  as: "Link";
+} & LinkProps;
+
 type ButtonAsAnchor = {
   as: "a";
-  href: string;
 } & AnchorHTMLAttributes<HTMLAnchorElement>;
 
 type ButtonProps = ButtonBaseProps &
-  (ButtonAsButton | ButtonAsSubmit | ButtonAsAnchor);
+  (ButtonAsButton | ButtonAsSubmit | ButtonAsLink | ButtonAsAnchor);
 
 export const Button = forwardRef<
   HTMLButtonElement | HTMLInputElement | HTMLAnchorElement,
@@ -61,12 +66,26 @@ export const Button = forwardRef<
     );
   }
 
-  if (as === "a") {
-    const { href, ...anchorProps } = props as ButtonAsAnchor;
+  if (as === "Link") {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { as: _, ...linkProps } = props as ButtonAsLink;
     return (
-      <a
+      <CustomLink
         ref={ref as Ref<HTMLAnchorElement>}
-        href={href}
+        as="Link"
+        className={classes}
+        {...linkProps}
+      />
+    );
+  }
+
+  if (as === "a") {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { as: _, ...anchorProps } = props as ButtonAsAnchor;
+    return (
+      <CustomLink
+        ref={ref as Ref<HTMLAnchorElement>}
+        as="a"
         className={classes}
         {...anchorProps}
       />
