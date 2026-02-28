@@ -123,12 +123,11 @@ export const useEmail = () => {
 
   return {
     setEmail: (email: string = "NONE") => {
-      console.log("Setting email in queryClient:", email);
       queryClient.setQueryData([EMAIL_KEY], email);
     },
     getEmail: () => {
       const email = queryClient.getQueryData([EMAIL_KEY]) as string | undefined;
-      return email === undefined
+      return !email
         ? EMAIL_DEFAULT
         : email === "NONE"
           ? EMAIL_DEFAULT

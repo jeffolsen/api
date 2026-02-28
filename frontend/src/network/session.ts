@@ -55,7 +55,6 @@ export const useLogoutAllWithOTP = () => {
     onSuccess: () => {
       queryClient.setQueryData([OTP_STATUS_KEY], OTP_STATUS_NONE);
       setIsAuthenticated(false);
-      console.log("congrats you logged out of all sessions");
     },
   });
 };
