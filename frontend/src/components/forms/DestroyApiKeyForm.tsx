@@ -1,33 +1,35 @@
 import {
   EMAIL_INPUT,
+  ORIGIN_DEFAULT,
+  ORIGIN_INPUT,
   PASSWORD_DEFAULT,
   PASSWORD_INPUT,
+  SLUG_DEFAULT,
+  SLUG_INPUT,
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
 } from "../../config/inputs";
-import {
-  RequestLogoutAllSessionsInput,
-  useRequestLogoutAllSessions,
-} from "../../network/verificationCode";
-import {
-  useLogoutAllWithOTP,
-  LogoutAllWithOTPFormInput,
-} from "../../network/session";
 import {
   FormWithHeading,
   FormWithHeadingProps,
   FormReponseHandlerProps,
 } from "./Form";
+import {
+  useRequestDestroyApiKey,
+  RequestDestroyApiKeyInput,
+} from "../../network/verificationCode";
+import { useDestroyApiKey, DestroyApiKeyInput } from "../../network/apiKey";
 import { useEmail, withFormHandling } from "../../network/api";
 
-function RequestLogoutAllSessionsForm({
-  handleSuccess,
+function RequestDestroyApiKeyForm({
   handleError,
+  handleSuccess,
   defaultValues = {},
   ...props
 }: FormWithHeadingProps & FormReponseHandlerProps) {
-  const logoutAll = useRequestLogoutAllSessions();
-  const { getEmail, setEmail } = useEmail();
+  const { setEmail, getEmail } = useEmail();
+  const requestDestroyApiKey = useRequestDestroyApiKey();
+
   return (
     <FormWithHeading
       fields={[EMAIL_INPUT, PASSWORD_INPUT]}
@@ -39,7 +41,9 @@ function RequestLogoutAllSessionsForm({
       trySubmit={async (args) =>
         withFormHandling(
           async () => {
-            await logoutAll.mutateAsync(args as RequestLogoutAllSessionsInput);
+            await requestDestroyApiKey.mutateAsync(
+              args as RequestDestroyApiKeyInput,
+            );
             setEmail((args?.email || "") as string);
           },
           {
@@ -53,26 +57,28 @@ function RequestLogoutAllSessionsForm({
   );
 }
 
-function LogoutAllSessionsWithOTPForm({
-  handleSuccess,
+function DestroyApiKeyWithOTPForm({
   handleError,
+  handleSuccess,
   defaultValues = {},
   ...props
 }: FormWithHeadingProps & FormReponseHandlerProps) {
-  const logoutAll = useLogoutAllWithOTP();
   const { getEmail } = useEmail();
+  const destroyApiKey = useDestroyApiKey();
   return (
     <FormWithHeading
-      fields={[EMAIL_INPUT, VERIFICATION_CODE_INPUT]}
+      fields={[EMAIL_INPUT, VERIFICATION_CODE_INPUT, SLUG_INPUT, ORIGIN_INPUT]}
       defaultValues={{
         ...getEmail(),
         ...VERIFICATION_CODE_DEFAULT,
+        ...SLUG_DEFAULT,
+        ...ORIGIN_DEFAULT,
         ...defaultValues,
       }}
       trySubmit={async (args) =>
         withFormHandling(
           async () => {
-            await logoutAll.mutateAsync(args as LogoutAllWithOTPFormInput);
+            await destroyApiKey.mutateAsync(args as DestroyApiKeyInput);
           },
           {
             onSuccess: handleSuccess,
@@ -85,4 +91,4 @@ function LogoutAllSessionsWithOTPForm({
   );
 }
 
-export { RequestLogoutAllSessionsForm, LogoutAllSessionsWithOTPForm };
+export { RequestDestroyApiKeyForm, DestroyApiKeyWithOTPForm };

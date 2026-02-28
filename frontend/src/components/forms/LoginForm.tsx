@@ -5,7 +5,11 @@ import {
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
 } from "../../config/inputs";
-import { FormWithHeading, FormWrapperProps } from "./Form";
+import {
+  FormWithHeading,
+  FormWithHeadingProps,
+  FormReponseHandlerProps,
+} from "./Form";
 import { useLoginWithOTP, LoginWithOTPFormInput } from "../../network/auth";
 import {
   useRequestLogin,
@@ -13,28 +17,28 @@ import {
 } from "../../network/verificationCode";
 import { useEmail, withFormHandling } from "../../network/api";
 
-function RequestLoginForm({ handleError, handleSuccess }: FormWrapperProps) {
+function RequestLoginForm({
+  handleError,
+  handleSuccess,
+  defaultValues = {},
+  ...props
+}: FormWithHeadingProps & FormReponseHandlerProps) {
   const login = useRequestLogin();
   const { setEmail, getEmail } = useEmail();
 
   return (
     <FormWithHeading
-      heading="Login"
-      headingSize="md"
-      headingStyles={"text-center uppercase font-bold text-accent"}
-      headingDecorator="strike"
       fields={[EMAIL_INPUT, PASSWORD_INPUT]}
       defaultValues={{
         ...getEmail(),
         ...PASSWORD_DEFAULT,
+        ...defaultValues,
       }}
       trySubmit={async (args) =>
         withFormHandling(
           async () => {
             await login.mutateAsync(args as RequestLoginFormInput);
-            if (args.email) {
-              setEmail(args.email as string);
-            }
+            setEmail((args?.email || "") as string);
           },
           {
             onSuccess: handleSuccess,
@@ -42,24 +46,27 @@ function RequestLoginForm({ handleError, handleSuccess }: FormWrapperProps) {
           },
         )
       }
+      {...props}
     />
   );
 }
 
-function LoginWithOTPForm({ handleError, handleSuccess }: FormWrapperProps) {
+function LoginWithOTPForm({
+  handleError,
+  handleSuccess,
+  defaultValues = {},
+  ...props
+}: FormWithHeadingProps & FormReponseHandlerProps) {
   const loginWithOTP = useLoginWithOTP();
   const { getEmail } = useEmail();
 
   return (
     <FormWithHeading
-      heading="Enter Email Code"
-      headingSize="md"
-      headingStyles={"text-center uppercase font-bold text-accent"}
-      headingDecorator="none"
       fields={[EMAIL_INPUT, VERIFICATION_CODE_INPUT]}
       defaultValues={{
         ...getEmail(),
         ...VERIFICATION_CODE_DEFAULT,
+        ...defaultValues,
       }}
       trySubmit={async (args) =>
         withFormHandling(
@@ -70,6 +77,7 @@ function LoginWithOTPForm({ handleError, handleSuccess }: FormWrapperProps) {
           },
         )
       }
+      {...props}
     />
   );
 }

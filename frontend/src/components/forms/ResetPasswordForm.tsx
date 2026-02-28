@@ -7,8 +7,6 @@ import {
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
 } from "../../config/inputs";
-import { FormWithHeading, FormWrapperProps } from "./Form";
-import { useEmail } from "../../network/api";
 import {
   useRequestPasswordReset,
   RequestPasswordResetInput,
@@ -17,38 +15,41 @@ import {
   usePasswordResetWithOTP,
   PasswordResetWithOTPFormInput,
 } from "../../network/profile";
+import {
+  FormWithHeading,
+  FormWithHeadingProps,
+  FormReponseHandlerProps,
+} from "./Form";
+import { useEmail, withFormHandling } from "../../network/api";
 
 function RequestResetPasswordForm({
   handleSuccess,
   handleError,
-}: FormWrapperProps) {
+  defaultValues = {},
+  ...props
+}: FormWithHeadingProps & FormReponseHandlerProps) {
   const requestReset = useRequestPasswordReset();
   const { setEmail, getEmail } = useEmail();
   return (
     <FormWithHeading
-      heading="Reset Password"
-      headingSize="md"
-      headingStyles={"text-center uppercase font-bold text-accent"}
-      headingDecorator="strike"
       fields={[EMAIL_INPUT]}
       defaultValues={{
         ...getEmail(),
+        ...defaultValues,
       }}
-      trySubmit={async (args) => {
-        try {
-          await requestReset.mutateAsync(args as RequestPasswordResetInput);
-          if (args.email) {
-            setEmail(args.email as string);
-          }
-          handleSuccess?.();
-        } catch (error) {
-          if (handleError) {
-            handleError(error as Error);
-          } else {
-            throw error;
-          }
-        }
-      }}
+      trySubmit={async (args) =>
+        withFormHandling(
+          async () => {
+            await requestReset.mutateAsync(args as RequestPasswordResetInput);
+            setEmail((args?.email || "") as string);
+          },
+          {
+            onSuccess: handleSuccess,
+            onError: handleError,
+          },
+        )
+      }
+      {...props}
     />
   );
 }
@@ -56,15 +57,13 @@ function RequestResetPasswordForm({
 function ResetPasswordWithOTPForm({
   handleSuccess,
   handleError,
-}: FormWrapperProps) {
+  defaultValues = {},
+  ...props
+}: FormWithHeadingProps & FormReponseHandlerProps) {
   const resetPassword = usePasswordResetWithOTP();
   const { getEmail } = useEmail();
   return (
     <FormWithHeading
-      heading="Reset Password"
-      headingSize="md"
-      headingStyles={"text-center uppercase font-bold text-accent"}
-      headingDecorator="strike"
       fields={[
         EMAIL_INPUT,
         VERIFICATION_CODE_INPUT,
@@ -76,21 +75,22 @@ function ResetPasswordWithOTPForm({
         ...VERIFICATION_CODE_DEFAULT,
         ...PASSWORD_DEFAULT,
         ...CONFIRM_PASSWORD_DEFAULT,
+        ...defaultValues,
       }}
-      trySubmit={async (args) => {
-        try {
-          await resetPassword.mutateAsync(
-            args as PasswordResetWithOTPFormInput,
-          );
-          handleSuccess?.();
-        } catch (error) {
-          if (handleError) {
-            handleError(error as Error);
-          } else {
-            throw error;
-          }
-        }
-      }}
+      trySubmit={async (args) =>
+        withFormHandling(
+          async () => {
+            await resetPassword.mutateAsync(
+              args as PasswordResetWithOTPFormInput,
+            );
+          },
+          {
+            onSuccess: handleSuccess,
+            onError: handleError,
+          },
+        )
+      }
+      {...props}
     />
   );
 }

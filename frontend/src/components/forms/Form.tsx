@@ -1,4 +1,4 @@
-import { InputHTMLAttributes } from "react";
+import { InputHTMLAttributes, useEffect } from "react";
 import {
   RegisterOptions,
   useForm,
@@ -8,19 +8,13 @@ import {
   UseFormRegister,
 } from "react-hook-form";
 import clsx from "clsx";
+import toast from "react-hot-toast";
 import Heading, { HeadingProps, HeadingLevelProvider } from "../common/Heading";
 import { TextInput } from "../inputs/TextInput";
-import toast from "react-hot-toast";
-import { useEffect } from "react";
 import { Button } from "../common/Button";
 import { ButtonColor } from "../common/helpers/contentStyles";
 
 export type SubmitArgs = Record<string, unknown>;
-
-export type FormWrapperProps = {
-  handleError?: (error: Error) => void;
-  handleSuccess?: () => void;
-};
 
 interface Field extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
@@ -28,19 +22,24 @@ interface Field extends InputHTMLAttributes<HTMLInputElement> {
   registerOptions?: RegisterOptions;
 }
 
+export type FormReponseHandlerProps = {
+  handleError?: (error: Error) => void;
+  handleSuccess?: () => void;
+};
+
 type FormProps = {
-  fields: Field[];
-  defaultValues: Record<string, unknown>;
-  trySubmit: (args: SubmitArgs) => Promise<void>;
+  fields?: Field[];
+  defaultValues?: Record<string, unknown>;
+  trySubmit?: (args: SubmitArgs) => Promise<void>;
   submitButtonText?: string;
   submitButtonColor?: ButtonColor;
   formStyles?: string;
 };
 
 function Form({
-  fields,
-  defaultValues,
-  trySubmit,
+  fields = [],
+  defaultValues = {},
+  trySubmit = async () => {},
   submitButtonText,
   submitButtonColor = "primary",
   formStyles,
@@ -49,13 +48,13 @@ function Form({
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm({
-    defaultValues,
+    defaultValues: { ...defaultValues },
   });
 
   useEffect(() => {
-    console.log("Resetting form with defaultValues:", defaultValues);
     reset(defaultValues);
   }, [defaultValues, reset]);
 
@@ -81,6 +80,7 @@ function Form({
             name={name}
             register={register}
             registerOptions={registerOptions}
+            watch={watch}
             {...props}
           />
           <FormError error={errors[name]} />
@@ -128,20 +128,24 @@ const FormWithHeading = ({
 type FormInputProps = {
   name: string;
   register: UseFormRegister<Record<string, unknown>>;
+  watch: (field: string) => unknown;
   registerOptions: RegisterOptions;
 };
 
 const FormInput = ({
   name,
   register,
+  watch,
   registerOptions,
   ...props
 }: FormInputProps) => {
   const required = !!registerOptions.required;
+  const watchedValue = watch(name);
   return (
     <TextInput
       register={register(name, registerOptions)}
       required={required}
+      watchedValue={watchedValue}
       {...props}
     />
   );

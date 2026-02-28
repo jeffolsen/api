@@ -13,41 +13,44 @@ import {
   useRequestDeleteProfile,
   RequestDeleteProfileInput,
 } from "../../network/verificationCode";
-import { FormWithHeading, FormWrapperProps } from "./Form";
-import { useEmail } from "../../network/api";
+import {
+  FormWithHeading,
+  FormWithHeadingProps,
+  FormReponseHandlerProps,
+} from "./Form";
+import { useEmail, withFormHandling } from "../../network/api";
 
 function RequestUnregisterForm({
   handleSuccess,
   handleError,
-}: FormWrapperProps) {
+  defaultValues = {},
+  ...props
+}: FormWithHeadingProps & FormReponseHandlerProps) {
   const { getEmail, setEmail } = useEmail();
   const requestUnregister = useRequestDeleteProfile();
   return (
     <FormWithHeading
-      submitButtonColor="error"
-      submitButtonText="Delete Profile"
       fields={[EMAIL_INPUT, PASSWORD_INPUT]}
       defaultValues={{
         ...getEmail(),
         ...PASSWORD_DEFAULT,
+        ...defaultValues,
       }}
-      trySubmit={async (args) => {
-        try {
-          await requestUnregister.mutateAsync(
-            args as RequestDeleteProfileInput,
-          );
-          if (args.email) {
-            setEmail(args.email as string);
-          }
-          handleSuccess?.();
-        } catch (error) {
-          if (handleError) {
-            handleError(error as Error);
-          } else {
-            throw error;
-          }
-        }
-      }}
+      trySubmit={async (args) =>
+        withFormHandling(
+          async () => {
+            await requestUnregister.mutateAsync(
+              args as RequestDeleteProfileInput,
+            );
+            setEmail((args?.email || "") as string);
+          },
+          {
+            onSuccess: handleSuccess,
+            onError: handleError,
+          },
+        )
+      }
+      {...props}
     />
   );
 }
@@ -55,34 +58,33 @@ function RequestUnregisterForm({
 function UnregisterWithOTPForm({
   handleSuccess,
   handleError,
-}: FormWrapperProps) {
+  defaultValues = {},
+  ...props
+}: FormWithHeadingProps & FormReponseHandlerProps) {
   const { getEmail } = useEmail();
   const unregisterWithOTP = useDeleteProfileWithOTP();
   return (
     <FormWithHeading
-      heading="Unregister Email"
-      headingSize="md"
-      headingStyles={"text-center uppercase font-bold text-accent"}
-      headingDecorator="strike"
       fields={[EMAIL_INPUT, VERIFICATION_CODE_INPUT]}
       defaultValues={{
         ...getEmail(),
         ...VERIFICATION_CODE_DEFAULT,
+        ...defaultValues,
       }}
-      trySubmit={async (args) => {
-        try {
-          await unregisterWithOTP.mutateAsync(
-            args as DeleteProfileWithOTPFormInput,
-          );
-          handleSuccess?.();
-        } catch (error) {
-          if (handleError) {
-            handleError(error as Error);
-          } else {
-            throw error;
-          }
-        }
-      }}
+      trySubmit={async (args) =>
+        withFormHandling(
+          async () => {
+            await unregisterWithOTP.mutateAsync(
+              args as DeleteProfileWithOTPFormInput,
+            );
+          },
+          {
+            onSuccess: handleSuccess,
+            onError: handleError,
+          },
+        )
+      }
+      {...props}
     />
   );
 }

@@ -9,38 +9,50 @@ import {
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
 } from "../../config/inputs";
-import { FormWithHeading, FormWrapperProps } from "./Form";
-import { useEmail } from "../../network/api";
+import {
+  FormWithHeading,
+  FormWithHeadingProps,
+  FormReponseHandlerProps,
+} from "./Form";
+import {
+  useRequestGenerateApiKey,
+  RequestGenerateApiKeyInput,
+} from "../../network/verificationCode";
+import { useGenerateApiKey, GenerateApiKeyInput } from "../../network/apiKey";
+import { useEmail, withFormHandling } from "../../network/api";
 
 function RequestGenerateApiKeyForm({
   handleError,
   handleSuccess,
-}: FormWrapperProps) {
+  defaultValues = {},
+  ...props
+}: FormWithHeadingProps & FormReponseHandlerProps) {
   const { setEmail, getEmail } = useEmail();
+  const requestGenerateApiKey = useRequestGenerateApiKey();
+
   return (
     <FormWithHeading
       fields={[EMAIL_INPUT, PASSWORD_INPUT]}
-      submitButtonText="Generate API Key"
-      submitButtonColor="success"
       defaultValues={{
         ...getEmail(),
         ...PASSWORD_DEFAULT,
+        ...defaultValues,
       }}
-      trySubmit={async (args) => {
-        try {
-          console.log(args);
-          if (args.email) {
-            setEmail(args.email as string);
-          }
-          handleSuccess?.();
-        } catch (error) {
-          if (handleError) {
-            handleError(error as Error);
-          } else {
-            throw error;
-          }
-        }
-      }}
+      trySubmit={async (args) =>
+        withFormHandling(
+          async () => {
+            await requestGenerateApiKey.mutateAsync(
+              args as RequestGenerateApiKeyInput,
+            );
+            setEmail((args?.email || "") as string);
+          },
+          {
+            onSuccess: handleSuccess,
+            onError: handleError,
+          },
+        )
+      }
+      {...props}
     />
   );
 }
@@ -48,33 +60,33 @@ function RequestGenerateApiKeyForm({
 function GenerateApiKeyWithOTPForm({
   handleError,
   handleSuccess,
-}: FormWrapperProps) {
+  defaultValues = {},
+  ...props
+}: FormWithHeadingProps & FormReponseHandlerProps) {
   const { getEmail } = useEmail();
+  const generateApiKey = useGenerateApiKey();
   return (
     <FormWithHeading
-      heading="Generate API Key"
-      headingSize="md"
-      headingStyles={"text-center uppercase font-bold text-accent"}
-      headingDecorator="strike"
       fields={[EMAIL_INPUT, VERIFICATION_CODE_INPUT, SLUG_INPUT, ORIGIN_INPUT]}
       defaultValues={{
         ...getEmail(),
         ...VERIFICATION_CODE_DEFAULT,
         ...SLUG_DEFAULT,
         ...ORIGIN_DEFAULT,
+        ...defaultValues,
       }}
-      trySubmit={async (args) => {
-        try {
-          console.log(args);
-          handleSuccess?.();
-        } catch (error) {
-          if (handleError) {
-            handleError(error as Error);
-          } else {
-            throw error;
-          }
-        }
-      }}
+      trySubmit={async (args) =>
+        withFormHandling(
+          async () => {
+            await generateApiKey.mutateAsync(args as GenerateApiKeyInput);
+          },
+          {
+            onSuccess: handleSuccess,
+            onError: handleError,
+          },
+        )
+      }
+      {...props}
     />
   );
 }
