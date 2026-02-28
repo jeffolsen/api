@@ -83,4 +83,4 @@ export const SLUG_INPUT = {
     },
   },
 };
-export const SLUG_DEFAULT = { code: "" };
+export const SLUG_DEFAULT = { apiSlug: "" };
