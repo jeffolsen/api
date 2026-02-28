@@ -10,13 +10,9 @@ export type DialogModalProps = ModalComponentType & {
 
 function DialogModal({ title, content }: DialogModalProps) {
   return (
-    <Modal modalStyles="bg-secondary text-secondary-content w-full text-center max-w-xl">
+    <Modal modalStyles="bg-neutral text-neutral-content w-full text-center max-w-xl">
       <ModalCloseXButton />
-      {title && (
-        <Heading headingSize="lg" headingStyles="text-secondary-content/75">
-          {title}
-        </Heading>
-      )}
+      {title && <Heading headingSize="lg">{title}</Heading>}
       {content && <Text textSize="lg">{content}</Text>}
       <div className="modal-action">
         <div className="flex-shrink">

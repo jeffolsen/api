@@ -48,7 +48,7 @@ const DropDownMenu = ({
           {selectedItem?.label}
         </Button>
       </ListboxButton>
-      <ListboxOptions anchor="bottom">
+      <ListboxOptions className="w-full px-6 md:w-auto md:px-0" anchor="bottom">
         {items.map((item) => (
           <ListboxOption as="div" key={item.id} value={item}>
             <Button

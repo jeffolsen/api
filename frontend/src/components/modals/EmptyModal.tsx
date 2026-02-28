@@ -5,7 +5,7 @@ export type EmptyModalProps = PropsWithChildren;
 
 function EmptyModal({ children }: EmptyModalProps) {
   return (
-    <Modal>
+    <Modal modalStyles="bg-neutral text-neutral-content w-full text-center max-w-xl">
       <ModalCloseXButton />
       {children}
     </Modal>
