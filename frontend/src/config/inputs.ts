@@ -47,6 +47,34 @@ export const CONFIRM_PASSWORD_INPUT = {
 };
 export const CONFIRM_PASSWORD_DEFAULT = { confirmPassword: "" };
 
+export const NEW_PASSWORD_INPUT = {
+  name: "newPassword",
+  placeholder: "New Password",
+  type: "password",
+  registerOptions: {
+    required: "New Password is required",
+    pattern: {
+      value: PASSWORD_REGEX,
+      message: "Invalid Password format",
+    },
+  },
+};
+export const NEW_PASSWORD_DEFAULT = { newPassword: "" };
+
+export const CONFIRM_NEW_PASSWORD_INPUT = {
+  name: "confirmNewPassword",
+  placeholder: "Confirm New Password",
+  type: "password",
+  registerOptions: {
+    required: "Confirm New Password is required",
+    pattern: {
+      value: PASSWORD_REGEX,
+      message: "Invalid Confirm Password format",
+    },
+  },
+};
+export const CONFIRM_NEW_PASSWORD_DEFAULT = { confirmNewPassword: "" };
+
 export const VERIFICATION_CODE_INPUT = {
   name: "verificationCode",
   placeholder: "Verification Code",

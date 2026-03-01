@@ -1,5 +1,4 @@
 import {
-  EMAIL_INPUT,
   PASSWORD_DEFAULT,
   PASSWORD_INPUT,
   VERIFICATION_CODE_DEFAULT,
@@ -18,7 +17,7 @@ import {
   FormWithHeadingProps,
   FormReponseHandlerProps,
 } from "./Form";
-import { useEmail, withFormHandling } from "../../network/api";
+import { withFormHandling } from "../../network/api";
 
 function RequestUnregisterForm({
   handleSuccess,
@@ -26,13 +25,11 @@ function RequestUnregisterForm({
   defaultValues = {},
   ...props
 }: FormWithHeadingProps & FormReponseHandlerProps) {
-  const { getEmail, setEmail } = useEmail();
   const requestUnregister = useRequestDeleteProfile();
   return (
     <FormWithHeading
-      fields={[EMAIL_INPUT, PASSWORD_INPUT]}
+      fields={[PASSWORD_INPUT]}
       defaultValues={{
-        ...getEmail(),
         ...PASSWORD_DEFAULT,
         ...defaultValues,
       }}
@@ -42,7 +39,6 @@ function RequestUnregisterForm({
             await requestUnregister.mutateAsync(
               args as RequestDeleteProfileInput,
             );
-            setEmail((args?.email || "") as string);
           },
           {
             onSuccess: handleSuccess,
@@ -61,13 +57,11 @@ function UnregisterWithOTPForm({
   defaultValues = {},
   ...props
 }: FormWithHeadingProps & FormReponseHandlerProps) {
-  const { getEmail } = useEmail();
   const unregisterWithOTP = useDeleteProfileWithOTP();
   return (
     <FormWithHeading
-      fields={[EMAIL_INPUT, VERIFICATION_CODE_INPUT]}
+      fields={[VERIFICATION_CODE_INPUT]}
       defaultValues={{
-        ...getEmail(),
         ...VERIFICATION_CODE_DEFAULT,
         ...defaultValues,
       }}

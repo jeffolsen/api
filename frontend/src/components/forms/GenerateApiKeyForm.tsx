@@ -1,5 +1,4 @@
 import {
-  EMAIL_INPUT,
   ORIGIN_DEFAULT,
   ORIGIN_INPUT,
   PASSWORD_DEFAULT,
@@ -19,7 +18,7 @@ import {
   RequestGenerateApiKeyInput,
 } from "../../network/verificationCode";
 import { useGenerateApiKey, GenerateApiKeyInput } from "../../network/apiKey";
-import { useEmail, withFormHandling } from "../../network/api";
+import { withFormHandling } from "../../network/api";
 
 function RequestGenerateApiKeyForm({
   handleError,
@@ -27,14 +26,12 @@ function RequestGenerateApiKeyForm({
   defaultValues = {},
   ...props
 }: FormWithHeadingProps & FormReponseHandlerProps) {
-  const { setEmail, getEmail } = useEmail();
   const requestGenerateApiKey = useRequestGenerateApiKey();
 
   return (
     <FormWithHeading
-      fields={[EMAIL_INPUT, PASSWORD_INPUT]}
+      fields={[PASSWORD_INPUT]}
       defaultValues={{
-        ...getEmail(),
         ...PASSWORD_DEFAULT,
         ...defaultValues,
       }}
@@ -44,7 +41,6 @@ function RequestGenerateApiKeyForm({
             await requestGenerateApiKey.mutateAsync(
               args as RequestGenerateApiKeyInput,
             );
-            setEmail((args?.email || "") as string);
           },
           {
             onSuccess: handleSuccess,
@@ -63,13 +59,12 @@ function GenerateApiKeyWithOTPForm({
   defaultValues = {},
   ...props
 }: FormWithHeadingProps & FormReponseHandlerProps) {
-  const { getEmail } = useEmail();
   const generateApiKey = useGenerateApiKey();
+
   return (
     <FormWithHeading
-      fields={[EMAIL_INPUT, VERIFICATION_CODE_INPUT, SLUG_INPUT, ORIGIN_INPUT]}
+      fields={[VERIFICATION_CODE_INPUT, SLUG_INPUT, ORIGIN_INPUT]}
       defaultValues={{
-        ...getEmail(),
         ...VERIFICATION_CODE_DEFAULT,
         ...SLUG_DEFAULT,
         ...ORIGIN_DEFAULT,

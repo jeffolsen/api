@@ -3,6 +3,7 @@ import { OTP_STATUS_KEY, OTP_STATUS_NONE, OtpInput } from "./verificationCode";
 import {
   PROFILE_ENDPOINT,
   PASSWORD_RESET_WITH_OTP_ENDPOINT,
+  PASSWORD_CHANGE_ENDPOINT,
   REQUEST_DELETE_PROFILE_ENDPOINT,
   withErrorHandling,
 } from "./api";
@@ -61,5 +62,23 @@ export const useDeleteProfileWithOTP = () => {
       queryClient.setQueryData([PROFILE_KEY], null);
       queryClient.setQueryData([OTP_STATUS_KEY], OTP_STATUS_NONE);
     },
+  });
+};
+
+export type PasswordResetWithSessionFormInput = {
+  password: string;
+  newPassword: string;
+  confirmNewPassword: string;
+};
+
+export const usePasswordResetWithSession = () => {
+  const { api } = useAuthState();
+
+  return useMutation({
+    mutationFn: async (data: PasswordResetWithSessionFormInput) =>
+      withErrorHandling(async () => {
+        const response = await api.post(PASSWORD_CHANGE_ENDPOINT, data);
+        return response.data;
+      }),
   });
 };

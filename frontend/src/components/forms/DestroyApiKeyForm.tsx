@@ -1,7 +1,4 @@
 import {
-  EMAIL_INPUT,
-  ORIGIN_DEFAULT,
-  ORIGIN_INPUT,
   PASSWORD_DEFAULT,
   PASSWORD_INPUT,
   SLUG_DEFAULT,
@@ -19,7 +16,7 @@ import {
   RequestDestroyApiKeyInput,
 } from "../../network/verificationCode";
 import { useDestroyApiKey, DestroyApiKeyInput } from "../../network/apiKey";
-import { useEmail, withFormHandling } from "../../network/api";
+import { withFormHandling } from "../../network/api";
 
 function RequestDestroyApiKeyForm({
   handleError,
@@ -27,14 +24,12 @@ function RequestDestroyApiKeyForm({
   defaultValues = {},
   ...props
 }: FormWithHeadingProps & FormReponseHandlerProps) {
-  const { setEmail, getEmail } = useEmail();
   const requestDestroyApiKey = useRequestDestroyApiKey();
 
   return (
     <FormWithHeading
-      fields={[EMAIL_INPUT, PASSWORD_INPUT]}
+      fields={[PASSWORD_INPUT]}
       defaultValues={{
-        ...getEmail(),
         ...PASSWORD_DEFAULT,
         ...defaultValues,
       }}
@@ -44,7 +39,6 @@ function RequestDestroyApiKeyForm({
             await requestDestroyApiKey.mutateAsync(
               args as RequestDestroyApiKeyInput,
             );
-            setEmail((args?.email || "") as string);
           },
           {
             onSuccess: handleSuccess,
@@ -63,16 +57,13 @@ function DestroyApiKeyWithOTPForm({
   defaultValues = {},
   ...props
 }: FormWithHeadingProps & FormReponseHandlerProps) {
-  const { getEmail } = useEmail();
   const destroyApiKey = useDestroyApiKey();
   return (
     <FormWithHeading
-      fields={[EMAIL_INPUT, VERIFICATION_CODE_INPUT, SLUG_INPUT, ORIGIN_INPUT]}
+      fields={[VERIFICATION_CODE_INPUT, SLUG_INPUT]}
       defaultValues={{
-        ...getEmail(),
         ...VERIFICATION_CODE_DEFAULT,
         ...SLUG_DEFAULT,
-        ...ORIGIN_DEFAULT,
         ...defaultValues,
       }}
       trySubmit={async (args) =>

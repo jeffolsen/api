@@ -10,8 +10,10 @@ import {
   useRequestLogoutAllSessions,
 } from "../../network/verificationCode";
 import {
-  useLogoutAllWithOTP,
-  LogoutAllWithOTPFormInput,
+  useResetSessionsWithOTP,
+  ResetSessionsWithOTPFormInput,
+  useLogoutAllWithSession,
+  LogoutAllWithSessionFormInput,
 } from "../../network/session";
 import {
   FormWithHeading,
@@ -59,7 +61,7 @@ function LogoutAllSessionsWithOTPForm({
   defaultValues = {},
   ...props
 }: FormWithHeadingProps & FormReponseHandlerProps) {
-  const logoutAll = useLogoutAllWithOTP();
+  const logoutAll = useResetSessionsWithOTP();
   const { getEmail } = useEmail();
   return (
     <FormWithHeading
@@ -72,7 +74,7 @@ function LogoutAllSessionsWithOTPForm({
       trySubmit={async (args) =>
         withFormHandling(
           async () => {
-            await logoutAll.mutateAsync(args as LogoutAllWithOTPFormInput);
+            await logoutAll.mutateAsync(args as ResetSessionsWithOTPFormInput);
           },
           {
             onSuccess: handleSuccess,
@@ -85,4 +87,38 @@ function LogoutAllSessionsWithOTPForm({
   );
 }
 
-export { RequestLogoutAllSessionsForm, LogoutAllSessionsWithOTPForm };
+function LogoutAllSessionsWithSessionForm({
+  handleSuccess,
+  handleError,
+  defaultValues = {},
+  ...props
+}: FormWithHeadingProps & FormReponseHandlerProps) {
+  const logoutAll = useLogoutAllWithSession();
+  return (
+    <FormWithHeading
+      fields={[PASSWORD_INPUT]}
+      defaultValues={{
+        ...PASSWORD_DEFAULT,
+        ...defaultValues,
+      }}
+      trySubmit={async (args) =>
+        withFormHandling(
+          async () => {
+            await logoutAll.mutateAsync(args as LogoutAllWithSessionFormInput);
+          },
+          {
+            onSuccess: handleSuccess,
+            onError: handleError,
+          },
+        )
+      }
+      {...props}
+    />
+  );
+}
+
+export {
+  RequestLogoutAllSessionsForm,
+  LogoutAllSessionsWithOTPForm,
+  LogoutAllSessionsWithSessionForm,
+};

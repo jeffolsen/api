@@ -41,26 +41,7 @@ export const useGenerateApiKey = () => {
       }),
     onSuccess: () => {
       queryClient.setQueryData([OTP_STATUS_KEY], OTP_STATUS_NONE);
-    },
-  });
-};
-
-type ConnectApiKeyInput = {
-  apiSlug: string;
-  apiKey: string;
-};
-
-export const useConnectApiKey = () => {
-  const { api } = useAuthState();
-
-  return useMutation({
-    mutationFn: async (data: ConnectApiKeyInput) =>
-      withErrorHandling(async () => {
-        const response = await api.post(CONNECT_API_KEY_ENDPOINT, data);
-        return response.data;
-      }),
-    onSuccess: () => {
-      console.log("congrats you connected with an api key");
+      queryClient.invalidateQueries({ queryKey: [API_KEYS_KEY] });
     },
   });
 };
@@ -81,6 +62,24 @@ export const useDestroyApiKey = () => {
       }),
     onSuccess: () => {
       queryClient.setQueryData([OTP_STATUS_KEY], OTP_STATUS_NONE);
+      queryClient.invalidateQueries({ queryKey: [API_KEYS_KEY] });
     },
+  });
+};
+
+export type ConnectApiKeyInput = {
+  apiSlug: string;
+  apiKey: string;
+};
+
+export const useConnectApiKey = () => {
+  const { api } = useAuthState();
+
+  return useMutation({
+    mutationFn: async (data: ConnectApiKeyInput) =>
+      withErrorHandling(async () => {
+        const response = await api.post(CONNECT_API_KEY_ENDPOINT, data);
+        return response.data;
+      }),
   });
 };

@@ -1,9 +1,13 @@
 import {
   CONFIRM_PASSWORD_DEFAULT,
   CONFIRM_PASSWORD_INPUT,
-  EMAIL_INPUT,
+  NEW_PASSWORD_DEFAULT,
+  NEW_PASSWORD_INPUT,
+  CONFIRM_NEW_PASSWORD_DEFAULT,
+  CONFIRM_NEW_PASSWORD_INPUT,
   PASSWORD_DEFAULT,
   PASSWORD_INPUT,
+  EMAIL_INPUT,
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
 } from "../../config/inputs";
@@ -14,6 +18,8 @@ import {
 import {
   usePasswordResetWithOTP,
   PasswordResetWithOTPFormInput,
+  usePasswordResetWithSession,
+  PasswordResetWithSessionFormInput,
 } from "../../network/profile";
 import {
   FormWithHeading,
@@ -95,4 +101,42 @@ function ResetPasswordWithOTPForm({
   );
 }
 
-export { RequestResetPasswordForm, ResetPasswordWithOTPForm };
+function ResetPasswordWithSessionForm({
+  handleSuccess,
+  handleError,
+  defaultValues = {},
+  ...props
+}: FormWithHeadingProps & FormReponseHandlerProps) {
+  const resetPassword = usePasswordResetWithSession();
+  return (
+    <FormWithHeading
+      fields={[PASSWORD_INPUT, NEW_PASSWORD_INPUT, CONFIRM_NEW_PASSWORD_INPUT]}
+      defaultValues={{
+        ...PASSWORD_DEFAULT,
+        ...NEW_PASSWORD_DEFAULT,
+        ...CONFIRM_NEW_PASSWORD_DEFAULT,
+        ...defaultValues,
+      }}
+      trySubmit={async (args) =>
+        withFormHandling(
+          async () => {
+            await resetPassword.mutateAsync(
+              args as PasswordResetWithSessionFormInput,
+            );
+          },
+          {
+            onSuccess: handleSuccess,
+            onError: handleError,
+          },
+        )
+      }
+      {...props}
+    />
+  );
+}
+
+export {
+  RequestResetPasswordForm,
+  ResetPasswordWithOTPForm,
+  ResetPasswordWithSessionForm,
+};

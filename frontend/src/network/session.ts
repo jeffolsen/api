@@ -3,10 +3,11 @@ import {
   SESSIONS_ENDPOINT,
   LOGOUT_ENDPOINT,
   LOGOUT_ALL_ENDPOINT,
+  SESSIONS_RESET_WITH_OTP_ENDPOINT,
   withErrorHandling,
 } from "./api";
 import { useAuthState } from "../contexts/AuthContext";
-import { OTP_STATUS_KEY, OTP_STATUS_NONE, OtpInput } from "./verificationCode";
+import { OTP_STATUS_KEY, OTP_STATUS_NONE } from "./verificationCode";
 
 const SESSION_KEY = "sessions" as const;
 
@@ -40,16 +41,40 @@ export const useLogout = () => {
   });
 };
 
-export type LogoutAllWithOTPFormInput = OtpInput;
+export type LogoutAllWithSessionFormInput = {
+  password: string;
+};
 
-export const useLogoutAllWithOTP = () => {
+export const useLogoutAllWithSession = () => {
   const { api, setIsAuthenticated } = useAuthState();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: LogoutAllWithOTPFormInput) =>
+    mutationFn: async (data: LogoutAllWithSessionFormInput) =>
       withErrorHandling(async () => {
         const response = await api.post(LOGOUT_ALL_ENDPOINT, data);
+        return response.data;
+      }),
+    onSuccess: () => {
+      queryClient.setQueryData([OTP_STATUS_KEY], OTP_STATUS_NONE);
+      setIsAuthenticated(false);
+    },
+  });
+};
+
+export type ResetSessionsWithOTPFormInput = {
+  email: string;
+  verificationCode: string;
+};
+
+export const useResetSessionsWithOTP = () => {
+  const { api, setIsAuthenticated } = useAuthState();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: ResetSessionsWithOTPFormInput) =>
+      withErrorHandling(async () => {
+        const response = await api.post(SESSIONS_RESET_WITH_OTP_ENDPOINT, data);
         return response.data;
       }),
     onSuccess: () => {
