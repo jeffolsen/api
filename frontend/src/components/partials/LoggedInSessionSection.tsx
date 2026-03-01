@@ -1,33 +1,51 @@
 import Grid from "../common/Grid";
 import BasicCard from "../cards/BasicCard";
 import SectionHeading from "./SectionHeading";
-import Wrapper from "../common/Wrapper";
-import { RequestLogoutAllSessionsForm } from "../forms/LogoutAllSessionsForm";
-import { useGetProfilesSessions, useLogout } from "../../network/session";
-import { useState } from "react";
 import { Button } from "../common/Button";
+import { useGetProfilesSessions } from "../../network/session";
+import { useModalContext } from "../../contexts/ModalContext";
+import EmptyModal, { EmptyModalProps } from "../modals/EmptyModal";
+import { LogoutAllSessionsWithSessionForm } from "../forms/LogoutAllSessionsForm";
+import Text from "../common/Text";
+
+function LogoutAllModalContent() {
+  return (
+    <>
+      <Text textSize="lg" className="text-center capitalize">
+        logout of all sessions
+      </Text>
+      <LogoutAllSessionsWithSessionForm
+        submitButtonText="Logout"
+        submitButtonColor="error"
+      />
+    </>
+  );
+}
 
 function LoggedInSessionSection() {
   const getSessions = useGetProfilesSessions();
   const sessions = getSessions.data;
-  const logout = useLogout();
+  const { enqueueModals } = useModalContext();
 
-  const [showLogoutAllSessions, setShowLogoutAllSessions] =
-    useState<boolean>(false);
-
-  const tooltipText =
-    "This lists all your active sessions across devices. If you see any unfamiliar sessions, consider logging out of all sessions and changing your password.";
+  const description = "This lists all your active sessions across devices.";
 
   return (
     <div className="flex flex-col gap-4">
-      <SectionHeading text="Current Sessions" tooltipText={tooltipText}>
+      <SectionHeading text="Current Sessions" description={description}>
         <Button
           color="error"
           onClick={() => {
-            logout.mutateAsync();
+            enqueueModals([
+              {
+                component: EmptyModal,
+                props: {
+                  children: <LogoutAllModalContent />,
+                } as EmptyModalProps,
+              },
+            ]);
           }}
         >
-          Logout This Session
+          Logout All Sessions
         </Button>
       </SectionHeading>
       {sessions && (
@@ -46,24 +64,6 @@ function LoggedInSessionSection() {
           )}
         />
       )}
-      <Wrapper width="xs">
-        {showLogoutAllSessions ? (
-          <div className="relative mt-8">
-            <Button
-              size="xs"
-              className="btn-circle btn-ghost border-white/50 absolute -right-6 -top-6"
-              onClick={() => setShowLogoutAllSessions(false)}
-            >
-              ✕
-            </Button>
-            <RequestLogoutAllSessionsForm />
-          </div>
-        ) : (
-          <Button color="error" onClick={() => setShowLogoutAllSessions(true)}>
-            Logout of all sessions
-          </Button>
-        )}
-      </Wrapper>
     </div>
   );
 }

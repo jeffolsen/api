@@ -21,7 +21,7 @@ function LoggedInCodesSection() {
   const today = useMemo(
     () =>
       ({
-        id: dayjs(dayjs()).toISOString(),
+        id: dayjs(dayjs()).startOf("day").toISOString(),
         label: "Today's Activities",
       }) as DropDownItem,
     [],
@@ -32,12 +32,13 @@ function LoggedInCodesSection() {
   const getDates = useCallback(() => {
     if (verificationCodes) {
       const dates = verificationCodes
-        ?.map((code: VerificationCode) => ({
-          id: dayjs(code.createdAt).startOf("day").toISOString(),
-          label: dayjs(code.createdAt).isToday()
-            ? "Today's Activities"
-            : dayjs(code.createdAt).format(longDate),
-        }))
+        ?.map((code: VerificationCode) => {
+          if (dayjs(code.createdAt).isToday()) return today;
+          return {
+            id: dayjs(code.createdAt).startOf("day").toISOString(),
+            label: dayjs(code.createdAt).format(longDate),
+          };
+        })
         .concat([today])
         .filter((item: DropDownItem, index: number, arr: DropDownItem[]) => {
           return arr.findIndex((obj) => obj.id === item.id) === index;
@@ -57,7 +58,7 @@ function LoggedInCodesSection() {
     <div className="flex flex-col gap-4">
       <SectionHeading
         text="History"
-        tooltipText="Your recent verification code generation history."
+        description="Your recent verification code generation history."
       >
         <DropDownMenu
           items={getDates()}
