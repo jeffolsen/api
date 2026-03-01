@@ -13,16 +13,18 @@ export const AUTH_REFRESH_ENDPOINT = "/refresh";
 export const SESSION_ROUTES = "/api/sessions";
 export const SESSION_LOGOUT_ENDPOINT = "/logout";
 export const SESSION_LOGOUT_ALL_ENDPOINT = "/logout-all";
+export const SESSION_RESET_ENDPOINT = "/reset";
 
 export const PROFILE_ROUTES = "/api/profiles";
-export const PROFILE_PASSWORD_RESET_ENDPOINT = "/password-reset";
 export const PROFILE_DELETE_PROFILE_ENDPOINT = "/unregister";
+export const PROFILE_PASSWORD_RESET_ENDPOINT = "/password-reset";
+export const PROFILE_PASSWORD_CHANGE_ENDPOINT = "/password-change";
 
 export const VERIFICATION_CODE_ROUTES = "/api/codes";
 export const VERIFICATION_CODE_LOGIN_ENDPOINT = "/login";
-export const VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT = "/logout-all";
+export const VERIFICATION_CODE_SESSION_RESET_ENDPOINT = "/sessions-reset";
 export const VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT = "/password-reset";
-export const VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT = "/delete-profile";
+export const VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT = "/unregister";
 export const VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT = "/manage-api-key";
 
 export const API_KEY_ROUTES = "/api/keys";
@@ -44,6 +46,7 @@ export const READ_VERIFICATION_CODE_SCOPE = "read:verificationCode";
 // session scopes
 export const READ_SESSION_SCOPE = "read:session";
 export const UPDATE_SESSION_SCOPE = "update:session";
+export const DELETE_SESSION_SCOPE = "delete:session";
 // api key scopes
 export const READ_API_KEY_SCOPE = "read:apiKey";
 // tag scopes
@@ -100,6 +103,7 @@ export const ERROR_EMAIL_TAKEN = "Email already taken";
 export const ERROR_ENDPOINT_NOT_FOUND = "Endpoint does not exist";
 export const ERROR_CREDENTIALS = "Invalid credentials";
 export const ERROR_UNAUTHORIZED = "Unauthorized";
+export const ERROR_MALFORMED = "Malformed request";
 export const ERROR_API_KEY_SLUG = "Invalid slug";
 export const ERROR_API_KEY_ORIGIN = "Invalid origin";
 export const ERROR_API_KEY_VALUE = "Invalid api key";

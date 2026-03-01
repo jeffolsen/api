@@ -11,6 +11,7 @@ import throwError from "../util/throwError";
 import { processVerificationCode } from "../services/auth";
 import { clearAuthCookies } from "../util/cookie";
 import { SessionLogoutAllSchema } from "../schemas/session";
+import { passwordSchema } from "../schemas/properties";
 
 export const getProfilesSessions: RequestHandler = catchErrors(
   async (req, res, next) => {
@@ -38,19 +39,45 @@ export const logout: RequestHandler = catchErrors(async (req, res, next) => {
   clearAuthCookies(res).sendStatus(OK);
 });
 
-interface logoutAllBody {
-  verificationCode: string;
-  email: string;
+interface LogoutAllWithSessionBody {
+  password: string;
 }
 
-export const logoutAll: RequestHandler<
+export const logoutAllWithSession: RequestHandler<
   unknown,
   unknown,
-  logoutAllBody,
+  LogoutAllWithSessionBody,
+  unknown
+> = catchErrors(async (req, res, next) => {
+  const { profileId } = req;
+  const password = passwordSchema.parse(req.body);
+  const profile = await prismaClient.profile.findUnique({
+    where: { id: profileId },
+  });
+  throwError(
+    profile && (await profile.comparePassword(password)),
+    NOT_FOUND,
+    ERROR_CREDENTIALS,
+  );
+
+  await prismaClient.session.logOutAll(profile.id);
+
+  clearAuthCookies(res).sendStatus(OK);
+});
+
+interface LogoutAllBody {
+  email: string;
+  verificationCode: string;
+}
+
+export const logoutAllWithCode: RequestHandler<
+  unknown,
+  unknown,
+  LogoutAllBody,
   unknown
 > = catchErrors(async (req, res, next) => {
   const { email, verificationCode, userAgent } = SessionLogoutAllSchema.parse({
-    ...(req.body as logoutAllBody),
+    ...(req.body as LogoutAllBody),
     userAgent: req.headers["user-agent"],
   });
 
@@ -73,7 +100,8 @@ export const logoutAll: RequestHandler<
 const sessionApi = {
   getProfilesSessions,
   logout,
-  logoutAll,
+  logoutAllWithCode,
+  logoutAllWithSession,
 };
 
 export default sessionApi;

@@ -2,12 +2,14 @@ import {
   OK,
   NOT_FOUND,
   VERIFICATION_CODE_LOGIN_ENDPOINT,
-  VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT,
+  VERIFICATION_CODE_SESSION_RESET_ENDPOINT,
   VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
   ERROR_ENDPOINT_NOT_FOUND,
   ERROR_CREDENTIALS,
   VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT,
   VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT,
+  BAD_REQUEST,
+  ERROR_MALFORMED,
 } from "../config/constants";
 import { RequestHandler } from "express";
 import catchErrors from "../util/catchErrors";
@@ -39,40 +41,79 @@ export const requestVerificationCode: RequestHandler<
   RequestCodeForProfileBody,
   unknown
 > = catchErrors(async (req, res, next) => {
+  const { profileId } = req;
   const { email, password, userAgent } = requestVerificationCodeSchema.parse({
     ...req.body,
     userAgent: req.headers["user-agent"],
   });
 
   let codeType;
+  let profile;
   switch (req.path) {
-    case VERIFICATION_CODE_LOGIN_ENDPOINT:
-      codeType = CodeType.LOGIN;
-      break;
-    case VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT:
-      codeType = CodeType.LOGOUT_ALL;
-      break;
-    case VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT:
-      codeType = CodeType.PASSWORD_RESET;
-      break;
+    // requires password + session
     case VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT:
+      throwError(profileId && password, NOT_FOUND, ERROR_CREDENTIALS);
+      profile = await prismaClient.profile.findUnique({
+        where: { id: profileId },
+      });
+      throwError(
+        profile && profile.comparePassword(password),
+        NOT_FOUND,
+        ERROR_CREDENTIALS,
+      );
       codeType = CodeType.DELETE_PROFILE;
       break;
+    // requires password + session
     case VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT:
+      throwError(profileId && password, NOT_FOUND, ERROR_CREDENTIALS);
+      profile = await prismaClient.profile.findUnique({
+        where: { id: profileId },
+      });
+      throwError(
+        profile && profile.comparePassword(password),
+        NOT_FOUND,
+        ERROR_CREDENTIALS,
+      );
       codeType = CodeType.CREATE_API_KEY;
       break;
-    default:
+    // requires email + password
+    case VERIFICATION_CODE_LOGIN_ENDPOINT:
+      throwError(email && password, NOT_FOUND, ERROR_CREDENTIALS);
+      profile = await prismaClient.profile.findUnique({ where: { email } });
+      throwError(
+        profile && profile.comparePassword(password),
+        NOT_FOUND,
+        ERROR_CREDENTIALS,
+      );
+      codeType = CodeType.LOGIN;
       break;
+    // requires email + password
+    case VERIFICATION_CODE_SESSION_RESET_ENDPOINT:
+      throwError(email && password, NOT_FOUND, ERROR_CREDENTIALS);
+      profile = await prismaClient.profile.findUnique({ where: { email } });
+      throwError(
+        profile && profile.comparePassword(password),
+        NOT_FOUND,
+        ERROR_CREDENTIALS,
+      );
+      codeType = CodeType.LOGOUT_ALL;
+      break;
+    // requires email only
+    case VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT:
+      throwError(email, NOT_FOUND, ERROR_CREDENTIALS);
+      profile = await prismaClient.profile.findUnique({ where: { email } });
+      throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
+      codeType = CodeType.PASSWORD_RESET;
+      break;
+    // bad url fragment
+    default:
+      throwError(false, NOT_FOUND, ERROR_ENDPOINT_NOT_FOUND);
   }
-  throwError(codeType, NOT_FOUND, ERROR_ENDPOINT_NOT_FOUND);
-
-  const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
+  throwError(profile && codeType, BAD_REQUEST, ERROR_MALFORMED);
 
   await sendVerificationCode({
     profile,
     codeType,
-    password,
     userAgent,
   });
 

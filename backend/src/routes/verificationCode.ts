@@ -4,12 +4,13 @@ import authorizeScope from "../middleware/authorizeScope";
 import {
   READ_VERIFICATION_CODE_SCOPE,
   VERIFICATION_CODE_LOGIN_ENDPOINT,
-  VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT,
+  VERIFICATION_CODE_SESSION_RESET_ENDPOINT,
   VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT,
   VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
   VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT,
   COLLECTION_ENDPOINT,
   CREATE_API_KEY_SCOPE,
+  DELETE_PROFILE_SCOPE,
 } from "../config/constants";
 import authenticate from "../middleware/authenticate";
 
@@ -28,15 +29,17 @@ router.post(
   verificationCodeApi.requestVerificationCode,
 );
 router.post(
+  VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
+  authenticate,
+  authorizeScope([DELETE_PROFILE_SCOPE]),
+  verificationCodeApi.requestVerificationCode,
+);
+router.post(
   VERIFICATION_CODE_LOGIN_ENDPOINT,
   verificationCodeApi.requestVerificationCode,
 );
 router.post(
-  VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
-  verificationCodeApi.requestVerificationCode,
-);
-router.post(
-  VERIFICATION_CODE_LOGOUT_ALL_ENDPOINT,
+  VERIFICATION_CODE_SESSION_RESET_ENDPOINT,
   verificationCodeApi.requestVerificationCode,
 );
 router.post(

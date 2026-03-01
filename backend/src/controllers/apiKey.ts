@@ -10,6 +10,7 @@ import {
   ERROR_API_KEY_ORIGIN,
   ERROR_API_KEY_VALUE,
   ERROR_NO_ACCESS,
+  ERROR_CREDENTIALS,
 } from "../config/constants";
 import { RequestHandler } from "express";
 import throwError from "../util/throwError";
@@ -62,7 +63,12 @@ export const generate: RequestHandler<
     userAgent: req.headers["user-agent"],
   });
 
-  const tooManyApiKeys = await prismaClient.apiKey.maxExceeded(profileId);
+  const profile = await prismaClient.profile.findUnique({
+    where: { id: profileId },
+  });
+  throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
+
+  const tooManyApiKeys = await prismaClient.apiKey.maxExceeded(profile.id);
   throwError(!tooManyApiKeys, FORBIDDEN, ERROR_API_KEY_LIMIT_REACHED);
 
   const slugExists = await prismaClient.apiKey.findUnique({
@@ -154,6 +160,11 @@ export const destroy: RequestHandler<
     ...(req.body as DestroyApiKeyBody),
     userAgent: req.headers["user-agent"],
   });
+
+  const profile = await prismaClient.profile.findUnique({
+    where: { id: profileId },
+  });
+  throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
 
   const apiKey = await prismaClient.apiKey.findUnique({
     where: { slug },

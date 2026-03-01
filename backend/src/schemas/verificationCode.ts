@@ -1,16 +1,17 @@
 import { z } from "zod";
 import { hashValue } from "../util/bcrypt";
-import { ProfileDataSchema } from "./profile";
 import {
   idSchema,
   passwordSchema,
   userAgentSchema,
   verificationCodeValueSchema,
   verificationCodeTypeSchema,
+  emailSchema,
 } from "./properties";
 
 // controllers
-export const requestVerificationCodeSchema = ProfileDataSchema.extend({
+export const requestVerificationCodeSchema = z.object({
+  email: emailSchema.optional(),
   password: passwordSchema.optional(),
   userAgent: userAgentSchema,
 });

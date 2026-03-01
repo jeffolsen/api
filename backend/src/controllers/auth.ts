@@ -50,6 +50,10 @@ export const login: RequestHandler<
   LoginWithVerificationCodeBody,
   unknown
 > = catchErrors(async (req, res, next) => {
+  const { profileId } = req;
+  const loggedIn = !!profileId;
+  throwError(!loggedIn, CONFLICT, "Already logged in");
+
   const { email, verificationCode, userAgent } = loginSchema.parse({
     ...(req.body as LoginWithVerificationCodeBody),
     userAgent: req.headers["user-agent"],

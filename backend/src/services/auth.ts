@@ -23,6 +23,7 @@ import {
   ERROR_INVALID_API_KEY,
   NOT_FOUND,
   ERROR_CREDENTIALS,
+  ERROR_ENDPOINT_NOT_FOUND,
 } from "../config/constants";
 import throwError from "../util/throwError";
 import sendEmail from "../util/sendEmail";
@@ -36,8 +37,8 @@ import { VerificationCodeCreateTransform } from "../schemas/verificationCode";
 
 interface LogInProfileParams {
   profile: Profile;
-  verificationCode: string;
   userAgent: string;
+  verificationCode: string;
 }
 
 export const initProfileSession = async ({
@@ -160,14 +161,12 @@ export const refreshAccessToken = async ({
 interface SendVerificationCode {
   profile: ExtendedProfile;
   codeType: CodeType;
-  password?: string;
   userAgent: string;
 }
 
 export const sendVerificationCode = async ({
   profile,
   codeType,
-  password,
   userAgent,
 }: SendVerificationCode) => {
   const { id: profileId, email } = profile;
@@ -178,16 +177,6 @@ export const sendVerificationCode = async ({
     !tooManyVerifcationCodes,
     TOO_MANY_REQUESTS,
     ERROR_VERIFICATION_CODE_TOO_MANY,
-  );
-
-  const passwordResetCredential = codeType === CodeType.PASSWORD_RESET;
-  const hasPasswordCredentials =
-    password && (await profile.comparePassword(password));
-
-  throwError(
-    hasPasswordCredentials || passwordResetCredential,
-    BAD_REQUEST,
-    ERROR_UNAUTHORIZED,
   );
 
   const code = generateCode();

@@ -15,7 +15,7 @@ export const ProfileDataSchema = z.object({
 });
 
 // controllers
-export const ResetPasswordSchema = ProfileDataSchema.extend({
+export const ResetPasswordWithCodeSchema = ProfileDataSchema.extend({
   confirmPassword: passwordSchema,
   verificationCode: verificationCodeValueSchema,
   userAgent: userAgentSchema,
@@ -24,16 +24,27 @@ export const ResetPasswordSchema = ProfileDataSchema.extend({
   path: ["password", "confirmPassword"],
 });
 
+export const ChangePasswordWithSessionSchema = z
+  .object({
+    password: passwordSchema,
+    newPassword: passwordSchema,
+    confirmNewPassword: passwordSchema,
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: ERROR_PASSWORD_MATCH,
+    path: ["newPassword", "confirmNewPassword"],
+  });
+
 export const DeleteProfileSchema = z.object({
-  email: emailSchema,
   verificationCode: verificationCodeValueSchema,
   userAgent: userAgentSchema,
 });
 
 // extensions
+export const passwordTransform = passwordSchema.pipe(
+  z.transform(async (val) => await hashValue(val)),
+);
 export const ProfileCreateTransform = z.object({
   email: emailSchema,
-  password: passwordSchema.pipe(
-    z.transform(async (val) => await hashValue(val)),
-  ),
+  password: passwordTransform,
 });

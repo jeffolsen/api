@@ -13,8 +13,10 @@ import prismaClient, { CodeType } from "../db/client";
 import { processVerificationCode } from "../services/auth";
 import {
   DeleteProfileSchema,
+  passwordTransform,
   ProfileCreateTransform,
-  ResetPasswordSchema,
+  ResetPasswordWithCodeSchema,
+  ChangePasswordWithSessionSchema,
 } from "../schemas/profile";
 import { clearAuthCookies } from "../util/cookie";
 
@@ -31,21 +33,56 @@ export const getAuthenticatedProfile: RequestHandler = catchErrors(
   },
 );
 
+interface DeleteProfileBody {
+  verificationCode: string;
+}
+
+export const deleteProfile: RequestHandler<
+  unknown,
+  unknown,
+  DeleteProfileBody,
+  unknown
+> = catchErrors(async (req, res, next) => {
+  const { profileId } = req;
+  const { verificationCode, userAgent } = DeleteProfileSchema.parse({
+    ...(req.body as DeleteProfileBody),
+    userAgent: req.headers["user-agent"],
+  });
+
+  const profile = await prismaClient.profile.findUnique({
+    where: { id: profileId },
+  });
+  throwError(profile && profile.id === profileId, NOT_FOUND, ERROR_CREDENTIALS);
+
+  await processVerificationCode({
+    profileId: profile.id,
+    value: verificationCode,
+    codeType: CodeType.DELETE_PROFILE,
+    userAgent,
+  });
+
+  await prismaClient.profile.delete({
+    where: { id: profile.id },
+  });
+
+  clearAuthCookies(res).sendStatus(NO_CONTENT);
+});
+
 interface ResetPasswordBody {
   verificationCode: string;
-  email: string;
   password: string;
   confirmPassword: string;
 }
 
-export const resetPassword: RequestHandler<
+// from logged out state, so no profileId in req
+export const resetPasswordWithCode: RequestHandler<
   unknown,
   unknown,
   ResetPasswordBody,
   unknown
 > = catchErrors(async (req, res, next) => {
   const { verificationCode, email, password, userAgent } =
-    ResetPasswordSchema.parse({
+    ResetPasswordWithCodeSchema.parse({
       ...req.body,
       userAgent: req.headers["user-agent"],
     });
@@ -72,45 +109,57 @@ export const resetPassword: RequestHandler<
     },
   });
 
+  await prismaClient.session.deleteMany({
+    where: { profileId: profile.id },
+  });
+
   res.sendStatus(OK);
 });
 
-interface deleteProfileBody {
-  verificationCode: string;
-  email: string;
+interface ChangePasswordWithSessionBody {
+  password: string;
+  newPassword: string;
+  confirmNewPassword: string;
 }
 
-export const deleteProfile: RequestHandler<
+export const changePasswordWithSession: RequestHandler<
   unknown,
   unknown,
-  deleteProfileBody,
+  ChangePasswordWithSessionBody,
   unknown
 > = catchErrors(async (req, res, next) => {
-  const { verificationCode, email, userAgent } = DeleteProfileSchema.parse({
-    ...(req.body as ResetPasswordBody),
-    userAgent: req.headers["user-agent"],
+  const { profileId, sessionId } = req;
+  const { password, newPassword } = ChangePasswordWithSessionSchema.parse(
+    req.body,
+  );
+  const profile = await prismaClient.profile.findUnique({
+    where: { id: profileId },
   });
+  throwError(
+    profile && (await profile.comparePassword(password)),
+    NOT_FOUND,
+    ERROR_PROFILE_ID,
+  );
+  const hashedNewPassword = await passwordTransform.parseAsync(newPassword);
 
-  const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
-
-  await processVerificationCode({
-    profileId: profile.id,
-    value: verificationCode,
-    codeType: CodeType.DELETE_PROFILE,
-    userAgent,
-  });
-
-  await prismaClient.profile.delete({
+  await prismaClient.profile.update({
     where: { id: profile.id },
+    data: {
+      password: hashedNewPassword,
+    },
   });
 
-  clearAuthCookies(res).sendStatus(NO_CONTENT);
+  await prismaClient.session.deleteMany({
+    where: { profileId: profile.id, id: { not: sessionId } },
+  });
+
+  res.sendStatus(OK);
 });
 
 const profileApi = {
   getAuthenticatedProfile,
-  resetPassword,
   deleteProfile,
+  resetPasswordWithCode,
+  changePasswordWithSession,
 };
 export default profileApi;

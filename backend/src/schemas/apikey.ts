@@ -1,10 +1,4 @@
-import {
-  ERROR_API_KEY_ORIGIN,
-  ERROR_API_KEY_SLUG,
-  ERROR_API_KEY_VALUE,
-  ERROR_PROFILE_ID,
-  SLUG_REGEX,
-} from "../config/constants";
+import { ERROR_PROFILE_ID } from "../config/constants";
 import { z } from "zod";
 import { hashValue } from "../util/bcrypt";
 import {
