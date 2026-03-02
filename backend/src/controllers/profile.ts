@@ -52,7 +52,7 @@ export const deleteProfile: RequestHandler<
   const profile = await prismaClient.profile.findUnique({
     where: { id: profileId },
   });
-  throwError(profile && profile.id === profileId, NOT_FOUND, ERROR_CREDENTIALS);
+  throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
 
   await processVerificationCode({
     profileId: profile.id,
@@ -69,6 +69,7 @@ export const deleteProfile: RequestHandler<
 });
 
 interface ResetPasswordBody {
+  email: string;
   verificationCode: string;
   password: string;
   confirmPassword: string;

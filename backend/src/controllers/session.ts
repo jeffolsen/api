@@ -50,7 +50,7 @@ export const logoutAllWithSession: RequestHandler<
   unknown
 > = catchErrors(async (req, res, next) => {
   const { profileId } = req;
-  const password = passwordSchema.parse(req.body);
+  const password = passwordSchema.parse(req.body?.password);
   const profile = await prismaClient.profile.findUnique({
     where: { id: profileId },
   });
