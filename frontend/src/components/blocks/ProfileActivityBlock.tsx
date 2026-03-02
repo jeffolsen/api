@@ -5,7 +5,6 @@ import Loading from "../common/Loading";
 import dayjs, { longDatetime, techDatetime } from "../../utils/dayjs";
 import Text from "../common/Text";
 import { Button } from "../common/Button";
-import { useLogout } from "../../network/session";
 import LoggedInSessionSection from "../partials/LoggedInSessionSection";
 import LoggedInApiKeySection from "../partials/LoggedInApiKeySection";
 import LoggedInCodesSection from "../partials/LoggedInCodesSection";
@@ -14,7 +13,6 @@ import LoggedInProfileAdminSection from "../partials/LoggedInProfileAdminSection
 function ProfileInfoBlock(props: BlockProps) {
   const getProfile = useGetAuthenticatedProfile();
   const profile = getProfile.data;
-  const logout = useLogout();
 
   if (getProfile.isLoading || !profile?.email) {
     return (
@@ -42,33 +40,30 @@ function ProfileInfoBlock(props: BlockProps) {
             Last updated: {dayjs(profile?.updatedAt).format(techDatetime)}
           </Text>
         </div>
-        <div className="flex justify-center gap-4 mx-auto mt-8 w-full">
+        <div className="flex flex-wrap md:flex-nowrap justify-center gap-4 mx-auto mt-8 w-full">
           <Button
+            as="Link"
             color="primary"
-            className="flex-1"
-            onClick={() => {
-              logout.mutateAsync();
-            }}
+            className="w-full md:flex-1 md:w-auto"
+            to="/items"
           >
             Items
           </Button>
           <Button
+            as="Link"
             color="primary"
-            className="flex-1"
-            onClick={() => {
-              logout.mutateAsync();
-            }}
+            className="w-full md:flex-1 md:w-auto"
+            to="/feeds"
           >
             Feeds
           </Button>
           <Button
-            color="error"
-            className="flex-1"
-            onClick={() => {
-              logout.mutateAsync();
-            }}
+            as="Link"
+            color="primary"
+            className="w-full md:flex-1 md:w-auto"
+            to="/"
           >
-            Logout
+            Home
           </Button>
         </div>
 
