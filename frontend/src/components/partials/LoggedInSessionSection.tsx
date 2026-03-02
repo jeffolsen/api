@@ -2,7 +2,7 @@ import Grid from "../common/Grid";
 import BasicCard from "../cards/BasicCard";
 import SectionHeading from "./SectionHeading";
 import { Button } from "../common/Button";
-import { useGetProfilesSessions } from "../../network/session";
+import { useGetProfilesSessions, useLogout } from "../../network/session";
 import { useModalContext } from "../../contexts/ModalContext";
 import EmptyModal, { EmptyModalProps } from "../modals/EmptyModal";
 import { LogoutAllSessionsWithSessionForm } from "../forms/LogoutAllSessionsForm";
@@ -24,6 +24,7 @@ function LogoutAllModalContent() {
 
 function LoggedInSessionSection() {
   const getSessions = useGetProfilesSessions();
+  const logout = useLogout();
   const sessions = getSessions.data;
   const { enqueueModals } = useModalContext();
 
@@ -32,21 +33,33 @@ function LoggedInSessionSection() {
   return (
     <div className="flex flex-col gap-4">
       <SectionHeading text="Current Sessions" description={description}>
-        <Button
-          color="error"
-          onClick={() => {
-            enqueueModals([
-              {
-                component: EmptyModal,
-                props: {
-                  children: <LogoutAllModalContent />,
-                } as EmptyModalProps,
-              },
-            ]);
-          }}
-        >
-          Logout All Sessions
-        </Button>
+        <div className="grid gap-4 grid-cols-2 w-full">
+          <Button
+            color="error"
+            onClick={() => {
+              if (confirm("Are you sure you want to logout of this session?")) {
+                logout.mutateAsync();
+              }
+            }}
+          >
+            Logout
+          </Button>
+          <Button
+            color="error"
+            onClick={() => {
+              enqueueModals([
+                {
+                  component: EmptyModal,
+                  props: {
+                    children: <LogoutAllModalContent />,
+                  } as EmptyModalProps,
+                },
+              ]);
+            }}
+          >
+            Logout All Sessions
+          </Button>
+        </div>
       </SectionHeading>
       {sessions && (
         <Grid

@@ -29,9 +29,11 @@ function SectionHeading({
           </Text>
         )}
 
-        <div className="flex flex-grow items-center justify-center gap-4 md:flex-grow-0  w-full sm:w-auto">
-          {children}
-        </div>
+        {children && (
+          <div className="flex flex-grow items-center justify-center gap-4 w-full sm:w-auto md:flex-grow-0">
+            {children}
+          </div>
+        )}
       </div>
     </>
   );
