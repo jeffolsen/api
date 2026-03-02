@@ -3,9 +3,14 @@ import { HeadingLevelProvider } from "../../contexts/HeadingLevelProvider";
 import Wrapper, { WrapperProps } from "../common/Wrapper";
 import Heading from "../common/Heading";
 
+export type BlockUrlIdentifier = {
+  urlIdentifier: string;
+};
+
 export interface BlockProps {
   path?: string;
   title: string;
+  id: number;
   settings: {
     isprimaryContent?: boolean;
     showOnLoggedinState?: "LOGGED_IN" | "LOGGED_OUT" | "BOTH";
@@ -15,7 +20,11 @@ export interface BlockProps {
   };
 }
 
-function Block({ title, settings, children }: PropsWithChildren<BlockProps>) {
+function Block({
+  title,
+  settings,
+  children,
+}: PropsWithChildren<Omit<BlockProps, "id">>) {
   if (settings?.isprimaryContent) {
     return <InnerBlock {...{ title, settings, children }} />;
   }
@@ -30,7 +39,7 @@ function InnerBlock({
   title,
   settings: { isprimaryContent, width } = {},
   children,
-}: PropsWithChildren<BlockProps>) {
+}: PropsWithChildren<Omit<BlockProps, "id">>) {
   return (
     <Wrapper width={width || "md"}>
       <Heading
