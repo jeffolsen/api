@@ -21,7 +21,7 @@ const ModalManager = () => {
   );
 };
 
-type ModalProps = {
+export type ModalProps = {
   closeConfirm?: string;
   onClose?: () => void;
   modalStyles?: ClassValue;
