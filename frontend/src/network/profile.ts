@@ -4,8 +4,9 @@ import {
   PROFILE_ENDPOINT,
   PASSWORD_RESET_WITH_OTP_ENDPOINT,
   PASSWORD_CHANGE_ENDPOINT,
-  REQUEST_DELETE_PROFILE_ENDPOINT,
+  DELETE_PROFILE_WITH_OTP_ENDPOINT,
   withErrorHandling,
+  useEmail,
 } from "./api";
 import { useAuthState } from "../contexts/AuthContext";
 
@@ -49,18 +50,21 @@ export const usePasswordResetWithOTP = () => {
 export type DeleteProfileWithOTPFormInput = OtpInput;
 
 export const useDeleteProfileWithOTP = () => {
-  const { api } = useAuthState();
+  const { api, setIsAuthenticated } = useAuthState();
+  const { setEmail } = useEmail();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (data: DeleteProfileWithOTPFormInput) =>
       withErrorHandling(async () => {
-        const response = await api.post(REQUEST_DELETE_PROFILE_ENDPOINT, data);
+        const response = await api.post(DELETE_PROFILE_WITH_OTP_ENDPOINT, data);
         return response.data;
       }),
     onSuccess: () => {
       queryClient.setQueryData([PROFILE_KEY], null);
       queryClient.setQueryData([OTP_STATUS_KEY], OTP_STATUS_NONE);
+      setEmail("");
+      setIsAuthenticated(false);
     },
   });
 };

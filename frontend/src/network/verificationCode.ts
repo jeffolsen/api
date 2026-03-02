@@ -74,6 +74,7 @@ const useRequestVerificationCode = <TData, TResponse = unknown>({
     mutationFn: (data: TData) => withErrorHandling(() => mutationFn(data)),
     onSuccess: () => {
       queryClient.setQueryData([OTP_STATUS_KEY], status);
+      queryClient.invalidateQueries({ queryKey: [VERIFICATION_CODES_KEY] });
     },
   });
 };

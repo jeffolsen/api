@@ -87,7 +87,7 @@ export const VERIFICATION_CODE_INPUT = {
     },
   },
 };
-export const VERIFICATION_CODE_DEFAULT = { code: "" };
+export const VERIFICATION_CODE_DEFAULT = { verificationCode: "" };
 
 export const ORIGIN_INPUT = {
   name: "origin",
@@ -97,7 +97,7 @@ export const ORIGIN_INPUT = {
     required: "App Origin is required",
   },
 };
-export const ORIGIN_DEFAULT = { code: "" };
+export const ORIGIN_DEFAULT = { origin: "" };
 
 export const SLUG_INPUT = {
   name: "apiSlug",

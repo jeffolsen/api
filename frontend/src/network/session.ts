@@ -5,6 +5,7 @@ import {
   LOGOUT_ALL_ENDPOINT,
   SESSIONS_RESET_WITH_OTP_ENDPOINT,
   withErrorHandling,
+  useEmail,
 } from "./api";
 import { useAuthState } from "../contexts/AuthContext";
 import { OTP_STATUS_KEY, OTP_STATUS_NONE } from "./verificationCode";
@@ -27,6 +28,7 @@ export const useGetProfilesSessions = () => {
 
 export const useLogout = () => {
   const { api, setIsAuthenticated } = useAuthState();
+  const { setEmail } = useEmail();
 
   return useMutation({
     mutationFn: async () =>
@@ -35,8 +37,8 @@ export const useLogout = () => {
         return response.data;
       }),
     onSuccess: () => {
+      setEmail("");
       setIsAuthenticated(false);
-      console.log("congrats you logged out");
     },
   });
 };
@@ -47,6 +49,7 @@ export type LogoutAllWithSessionFormInput = {
 
 export const useLogoutAllWithSession = () => {
   const { api, setIsAuthenticated } = useAuthState();
+  const { setEmail } = useEmail();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -57,6 +60,7 @@ export const useLogoutAllWithSession = () => {
       }),
     onSuccess: () => {
       queryClient.setQueryData([OTP_STATUS_KEY], OTP_STATUS_NONE);
+      setEmail("");
       setIsAuthenticated(false);
     },
   });
@@ -69,6 +73,7 @@ export type ResetSessionsWithOTPFormInput = {
 
 export const useResetSessionsWithOTP = () => {
   const { api, setIsAuthenticated } = useAuthState();
+  const { setEmail } = useEmail();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -79,6 +84,7 @@ export const useResetSessionsWithOTP = () => {
       }),
     onSuccess: () => {
       queryClient.setQueryData([OTP_STATUS_KEY], OTP_STATUS_NONE);
+      setEmail("");
       setIsAuthenticated(false);
     },
   });

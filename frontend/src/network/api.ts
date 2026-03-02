@@ -14,13 +14,14 @@ export const REGISTER_ENDPOINT = "/auth/register";
 export const LOGIN_WITH_OTP_ENDPOINT = "/auth/login";
 
 export const PROFILE_ENDPOINT = "/profiles/me";
-export const PASSWORD_RESET_WITH_OTP_ENDPOINT = "/profile/password-reset";
+export const PASSWORD_RESET_WITH_OTP_ENDPOINT = "/profiles/password-reset";
 export const PASSWORD_CHANGE_ENDPOINT = "/profiles/password-change";
+export const DELETE_PROFILE_WITH_OTP_ENDPOINT = "/profiles/unregister";
 
 export const SESSIONS_ENDPOINT = "/sessions";
-export const LOGOUT_ENDPOINT = "/sessions/logout";
-export const SESSIONS_RESET_WITH_OTP_ENDPOINT = "/sessions/reset";
-export const LOGOUT_ALL_ENDPOINT = "/sessions/logout-all";
+export const LOGOUT_ENDPOINT = SESSIONS_ENDPOINT + "/logout";
+export const SESSIONS_RESET_WITH_OTP_ENDPOINT = SESSIONS_ENDPOINT + "/reset";
+export const LOGOUT_ALL_ENDPOINT = SESSIONS_ENDPOINT + "/logout-all";
 
 export const VERIFICATION_CODE_ENDPOINT = "/codes";
 export const REQUEST_LOGIN_ENDPOINT = "/codes/login";
@@ -33,6 +34,18 @@ export const GET_PROFILES_API_KEYS_ENDPOINT = "/keys";
 export const GENERATE_API_KEY_ENDPOINT = "/keys/generate";
 export const CONNECT_API_KEY_ENDPOINT = "/keys/public";
 export const DESTROY_API_KEY_ENDPOINT = "/keys/destroy";
+
+export const OK = 200;
+export const CREATED = 201;
+export const NO_CONTENT = 204;
+export const BAD_REQUEST = 400;
+export const UNAUTHORIZED = 401;
+export const FORBIDDEN = 403;
+export const NOT_FOUND = 404;
+export const CONFLICT = 409;
+export const UNPROCESSABLE_CONTENT = 422;
+export const TOO_MANY_REQUESTS = 429;
+export const INTERNAL_SERVER_ERROR = 500;
 
 export const EMAIL_KEY = "email" as const;
 
