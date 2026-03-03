@@ -1,22 +1,40 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import clsx, { ClassValue } from "clsx";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
+import { BlockUrlIdentifier } from "../blocks/Block";
+import { useSearchParamWithDefault } from "../../hooks/useSearchParam";
+
+export type TabPanelProps = {
+  urlIdentifier: string;
+};
 
 export type TabsProps = {
   tabs: {
     name: string;
-    Component: React.ComponentType;
+    Component: React.ComponentType<TabPanelProps>;
     getTabClasses?: (selected?: boolean, hover?: boolean) => ClassValue;
   }[];
-};
+  tabListClassName?: ClassValue;
+} & BlockUrlIdentifier;
 
-function Tabs({
-  tabs,
-  tabListClassName,
-  ...props
-}: TabsProps & { tabListClassName?: ClassValue }) {
+function Tabs({ tabs, tabListClassName, urlIdentifier, ...props }: TabsProps) {
+  const componentSelectedQueryParam = `tabs${urlIdentifier}_selected`;
+  const [selectedTab, setSelectedTab] = useSearchParamWithDefault(
+    componentSelectedQueryParam,
+    tabs[0]?.name || "",
+  );
+  useEffect(() => {
+    return () => {
+      setSelectedTab(undefined);
+    };
+  }, []);
   return (
-    <TabGroup className="w-full flex flex-col gap-4" {...props}>
+    <TabGroup
+      selectedIndex={tabs.findIndex((tab) => tab.name === selectedTab)}
+      onChange={(index) => setSelectedTab(tabs[index].name)}
+      className="w-full flex flex-col gap-4"
+      {...props}
+    >
       <TabList className={clsx([tabListClassName])}>
         {tabs.map(({ name, getTabClasses }) => (
           <Tab as={Fragment} key={name}>
@@ -38,7 +56,10 @@ function Tabs({
         <TabPanels className="w-full">
           {tabs.map(({ name, Component }) => (
             <TabPanel key={name} className="flex flex-col gap-4">
-              <Component key={name} />
+              <Component
+                key={name}
+                urlIdentifier={componentSelectedQueryParam}
+              />
             </TabPanel>
           ))}
         </TabPanels>

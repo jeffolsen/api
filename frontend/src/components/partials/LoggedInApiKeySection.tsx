@@ -49,6 +49,8 @@ function LoggedInApiKeySection() {
                   destroy this API key.
                 </Text>
                 <DestroyApiKeyWithOTPForm
+                  submitButtonColor="error"
+                  submitButtonText="Destroy API Key"
                   defaultValues={{
                     apiSlug: apiKey.slug,
                     origin: apiKey.origin,

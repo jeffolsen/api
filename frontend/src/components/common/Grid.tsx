@@ -11,11 +11,11 @@ type ColumnProps = {
 function Grid({
   items,
   columns,
-  onEmpty,
+  onEmpty = () => null,
 }: {
   items: React.ReactNode[];
   columns?: ColumnProps;
-  onEmpty: () => React.ReactNode;
+  onEmpty?: () => React.ReactNode;
 }) {
   const mergedColumns = {
     ...{
