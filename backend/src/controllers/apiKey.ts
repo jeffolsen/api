@@ -43,7 +43,6 @@ export const getProfilesApiKeys: RequestHandler = catchErrors(
 interface GenerateApiKeyBody {
   apiSlug: string;
   origin: string;
-  verificationCode: string;
 }
 
 export const generate: RequestHandler<
@@ -52,6 +51,8 @@ export const generate: RequestHandler<
   GenerateApiKeyBody,
   unknown
 > = catchErrors(async (req, res, next) => {
+  const code = req.get("X-Verification-Code") as string;
+  console.log("Generate API Key - Received code:", code);
   const { profileId } = req;
   const {
     apiSlug: slug,
@@ -60,6 +61,7 @@ export const generate: RequestHandler<
     userAgent,
   } = ApiKeyGenerateSchema.parse({
     ...(req.body as GenerateApiKeyBody),
+    verificationCode: code || "",
     userAgent: req.headers["user-agent"],
   });
 
@@ -142,7 +144,6 @@ export const connect: RequestHandler<
 
 interface DestroyApiKeyBody {
   apiSlug: string;
-  verificationCode: string;
 }
 
 export const destroy: RequestHandler<
@@ -152,6 +153,10 @@ export const destroy: RequestHandler<
   unknown
 > = catchErrors(async (req, res, next) => {
   const { profileId } = req;
+  const code = req.get("X-Verification-Code") as string;
+
+  console.log("Destroy API Key - Received code:", code);
+
   const {
     apiSlug: slug,
     verificationCode,
@@ -159,6 +164,7 @@ export const destroy: RequestHandler<
   } = ApiKeyDestroySchema.parse({
     ...(req.body as DestroyApiKeyBody),
     userAgent: req.headers["user-agent"],
+    verificationCode: code || "",
   });
 
   const profile = await prismaClient.profile.findUnique({

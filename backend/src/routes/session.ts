@@ -3,7 +3,6 @@ import sessionApi from "../controllers/session";
 import authorizeScope from "../middleware/authorizeScope";
 import {
   SESSION_LOGOUT_ALL_ENDPOINT,
-  SELF_ENDPOINT,
   READ_SESSION_SCOPE,
   SESSION_LOGOUT_ENDPOINT,
   UPDATE_SESSION_SCOPE,

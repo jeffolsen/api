@@ -35,7 +35,13 @@ export const useLoginWithOTP = () => {
     mutationFn: (data: LoginWithOTPFormInput) =>
       withErrorHandling(
         async () => {
-          const response = await api.post(LOGIN_WITH_OTP_ENDPOINT, data);
+          const { verificationCode, ...restData } = data;
+          const headers = {
+            "X-Verification-Code": verificationCode,
+          };
+          const response = await api.post(LOGIN_WITH_OTP_ENDPOINT, restData, {
+            headers,
+          });
           return response.data;
         },
         () => setIsAuthenticated(false),

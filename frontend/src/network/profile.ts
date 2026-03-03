@@ -4,7 +4,6 @@ import {
   PROFILE_ENDPOINT,
   PASSWORD_RESET_WITH_OTP_ENDPOINT,
   PASSWORD_CHANGE_ENDPOINT,
-  DELETE_PROFILE_WITH_OTP_ENDPOINT,
   withErrorHandling,
   useEmail,
 } from "./api";
@@ -38,7 +37,17 @@ export const usePasswordResetWithOTP = () => {
   return useMutation({
     mutationFn: async (data: PasswordResetWithOTPFormInput) =>
       withErrorHandling(async () => {
-        const response = await api.post(PASSWORD_RESET_WITH_OTP_ENDPOINT, data);
+        const { verificationCode, ...restData } = data;
+        const headers = {
+          "X-Verification-Code": verificationCode,
+        };
+        const response = await api.post(
+          PASSWORD_RESET_WITH_OTP_ENDPOINT,
+          restData,
+          {
+            headers,
+          },
+        );
         return response.data;
       }),
     onSuccess: () => {
@@ -47,7 +56,9 @@ export const usePasswordResetWithOTP = () => {
   });
 };
 
-export type DeleteProfileWithOTPFormInput = OtpInput;
+export type DeleteProfileWithOTPFormInput = {
+  verificationCode: string;
+};
 
 export const useDeleteProfileWithOTP = () => {
   const { api, setIsAuthenticated } = useAuthState();
@@ -57,7 +68,11 @@ export const useDeleteProfileWithOTP = () => {
   return useMutation({
     mutationFn: async (data: DeleteProfileWithOTPFormInput) =>
       withErrorHandling(async () => {
-        const response = await api.post(DELETE_PROFILE_WITH_OTP_ENDPOINT, data);
+        const { verificationCode } = data;
+        const headers = {
+          "X-Verification-Code": verificationCode,
+        };
+        const response = await api.delete(PROFILE_ENDPOINT, { headers });
         return response.data;
       }),
     onSuccess: () => {

@@ -79,7 +79,17 @@ export const useResetSessionsWithOTP = () => {
   return useMutation({
     mutationFn: async (data: ResetSessionsWithOTPFormInput) =>
       withErrorHandling(async () => {
-        const response = await api.post(SESSIONS_RESET_WITH_OTP_ENDPOINT, data);
+        const { verificationCode, ...restData } = data;
+        const headers = {
+          "X-Verification-Code": verificationCode,
+        };
+        const response = await api.post(
+          SESSIONS_RESET_WITH_OTP_ENDPOINT,
+          restData,
+          {
+            headers,
+          },
+        );
         return response.data;
       }),
     onSuccess: () => {

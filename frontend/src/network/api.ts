@@ -16,7 +16,6 @@ export const LOGIN_WITH_OTP_ENDPOINT = "/auth/login";
 export const PROFILE_ENDPOINT = "/profiles/me";
 export const PASSWORD_RESET_WITH_OTP_ENDPOINT = "/profiles/password-reset";
 export const PASSWORD_CHANGE_ENDPOINT = "/profiles/password-change";
-export const DELETE_PROFILE_WITH_OTP_ENDPOINT = "/profiles/unregister";
 
 export const SESSIONS_ENDPOINT = "/sessions";
 export const LOGOUT_ENDPOINT = SESSIONS_ENDPOINT + "/logout";
@@ -34,6 +33,8 @@ export const GET_PROFILES_API_KEYS_ENDPOINT = "/keys";
 export const GENERATE_API_KEY_ENDPOINT = "/keys/generate";
 export const CONNECT_API_KEY_ENDPOINT = "/keys/public";
 export const DESTROY_API_KEY_ENDPOINT = "/keys/destroy";
+
+export const GET_IMAGES_ENDPOINT = "/images";
 
 export const OK = 200;
 export const CREATED = 201;

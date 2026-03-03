@@ -20,8 +20,8 @@ router.get(
   authorizeScope([READ_PROFILE_SCOPE]),
   profileApi.getAuthenticatedProfile,
 );
-router.post(
-  PROFILE_DELETE_PROFILE_ENDPOINT,
+router.delete(
+  SELF_ENDPOINT,
   authenticate,
   authorizeScope([DELETE_PROFILE_SCOPE]),
   profileApi.deleteProfile,
@@ -32,7 +32,6 @@ router.post(
   authorizeScope([UPDATE_PROFILE_SCOPE]),
   profileApi.changePasswordWithSession,
 );
-
 router.post(PROFILE_PASSWORD_RESET_ENDPOINT, profileApi.resetPasswordWithCode);
 
 export default router;

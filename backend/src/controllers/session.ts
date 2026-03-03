@@ -67,7 +67,6 @@ export const logoutAllWithSession: RequestHandler<
 
 interface LogoutAllBody {
   email: string;
-  verificationCode: string;
 }
 
 export const logoutAllWithCode: RequestHandler<
@@ -76,8 +75,10 @@ export const logoutAllWithCode: RequestHandler<
   LogoutAllBody,
   unknown
 > = catchErrors(async (req, res, next) => {
+  const code = req.get("X-Verification-Code") as string;
   const { email, verificationCode, userAgent } = SessionLogoutAllSchema.parse({
     ...(req.body as LogoutAllBody),
+    verificationCode: code || "",
     userAgent: req.headers["user-agent"],
   });
 

@@ -36,7 +36,13 @@ export const useGenerateApiKey = () => {
   return useMutation({
     mutationFn: async (data: GenerateApiKeyInput) =>
       withErrorHandling(async () => {
-        const response = await api.post(GENERATE_API_KEY_ENDPOINT, data);
+        const { verificationCode, ...restData } = data;
+        const headers = {
+          "X-Verification-Code": verificationCode,
+        };
+        const response = await api.post(GENERATE_API_KEY_ENDPOINT, restData, {
+          headers,
+        });
         return response.data;
       }),
     onSuccess: () => {
@@ -48,6 +54,7 @@ export const useGenerateApiKey = () => {
 
 export type DestroyApiKeyInput = {
   apiSlug: string;
+  verificationCode: string;
 };
 
 export const useDestroyApiKey = () => {
@@ -57,7 +64,13 @@ export const useDestroyApiKey = () => {
   return useMutation({
     mutationFn: async (data: DestroyApiKeyInput) =>
       withErrorHandling(async () => {
-        const response = await api.post(DESTROY_API_KEY_ENDPOINT, data);
+        const { verificationCode, ...restData } = data;
+        const headers = {
+          "X-Verification-Code": verificationCode,
+        };
+        const response = await api.post(DESTROY_API_KEY_ENDPOINT, restData, {
+          headers,
+        });
         return response.data;
       }),
     onSuccess: () => {

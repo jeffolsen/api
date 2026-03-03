@@ -41,7 +41,6 @@ export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
 
 interface LoginWithVerificationCodeBody {
   email: string;
-  verificationCode: string;
 }
 
 export const login: RequestHandler<
@@ -50,6 +49,8 @@ export const login: RequestHandler<
   LoginWithVerificationCodeBody,
   unknown
 > = catchErrors(async (req, res, next) => {
+  const code = req.get("X-Verification-Code") as string;
+  console.log("Login - Received code:", code);
   const { profileId } = req;
   const loggedIn = !!profileId;
   throwError(!loggedIn, CONFLICT, "Already logged in");
@@ -57,6 +58,7 @@ export const login: RequestHandler<
   const { email, verificationCode, userAgent } = loginSchema.parse({
     ...(req.body as LoginWithVerificationCodeBody),
     userAgent: req.headers["user-agent"],
+    verificationCode: code || "",
   });
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });

@@ -33,44 +33,37 @@ export const getAuthenticatedProfile: RequestHandler = catchErrors(
   },
 );
 
-interface DeleteProfileBody {
-  verificationCode: string;
-}
+export const deleteProfile: RequestHandler = catchErrors(
+  async (req, res, next) => {
+    const code = req.get("X-Verification-Code") as string;
+    const { profileId } = req;
+    const { verificationCode, userAgent } = DeleteProfileSchema.parse({
+      verificationCode: code || "",
+      userAgent: req.headers["user-agent"],
+    });
 
-export const deleteProfile: RequestHandler<
-  unknown,
-  unknown,
-  DeleteProfileBody,
-  unknown
-> = catchErrors(async (req, res, next) => {
-  const { profileId } = req;
-  const { verificationCode, userAgent } = DeleteProfileSchema.parse({
-    ...(req.body as DeleteProfileBody),
-    userAgent: req.headers["user-agent"],
-  });
+    const profile = await prismaClient.profile.findUnique({
+      where: { id: profileId },
+    });
+    throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
 
-  const profile = await prismaClient.profile.findUnique({
-    where: { id: profileId },
-  });
-  throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
+    await processVerificationCode({
+      profileId: profile.id,
+      value: verificationCode,
+      codeType: CodeType.DELETE_PROFILE,
+      userAgent,
+    });
 
-  await processVerificationCode({
-    profileId: profile.id,
-    value: verificationCode,
-    codeType: CodeType.DELETE_PROFILE,
-    userAgent,
-  });
+    await prismaClient.profile.delete({
+      where: { id: profile.id },
+    });
 
-  await prismaClient.profile.delete({
-    where: { id: profile.id },
-  });
-
-  clearAuthCookies(res).sendStatus(NO_CONTENT);
-});
+    clearAuthCookies(res).sendStatus(NO_CONTENT);
+  },
+);
 
 interface ResetPasswordBody {
   email: string;
-  verificationCode: string;
   password: string;
   confirmPassword: string;
 }
@@ -82,9 +75,11 @@ export const resetPasswordWithCode: RequestHandler<
   ResetPasswordBody,
   unknown
 > = catchErrors(async (req, res, next) => {
+  const code = req.get("X-Verification-Code") as string;
   const { verificationCode, email, password, userAgent } =
     ResetPasswordWithCodeSchema.parse({
       ...req.body,
+      verificationCode: code || "",
       userAgent: req.headers["user-agent"],
     });
 
