@@ -1,6 +1,18 @@
-import prismaClient, { TagName } from "../src/db/client";
+import prismaClient, { TagName, ImageType } from "../src/db/client";
+import content from "content";
 
 async function main() {
+  content.images.forEach(async (image) => {
+    await prismaClient.image.upsert({
+      where: { url: image.url },
+      update: {},
+      create: {
+        url: image.url,
+        alt: image.alt,
+        type: image.type as ImageType,
+      },
+    });
+  });
   const seedTag = async (name: TagName) => {
     await prismaClient.tag.upsert({
       where: { name },
@@ -10,7 +22,6 @@ async function main() {
       },
     });
   };
-  console.log("seeding tags");
   Object.keys(TagName).forEach((t) => {
     seedTag(t as TagName);
   });

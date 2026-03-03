@@ -9,7 +9,7 @@
     "dev": "prisma generate && nodemon --watch src --ext ts --exec ts-node --files src/server.ts",
     "build": "prisma generate && tsc",
     "start": "node dist/server.js",
-    "seed": "prisma db seed",
+    "seed": "yarn add git+ssh://git@github.com/jeffolsen/content.git && tsc && prisma db seed",
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint"
@@ -17,6 +17,7 @@
   "dependencies": {
     "@prisma/client": "^6.19.0",
     "bcrypt": "^6.0.0",
+    "content": "git+ssh://git@github.com/jeffolsen/content.git",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",

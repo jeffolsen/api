@@ -111,17 +111,34 @@ model Component {
 }
 
 model Item {
-  id        Int      @id @default(autoincrement())
-  title     String
-  subtitle  String?
-  content   String
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
-  author    Profile? @relation("ProfileItems", fields: [authorId], references: [id], onDelete: SetNull)
-  authorId  Int?
-  tags      Tag[]
+  id          Int         @id @default(autoincrement())
+  title       String?
+  subtitle    String?
+  content     String?
+  isPrivate   Boolean     @default(true)
+  createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+  publistedAt DateTime?   @map("published_at") @db.Timestamptz(3)
+  expiresAt   DateTime?   @map("expires_at") @db.Timestamptz(3)
+  author      Profile?    @relation("ProfileItems", fields: [authorId], references: [id], onDelete: SetNull)
+  authorId    Int?
+  dateRanges  DateRange[] @relation("ItemDateRanges")
+  tags        Tag[]
+  images      ItemImage[]
 
   @@map("items")
+}
+
+model DateRange {
+  id        Int      @id @default(autoincrement())
+  startAt   DateTime
+  endAt     DateTime
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  item      Item     @relation("ItemDateRanges", fields: [itemId], references: [id], onDelete: Cascade)
+  itemId    Int
+
+  @@map("date_ranges")
 }
 
 enum TagName {
@@ -145,4 +162,33 @@ model Tag {
   items Item[]
 
   @@map("tags")
+}
+
+enum ImageType {
+  LANDSCAPE
+  PORTRAIT
+  ICON
+  OTHER
+}
+
+model Image {
+  id        Int         @id @default(autoincrement())
+  url       String      @unique
+  alt       String?
+  type      ImageType   @default(OTHER)
+  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+  items     ItemImage[]
+
+  @@map("images")
+}
+
+model ItemImage {
+  item    Item  @relation(fields: [itemId], references: [id])
+  itemId  Int
+  image   Image @relation(fields: [imageId], references: [id])
+  imageId Int
+
+  @@id([itemId, imageId])
+  @@map("items_images")
 }
