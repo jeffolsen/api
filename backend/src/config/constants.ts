@@ -1,3 +1,4 @@
+import e from "express";
 import { SignOptions } from "jsonwebtoken";
 
 // routes
@@ -37,6 +38,8 @@ export const TAG_ROUTES = "/api/tags";
 export const TAG_NAME_ENDPOINT = "/:name";
 export const ITEM_ROUTES = "/api/items";
 export const COMPONENT_ROUTES = "/api/components";
+export const IMAGE_ROUTES = "/api/images";
+export const IMAGE_ID_ENDPOINT = "/:id";
 
 // profile scopes
 export const READ_PROFILE_SCOPE = "read:profile";
@@ -74,6 +77,8 @@ export const LOGOUT_ALL_SCOPE = "auth:logout-all";
 export const PASSWORD_RESET_SCOPE = "auth:update-password";
 export const DELETE_PROFILE_SCOPE = "auth:delete-profile";
 export const CREATE_API_KEY_SCOPE = "auth:create-apiKey";
+// image scopes
+export const READ_IMAGE_SCOPE = "read:image";
 
 // http codes
 export const OK = 200;
@@ -120,6 +125,11 @@ export const ERROR_SESSION_CANNOT_REFRESH = "Cannot refresh session";
 export const ERROR_SESSION_TOO_MANY = "Max number of sessions reached";
 export const ERROR_SESSIONS_NOT_FOUND = "No sessions found";
 export const ERROR_NO_ACCESS = "You do not have access to that resource";
+export const ERROR_IMAGE_NOT_FOUND = "Image not found";
+export const ERROR_TAG_NOT_FOUND = "Tag not found";
+export const ERROR_ITEM_NOT_FOUND = "Item not found";
+export const ERROR_COMPONENT_NOT_FOUND = "Component not found";
+export const ERROR_FEED_NOT_FOUND = "Feed not found";
 
 // resource limits
 export const MAX_DAILY_SYSTEM_EMAILS = 2800;

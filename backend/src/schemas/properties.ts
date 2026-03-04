@@ -15,7 +15,7 @@ import {
   SLUG_REGEX,
 } from "../config/constants";
 import { API_KEY_SESSION, PROFILE_SESSION } from "../util/scope";
-import { CodeType, TagName } from "../generated/prisma/client";
+import { CodeType, ImageType, TagName } from "../generated/prisma/client";
 
 export const verificationCodeTypeSchema = z.enum(
   [
@@ -29,6 +29,7 @@ export const verificationCodeTypeSchema = z.enum(
 );
 
 export const idSchema = z.number(ERROR_ID);
+export const idArraySchema = z.array(z.number(ERROR_ID));
 
 export const userAgentSchema = z.string(ERROR_SESSION_USER_AGENT);
 
@@ -89,3 +90,12 @@ export const tagNameUniqueArraySchema = z
   .refine((items) => {
     return new Set(items).size === items.length;
   });
+
+const imageTypeArray = [
+  ImageType.ICON,
+  ImageType.LANDSCAPE,
+  ImageType.PORTRAIT,
+  ImageType.OTHER,
+] as const;
+
+export const imageTypeSchema = z.enum(imageTypeArray, ERROR_CODE_TYPE);

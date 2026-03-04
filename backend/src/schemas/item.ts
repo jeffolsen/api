@@ -4,12 +4,14 @@ import {
   subtitleSchema,
   tagNameArraySchema,
   titleSchema,
+  idArraySchema,
 } from "./properties";
 
 // controllers
 export const CreateItemSchema = z.object({
-  title: titleSchema,
+  title: titleSchema.optional(),
   subtitle: subtitleSchema.optional(),
-  content: contentSchema,
-  tags: tagNameArraySchema,
+  content: contentSchema.optional(),
+  tags: tagNameArraySchema.optional(),
+  images: idArraySchema.optional(),
 });
