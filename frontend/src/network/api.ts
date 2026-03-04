@@ -34,7 +34,8 @@ export const GENERATE_API_KEY_ENDPOINT = "/keys/generate";
 export const CONNECT_API_KEY_ENDPOINT = "/keys/public";
 export const DESTROY_API_KEY_ENDPOINT = "/keys/destroy";
 
-export const GET_IMAGES_ENDPOINT = "/images";
+export const IMAGES_ENDPOINT = "/images";
+export const ITEMS_ENDPOINT = "/items";
 
 export const OK = 200;
 export const CREATED = 201;
