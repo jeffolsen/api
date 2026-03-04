@@ -11,6 +11,7 @@ import tagRoutes from "./routes/tag";
 import itemRoutes from "./routes/item";
 import componentRoutes from "./routes/component";
 import apiKeyRoutes from "./routes/apiKey";
+import imageRoutes from "./routes/image";
 import errorHandler from "./middleware/errorHandler";
 import authenticate from "./middleware/authenticate";
 import path from "path";
@@ -25,6 +26,7 @@ import {
   SESSION_ROUTES,
   TAG_ROUTES,
   VERIFICATION_CODE_ROUTES,
+  IMAGE_ROUTES,
 } from "./config/constants";
 // import rateLimiter from "./middleware/rateLimit";
 
@@ -48,6 +50,7 @@ app.use(PROFILE_ROUTES, profileRoutes);
 app.use(API_KEY_ROUTES, apiKeyRoutes);
 app.use(SESSION_ROUTES, sessionRoutes);
 
+app.use(IMAGE_ROUTES, imageRoutes);
 app.use(TAG_ROUTES, authenticate, tagRoutes);
 app.use(ITEM_ROUTES, authenticate, itemRoutes);
 app.use(COMPONENT_ROUTES, authenticate, componentRoutes);

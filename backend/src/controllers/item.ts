@@ -41,12 +41,13 @@ interface CreateItemBody {
   content: string;
   tags: TagName[];
   private: boolean;
+  images: number[];
 }
 
 export const createItem: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const { title, subtitle, content, tags } = CreateItemSchema.parse({
+    const { title, subtitle, content, tags, images } = CreateItemSchema.parse({
       ...(req.body as CreateItemBody),
     });
 
@@ -63,6 +64,10 @@ export const createItem: RequestHandler = catchErrors(
         content,
         subtitle,
         tags: { connect: tagIds },
+        images: { create: [] },
+        dateRanges: { create: [] },
+        authorId: profileId,
+        isPrivate: true,
       },
       omit: { authorId: true },
     });
