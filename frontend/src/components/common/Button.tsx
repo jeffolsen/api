@@ -117,3 +117,5 @@ export const XButton = forwardRef<HTMLButtonElement, ButtonProps>(
 );
 
 Button.displayName = "Button";
+
+export default Button;

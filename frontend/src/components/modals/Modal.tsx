@@ -1,6 +1,6 @@
 import clsx, { ClassValue } from "clsx";
 import { useModalContext } from "../../contexts/ModalContext";
-import { Button } from "../common/Button";
+import Button from "../common/Button";
 import { HeadingLevelProvider } from "../common/Heading";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { PropsWithChildren } from "react";

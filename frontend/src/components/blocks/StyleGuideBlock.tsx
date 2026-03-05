@@ -1,15 +1,20 @@
-import { Button } from "../common/Button";
+import Button from "../common/Button";
 import Heading, { HeadingLevelProvider } from "../common/Heading";
 import List from "../common/List";
 import Text from "../common/Text";
 import Block, { BlockProps } from "./Block";
 import { useModalContext } from "../../contexts/ModalContext";
 import DialogModal, { DialogModalProps } from "../modals/DialogModal";
+// import ImageSelector from "../inputs/ImageSelectInput";
+
+import { CreateItemForm } from "../forms/CreateItemForm";
 
 function StyleGuideBlock(props: BlockProps) {
   const { enqueueModals } = useModalContext();
+
   return (
     <Block {...props}>
+      <CreateItemForm heading="Create Item" submitButtonText="Create Item" />
       <HeadingLevelProvider>
         <Heading headingSize="xxl" headingStyles="uppercase">
           Heading xxl

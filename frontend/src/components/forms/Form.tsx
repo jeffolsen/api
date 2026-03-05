@@ -6,19 +6,25 @@ import {
   FieldErrorsImpl,
   Merge,
   UseFormRegister,
+  Control,
+  UseFieldArrayProps,
 } from "react-hook-form";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import Heading, { HeadingProps, HeadingLevelProvider } from "../common/Heading";
 import { TextInput } from "../inputs/TextInput";
-import { Button } from "../common/Button";
+import TextAreaInput from "../inputs/TextAreaInput";
+import { ImageSelectInput } from "../inputs/ImageSelectInput";
+import Button from "../common/Button";
 import { ButtonColor } from "../common/helpers/contentStyles";
 
 export type SubmitArgs = Record<string, unknown>;
 
-interface Field extends InputHTMLAttributes<HTMLInputElement> {
+export interface Field extends InputHTMLAttributes<
+  HTMLInputElement | HTMLTextAreaElement
+> {
   name: string;
-  componentName?: string;
+  componentName: string;
   registerOptions?: RegisterOptions;
 }
 
@@ -45,6 +51,7 @@ function Form({
   formStyles,
 }: FormProps) {
   const {
+    control,
     register,
     handleSubmit,
     reset,
@@ -74,13 +81,13 @@ function Form({
       className={clsx(formStyles || "flex flex-col gap-4 w-full")}
       onSubmit={handleSubmit(onSubmit)}
     >
-      {fields.map(({ name, registerOptions = {}, ...props }) => (
+      {fields.map(({ name, ...props }) => (
         <div key={name}>
           <FormInput
             name={name}
             register={register}
-            registerOptions={registerOptions}
             watch={watch}
+            control={control}
             {...props}
           />
           <FormError error={errors[name]} />
@@ -125,29 +132,29 @@ const FormWithHeading = ({
   );
 };
 
-type FormInputProps = {
+export type FormInputProps = {
   name: string;
+  componentName: string;
+  control: Control;
   register: UseFormRegister<Record<string, unknown>>;
   watch: (field: string) => unknown;
-  registerOptions: RegisterOptions;
+  registerOptions?: RegisterOptions;
+  rules?: UseFieldArrayProps["rules"];
 };
 
-const FormInput = ({
-  name,
-  register,
-  watch,
-  registerOptions,
-  ...props
-}: FormInputProps) => {
-  const required = !!registerOptions.required;
-  const watchedValue = watch(name);
-  return (
-    <TextInput
-      register={register(name, registerOptions)}
-      required={required}
-      watchedValue={watchedValue}
-      {...props}
-    />
+const FormInput = ({ componentName, ...props }: FormInputProps) => {
+  return componentName === "TextInput" ? (
+    <TextInput {...props} />
+  ) : componentName === "TextAreaInput" ? (
+    <TextAreaInput {...props} />
+  ) : componentName === "ImageSelectInput" ? (
+    <ImageSelectInput {...props} />
+  ) : componentName === "TagNamesInput" ? (
+    <p>TAGNAMES</p>
+  ) : componentName === "DateRangeSelectInput" ? (
+    <p>DATERANGESELECTOR</p>
+  ) : (
+    <p>Unsupported input type</p>
   );
 };
 

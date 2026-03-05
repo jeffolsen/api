@@ -1,7 +1,7 @@
 import Grid from "../common/Grid";
 import BasicCard from "../cards/BasicCard";
 import SectionHeading from "./SectionHeading";
-import { Button } from "../common/Button";
+import Button from "../common/Button";
 import { useGetProfilesSessions, useLogout } from "../../network/session";
 import { useModalContext } from "../../contexts/ModalContext";
 import EmptyModal, { EmptyModalProps } from "../modals/EmptyModal";

@@ -4,7 +4,7 @@ import Heading, { HeadingLevelProvider } from "../common/Heading";
 import Loading from "../common/Loading";
 import dayjs, { longDatetime, techDatetime } from "../../utils/dayjs";
 import Text from "../common/Text";
-import { Button } from "../common/Button";
+import Button from "../common/Button";
 import LoggedInSessionSection from "../partials/LoggedInSessionSection";
 import LoggedInApiKeySection from "../partials/LoggedInApiKeySection";
 import LoggedInCodesSection from "../partials/LoggedInCodesSection";

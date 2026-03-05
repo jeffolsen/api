@@ -5,7 +5,7 @@ import {
   ListboxOptions,
 } from "@headlessui/react";
 import { useState } from "react";
-import { Button } from "./Button";
+import Button from "./Button";
 import { ButtonColor } from "./helpers/contentStyles";
 import clsx, { ClassValue } from "clsx";
 

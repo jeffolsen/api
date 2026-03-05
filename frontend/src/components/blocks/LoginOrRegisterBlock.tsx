@@ -1,19 +1,27 @@
-import { RequestLoginForm, LoginWithOTPForm } from "../forms/LoginForm";
-import { RequestResetPasswordForm } from "../forms/ResetPasswordForm";
-import RegisterForm from "../forms/RegisterForm";
-import Block, { BlockProps } from "./Block";
-import Tabs, { TabsProps } from "../common/Tabs";
+import { TOO_MANY_REQUESTS } from "../../network/api";
 import {
   OTP_STATUS_LOGIN,
   OTP_STATUS_LOGOUT_ALL,
+  OTP_STATUS_PASSWORD_RESET,
   useOtpStatus,
 } from "../../network/verificationCode";
-import { LogoutAllSessionsWithOTPForm } from "../forms/LogoutAllSessionsForm";
+import { RequestLoginForm, LoginWithOTPForm } from "../forms/LoginForm";
+import {
+  RequestResetPasswordForm,
+  ResetPasswordWithOTPForm,
+} from "../forms/ResetPasswordForm";
+import {
+  RequestLogoutAllSessionsForm,
+  LogoutAllSessionsWithOTPForm,
+} from "../forms/LogoutAllSessionsForm";
+import RegisterForm from "../forms/RegisterForm";
+import Block, { BlockProps } from "./Block";
+import Text from "../common/Text";
+import Tabs, { TabsProps, TabPanelProps } from "../common/Tabs";
 import { useModalContext } from "../../contexts/ModalContext";
 import EmptyModal, { EmptyModalProps } from "../modals/EmptyModal";
-import Text from "../common/Text";
-import { RequestLogoutAllSessionsForm } from "../forms/LogoutAllSessionsForm";
-import DialogModal, { DialogModalProps } from "../modals/DialogModal";
+import { useSearchParam } from "../../hooks/useSearchParam";
+import { toast } from "react-hot-toast";
 
 const tabs: TabsProps["tabs"] = [
   {
@@ -28,50 +36,56 @@ const tabs: TabsProps["tabs"] = [
   },
   {
     name: "Reset Password",
-    Component: RequestResetPasswordForm,
+    Component: RequestResetPasswordOrResetWithOtp,
     getTabClasses: () => ["flex-none text-sm pt-2 order-last"],
   },
 ];
 
 function LoginOrRegisterBlock(props: BlockProps) {
+  const { id, ...rest } = props;
   return (
-    <Block {...props}>
-      <Tabs tabs={tabs} tabListClassName="flex flex-wrap justify-end gap-2" />
+    <Block {...rest}>
+      <Tabs
+        urlIdentifier={`${id}`}
+        tabs={tabs}
+        tabListClassName="flex flex-wrap justify-end gap-2"
+      />
     </Block>
   );
 }
 
-function RegisterFormWithSuccessModal() {
-  const { enqueueModals } = useModalContext();
-
+function RegisterFormWithSuccessModal({
+  urlIdentifier,
+  ...props
+}: TabPanelProps) {
+  const [, setTabSelected] = useSearchParam(`${urlIdentifier}`);
   return (
     <RegisterForm
+      heading="Register"
+      headingSize="md"
+      headingStyles={"text-center uppercase font-bold text-accent"}
+      headingDecorator="strike"
       handleSuccess={() => {
-        enqueueModals([
-          {
-            component: DialogModal,
-            props: {
-              title: "Registration Successful!",
-              content: "You have been successfully registered.",
-            } as DialogModalProps,
-          },
-        ]);
+        toast.success("Registration Successful! You can now log in.");
+        setTabSelected("Login");
       }}
+      {...props}
     />
   );
 }
 
-function RequestLoginOrLoginWithOtp() {
+function RequestLoginOrLoginWithOtp({ ...props }: TabPanelProps) {
   const otpStatus = useOtpStatus();
   const { enqueueModals } = useModalContext();
 
   const handleError = (error: Error) => {
-    if (error?.cause === 429) {
+    if (error?.cause === TOO_MANY_REQUESTS) {
       enqueueModals([
         {
           component: EmptyModal,
           props: {
-            children: <RequestLogoutAllModalContent />,
+            closeConfirm: "Do you want to exit the login flow?",
+            children: <RequestLogoutAllModalContent {...props} />,
           } as EmptyModalProps,
         },
       ]);
@@ -82,33 +96,47 @@ function RequestLoginOrLoginWithOtp() {
 
   if (otpStatus === OTP_STATUS_LOGIN) {
     return (
-      <LoginWithOTPForm handleError={(error) => handleError(error as Error)} />
+      <LoginWithOTPForm
+        heading="Enter Email Code"
+        headingSize="md"
+        headingStyles={"text-center uppercase font-bold text-accent"}
+        headingDecorator="strike"
+        submitButtonText="Login"
+        handleError={(error) => {
+          handleError(error as Error);
+        }}
+        {...props}
+      />
     );
   }
-  return <RequestLoginForm />;
+  return (
+    <RequestLoginForm
+      heading="Login"
+      headingSize="md"
+      headingStyles={"text-center uppercase font-bold text-accent"}
+      headingDecorator="strike"
+      {...props}
+    />
+  );
 }
 
-function RequestLogoutAllModalContent() {
+function RequestLogoutAllModalContent({ urlIdentifier }: TabPanelProps) {
   const otpStatus = useOtpStatus();
-  const { insertNextOne } = useModalContext();
+  const [, setTabSelected] = useSearchParam(`${urlIdentifier}`);
+
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       {otpStatus === OTP_STATUS_LOGOUT_ALL ? (
         <>
           <Text textSize="lg" className="text-center">
-            Enter the OTP sent to your email to log out of all sessions.
+            Enter the OTP sent to your email.
           </Text>
           <LogoutAllSessionsWithOTPForm
-            handleSuccess={() =>
-              insertNextOne(
-                DialogModal,
-                {
-                  title: "Success!",
-                  content: "You have been logged out of all sessions.",
-                } as DialogModalProps,
-                true,
-              )
-            }
+            submitButtonText="Logout of all sessions"
+            handleSuccess={() => {
+              toast.success("You have been logged out of all sessions.");
+              setTabSelected("Login");
+            }}
           />
         </>
       ) : (
@@ -117,10 +145,47 @@ function RequestLogoutAllModalContent() {
             You have too many active sessions. You can log out of all of them
             here.
           </Text>
-          <RequestLogoutAllSessionsForm />
+          <RequestLogoutAllSessionsForm
+            submitButtonText="Logout of all sessions"
+            submitButtonColor="error"
+          />
         </>
       )}
     </div>
+  );
+}
+
+function RequestResetPasswordOrResetWithOtp({
+  urlIdentifier,
+  ...props
+}: TabPanelProps) {
+  const otpStatus = useOtpStatus();
+  const [, setTabSelected] = useSearchParam(`${urlIdentifier}`);
+
+  if (otpStatus === OTP_STATUS_PASSWORD_RESET) {
+    return (
+      <ResetPasswordWithOTPForm
+        heading="Enter Email Code"
+        headingSize="md"
+        headingStyles={"text-center uppercase font-bold text-accent"}
+        headingDecorator="strike"
+        submitButtonText="Reset Password"
+        handleSuccess={() => {
+          toast.success("Password reset successful! You can now log in.");
+          setTabSelected("Login");
+        }}
+        {...props}
+      />
+    );
+  }
+  return (
+    <RequestResetPasswordForm
+      heading="Reset Password"
+      headingSize="md"
+      headingStyles={"text-center uppercase font-bold text-accent"}
+      headingDecorator="strike"
+      {...props}
+    />
   );
 }
 
