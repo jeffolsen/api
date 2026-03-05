@@ -18,10 +18,10 @@ import RegisterForm from "../forms/RegisterForm";
 import Block, { BlockProps } from "./Block";
 import Text from "../common/Text";
 import Tabs, { TabsProps, TabPanelProps } from "../common/Tabs";
-import { useModalContext } from "../../contexts/ModalContext";
-import EmptyModal, { EmptyModalProps } from "../modals/EmptyModal";
 import { useSearchParam } from "../../hooks/useSearchParam";
 import { toast } from "react-hot-toast";
+import { useState } from "react";
+import Modal from "../layout/Modal";
 
 const tabs: TabsProps["tabs"] = [
   {
@@ -76,19 +76,11 @@ function RegisterFormWithSuccessModal({
 
 function RequestLoginOrLoginWithOtp({ ...props }: TabPanelProps) {
   const otpStatus = useOtpStatus();
-  const { enqueueModals } = useModalContext();
+  const [openLogoutAllModal, setOpenLogoutAllModal] = useState(false);
 
   const handleError = (error: Error) => {
     if (error?.cause === TOO_MANY_REQUESTS) {
-      enqueueModals([
-        {
-          component: EmptyModal,
-          props: {
-            closeConfirm: "Do you want to exit the login flow?",
-            children: <RequestLogoutAllModalContent {...props} />,
-          } as EmptyModalProps,
-        },
-      ]);
+      setOpenLogoutAllModal(true);
     } else {
       throw error;
     }
@@ -96,17 +88,22 @@ function RequestLoginOrLoginWithOtp({ ...props }: TabPanelProps) {
 
   if (otpStatus === OTP_STATUS_LOGIN) {
     return (
-      <LoginWithOTPForm
-        heading="Enter Email Code"
-        headingSize="md"
-        headingStyles={"text-center uppercase font-bold text-accent"}
-        headingDecorator="strike"
-        submitButtonText="Login"
-        handleError={(error) => {
-          handleError(error as Error);
-        }}
-        {...props}
-      />
+      <>
+        <LoginWithOTPForm
+          heading="Enter Email Code"
+          headingSize="md"
+          headingStyles={"text-center uppercase font-bold text-accent"}
+          headingDecorator="strike"
+          submitButtonText="Login"
+          handleError={(error) => {
+            handleError(error as Error);
+          }}
+          {...props}
+        />
+        <Modal isOpen={openLogoutAllModal} setIsOpen={setOpenLogoutAllModal}>
+          <RequestLogoutAllModalContent {...props} />
+        </Modal>
+      </>
     );
   }
   return (

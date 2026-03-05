@@ -1,14 +1,13 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, MouseEvent } from "react";
 import { useFieldArray } from "react-hook-form";
-import { useModalContext } from "../../contexts/ModalContext";
 import { useGetImages } from "../../network/image";
 import { FormInputProps } from "../forms/Form";
-import EmptyModal, { EmptyModalProps } from "../modals/EmptyModal";
+import Modal from "../layout/Modal";
 import Image from "../common/Image";
 import Button from "../common/Button";
 import clsx from "clsx";
 
-type TypeFilter = "ICON" | "LANDSCAPE" | "PORTRAIT" | "";
+type TypeFilter = "ICON" | "LANDSCAPE" | "PORTRAIT" | "OTHER" | "";
 
 type Image = {
   url: string;
@@ -36,7 +35,14 @@ function SelectedImage({
   onClick: () => void;
 }) {
   return (
-    <span className="inline-flex border" onClick={onClick}>
+    <span
+      className="inline-flex border"
+      onClick={(e: MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClick();
+      }}
+    >
       <Image
         src={image.url}
         alt={image.alt}
@@ -46,7 +52,7 @@ function SelectedImage({
   );
 }
 
-function AddImageButton() {
+function AddImageButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       className={clsx([
@@ -56,7 +62,11 @@ function AddImageButton() {
         "text-3xl text-primary-content/70",
       ])}
       type="button"
-      onClick={() => console.log("Add image button clicked")}
+      onClick={(e: MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClick();
+      }}
     >
       +
     </button>
@@ -64,7 +74,7 @@ function AddImageButton() {
 }
 
 function ImageSelectInput(
-  props: Omit<FormInputProps, "watch" | "registerOptions">,
+  props: Omit<FormInputProps, "watch" | "registerOptions" | "componentName">,
 ) {
   const { name, control, register, rules } = props;
   const { fields, append, remove } = useFieldArray({
@@ -73,6 +83,8 @@ function ImageSelectInput(
     rules,
   });
   const images = useGetImages();
+  const [showImageSelector, setShowImageSelector] = useState(false);
+
   const selectedImages = useCallback(() => {
     const imageIds = (fields as ImageIdArrayFields).map(
       (field) => field.imageId,
@@ -83,33 +95,47 @@ function ImageSelectInput(
   }, [fields, images.data]);
 
   return (
-    <label className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20">
-      <span className="label-text text-sm font-semibold text-neutral-content/70 w-full">
-        Selected Images
-      </span>
-      {(fields as ImageIdArrayFields).map((field, index) => (
-        <span key={field.id}>
-          <SelectedImage
-            image={selectedImages()[index]}
-            onClick={() => remove(index)}
-          />
-          <input
-            {...register(`${name}.${index}.imageId` as const)}
-            {...props}
-            type="hidden"
+    <>
+      <label
+        className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
+        <span className="label-text text-sm font-semibold text-neutral-content/70 w-full">
+          Selected Images
+        </span>
+        <span className="flex flex-wrap gap-2 w-full">
+          {(fields as ImageIdArrayFields).map((field, index) => (
+            <span key={field.id}>
+              <SelectedImage
+                image={selectedImages()[index]}
+                onClick={() => remove(index)}
+              />
+              <input
+                {...register(`${name}.${index}.imageId` as const)}
+                {...props}
+                type="hidden"
+              />
+            </span>
+          ))}
+          <AddImageButton
+            onClick={() => {
+              setShowImageSelector(true);
+            }}
           />
         </span>
-      ))}
-      <AddImageButton />
-      <ImageSelector
-        images={images.data || []}
-        selectedImages={selectedImages}
-        onThumbnailClick={(imageId) => append({ imageId })}
-        onPreviewClick={
-          (index) => remove(index) // For simplicity, clicking a selected image in the preview will remove it. This can be changed to open a larger preview modal if desired.
-        }
-      />
-    </label>
+      </label>
+      <Modal isOpen={showImageSelector} setIsOpen={setShowImageSelector}>
+        <ImageSelector
+          images={images.data || []}
+          selectedImages={selectedImages}
+          onThumbnailClick={(imageId) => append({ imageId })}
+          onPreviewClick={(index) => remove(index)}
+        />
+      </Modal>
+    </>
   );
 }
 
@@ -127,20 +153,24 @@ const ImageSelector = ({
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("");
   const [searchTerm, setSearchTerm] = useState("");
   const filteredImages = useCallback(() => {
-    return images
-      .filter((image) => !selectedImages().includes(image))
-      .filter((image) => {
-        const matchesType = typeFilter ? image.type === typeFilter : true;
-        const matchesSearch = image.alt
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase());
-        return matchesType && matchesSearch;
-      });
+    return (
+      ((typeFilter || searchTerm) &&
+        images
+          .filter((image) => !selectedImages().includes(image))
+          .filter((image) => {
+            const matchesType = typeFilter ? image.type === typeFilter : true;
+            const matchesSearch = image.alt
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase());
+            return matchesType && matchesSearch;
+          })) ||
+      []
+    );
   }, [typeFilter, searchTerm, images, selectedImages]);
 
   return (
-    <div className="flex flex-col items-center gap-6">
-      <div>
+    <div className="flex flex-col items-center gap-6 w-full">
+      <div className="flex items-center gap-4 flex-wrap w-full">
         {selectedImages().map((image, index) => (
           <span key={image.id} className="inline-flex items-center gap-2">
             <SelectedImage
@@ -152,49 +182,55 @@ const ImageSelector = ({
           </span>
         ))}
       </div>
-      <div className="flex flex-col gap-2 w-full">
-        <input
-          className="flex-grow input input-bordered"
-          type="text"
-          placeholder="Search images..."
-          value={searchTerm}
-          onChange={(e) => {
-            if (e.target.value.length) setTypeFilter("");
-            setSearchTerm(e.target.value);
+      <input
+        className="flex-grow input input-bordered w-full"
+        type="text"
+        placeholder="Search images..."
+        value={searchTerm}
+        onChange={(e) => {
+          if (e.target.value.length) setTypeFilter("");
+          setSearchTerm(e.target.value);
+        }}
+      />
+      <div className="grid grid-cols-2 sm:grid-cols-4 items-center gap-2 w-full">
+        <FilterButton
+          active={typeFilter === "ICON"}
+          onClick={() => {
+            setSearchTerm("");
+            setTypeFilter((prev) => (prev === "ICON" ? "" : "ICON"));
           }}
-        />
-        <div className="flex items-center gap-2">
-          <FilterButton
-            active={typeFilter === "ICON"}
-            onClick={() => {
-              setSearchTerm("");
-              setTypeFilter((prev) => (prev === "ICON" ? "" : "ICON"));
-            }}
-          >
-            Icons
-          </FilterButton>
-          <FilterButton
-            active={typeFilter === "LANDSCAPE"}
-            onClick={() => {
-              setSearchTerm("");
-              setTypeFilter((prev) =>
-                prev === "LANDSCAPE" ? "" : "LANDSCAPE",
-              );
-            }}
-          >
-            Landscapes
-          </FilterButton>
-          <FilterButton
-            active={typeFilter === "PORTRAIT"}
-            onClick={() => {
-              setSearchTerm("");
-              setTypeFilter((prev) => (prev === "PORTRAIT" ? "" : "PORTRAIT"));
-            }}
-          >
-            Portraits
-          </FilterButton>
-        </div>
+        >
+          Icons
+        </FilterButton>
+        <FilterButton
+          active={typeFilter === "LANDSCAPE"}
+          onClick={() => {
+            setSearchTerm("");
+            setTypeFilter((prev) => (prev === "LANDSCAPE" ? "" : "LANDSCAPE"));
+          }}
+        >
+          Landscapes
+        </FilterButton>
+        <FilterButton
+          active={typeFilter === "PORTRAIT"}
+          onClick={() => {
+            setSearchTerm("");
+            setTypeFilter((prev) => (prev === "PORTRAIT" ? "" : "PORTRAIT"));
+          }}
+        >
+          Portraits
+        </FilterButton>
+        <FilterButton
+          active={typeFilter === "OTHER"}
+          onClick={() => {
+            setSearchTerm("");
+            setTypeFilter((prev) => (prev === "OTHER" ? "" : "OTHER"));
+          }}
+        >
+          Other
+        </FilterButton>
       </div>
+
       <ImageDrawer
         images={filteredImages()}
         onThumbnailClick={(imageId) => {
@@ -234,7 +270,7 @@ function ImageDrawer({
   onThumbnailClick: (imageId: number) => void;
 }) {
   return (
-    <div className="flex flex-wrap gap-4 justify-center">
+    <div className="flex flex-wrap gap-4 w-full">
       {images.map((image) => (
         <span key={image.id}>
           <SelectedImage

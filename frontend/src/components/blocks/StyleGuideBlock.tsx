@@ -3,14 +3,13 @@ import Heading, { HeadingLevelProvider } from "../common/Heading";
 import List from "../common/List";
 import Text from "../common/Text";
 import Block, { BlockProps } from "./Block";
-import { useModalContext } from "../../contexts/ModalContext";
-import DialogModal, { DialogModalProps } from "../modals/DialogModal";
-// import ImageSelector from "../inputs/ImageSelectInput";
+import Modal from "../layout/Modal";
+import { useState } from "react";
 
 import { CreateItemForm } from "../forms/CreateItemForm";
 
 function StyleGuideBlock(props: BlockProps) {
-  const { enqueueModals } = useModalContext();
+  const [openModal, setOpenModal] = useState(false);
 
   return (
     <Block {...props}>
@@ -99,26 +98,23 @@ function StyleGuideBlock(props: BlockProps) {
           items={["ordered List item 1", "ordered List item 2"]}
         />
         <hr />
-        <Button
-          onClick={() =>
-            enqueueModals([
-              {
-                component: DialogModal,
-                props: {
-                  title: "Registration Successful!",
-                  content: "You have been successfully registered.",
-                } as DialogModalProps,
-              },
-            ])
-          }
-        >
-          Default Button
-        </Button>
+        <Button onClick={() => setOpenModal(true)}>Default Button</Button>
         <Button color="primary">Primary Button</Button>
         <Button color="secondary">Secondary Button</Button>
         <Button color="accent">Accent Button</Button>
         <Button color="error">Error Button</Button>
       </HeadingLevelProvider>
+      <Modal
+        onClose={() => setOpenModal(false)}
+        isOpen={openModal}
+        setIsOpen={setOpenModal}
+      >
+        <div className="flex flex-col gap-4">
+          <Heading headingSize="lg">Modal Title</Heading>
+          <Text>This is the content of the Modal.</Text>
+          <Button onClick={() => setOpenModal(false)}>Close Modal</Button>
+        </div>
+      </Modal>
     </Block>
   );
 }
