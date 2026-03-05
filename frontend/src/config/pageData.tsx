@@ -12,12 +12,13 @@ export type PageData = {
 export type PagesDictionary = Record<string, PageData>;
 
 const pages = {
-  "/": {
+  home: {
     blocks: [
       {
         type: "login",
         data: {
-          title: "Login or Register",
+          id: 1,
+          title: "Login or register",
           settings: {
             isprimaryContent: true,
             showOnLoggedinState: "LOGGED_OUT",
@@ -28,11 +29,108 @@ const pages = {
       {
         type: "profileActivity",
         data: {
-          title: "Your Profile",
+          id: 2,
+          title: "Dashboard",
           settings: {
-            // isprimaryContent: true,
+            isprimaryContent: true,
             showOnLoggedinState: "LOGGED_IN",
             width: "lg",
+          },
+        },
+      },
+    ],
+  },
+  items: {
+    blocks: [
+      {
+        type: "itemsList",
+        data: {
+          id: 3,
+          title: "Items",
+          settings: {
+            isprimaryContent: true,
+            showOnLoggedinState: "LOGGED_IN",
+            width: "lg",
+          },
+        },
+      },
+    ],
+  },
+  "items/new": {
+    blocks: [
+      {
+        type: "createItem",
+        data: {
+          id: 3,
+          title: "Create a new item",
+          settings: {
+            isprimaryContent: true,
+            showOnLoggedinState: "LOGGED_IN",
+            width: "md",
+          },
+        },
+      },
+    ],
+  },
+  feeds: {
+    blocks: [
+      {
+        type: "generic",
+        data: {
+          id: 4,
+          title: "Feeds",
+          settings: {
+            isprimaryContent: true,
+            showOnLoggedinState: "BOTH",
+            width: "md",
+          },
+        },
+      },
+    ],
+  },
+  about: {
+    blocks: [
+      {
+        type: "generic",
+        data: {
+          id: 5,
+          title: "About me",
+          settings: {
+            isprimaryContent: true,
+            showOnLoggedinState: "BOTH",
+            width: "md",
+          },
+        },
+      },
+    ],
+  },
+  "style-guide": {
+    blocks: [
+      {
+        type: "styleGuide",
+        data: {
+          id: 6,
+          title: "Style guide",
+          settings: {
+            isprimaryContent: true,
+            showOnLoggedinState: "BOTH",
+            width: "md",
+          },
+        },
+      },
+    ],
+  },
+  "401": {
+    blocks: [
+      {
+        type: "401",
+        data: {
+          id: 8,
+          title: "Access denied",
+          settings: {
+            isprimaryContent: true,
+            showOnLoggedinState: "BOTH",
+            width: "sm",
           },
         },
       },
@@ -43,7 +141,8 @@ const pages = {
       {
         type: "404",
         data: {
-          title: "Page Not Found",
+          id: 7,
+          title: "Page not found",
           settings: {
             isprimaryContent: true,
             showOnLoggedinState: "BOTH",

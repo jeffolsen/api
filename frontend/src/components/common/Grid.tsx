@@ -1,16 +1,16 @@
 import clsx from "clsx";
 
 type ColumnProps = {
-  base: "1" | "2" | "3" | "4" | "5" | "6";
-  sm: "1" | "2" | "3" | "4" | "5" | "6";
-  md: "1" | "2" | "3" | "4" | "5" | "6";
-  lg: "1" | "2" | "3" | "4" | "5" | "6";
-  xl: "1" | "2" | "3" | "4" | "5" | "6";
+  base?: "1" | "2" | "3" | "4" | "5" | "6";
+  sm?: "1" | "2" | "3" | "4" | "5" | "6";
+  md?: "1" | "2" | "3" | "4" | "5" | "6";
+  lg?: "1" | "2" | "3" | "4" | "5" | "6";
+  xl?: "1" | "2" | "3" | "4" | "5" | "6";
 };
 
 function Grid({
   items,
-  columns,
+  columns = {},
   onEmpty = () => null,
 }: {
   items: React.ReactNode[];
@@ -20,10 +20,6 @@ function Grid({
   const mergedColumns = {
     ...{
       base: "1",
-      sm: "1",
-      md: "2",
-      lg: "2",
-      xl: "2",
     },
     ...columns,
   };

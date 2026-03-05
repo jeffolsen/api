@@ -106,7 +106,7 @@ export const Button = forwardRef<
 export const XButton = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ ...props }, ref) => {
     const classes = clsx(
-      "btn btn-circle  btn-ghost border-white/50 btn-xs absolute right-2 top-2",
+      "btn btn-circle btn-ghost border-white/50 btn-xs absolute right-2 top-2",
     );
     return (
       <Button as="button" ref={ref} className={classes} {...props}>

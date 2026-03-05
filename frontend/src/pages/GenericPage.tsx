@@ -1,65 +1,90 @@
 import { useLocation } from "react-router";
-import {
-  LoginOrRegisterBlock,
-  FourOhFourBlock,
-  ProfileActivityBlock,
-} from "../components/blocks/Blocks";
 import pages, { PageData, BlockType } from "../config/pageData";
 import { BlockProps } from "../components/blocks/Block";
 import { useAuthState } from "../contexts/AuthContext";
-import { useEffect, useState } from "react";
+import { useCallback, lazy, Suspense } from "react";
+import Loading from "../components/common/Loading";
 
-function GenericPage() {
+export default function GenericPage() {
   const location = useLocation();
-  const path = location.pathname;
+  const path = location.pathname.replace(/^\/|\/$/g, "") || "home";
   const pageData: PageData = pages[path] || pages["404"];
   const { isAuthenticated } = useAuthState();
 
   const isLoggedIn = isAuthenticated();
-  const [blocks, setBlocks] = useState<BlockType[]>(
-    includeOnePrimaryContent(
-      filterBlocksByLoginState(pageData.blocks, !!isLoggedIn),
-    ),
+
+  const calculateBlocksToRender = useCallback(
+    (blocks: BlockType[]) => {
+      const filteredBlocks = filterBlocksByLoginState(blocks, !!isLoggedIn);
+      if (filteredBlocks.length === 0) {
+        return includeOnePrimaryContent(pages["401"].blocks);
+      }
+      return includeOnePrimaryContent(filteredBlocks);
+    },
+    [isLoggedIn],
   );
-
-  useEffect(() => {
-    const filteredBlocks = filterBlocksByLoginState(
-      pageData.blocks,
-      !!isLoggedIn,
-    );
-    const blocksWithPrimaryContent = includeOnePrimaryContent(filteredBlocks);
-    setBlocks(blocksWithPrimaryContent);
-  }, [pageData.blocks, isLoggedIn]);
-
-  console.log("isLoggedIn", isLoggedIn);
-  console.log("blocks to render", blocks);
 
   return (
     <>
-      {blocks.length &&
-        blocks.map((block, index) => {
+      {calculateBlocksToRender(pageData.blocks)
+        .filter((block) => block !== undefined)
+        .map((block, index) => {
           const { type, data } = block;
           const props = { ...data, path };
-          if (type === "404") {
-            return <FourOhFourBlock key={index} {...(props as BlockProps)} />;
-          }
-          if (type === "login") {
-            return (
-              <LoginOrRegisterBlock key={index} {...(props as BlockProps)} />
-            );
-          }
-          if (type === "profileActivity") {
-            return (
-              <ProfileActivityBlock key={index} {...(props as BlockProps)} />
-            );
-          }
-          return null;
+          return (
+            <Suspense key={index} fallback={<Loading />}>
+              {type === "404" ? (
+                <LazyLoadedFourOhFourBlock
+                  key={index}
+                  {...(props as BlockProps)}
+                />
+              ) : type === "401" ? (
+                <LazyLoadedFourOhOneBlock
+                  key={index}
+                  {...(props as BlockProps)}
+                />
+              ) : type === "generic" ? (
+                <LazyLoadedGenericBlock
+                  key={index}
+                  {...(props as BlockProps)}
+                />
+              ) : type === "login" ? (
+                <LazyLoadedLoginOrRegisterBlock
+                  key={index}
+                  {...(props as BlockProps)}
+                />
+              ) : type === "profileActivity" ? (
+                <LazyLoadedProfileActivityBlock
+                  key={index}
+                  {...(props as BlockProps)}
+                />
+              ) : type === "itemsList" ? (
+                <LazyLoadedItemsListBlock
+                  key={index}
+                  {...(props as BlockProps)}
+                />
+              ) : type === "createItem" ? (
+                <LazyLoadedCreateItemBlock
+                  key={index}
+                  {...(props as BlockProps)}
+                />
+              ) : type === "styleGuide" ? (
+                <LazyLoadedStyleGuideBlock
+                  key={index}
+                  {...(props as BlockProps)}
+                />
+              ) : (
+                <LazyLoadedFourOhFourBlock
+                  key={index}
+                  {...(props as BlockProps)}
+                />
+              )}
+            </Suspense>
+          );
         })}
     </>
   );
 }
-
-export default GenericPage;
 
 const filterBlocksByLoginState = (
   blocks: BlockType[],
@@ -95,3 +120,28 @@ const includeOnePrimaryContent = (blocks: BlockType[]): BlockType[] => {
     ...restBlocks,
   ] as BlockType[];
 };
+
+const LazyLoadedGenericBlock = lazy(
+  () => import("../components/blocks/GenericBlock"),
+);
+const LazyLoadedFourOhFourBlock = lazy(
+  () => import("../components/blocks/FourOhFourBlock"),
+);
+const LazyLoadedFourOhOneBlock = lazy(
+  () => import("../components/blocks/FourOhOneBlock"),
+);
+const LazyLoadedLoginOrRegisterBlock = lazy(
+  () => import("../components/blocks/LoginOrRegisterBlock"),
+);
+const LazyLoadedProfileActivityBlock = lazy(
+  () => import("../components/blocks/ProfileActivityBlock"),
+);
+const LazyLoadedItemsListBlock = lazy(
+  () => import("../components/blocks/ItemsListBlock"),
+);
+const LazyLoadedCreateItemBlock = lazy(
+  () => import("../components/blocks/CreateItemBlock"),
+);
+const LazyLoadedStyleGuideBlock = lazy(
+  () => import("../components/blocks/StyleGuideBlock"),
+);
