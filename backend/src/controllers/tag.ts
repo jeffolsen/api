@@ -5,7 +5,10 @@ import prismaClient from "../db/client";
 
 export const getAllTags: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
-    const tags = prismaClient.tag.findMany({ select: { name: true } });
+    const tags = await prismaClient.tag.findMany({
+      select: { name: true },
+      orderBy: { name: "desc" },
+    });
     res.status(OK).json(tags);
   },
 );

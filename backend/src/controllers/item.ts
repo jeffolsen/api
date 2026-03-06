@@ -8,7 +8,7 @@ import { CreateItemSchema } from "../schemas/item";
 export const getAllItems: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const items = prismaClient.item.findMany();
+    const items = await prismaClient.item.findMany();
 
     res.status(OK).json(items);
   },
@@ -25,7 +25,7 @@ export const getItemById: RequestHandler = catchErrors(
       "ID should be a number",
     );
 
-    const item = prismaClient.item.findUnique({
+    const item = await prismaClient.item.findUnique({
       where: { id: numericId },
       omit: { authorId: true },
     });
