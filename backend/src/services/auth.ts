@@ -136,10 +136,12 @@ export const connectToApiSession = async ({
 
 interface RefreshAccessTokenParams {
   refreshToken: string;
+  userAgent?: string;
 }
 
 export const refreshAccessToken = async ({
   refreshToken,
+  userAgent,
 }: RefreshAccessTokenParams) => {
   const payload = verifyRefreshToken(refreshToken);
 
@@ -147,7 +149,7 @@ export const refreshAccessToken = async ({
 
   const { sessionId } = payload;
   const sessionWithProfile = await prismaClient.session.findUnique({
-    where: { id: sessionId },
+    where: { id: sessionId, ...(userAgent && { userAgent }) },
     include: { profile: true },
   });
   throwError(sessionWithProfile?.profile, BAD_REQUEST, ERROR_INVALID_TOKEN);

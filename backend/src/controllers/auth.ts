@@ -79,9 +79,13 @@ export const login: RequestHandler<
 
 export const refresh: RequestHandler = catchErrors(async (req, res, next) => {
   const { refreshToken } = req.cookies;
+  const userAgent = req.headers["user-agent"];
   throwError(refreshToken, NOT_FOUND, ERROR_CREDENTIALS);
 
-  const { session, ...tokens } = await refreshAccessToken({ refreshToken });
+  const { session, ...tokens } = await refreshAccessToken({
+    refreshToken,
+    userAgent,
+  });
 
   setAuthCookies({
     res,
