@@ -10,6 +10,8 @@ import {
   VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT,
   BAD_REQUEST,
   ERROR_MALFORMED,
+  ERROR_SESSION_TOO_MANY,
+  TOO_MANY_REQUESTS,
 } from "../config/constants";
 import { RequestHandler } from "express";
 import catchErrors from "../util/catchErrors";
@@ -84,6 +86,11 @@ export const requestVerificationCode: RequestHandler<
         profile && profile.comparePassword(password),
         NOT_FOUND,
         ERROR_CREDENTIALS,
+      );
+      throwError(
+        !(await prismaClient.session.maxExceeded(profile.id)),
+        TOO_MANY_REQUESTS,
+        ERROR_SESSION_TOO_MANY,
       );
       codeType = CodeType.LOGIN;
       break;
