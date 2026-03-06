@@ -31,7 +31,7 @@ function Grid({
   return (
     <div
       className={clsx([
-        "grid grid-flow-row auto-rows-fr gap-4",
+        "w-full grid grid-flow-row auto-rows-fr gap-4",
         mergedColumns["base"] === "1"
           ? "grid-cols-1"
           : mergedColumns["base"] === "2"
