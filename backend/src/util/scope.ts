@@ -8,6 +8,9 @@ import {
   READ_FEED_SCOPE,
   CREATE_API_KEY_SCOPE,
   READ_API_KEY_SCOPE,
+  READ_COMPONENT_SCOPE,
+  READ_ITEM_SCOPE,
+  READ_TAG_SCOPE,
 } from "../config/constants";
 
 export const defaultProfileScope = () =>
@@ -20,6 +23,10 @@ export const defaultProfileScope = () =>
     READ_VERIFICATION_CODE_SCOPE,
     READ_API_KEY_SCOPE,
     CREATE_API_KEY_SCOPE,
+    READ_TAG_SCOPE,
+    READ_ITEM_SCOPE,
+    READ_COMPONENT_SCOPE,
+    READ_FEED_SCOPE,
   ]);
 
 export const defaultApiKeyScope = () => createScopeString([READ_FEED_SCOPE]);
