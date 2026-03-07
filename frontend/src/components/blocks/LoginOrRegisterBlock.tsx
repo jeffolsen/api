@@ -86,38 +86,43 @@ function RequestLoginOrLoginWithOtp({ ...props }: TabPanelProps) {
     }
   };
 
-  if (otpStatus === OTP_STATUS_LOGIN) {
-    return (
-      <>
+  return (
+    <>
+      {otpStatus === OTP_STATUS_LOGIN ? (
         <LoginWithOTPForm
           heading="Enter Email Code"
           headingSize="md"
           headingStyles={"text-center uppercase font-bold text-accent"}
           headingDecorator="strike"
           submitButtonText="Login"
+          {...props}
+        />
+      ) : (
+        <RequestLoginForm
+          heading="Login"
+          headingSize="md"
+          headingStyles={"text-center uppercase font-bold text-accent"}
+          headingDecorator="strike"
           handleError={(error) => {
             handleError(error as Error);
           }}
           {...props}
         />
-        <Modal isOpen={openLogoutAllModal} setIsOpen={setOpenLogoutAllModal}>
-          <RequestLogoutAllModalContent {...props} />
-        </Modal>
-      </>
-    );
-  }
-  return (
-    <RequestLoginForm
-      heading="Login"
-      headingSize="md"
-      headingStyles={"text-center uppercase font-bold text-accent"}
-      headingDecorator="strike"
-      {...props}
-    />
+      )}
+      <Modal isOpen={openLogoutAllModal} setIsOpen={setOpenLogoutAllModal}>
+        <RequestLogoutAllModalContent
+          {...props}
+          setOpenLogoutAllModal={setOpenLogoutAllModal}
+        />
+      </Modal>
+    </>
   );
 }
 
-function RequestLogoutAllModalContent({ urlIdentifier }: TabPanelProps) {
+function RequestLogoutAllModalContent({
+  urlIdentifier,
+  setOpenLogoutAllModal,
+}: TabPanelProps & { setOpenLogoutAllModal: (open: boolean) => void }) {
   const otpStatus = useOtpStatus();
   const [, setTabSelected] = useSearchParam(`${urlIdentifier}`);
 
@@ -133,13 +138,15 @@ function RequestLogoutAllModalContent({ urlIdentifier }: TabPanelProps) {
             handleSuccess={() => {
               toast.success("You have been logged out of all sessions.");
               setTabSelected("Login");
+              setOpenLogoutAllModal(false);
             }}
           />
         </>
       ) : (
         <>
-          <Text textSize="lg" className="text-center">
-            You have too many active sessions. You can log out of all of them
+          <Text textSize="lg" className="text-center px-4">
+            You have too many active sessions.
+            <br className="hidden md:inline" /> You can log out of all of them
             here.
           </Text>
           <RequestLogoutAllSessionsForm
