@@ -68,7 +68,7 @@ function LoggedInCodesSection() {
       </SectionHeading>
       {verificationCodes && (
         <Grid
-          columns={{ base: "2", sm: "3", md: "3", lg: "4", xl: "5" }}
+          columns={{ base: "2", sm: "3", lg: "4", xl: "5" }}
           items={verificationCodes
             ?.filter((code: VerificationCode) => {
               return dateFilter

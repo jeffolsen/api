@@ -60,7 +60,7 @@ function LoggedInSessionSection() {
         </SectionHeading>
         {sessions && (
           <Grid
-            columns={{ base: "1", sm: "1", md: "2", lg: "3", xl: "3" }}
+            columns={{ md: "2", lg: "3" }}
             items={sessions?.map(
               (session: { userAgent: string; createdAt: string }) => (
                 <BasicCard

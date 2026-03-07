@@ -34,7 +34,6 @@ function LoggedInApiKeySection() {
         description="API keys allow you to authenticate a read-only API session for apps."
       />
       <Grid
-        columns={{ base: "1", sm: "1", md: "1", lg: "1", xl: "1" }}
         items={apiKeys.map((apiKey: { slug: string; origin: string }) => (
           <RevealCard
             buttonLabel="Destroy API Key"
