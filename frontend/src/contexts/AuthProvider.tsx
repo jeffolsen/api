@@ -4,6 +4,7 @@ import api, {
   isAuthenticated,
   setIsAuthenticated,
   REFRESH_ENDPOINT,
+  LOGOUT_ENDPOINT,
 } from "../network/api";
 import createAuthRefreshInterceptor from "axios-auth-refresh";
 
@@ -38,6 +39,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         console.log("refreshAuthLogic refreshResponse", refreshResponse);
 
         if (refreshResponse.status === 401) {
+          await api.post(LOGOUT_ENDPOINT, { skipAuthRefresh: true });
+          setAuthenticated(false);
           throw new Error("Refresh token expired");
         }
 
