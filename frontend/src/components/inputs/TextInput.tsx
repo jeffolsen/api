@@ -22,3 +22,5 @@ export const TextInput = (
     </label>
   );
 };
+
+export default TextInput;
