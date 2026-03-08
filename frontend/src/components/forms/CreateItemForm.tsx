@@ -3,14 +3,14 @@ import {
   IMAGE_IDS_INPUT,
   SUBTITLE_INPUT,
   TITLE_INPUT,
-  // TAGNAMES_INPUT,
-  // DATE_RANGES_INPUT,
+  TAGNAMES_INPUT,
+  DATE_RANGES_INPUT,
   TITLE_DEFAULT,
   SUBTITLE_DEFAULT,
   CONTENT_DEFAULT,
   IMAGE_IDS_DEFAULT,
-  // TAGNAMES_DEFAULT,
-  // DATE_RANGES_DEFAULT,
+  TAGNAMES_DEFAULT,
+  DATE_RANGES_DEFAULT,
 } from "../../config/inputs";
 import { withFormHandling } from "../../network/api";
 import { CreateItemInput, useCreateItem } from "../../network/item";
@@ -18,6 +18,7 @@ import {
   FormWithHeading,
   FormReponseHandlerProps,
   FormWithHeadingProps,
+  Field,
 } from "./Form";
 
 function CreateItemForm({
@@ -31,20 +32,28 @@ function CreateItemForm({
   return (
     <FormWithHeading
       fields={[
+        {
+          componentName: "Subheading",
+          text: "Item content",
+        } as Field,
         TITLE_INPUT,
         SUBTITLE_INPUT,
         CONTENT_INPUT,
         IMAGE_IDS_INPUT,
-        // TAGNAMES_INPUT,
-        // DATE_RANGES_INPUT,
+        {
+          componentName: "Subheading",
+          text: "Item meta",
+        } as Field,
+        TAGNAMES_INPUT,
+        DATE_RANGES_INPUT,
       ]}
       defaultValues={{
         ...TITLE_DEFAULT,
         ...SUBTITLE_DEFAULT,
         ...CONTENT_DEFAULT,
         ...IMAGE_IDS_DEFAULT,
-        // ...TAGNAMES_DEFAULT,
-        // ...DATE_RANGES_DEFAULT,
+        ...TAGNAMES_DEFAULT,
+        ...DATE_RANGES_DEFAULT,
         ...defaultValues,
       }}
       trySubmit={async (args) =>

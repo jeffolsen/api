@@ -1,7 +1,11 @@
 import { useCallback, useState, MouseEvent } from "react";
 import { useFieldArray } from "react-hook-form";
 import { useGetImages } from "../../network/image";
-import { FormInputProps } from "../forms/Form";
+import {
+  FormInputProps,
+  FieldArrayMinAndMax,
+  FieldArrayMinMaxRule,
+} from "../forms/Form";
 import Modal from "../layout/Modal";
 import Image from "../common/Image";
 import Button from "../common/Button";
@@ -36,7 +40,7 @@ function SelectedImage({
 }) {
   return (
     <span
-      className="inline-flex border"
+      className="inline-flex border max-w-[75px] max-h-[75px] sm:max-w-[100px] sm:max-h-[100px] rounded border-base-content/20 cursor-pointer"
       onClick={(e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         e.stopPropagation();
@@ -57,7 +61,7 @@ function AddImageButton({ onClick }: { onClick: () => void }) {
     <button
       className={clsx([
         "flex items-center justify-center",
-        "w-[100px] h-[100px]",
+        "w-[75px] h-[75px] sm:w-[100px] sm:h-[100px]",
         "border rounded border-base-content/20",
         "text-3xl text-primary-content/70",
       ])}
@@ -76,7 +80,7 @@ function AddImageButton({ onClick }: { onClick: () => void }) {
 function ImageSelectInput(
   props: Omit<FormInputProps, "watch" | "registerOptions" | "componentName">,
 ) {
-  const { name, control, register, rules } = props;
+  const { name, control, register, rules, ...restProps } = props;
   const { fields, append, remove } = useFieldArray({
     control,
     name,
@@ -104,7 +108,11 @@ function ImageSelectInput(
         }}
       >
         <span className="label-text text-sm font-semibold text-neutral-content/70 w-full">
-          Selected Images
+          Images{" "}
+          <FieldArrayMinAndMax
+            minLength={(rules as FieldArrayMinMaxRule)?.minLength?.value}
+            maxLength={(rules as FieldArrayMinMaxRule)?.maxLength?.value}
+          />
         </span>
         <span className="flex flex-wrap gap-2 w-full">
           {(fields as ImageIdArrayFields).map((field, index) => (
@@ -115,7 +123,7 @@ function ImageSelectInput(
               />
               <input
                 {...register(`${name}.${index}.imageId` as const)}
-                {...props}
+                {...restProps}
                 type="hidden"
               />
             </span>
@@ -285,4 +293,4 @@ function ImageDrawer({
   );
 }
 
-export { ImageSelectInput };
+export default ImageSelectInput;

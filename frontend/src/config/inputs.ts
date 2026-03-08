@@ -5,6 +5,8 @@ const EMAIL_REGEX =
 export const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export const NUMERIC_CODE_REGEX = /^\d{6}/;
 
+import { Field } from "../components/forms/Form";
+
 export const EMAIL_INPUT = {
   name: "email",
   placeholder: "Email",
@@ -18,7 +20,7 @@ export const EMAIL_INPUT = {
       message: "Invalid Email format",
     },
   },
-};
+} as Field;
 export const EMAIL_DEFAULT = { email: "" };
 
 export const PASSWORD_INPUT = {
@@ -34,7 +36,7 @@ export const PASSWORD_INPUT = {
       message: "Invalid Password format",
     },
   },
-};
+} as Field;
 export const PASSWORD_DEFAULT = { password: "" };
 
 export const CONFIRM_PASSWORD_INPUT = {
@@ -50,7 +52,7 @@ export const CONFIRM_PASSWORD_INPUT = {
       message: "Invalid Confirm Password format",
     },
   },
-};
+} as Field;
 export const CONFIRM_PASSWORD_DEFAULT = { confirmPassword: "" };
 
 export const NEW_PASSWORD_INPUT = {
@@ -66,7 +68,7 @@ export const NEW_PASSWORD_INPUT = {
       message: "Invalid Password format",
     },
   },
-};
+} as Field;
 export const NEW_PASSWORD_DEFAULT = { newPassword: "" };
 
 export const CONFIRM_NEW_PASSWORD_INPUT = {
@@ -82,7 +84,7 @@ export const CONFIRM_NEW_PASSWORD_INPUT = {
       message: "Invalid Confirm Password format",
     },
   },
-};
+} as Field;
 export const CONFIRM_NEW_PASSWORD_DEFAULT = { confirmNewPassword: "" };
 
 export const VERIFICATION_CODE_INPUT = {
@@ -98,7 +100,7 @@ export const VERIFICATION_CODE_INPUT = {
       message: "Invalid Verification Code format",
     },
   },
-};
+} as Field;
 export const VERIFICATION_CODE_DEFAULT = { verificationCode: "" };
 
 export const ORIGIN_INPUT = {
@@ -110,7 +112,7 @@ export const ORIGIN_INPUT = {
   registerOptions: {
     required: "App Origin is required",
   },
-};
+} as Field;
 export const ORIGIN_DEFAULT = { origin: "" };
 
 export const SLUG_INPUT = {
@@ -126,7 +128,7 @@ export const SLUG_INPUT = {
       message: "Invalid Slug format",
     },
   },
-};
+} as Field;
 export const SLUG_DEFAULT = { apiSlug: "" };
 
 export const TITLE_INPUT = {
@@ -135,8 +137,8 @@ export const TITLE_INPUT = {
   label: "Title",
   type: "text",
   componentName: "TextInput",
-  registerOptions: {},
-};
+  registerOptions: { required: "Title is required" },
+} as Field;
 export const TITLE_DEFAULT = { title: "" };
 
 export const SUBTITLE_INPUT = {
@@ -146,7 +148,7 @@ export const SUBTITLE_INPUT = {
   type: "text",
   componentName: "TextInput",
   registerOptions: {},
-};
+} as Field;
 export const SUBTITLE_DEFAULT = { subtitle: "" };
 
 export const CONTENT_INPUT = {
@@ -156,7 +158,7 @@ export const CONTENT_INPUT = {
   type: "textarea",
   componentName: "TextAreaInput",
   registerOptions: {},
-};
+} as Field;
 export const CONTENT_DEFAULT = { content: "" };
 
 export const IMAGE_IDS_INPUT = {
@@ -166,40 +168,29 @@ export const IMAGE_IDS_INPUT = {
   type: "hidden",
   componentName: "ImageSelectInput",
   rules: { maxLength: { value: 3, message: "You can select up to 3 images" } },
-};
+} as Field;
 export const IMAGE_IDS_DEFAULT = { imageIds: [] as { imageId: number }[] };
-
-type TagName =
-  | "BAR"
-  | "BAZ"
-  | "BLUE"
-  | "FOO"
-  | "FUTURE"
-  | "GREEN"
-  | "PAST"
-  | "PERSON"
-  | "PLACE"
-  | "PRESENT"
-  | "RED"
-  | "THING";
 
 export const TAGNAMES_INPUT = {
   name: "tagNames",
   placeholder: "Tag Names",
   label: "Tag Names",
   type: "hidden",
-  componentName: "TagNamesInput",
-  registerOptions: {},
-};
-export const TAGNAMES_DEFAULT = { tagNames: [] as TagName[] };
+  componentName: "TagArrayInput",
+  rules: { maxLength: { value: 3, message: "You can select up to 3 tags" } },
+} as Field;
+export const TAGNAMES_DEFAULT = { tagNames: [] as { tagname: string }[] };
+
+export const tagnamesDefaultFromStrings = (tagnames: string[]) => ({
+  tagNames: tagnames.map((tagname) => ({ tagname })),
+});
 
 import { CreateDateRange } from "../network/item";
 export const DATE_RANGES_INPUT = {
   name: "dateRanges",
-  placeholder: "Date Ranges",
   label: "Date Ranges",
-  type: "hidden",
   componentName: "DateRangeSelectInput",
-  registerOptions: {},
-};
+  registerOptions: { required: true },
+  rules: { maxLength: { value: 3, message: "You can select up to 3 tags" } },
+} as Field;
 export const DATE_RANGES_DEFAULT = { dateRanges: [] as CreateDateRange[] };
