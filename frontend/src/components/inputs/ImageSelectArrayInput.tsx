@@ -2,16 +2,21 @@ import { useCallback, useState, MouseEvent } from "react";
 import { useFieldArray } from "react-hook-form";
 import { useGetImages } from "../../network/image";
 import {
-  FormInputProps,
+  AtomicFormComponentProps,
+  FromFormProps,
   FieldArrayMinAndMax,
   FieldArrayMinMaxRule,
-} from "../forms/Form";
+  FormError,
+} from "./Input";
+
 import Modal from "../layout/Modal";
 import Image from "../common/Image";
 import Button from "../common/Button";
 import clsx from "clsx";
 
-type TypeFilter = "ICON" | "LANDSCAPE" | "PORTRAIT" | "OTHER" | "";
+const typeFilters = ["ICON", "LANDSCAPE", "PORTRAIT", "OTHER", ""] as const;
+
+type TypeFilter = (typeof typeFilters)[number];
 
 type Image = {
   url: string;
@@ -78,16 +83,25 @@ function AddImageButton({ onClick }: { onClick: () => void }) {
 }
 
 function ImageSelectInput(
-  props: Omit<FormInputProps, "watch" | "registerOptions" | "componentName">,
+  props: Omit<
+    AtomicFormComponentProps & FromFormProps,
+    "watch" | "registerOptions" | "componentName"
+  >,
 ) {
-  const { name, control, register, rules, ...restProps } = props;
+  const { displayName, dataName, control, register, errors, input } = props;
   const { fields, append, remove } = useFieldArray({
     control,
-    name,
-    rules,
+    name: dataName,
+    rules: input?.rules,
   });
   const images = useGetImages();
   const [showImageSelector, setShowImageSelector] = useState(false);
+  const elementProps = {
+    ...(input?.element || {}),
+    type: "hidden",
+  };
+  const registerProps = input?.registerOpts || {};
+  const rulesProps = input?.rules || {};
 
   const selectedImages = useCallback(() => {
     const imageIds = (fields as ImageIdArrayFields).map(
@@ -108,10 +122,10 @@ function ImageSelectInput(
         }}
       >
         <span className="label-text text-sm font-semibold text-neutral-content/70 w-full">
-          Images{" "}
+          {displayName}{" "}
           <FieldArrayMinAndMax
-            minLength={(rules as FieldArrayMinMaxRule)?.minLength?.value}
-            maxLength={(rules as FieldArrayMinMaxRule)?.maxLength?.value}
+            minLength={(rulesProps as FieldArrayMinMaxRule)?.minLength?.value}
+            maxLength={(rulesProps as FieldArrayMinMaxRule)?.maxLength?.value}
           />
         </span>
         <span className="flex flex-wrap gap-2 w-full">
@@ -122,9 +136,11 @@ function ImageSelectInput(
                 onClick={() => remove(index)}
               />
               <input
-                {...register(`${name}.${index}.imageId` as const)}
-                {...restProps}
-                type="hidden"
+                {...register(
+                  `${dataName}.${index}.imageId` as const,
+                  registerProps,
+                )}
+                {...elementProps}
               />
             </span>
           ))}
@@ -135,12 +151,14 @@ function ImageSelectInput(
           />
         </span>
       </label>
+      <FormError error={errors[dataName]} />
       <Modal isOpen={showImageSelector} setIsOpen={setShowImageSelector}>
         <ImageSelector
           images={images.data || []}
           selectedImages={selectedImages}
           onThumbnailClick={(imageId) => append({ imageId })}
           onPreviewClick={(index) => remove(index)}
+          rules={rulesProps as FieldArrayMinMaxRule}
         />
       </Modal>
     </>
@@ -152,11 +170,13 @@ const ImageSelector = ({
   selectedImages = () => [],
   onThumbnailClick,
   onPreviewClick,
+  rules,
 }: {
   images: Image[];
   selectedImages: () => Image[];
   onThumbnailClick: (imageId: number) => void;
   onPreviewClick?: (index: number) => void;
+  rules: FieldArrayMinMaxRule;
 }) => {
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -178,6 +198,12 @@ const ImageSelector = ({
 
   return (
     <div className="flex flex-col items-center gap-6 w-full">
+      <div className="w-full">
+        <FieldArrayMinAndMax
+          minLength={(rules as FieldArrayMinMaxRule)?.minLength?.value}
+          maxLength={(rules as FieldArrayMinMaxRule)?.maxLength?.value}
+        />
+      </div>
       <div className="flex items-center gap-4 flex-wrap w-full">
         {selectedImages().map((image, index) => (
           <span key={image.id} className="inline-flex items-center gap-2">
@@ -201,42 +227,18 @@ const ImageSelector = ({
         }}
       />
       <div className="grid grid-cols-2 sm:grid-cols-4 items-center gap-2 w-full">
-        <FilterButton
-          active={typeFilter === "ICON"}
-          onClick={() => {
-            setSearchTerm("");
-            setTypeFilter((prev) => (prev === "ICON" ? "" : "ICON"));
-          }}
-        >
-          Icons
-        </FilterButton>
-        <FilterButton
-          active={typeFilter === "LANDSCAPE"}
-          onClick={() => {
-            setSearchTerm("");
-            setTypeFilter((prev) => (prev === "LANDSCAPE" ? "" : "LANDSCAPE"));
-          }}
-        >
-          Landscapes
-        </FilterButton>
-        <FilterButton
-          active={typeFilter === "PORTRAIT"}
-          onClick={() => {
-            setSearchTerm("");
-            setTypeFilter((prev) => (prev === "PORTRAIT" ? "" : "PORTRAIT"));
-          }}
-        >
-          Portraits
-        </FilterButton>
-        <FilterButton
-          active={typeFilter === "OTHER"}
-          onClick={() => {
-            setSearchTerm("");
-            setTypeFilter((prev) => (prev === "OTHER" ? "" : "OTHER"));
-          }}
-        >
-          Other
-        </FilterButton>
+        {typeFilters.filter(Boolean).map((type) => (
+          <FilterButton
+            key={type}
+            active={typeFilter === type}
+            onClick={() => {
+              setSearchTerm("");
+              setTypeFilter((prev) => (prev === type ? "" : type));
+            }}
+          >
+            {type.toLowerCase()}
+          </FilterButton>
+        ))}
       </div>
 
       <ImageDrawer

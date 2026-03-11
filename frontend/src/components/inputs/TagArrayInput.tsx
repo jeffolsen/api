@@ -1,12 +1,14 @@
 import { useFieldArray } from "react-hook-form";
-import {
-  FormInputProps,
-  FieldArrayMinAndMax,
-  FieldArrayMinMaxRule,
-} from "../forms/Form";
 import { useGetTags } from "../../network/tag";
 import Grid from "../common/Grid";
 import { useCallback } from "react";
+import {
+  AtomicFormComponentProps,
+  FromFormProps,
+  FieldArrayMinAndMax,
+  FieldArrayMinMaxRule,
+  FormError,
+} from "./Input";
 
 type TagnameField = {
   id: string;
@@ -20,12 +22,21 @@ type Tag = {
 type TagnameArrayFields = Array<TagnameField>;
 
 function TagArrayInput(
-  props: Omit<FormInputProps, "watch" | "registerOptions" | "componentName">,
+  props: Omit<
+    AtomicFormComponentProps & FromFormProps,
+    "watch" | "registerOptions" | "componentName"
+  >,
 ) {
-  const { name, control, rules } = props;
+  const {
+    dataName,
+    displayName,
+    control,
+    errors,
+    input: { rules },
+  } = props;
   const { fields, append, remove } = useFieldArray({
     control,
-    name,
+    name: dataName,
     rules,
   });
   const tags = useGetTags();
@@ -49,32 +60,35 @@ function TagArrayInput(
   }, [tags.data]);
 
   return (
-    <fieldset className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20">
-      <span className="label-text text-sm font-semibold text-neutral-content/70 w-full">
-        Tags{" "}
-        <FieldArrayMinAndMax
-          minLength={(rules as FieldArrayMinMaxRule)?.minLength?.value}
-          maxLength={(rules as FieldArrayMinMaxRule)?.maxLength?.value}
+    <>
+      <fieldset className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20">
+        <legend className="label-text text-sm font-semibold text-neutral-content/70 w-full">
+          {displayName}{" "}
+          <FieldArrayMinAndMax
+            minLength={(rules as FieldArrayMinMaxRule)?.minLength?.value}
+            maxLength={(rules as FieldArrayMinMaxRule)?.maxLength?.value}
+          />
+        </legend>
+        <Grid
+          columns={{ base: "2", sm: "3", md: "4" }}
+          items={getTags().map((tag: { name: string }) => (
+            <label
+              key={tag.name}
+              className="flex items-center gap-2 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                className="checkbox checkbox-primary"
+                checked={selectedTagnames.includes(tag.name)}
+                onChange={() => handleToggle(tag.name)}
+              />
+              <span>{tag.name}</span>
+            </label>
+          ))}
         />
-      </span>
-      <Grid
-        columns={{ base: "2", sm: "3", md: "4" }}
-        items={getTags().map((tag: { name: string }) => (
-          <label
-            key={tag.name}
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <input
-              type="checkbox"
-              className="checkbox checkbox-primary"
-              checked={selectedTagnames.includes(tag.name)}
-              onChange={() => handleToggle(tag.name)}
-            />
-            <span>{tag.name}</span>
-          </label>
-        ))}
-      />
-    </fieldset>
+      </fieldset>
+      <FormError error={errors[dataName]} />
+    </>
   );
 }
 

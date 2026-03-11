@@ -13,8 +13,8 @@ import clsx from "clsx";
 import Text from "../common/Text";
 import TextInput from "./TextInput";
 import TextAreaInput from "./TextAreaInput";
-// import ImageSelectInput from "./ImageSelectInput";
-// import TagArrayInput from "./TagArrayInput";
+import TagArrayInput from "./TagArrayInput";
+import ImageSelectArrayInput from "./ImageSelectArrayInput";
 
 export type FromFormProps = {
   control: Control;
@@ -85,16 +85,14 @@ export const FormInput = (props: FormComponentProps & FromFormProps) => {
     <TextInput {...props} />
   ) : componentName === "TextAreaInput" ? (
     <TextAreaInput {...props} />
+  ) : componentName === "ImageSelectArrayInput" ? (
+    <ImageSelectArrayInput {...props} />
+  ) : componentName === "TagArrayInput" ? (
+    <TagArrayInput {...props} />
   ) : (
-    // : componentName === "ImageSelectInput" ? (
-    //   <ImageSelectInput {...props} />
-    // ) : componentName === "TagArrayInput" ? (
-    //   <TagArrayInput {...props} />
-    // ) :
     // : componentName === "DateRangeSelectInput" ? (
     //   <DateRangeSelectInput {...props} />
     // )
-
     <p>Unsupported input type</p>
   );
 };

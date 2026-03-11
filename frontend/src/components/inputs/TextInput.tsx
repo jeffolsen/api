@@ -1,25 +1,39 @@
 import clsx from "clsx";
-import { FormInputProps } from "../forms/Form";
+import {
+  AtomicFormComponentProps,
+  FromFormProps,
+  RequiredLabel,
+  FormError,
+} from "./Input";
 
 export const TextInput = (
-  props: Omit<FormInputProps, "control" | "componentName" | "rules">,
+  props: Omit<AtomicFormComponentProps & FromFormProps, "control" | "rules">,
 ) => {
-  const { name, register, registerOptions, watch, ...rest } = props;
-  const required = !!registerOptions?.required;
-  const watchedValue = watch(name);
+  const { dataName, displayName, register, watch, errors, input } = props;
+  const required = !!input?.registerOpts?.required;
+  const watchedValue = watch(dataName);
+  const elementProps = {
+    ...(input?.element || {}),
+    placeholder: input?.element?.placeholder || displayName,
+    type: input?.element?.type || "text",
+  };
+  const registerProps = input?.registerOpts || {};
   return (
-    <label className={clsx(["form-control relative"])}>
-      {required && !watchedValue && (
-        <span className={clsx("text-error absolute top-3.5 left-2.5 text-lg")}>
-          *
-        </span>
-      )}
-      <input
-        className="input input-bordered flex-grow pl-6 text-sm"
-        {...register(name, registerOptions)}
-        {...rest}
-      />
-    </label>
+    <>
+      <label className={clsx(["form-control relative"])}>
+        <RequiredLabel
+          watchedValue={watchedValue}
+          required={required}
+          position="absolute"
+        />
+        <input
+          className="input input-bordered flex-grow pl-6 text-sm"
+          {...register(dataName, registerProps)}
+          {...elementProps}
+        />
+      </label>
+      <FormError error={errors[dataName]} />
+    </>
   );
 };
 
