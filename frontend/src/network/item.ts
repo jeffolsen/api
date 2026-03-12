@@ -26,7 +26,7 @@ export type CreateItemInput = {
   subtitle?: string;
   content?: string;
   imageIds?: number[];
-  tabNames?: string[];
+  tagNames?: string[];
   dateRanges?: CreateDateRange[];
 };
 
