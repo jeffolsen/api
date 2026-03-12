@@ -4,7 +4,7 @@ import Grid from "../common/Grid";
 import { useCallback } from "react";
 import {
   AtomicFormComponentProps,
-  FromFormProps,
+  ChildFromFormProps,
   FieldArrayMinAndMax,
   FieldArrayMinMaxRule,
   FormError,
@@ -23,7 +23,7 @@ type TagnameArrayFields = Array<TagnameField>;
 
 function TagArrayInput(
   props: Omit<
-    AtomicFormComponentProps & FromFormProps,
+    AtomicFormComponentProps & ChildFromFormProps,
     "watch" | "registerOptions" | "componentName"
   >,
 ) {
@@ -62,7 +62,7 @@ function TagArrayInput(
   return (
     <>
       <fieldset className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20">
-        <legend className="label-text text-sm font-semibold text-neutral-content/70 w-full">
+        <legend className="label-text text-sm font-semibold text-neutral-content/70 w-full float-start">
           {displayName}{" "}
           <FieldArrayMinAndMax
             minLength={(rules as FieldArrayMinMaxRule)?.minLength?.value}
@@ -87,7 +87,7 @@ function TagArrayInput(
           ))}
         />
       </fieldset>
-      <FormError error={errors[dataName]} />
+      <FormError error={errors} />
     </>
   );
 }

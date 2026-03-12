@@ -1,8 +1,8 @@
 import {
   CONTENT_INPUT,
   IMAGE_IDS_INPUT,
-  SUBTITLE_INPUT,
-  TITLE_INPUT,
+  DESCRIPTION_INPUT,
+  NAME_INPUT,
   TAGNAMES_INPUT,
   DATE_RANGES_INPUT,
   TITLE_DEFAULT,
@@ -18,8 +18,40 @@ import {
   FormWithHeading,
   FormReponseHandlerProps,
   FormWithHeadingProps,
-  Field,
 } from "./Form";
+
+type DateRangeFormValues = {
+  startAt: string;
+  endAt: string;
+  description: string;
+};
+
+type FormValues = {
+  title?: string;
+  subtitle?: string;
+  content?: string;
+  imageIds?: { imageId: number }[];
+  tagNames?: { tagname: string }[];
+  dateRanges?: DateRangeFormValues[];
+};
+
+const mapFormValuesToCreateItemInput = (
+  values: FormValues,
+): CreateItemInput => ({
+  title: values.title,
+  subtitle: values.subtitle,
+  content: values.content,
+  imageIds:
+    values.imageIds?.map((img: { imageId: number }) => img.imageId) || [],
+  tagNames:
+    values.tagNames?.map((tag: { tagname: string }) => tag.tagname) || [],
+  dateRanges:
+    values.dateRanges?.map((dateRange: DateRangeFormValues) => ({
+      startAt: dateRange.startAt,
+      endAt: dateRange.endAt,
+      description: dateRange.description,
+    })) || [],
+});
 
 function CreateItemForm({
   handleError,
@@ -34,16 +66,16 @@ function CreateItemForm({
       fields={[
         {
           componentName: "Subheading",
-          text: "Item content",
-        } as Field,
-        TITLE_INPUT,
-        SUBTITLE_INPUT,
+          displayName: "Item content",
+        },
+        NAME_INPUT,
+        DESCRIPTION_INPUT,
         CONTENT_INPUT,
         IMAGE_IDS_INPUT,
         {
           componentName: "Subheading",
-          text: "Item meta",
-        } as Field,
+          displayName: "Item meta",
+        },
         TAGNAMES_INPUT,
         DATE_RANGES_INPUT,
       ]}
@@ -59,7 +91,9 @@ function CreateItemForm({
       trySubmit={async (args) =>
         withFormHandling(
           async () => {
-            await createItem.mutateAsync(args as CreateItemInput);
+            await createItem.mutateAsync(
+              mapFormValuesToCreateItemInput(args as FormValues),
+            );
           },
           {
             onSuccess: handleSuccess,

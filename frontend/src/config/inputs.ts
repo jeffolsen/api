@@ -143,29 +143,29 @@ export const SLUG_INPUT = {
 } as FormComponentProps;
 export const SLUG_DEFAULT = { apiSlug: "" };
 
-export const TITLE_INPUT = {
-  dataName: "title",
-  displayName: "Title",
+export const NAME_INPUT = {
+  dataName: "name",
+  displayName: "Name",
   componentName: "TextInput",
   input: {
     registerOpts: {
-      required: "Title is required",
+      required: "Name is required",
     },
   },
 } as FormComponentProps;
-export const TITLE_DEFAULT = { title: "" };
+export const NAME_DEFAULT = { name: "" };
 
-export const SUBTITLE_INPUT = {
-  dataName: "subtitle",
-  displayName: "Subtitle",
+export const DESCRIPTION_INPUT = {
+  dataName: "description",
+  displayName: "Description",
   componentName: "TextInput",
   input: {
     registerOpts: {
-      required: "Subtitle is required",
+      required: "Description is required",
     },
   },
 } as FormComponentProps;
-export const SUBTITLE_DEFAULT = { subtitle: "" };
+export const DESCRIPTION_DEFAULT = { description: "" };
 
 export const CONTENT_INPUT = {
   dataName: "content",
@@ -215,26 +215,32 @@ export const DATE_RANGES_INPUT = {
       startAt: {
         dataName: "startAt",
         displayName: "Start At",
-        element: {
-          type: "datetime-local",
+        input: {
+          element: {
+            type: "datetime-local",
+          },
+          registerOpts: { required: "Start At is required" },
         },
-        registerOptions: { required: true },
       },
       endAt: {
         dataName: "endAt",
         displayName: "End At",
-        element: {
-          type: "datetime-local",
+        input: {
+          element: {
+            type: "datetime-local",
+          },
+          registerOpts: { required: "End At is required" },
         },
-        registerOptions: { required: true },
       },
       description: {
         dataName: "description",
         displayName: "Description",
-        element: {
-          type: "text",
+        input: {
+          element: {
+            type: "text",
+          },
+          registerOpts: { required: "Description is required" },
         },
-        registerOptions: { required: true },
       },
     },
     rules: {

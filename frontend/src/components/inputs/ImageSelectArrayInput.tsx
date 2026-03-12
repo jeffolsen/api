@@ -3,7 +3,7 @@ import { useFieldArray } from "react-hook-form";
 import { useGetImages } from "../../network/image";
 import {
   AtomicFormComponentProps,
-  FromFormProps,
+  ChildFromFormProps,
   FieldArrayMinAndMax,
   FieldArrayMinMaxRule,
   FormError,
@@ -84,7 +84,7 @@ function AddImageButton({ onClick }: { onClick: () => void }) {
 
 function ImageSelectInput(
   props: Omit<
-    AtomicFormComponentProps & FromFormProps,
+    AtomicFormComponentProps & ChildFromFormProps,
     "watch" | "registerOptions" | "componentName"
   >,
 ) {
@@ -151,7 +151,7 @@ function ImageSelectInput(
           />
         </span>
       </label>
-      <FormError error={errors[dataName]} />
+      <FormError error={errors} />
       <Modal isOpen={showImageSelector} setIsOpen={setShowImageSelector}>
         <ImageSelector
           images={images.data || []}
