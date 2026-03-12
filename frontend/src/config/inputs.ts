@@ -158,7 +158,7 @@ export const NAME_DEFAULT = { name: "" };
 export const DESCRIPTION_INPUT = {
   dataName: "description",
   displayName: "Description",
-  componentName: "TextInput",
+  componentName: "TextAreaInput",
   input: {
     registerOpts: {
       required: "Description is required",
@@ -166,18 +166,6 @@ export const DESCRIPTION_INPUT = {
   },
 } as FormComponentProps;
 export const DESCRIPTION_DEFAULT = { description: "" };
-
-export const CONTENT_INPUT = {
-  dataName: "content",
-  displayName: "Content",
-  componentName: "TextAreaInput",
-  input: {
-    registerOpts: {
-      required: "Content is required",
-    },
-  },
-} as FormComponentProps;
-export const CONTENT_DEFAULT = { content: "" };
 
 export const IMAGE_IDS_INPUT = {
   dataName: "imageIds",

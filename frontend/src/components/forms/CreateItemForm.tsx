@@ -1,13 +1,11 @@
 import {
-  CONTENT_INPUT,
   IMAGE_IDS_INPUT,
   DESCRIPTION_INPUT,
   NAME_INPUT,
   TAGNAMES_INPUT,
   DATE_RANGES_INPUT,
-  TITLE_DEFAULT,
-  SUBTITLE_DEFAULT,
-  CONTENT_DEFAULT,
+  NAME_DEFAULT,
+  DESCRIPTION_DEFAULT,
   IMAGE_IDS_DEFAULT,
   TAGNAMES_DEFAULT,
   DATE_RANGES_DEFAULT,
@@ -70,7 +68,6 @@ function CreateItemForm({
         },
         NAME_INPUT,
         DESCRIPTION_INPUT,
-        CONTENT_INPUT,
         IMAGE_IDS_INPUT,
         {
           componentName: "Subheading",
@@ -80,9 +77,8 @@ function CreateItemForm({
         DATE_RANGES_INPUT,
       ]}
       defaultValues={{
-        ...TITLE_DEFAULT,
-        ...SUBTITLE_DEFAULT,
-        ...CONTENT_DEFAULT,
+        ...NAME_DEFAULT,
+        ...DESCRIPTION_DEFAULT,
         ...IMAGE_IDS_DEFAULT,
         ...TAGNAMES_DEFAULT,
         ...DATE_RANGES_DEFAULT,
