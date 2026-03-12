@@ -130,6 +130,8 @@ export const ERROR_TAG_NOT_FOUND = "Tag not found";
 export const ERROR_ITEM_NOT_FOUND = "Item not found";
 export const ERROR_COMPONENT_NOT_FOUND = "Component not found";
 export const ERROR_FEED_NOT_FOUND = "Feed not found";
+export const ERROR_DATE_TIME_FORMAT = "Invalid date time format";
+export const ERROR_START_END_DATE = "Start date must be before end date";
 
 // resource limits
 export const MAX_DAILY_SYSTEM_EMAILS = 2800;

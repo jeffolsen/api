@@ -112,9 +112,9 @@ model Component {
 
 model Item {
   id          Int         @id @default(autoincrement())
-  title       String?
-  subtitle    String?
-  content     String?
+  name        String
+  description String?
+  sortName    String      @map("sort_name")
   isPrivate   Boolean     @default(true)
   createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -130,13 +130,14 @@ model Item {
 }
 
 model DateRange {
-  id        Int      @id @default(autoincrement())
-  startAt   DateTime
-  endAt     DateTime
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
-  item      Item     @relation("ItemDateRanges", fields: [itemId], references: [id], onDelete: Cascade)
-  itemId    Int
+  id          Int      @id @default(autoincrement())
+  description String?
+  startAt     DateTime
+  endAt       DateTime
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  item        Item     @relation("ItemDateRanges", fields: [itemId], references: [id], onDelete: Cascade)
+  itemId      Int
 
   @@map("date_ranges")
 }

@@ -36,20 +36,25 @@ export const getItemById: RequestHandler = catchErrors(
 );
 
 interface CreateItemBody {
-  title: string;
-  subtitle?: string;
-  content: string;
-  tags: TagName[];
+  name: string;
+  description: string;
   private: boolean;
+  tags: TagName[];
   images: number[];
+  dateRanges: {
+    startAt: string;
+    endAt: string;
+    description: string;
+  }[];
 }
 
 export const createItem: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const { title, subtitle, content, tags, images } = CreateItemSchema.parse({
-      ...(req.body as CreateItemBody),
-    });
+    const { name, description, sortName, tags, images, dateRanges } =
+      CreateItemSchema.parse({
+        ...(req.body as CreateItemBody),
+      });
 
     const existingTags = await prismaClient.tag.findMany({
       where: { name: { in: tags } },
@@ -60,9 +65,9 @@ export const createItem: RequestHandler = catchErrors(
 
     const item = await prismaClient.item.create({
       data: {
-        title,
-        content,
-        subtitle,
+        name,
+        description,
+        sortName,
         tags: { connect: tagIds },
         images: { create: [] },
         dateRanges: { create: [] },

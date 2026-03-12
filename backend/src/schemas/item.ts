@@ -1,17 +1,25 @@
 import { z } from "zod";
 import {
-  contentSchema,
-  subtitleSchema,
+  descriptionSchema,
   tagNameArraySchema,
-  titleSchema,
+  nameSchema,
   idArraySchema,
 } from "./properties";
+import { dateRangeArraySchema } from "./dateRange";
+import sortWord from "../util/sortWord";
 
 // controllers
-export const CreateItemSchema = z.object({
-  title: titleSchema.optional(),
-  subtitle: subtitleSchema.optional(),
-  content: contentSchema.optional(),
-  tags: tagNameArraySchema.optional(),
-  images: idArraySchema.optional(),
-});
+export const CreateItemSchema = z
+  .object({
+    name: nameSchema,
+    description: descriptionSchema.optional(),
+    tags: tagNameArraySchema.optional(),
+    images: idArraySchema.optional(),
+    dateRanges: dateRangeArraySchema.optional(),
+  })
+  .transform((data) => {
+    return {
+      ...data,
+      sortName: sortWord(data.name),
+    };
+  });

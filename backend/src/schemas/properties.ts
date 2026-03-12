@@ -6,6 +6,7 @@ import {
   ERROR_API_KEY_VALUE,
   ERROR_CODE_TYPE,
   ERROR_CODE_VALUE,
+  ERROR_DATE_TIME_FORMAT,
   ERROR_EMAIL_FORMAT,
   ERROR_ID,
   ERROR_PASSWORD_FORMAT,
@@ -30,6 +31,11 @@ export const verificationCodeTypeSchema = z.enum(
 
 export const idSchema = z.number(ERROR_ID);
 export const idArraySchema = z.array(z.number(ERROR_ID));
+export const dateTimeSchema = z
+  .string()
+  .refine((val) => !isNaN(Date.parse(val)), {
+    message: ERROR_DATE_TIME_FORMAT,
+  });
 
 export const userAgentSchema = z.string(ERROR_SESSION_USER_AGENT);
 
@@ -60,9 +66,8 @@ export const scopeSchema = z.union([
   z.literal(PROFILE_SESSION),
 ]);
 
-export const titleSchema = z.string();
-export const subtitleSchema = z.string();
-export const contentSchema = z.string();
+export const nameSchema = z.string();
+export const descriptionSchema = z.string();
 
 const tagArray = [
   TagName.BAR,
