@@ -39,6 +39,7 @@ function Form({
     watch,
     formState: { errors, isSubmitting },
   } = useForm({
+    mode: "onChange",
     defaultValues: { ...defaultValues },
   });
 
@@ -66,7 +67,7 @@ function Form({
       className={clsx(formStyles || "flex flex-col gap-4 w-full")}
       onSubmit={handleSubmit(onSubmit)}
     >
-      {fields.map(({ dataName, ...props }, index) => (
+      {fields.map(({ ...props }, index) => (
         <div
           key={index}
           className={clsx([
@@ -74,7 +75,6 @@ function Form({
           ])}
         >
           <FormInput
-            dataName={dataName}
             register={register}
             watch={watch}
             control={control}

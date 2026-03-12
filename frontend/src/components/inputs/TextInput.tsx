@@ -1,14 +1,17 @@
 import clsx from "clsx";
 import {
   AtomicFormComponentProps,
-  FromFormProps,
+  ChildFromFormProps,
   RequiredLabel,
   FormError,
 } from "./Input";
 
-export const TextInput = (
-  props: Omit<AtomicFormComponentProps & FromFormProps, "control" | "rules">,
-) => {
+export type TextInputProps = Omit<
+  AtomicFormComponentProps & ChildFromFormProps,
+  "control" | "rules" | "componentName"
+>;
+
+export const TextInput = (props: TextInputProps) => {
   const { dataName, displayName, register, watch, errors, input } = props;
   const required = !!input?.registerOpts?.required;
   const watchedValue = watch(dataName);
@@ -32,7 +35,7 @@ export const TextInput = (
           {...elementProps}
         />
       </label>
-      <FormError error={errors[dataName]} />
+      <FormError error={errors} />
     </>
   );
 };

@@ -6,8 +6,7 @@ import {
   Control,
   FieldErrors,
   FieldError,
-  FieldErrorsImpl,
-  Merge,
+  get,
 } from "react-hook-form";
 import clsx from "clsx";
 import Text from "../common/Text";
@@ -15,6 +14,7 @@ import TextInput from "./TextInput";
 import TextAreaInput from "./TextAreaInput";
 import TagArrayInput from "./TagArrayInput";
 import ImageSelectArrayInput from "./ImageSelectArrayInput";
+import DateRangeArrayInput from "./DateRangeArrayInput";
 
 export type FromFormProps = {
   control: Control;
@@ -25,8 +25,14 @@ export type FromFormProps = {
   }>;
 };
 
+// Props for child input components that receive a pre-extracted single field error
+export type ChildFromFormProps = Omit<FromFormProps, "errors"> & {
+  errors: FieldError | undefined;
+};
+
+export type DecorativeFormComponentName = "Subheading";
+
 export type AtomicFormComponentName =
-  | "Subheading"
   | "TextInput"
   | "TextAreaInput"
   | "DateTimeInput"
@@ -46,22 +52,28 @@ export type FormSectionProps = {
   dataName: string;
   displayName: string;
 };
-
+export type DecorativeFormComponentProps = {
+  componentName: DecorativeFormComponentName;
+  displayName: string;
+};
 export type AtomicFormComponentProps = {
   componentName: AtomicFormComponentName;
   input: FormInputProps;
 } & FormSectionProps;
+
+export type ChildInputProps = FormSectionProps & { input: FormInputProps };
 export type CompoundFormComponentProps = {
   componentName: CompoundFormComponentName;
   inputGroup: {
-    inputs: Record<string, FormInputProps & FormSectionProps>;
+    inputs: Record<string, ChildInputProps>;
     rules?: UseFieldArrayProps["rules"];
   };
 } & FormSectionProps;
 
 export type FormComponentProps =
   | AtomicFormComponentProps
-  | CompoundFormComponentProps;
+  | CompoundFormComponentProps
+  | DecorativeFormComponentProps;
 
 const FormSubheading = ({ displayName }: { displayName: string }) => {
   return (
@@ -78,27 +90,37 @@ const FormSubheading = ({ displayName }: { displayName: string }) => {
 };
 
 export const FormInput = (props: FormComponentProps & FromFormProps) => {
-  const { displayName, componentName } = props;
-  return componentName === "Subheading" ? (
-    <FormSubheading displayName={displayName} />
-  ) : componentName === "TextInput" ? (
-    <TextInput {...props} />
-  ) : componentName === "TextAreaInput" ? (
-    <TextAreaInput {...props} />
-  ) : componentName === "ImageSelectArrayInput" ? (
-    <ImageSelectArrayInput {...props} />
-  ) : componentName === "TagArrayInput" ? (
-    <TagArrayInput {...props} />
+  return props.componentName === "Subheading" ? (
+    <FormSubheading displayName={props.displayName} />
+  ) : props.componentName === "TextInput" ? (
+    <TextInput {...props} errors={get(props.errors || {}, props.dataName)} />
+  ) : props.componentName === "TextAreaInput" ? (
+    <TextAreaInput
+      {...props}
+      errors={get(props.errors || {}, props.dataName)}
+    />
+  ) : props.componentName === "ImageSelectArrayInput" ? (
+    <ImageSelectArrayInput
+      {...props}
+      errors={get(props.errors || {}, props.dataName)}
+    />
+  ) : props.componentName === "TagArrayInput" ? (
+    <TagArrayInput
+      {...props}
+      errors={get(props.errors || {}, props.dataName)}
+    />
+  ) : props.componentName === "DateRangeArrayInput" ? (
+    <DateRangeArrayInput
+      {...props}
+      errors={get(props.errors || {}, props.dataName)}
+    />
   ) : (
-    // : componentName === "DateRangeSelectInput" ? (
-    //   <DateRangeSelectInput {...props} />
-    // )
     <p>Unsupported input type</p>
   );
 };
 
-type FormErrorProps = {
-  error: Merge<FieldError, FieldErrorsImpl<object>> | undefined;
+export type FormErrorProps = {
+  error: FieldError | undefined;
 };
 
 export const FormError = ({ error }: FormErrorProps) => {
