@@ -33,7 +33,7 @@ function RequestDestroyApiKeyForm({
         ...PASSWORD_DEFAULT,
         ...defaultValues,
       }}
-      trySubmit={async (args) =>
+      submitAction={async (args) =>
         withFormHandling(
           async () => {
             await requestDestroyApiKey.mutateAsync(
@@ -66,7 +66,7 @@ function DestroyApiKeyWithOTPForm({
         ...SLUG_DEFAULT,
         ...defaultValues,
       }}
-      trySubmit={async (args) =>
+      submitAction={async (args) =>
         withFormHandling(
           async () => {
             await destroyApiKey.mutateAsync(args as DestroyApiKeyInput);

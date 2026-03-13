@@ -35,7 +35,7 @@ function RequestGenerateApiKeyForm({
         ...PASSWORD_DEFAULT,
         ...defaultValues,
       }}
-      trySubmit={async (args) =>
+      submitAction={async (args) =>
         withFormHandling(
           async () => {
             await requestGenerateApiKey.mutateAsync(
@@ -70,7 +70,7 @@ function GenerateApiKeyWithOTPForm({
         ...ORIGIN_DEFAULT,
         ...defaultValues,
       }}
-      trySubmit={async (args) =>
+      submitAction={async (args) =>
         withFormHandling(
           async () => {
             await generateApiKey.mutateAsync(args as GenerateApiKeyInput);

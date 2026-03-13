@@ -31,7 +31,7 @@ function RegisterForm({
         ...CONFIRM_PASSWORD_DEFAULT,
         ...defaultValues,
       }}
-      trySubmit={async (args) =>
+      submitAction={async (args) =>
         withFormHandling(
           async () => {
             await register.mutateAsync(args as RegisterFormInput);

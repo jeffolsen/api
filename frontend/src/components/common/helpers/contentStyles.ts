@@ -22,23 +22,15 @@ export type ButtonSize = "none" | "xs" | "sm" | "md" | "lg";
 
 export const buttonColorClasses = {
   none: "",
-  primary: "bg-primary text-primary-content",
-  secondary: "bg-secondary text-secondary-content",
-  accent: "bg-accent text-accent-content",
-  neutral: "bg-neutral text-neutral-content",
-  info: "bg-info text-info-content",
-  success: "bg-success text-success-content",
-  warning: "bg-warning text-warning-content",
-  error: "bg-error text-error-content",
+  primary: "btn-primary",
+  secondary: "btn-secondary",
+  accent: "btn-accent",
+  neutral: "btn-neutral",
+  info: "btn-info",
+  success: "btn-success",
+  warning: "btn-warning",
+  error: "btn-error",
+  disabled: "btn-disabled",
 };
 
-export type ButtonColor =
-  | "none"
-  | "primary"
-  | "secondary"
-  | "accent"
-  | "neutral"
-  | "info"
-  | "success"
-  | "warning"
-  | "error";
+export type ButtonColor = keyof typeof buttonColorClasses;

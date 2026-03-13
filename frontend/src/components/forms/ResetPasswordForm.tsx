@@ -43,7 +43,7 @@ function RequestResetPasswordForm({
         ...getEmail(),
         ...defaultValues,
       }}
-      trySubmit={async (args) =>
+      submitAction={async (args) =>
         withFormHandling(
           async () => {
             await requestReset.mutateAsync(args as RequestPasswordResetInput);
@@ -83,7 +83,7 @@ function ResetPasswordWithOTPForm({
         ...CONFIRM_PASSWORD_DEFAULT,
         ...defaultValues,
       }}
-      trySubmit={async (args) =>
+      submitAction={async (args) =>
         withFormHandling(
           async () => {
             await resetPassword.mutateAsync(
@@ -117,7 +117,7 @@ function ResetPasswordWithSessionForm({
         ...CONFIRM_NEW_PASSWORD_DEFAULT,
         ...defaultValues,
       }}
-      trySubmit={async (args) =>
+      submitAction={async (args) =>
         withFormHandling(
           async () => {
             await resetPassword.mutateAsync(

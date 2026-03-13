@@ -38,7 +38,7 @@ function RequestLogoutAllSessionsForm({
         ...PASSWORD_DEFAULT,
         ...defaultValues,
       }}
-      trySubmit={async (args) =>
+      submitAction={async (args) =>
         withFormHandling(
           async () => {
             await logoutAll.mutateAsync(args as RequestLogoutAllSessionsInput);
@@ -71,7 +71,7 @@ function LogoutAllSessionsWithOTPForm({
         ...VERIFICATION_CODE_DEFAULT,
         ...defaultValues,
       }}
-      trySubmit={async (args) =>
+      submitAction={async (args) =>
         withFormHandling(
           async () => {
             await logoutAll.mutateAsync(args as ResetSessionsWithOTPFormInput);
@@ -101,7 +101,7 @@ function LogoutAllSessionsWithSessionForm({
         ...PASSWORD_DEFAULT,
         ...defaultValues,
       }}
-      trySubmit={async (args) =>
+      submitAction={async (args) =>
         withFormHandling(
           async () => {
             await logoutAll.mutateAsync(args as LogoutAllWithSessionFormInput);

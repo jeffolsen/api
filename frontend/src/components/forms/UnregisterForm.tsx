@@ -33,7 +33,7 @@ function RequestUnregisterForm({
         ...PASSWORD_DEFAULT,
         ...defaultValues,
       }}
-      trySubmit={async (args) =>
+      submitAction={async (args) =>
         withFormHandling(
           async () => {
             await requestUnregister.mutateAsync(
@@ -65,7 +65,7 @@ function UnregisterWithOTPForm({
         ...VERIFICATION_CODE_DEFAULT,
         ...defaultValues,
       }}
-      trySubmit={async (args) =>
+      submitAction={async (args) =>
         withFormHandling(
           async () => {
             await unregisterWithOTP.mutateAsync(
