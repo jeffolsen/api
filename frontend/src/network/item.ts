@@ -19,12 +19,14 @@ export const useGetItems = () => {
 export type CreateDateRange = {
   startAt: string;
   endAt: string;
+  description?: string;
 };
 
 export type CreateItemInput = {
-  title?: string;
-  subtitle?: string;
-  content?: string;
+  name?: string;
+  description?: string;
+  publishedAt?: string | null;
+  expiresAt?: string | null;
   imageIds?: number[];
   tagNames?: string[];
   dateRanges?: CreateDateRange[];

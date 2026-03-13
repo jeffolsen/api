@@ -159,11 +159,6 @@ export const DESCRIPTION_INPUT = {
   dataName: "description",
   displayName: "Description",
   componentName: "TextAreaInput",
-  input: {
-    registerOpts: {
-      required: "Description is required",
-    },
-  },
 } as FormComponentProps;
 export const DESCRIPTION_DEFAULT = { description: "" };
 
@@ -237,3 +232,14 @@ export const DATE_RANGES_INPUT = {
   },
 } as FormComponentProps;
 export const DATE_RANGES_DEFAULT = { dateRanges: [] as CreateDateRange[] };
+
+export const PUBLISH_DEFAULT = {
+  publishedAt: null as string | null,
+  expiresAt: null as string | null,
+};
+
+export const subheading = (displayName: string) =>
+  ({
+    componentName: "Subheading",
+    displayName,
+  }) as FormComponentProps;

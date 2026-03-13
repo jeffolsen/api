@@ -9,9 +9,12 @@ import {
   IMAGE_IDS_DEFAULT,
   TAGNAMES_DEFAULT,
   DATE_RANGES_DEFAULT,
+  PUBLISH_DEFAULT,
+  subheading,
 } from "../../config/inputs";
 import { withFormHandling } from "../../network/api";
 import { CreateItemInput, useCreateItem } from "../../network/item";
+import PublishInput from "../inputs/PublishInput";
 import {
   FormWithHeading,
   FormReponseHandlerProps,
@@ -25,20 +28,22 @@ type DateRangeFormValues = {
 };
 
 type FormValues = {
-  title?: string;
-  subtitle?: string;
-  content?: string;
+  name?: string;
+  description?: string;
   imageIds?: { imageId: number }[];
   tagNames?: { tagname: string }[];
   dateRanges?: DateRangeFormValues[];
+  publishedAt?: string | null;
+  expiresAt?: string | null;
 };
 
 const mapFormValuesToCreateItemInput = (
   values: FormValues,
 ): CreateItemInput => ({
-  title: values.title,
-  subtitle: values.subtitle,
-  content: values.content,
+  name: values.name,
+  description: values.description,
+  publishedAt: values.publishedAt,
+  expiresAt: values.expiresAt,
   imageIds:
     values.imageIds?.map((img: { imageId: number }) => img.imageId) || [],
   tagNames:
@@ -62,17 +67,11 @@ function CreateItemForm({
   return (
     <FormWithHeading
       fields={[
-        {
-          componentName: "Subheading",
-          displayName: "Item content",
-        },
+        subheading("Item content"),
         NAME_INPUT,
         DESCRIPTION_INPUT,
         IMAGE_IDS_INPUT,
-        {
-          componentName: "Subheading",
-          displayName: "Item meta",
-        },
+        subheading("Item meta"),
         TAGNAMES_INPUT,
         DATE_RANGES_INPUT,
       ]}
@@ -82,9 +81,10 @@ function CreateItemForm({
         ...IMAGE_IDS_DEFAULT,
         ...TAGNAMES_DEFAULT,
         ...DATE_RANGES_DEFAULT,
+        ...PUBLISH_DEFAULT,
         ...defaultValues,
       }}
-      trySubmit={async (args) =>
+      submitAction={async (args) =>
         withFormHandling(
           async () => {
             await createItem.mutateAsync(
@@ -97,6 +97,7 @@ function CreateItemForm({
           },
         )
       }
+      SubmitInput={PublishInput}
       {...props}
     />
   );
