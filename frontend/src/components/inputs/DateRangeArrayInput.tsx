@@ -1,119 +1,135 @@
-import { FormInputProps } from "../forms/Form";
+// import clsx from "clsx";
+import { useFieldArray, get, FieldErrors, FieldError } from "react-hook-form";
 import {
-  useFieldArray,
-  UseFormRegister,
-  RegisterOptions,
-} from "react-hook-form";
+  CompoundFormComponentProps,
+  FromFormProps,
+  ChildInputProps,
+  FormError,
+} from "./Input";
 import Button, { XButton } from "../common/Button";
+import TextInput, { TextInputProps } from "./TextInput";
 
-const descriptionDefaultOptions = {
-  placeholder: "Description",
-  registerOptions: {
-    required: true,
-  },
-};
+function DateRangeSelectInput(
+  props: CompoundFormComponentProps & FromFormProps,
+) {
+  const {
+    dataName,
+    displayName,
+    control,
+    register,
+    watch,
+    errors,
+    inputGroup,
+  } = props;
+  const rules = inputGroup.rules;
+  const inputs = inputGroup.inputs;
 
-const startAtDefaultOptions = {
-  placeholder: "Start At",
-  registerOptions: {
-    required: true,
-    valueAsDate: true,
-  },
-};
-const endAtDefaultOptions = {
-  placeholder: "End At",
-  registerOptions: {
-    required: true,
-    valueAsDate: true,
-  },
-};
-
-function DateRangeSelectInput(props: Omit<FormInputProps, "componentName">) {
-  const { name, control, rules, register, registerOptions } = props;
   const { fields, append, remove } = useFieldArray({
     control,
-    name,
+    name: dataName,
     rules,
   });
 
   return (
-    <fieldset className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20">
-      <span className="label-text text-sm font-semibold text-neutral-content/70 w-full">
-        Date Ranges
-      </span>
-      {fields.map((field, index) => (
-        <DateRangeEntry
-          key={field.id}
-          index={index}
-          remove={remove}
-          register={register}
-          registerOptions={registerOptions}
-        />
-      ))}
-      <div>
-        <Button
-          color="primary"
-          onClick={() => {
-            append({});
-          }}
-        >
-          +
-        </Button>
-      </div>
-    </fieldset>
+    <>
+      <fieldset className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20">
+        <legend className="label-text text-sm font-semibold text-neutral-content/70 w-full float-start">
+          {displayName}{" "}
+        </legend>
+        {fields.map((field, index) => (
+          <DateRangeEntry
+            key={field.id}
+            index={index}
+            remove={remove}
+            register={register}
+            errors={errors}
+            inputs={inputs as DateRangeInputsProps}
+            watch={watch}
+            dataName={dataName}
+          />
+        ))}
+        <div>
+          <Button
+            color="primary"
+            onClick={() => {
+              append({});
+            }}
+          >
+            +
+          </Button>
+        </div>
+      </fieldset>
+      <FormError error={errors?.root as FieldError} />
+    </>
   );
 }
+
+export type DateRangeInputsProps = {
+  startAt: ChildInputProps;
+  endAt: ChildInputProps;
+  description: ChildInputProps;
+};
 
 function DateRangeEntry({
   index,
   remove,
   register,
+  watch,
+  errors,
+  inputs,
+  dataName,
+  ...props
 }: {
   index: number;
-  register: UseFormRegister<Record<string, unknown>>;
-  registerOptions: RegisterOptions | undefined;
   remove: (index: number) => void;
-}) {
-  const { registerOptions: descRegisterOptions, ...descRestProps } =
-    descriptionDefaultOptions;
-  const { registerOptions: startAtRegisterOptions, ...startAtRestProps } =
-    startAtDefaultOptions;
-  const { registerOptions: endAtRegisterOptions, ...endAtRestProps } =
-    endAtDefaultOptions;
+  inputs: DateRangeInputsProps;
+} & Omit<
+  TextInputProps,
+  "control" | "rules" | "displayName" | "input" | "errors"
+> & {
+    errors: FieldErrors<Record<string, unknown>>;
+  }) {
+  const startAt = {
+    ...(inputs?.startAt || {}),
+    dataName: `${dataName}.${index}.${inputs.startAt.dataName}`,
+  };
+  const startAtError = get(errors?.[index], `${inputs.startAt.dataName}`);
+  const endAt = {
+    ...(inputs?.endAt || {}),
+    dataName: `${dataName}.${index}.${inputs.endAt.dataName}`,
+  };
+  const endAtError = get(errors?.[index], `${inputs.endAt.dataName}`);
+  const description = {
+    ...(inputs?.description || {}),
+    dataName: `${dataName}.${index}.${inputs.description.dataName}`,
+  };
+  const descriptionError = get(
+    errors?.[index],
+    `${inputs.description.dataName}`,
+  );
+
   return (
-    <div className="flex gap-4 w-full">
+    <div className="flex gap-4 w-full" {...props}>
       <div className="flex flex-col gap-4 w-full text-neutral-content/70 text-sm">
-        <div className="flex gap-4">
-          <label className="form-control flex-1">
-            StartAt
-            <input
-              className="input input-bordered"
-              type="datetime-local"
-              {...register(`dateRanges.${index}.startAt`, {
-                ...startAtRegisterOptions,
-              })}
-              {...startAtRestProps}
-            />
-          </label>
-          <label className="form-control flex-1">
-            EndAt
-            <input
-              className="input input-bordered"
-              type="datetime-local"
-              {...register(`dateRanges.${index}.endAt`, {
-                ...endAtRegisterOptions,
-              })}
-              {...endAtRestProps}
-            />
-          </label>
+        <div className="flex gap-4 w-full">
+          <TextInput
+            register={register}
+            errors={startAtError}
+            watch={watch}
+            {...startAt}
+          />
+          <TextInput
+            register={register}
+            errors={endAtError}
+            watch={watch}
+            {...endAt}
+          />
         </div>
-        <input
-          className="input input-bordered"
-          type="text"
-          {...register(`dateRanges.${index}.description`, {
-            ...descRegisterOptions,
-          })}
-          {...descRestProps}
+        <TextInput
+          register={register}
+          errors={descriptionError}
+          watch={watch}
+          {...description}
         />
       </div>
       <div className="flex flex-none self-end h-[48px]">
