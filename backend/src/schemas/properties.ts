@@ -9,10 +9,12 @@ import {
   ERROR_DATE_TIME_FORMAT,
   ERROR_EMAIL_FORMAT,
   ERROR_ID,
+  ERROR_IDS_UNIQUE,
   ERROR_PASSWORD_FORMAT,
   ERROR_SESSION_USER_AGENT,
   NUMERIC_CODE_REGEX,
   PASSWORD_REGEX,
+  ERROR_TAGS_UNIQUE,
   SLUG_REGEX,
 } from "../config/constants";
 import { API_KEY_SESSION, PROFILE_SESSION } from "../util/scope";
@@ -30,7 +32,9 @@ export const verificationCodeTypeSchema = z.enum(
 );
 
 export const idSchema = z.number(ERROR_ID);
-export const idArraySchema = z.array(z.number(ERROR_ID));
+export const idArraySchema = z.array(z.number(ERROR_ID)).refine((items) => {
+  return new Set(items).size === items.length;
+}, ERROR_IDS_UNIQUE);
 export const dateTimeSchema = z
   .string()
   .refine((val) => !isNaN(Date.parse(val)), {
@@ -86,9 +90,11 @@ const tagArray = [
 
 export const tagNameSchema = z.enum(tagArray, ERROR_CODE_TYPE);
 
-export const tagNameArraySchema = z.array(
-  z.union(tagArray.map((val) => z.literal(val))),
-);
+export const tagNameArraySchema = z
+  .array(z.union(tagArray.map((val) => z.literal(val))))
+  .refine((items) => {
+    return new Set(items).size === items.length;
+  }, ERROR_TAGS_UNIQUE);
 
 export const tagNameUniqueArraySchema = z
   .union(tagArray.map((val) => z.literal(val)))

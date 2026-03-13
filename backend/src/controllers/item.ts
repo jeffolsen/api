@@ -51,7 +51,7 @@ interface CreateItemBody {
 export const createItem: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const { name, description, sortName, tags, images, dateRanges } =
+    const { name, description, sortName, tags, imageIds, dateRanges } =
       CreateItemSchema.parse({
         ...(req.body as CreateItemBody),
       });
@@ -69,7 +69,9 @@ export const createItem: RequestHandler = catchErrors(
         description,
         sortName,
         tags: { connect: tagIds },
-        images: { create: [] },
+        images: {
+          create: imageIds.map((imageId) => ({ imageId })),
+        },
         dateRanges: { create: [] },
         authorId: profileId,
         isPrivate: true,

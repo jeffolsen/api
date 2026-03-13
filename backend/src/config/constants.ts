@@ -132,6 +132,8 @@ export const ERROR_COMPONENT_NOT_FOUND = "Component not found";
 export const ERROR_FEED_NOT_FOUND = "Feed not found";
 export const ERROR_DATE_TIME_FORMAT = "Invalid date time format";
 export const ERROR_START_END_DATE = "Start date must be before end date";
+export const ERROR_TAGS_UNIQUE = "Tags must be unique";
+export const ERROR_IDS_UNIQUE = "IDs must be unique";
 
 // resource limits
 export const MAX_DAILY_SYSTEM_EMAILS = 2800;

@@ -13,9 +13,9 @@ export const CreateItemSchema = z
   .object({
     name: nameSchema,
     description: descriptionSchema.optional(),
-    tags: tagNameArraySchema.optional(),
-    images: idArraySchema.optional(),
-    dateRanges: dateRangeArraySchema.optional(),
+    tags: tagNameArraySchema.default([]),
+    imageIds: idArraySchema.default([]),
+    dateRanges: dateRangeArraySchema.default([]),
   })
   .transform((data) => {
     return {
