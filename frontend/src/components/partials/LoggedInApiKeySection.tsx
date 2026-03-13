@@ -48,8 +48,10 @@ function LoggedInApiKeySection() {
                   destroy this API key.
                 </Text>
                 <DestroyApiKeyWithOTPForm
-                  submitButtonColor="error"
-                  submitButtonText="Destroy API Key"
+                  submitInputConfig={{
+                    color: "error",
+                    text: "Destroy API Key",
+                  }}
                   defaultValues={{
                     apiSlug: apiKey.slug,
                     origin: apiKey.origin,
@@ -58,8 +60,10 @@ function LoggedInApiKeySection() {
               </>
             ) : (
               <RequestDestroyApiKeyForm
-                submitButtonColor="error"
-                submitButtonText="Destroy API Key"
+                submitInputConfig={{
+                  color: "error",
+                  text: "Destroy API Key",
+                }}
               />
             )}
           </RevealCard>
@@ -77,13 +81,17 @@ function LoggedInApiKeySection() {
           >
             {otpStatus === OTP_STATUS_CREATE_API_KEY ? (
               <GenerateApiKeyWithOTPForm
-                submitButtonText="Generate API Key"
-                submitButtonColor="success"
+                submitInputConfig={{
+                  color: "success",
+                  text: "Generate API Key",
+                }}
               />
             ) : (
               <RequestGenerateApiKeyForm
-                submitButtonText="Generate API Key"
-                submitButtonColor="success"
+                submitInputConfig={{
+                  color: "success",
+                  text: "Generate API Key",
+                }}
               />
             )}
           </RevealCard>

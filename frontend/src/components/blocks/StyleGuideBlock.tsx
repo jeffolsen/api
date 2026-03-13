@@ -6,14 +6,11 @@ import Block, { BlockProps } from "./Block";
 import Modal from "../layout/Modal";
 import { useState } from "react";
 
-import { CreateItemForm } from "../forms/CreateItemForm";
-
 function StyleGuideBlock(props: BlockProps) {
   const [openModal, setOpenModal] = useState(false);
 
   return (
     <Block {...props}>
-      <CreateItemForm heading="Create Item" submitButtonText="Create Item" />
       <HeadingLevelProvider>
         <Heading headingSize="xxl" headingStyles="uppercase">
           Heading xxl

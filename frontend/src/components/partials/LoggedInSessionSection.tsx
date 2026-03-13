@@ -15,8 +15,7 @@ function LogoutAllModalContent() {
         logout of all sessions
       </Text>
       <LogoutAllSessionsWithSessionForm
-        submitButtonText="Logout"
-        submitButtonColor="error"
+        submitInputConfig={{ text: "Logout", color: "error" }}
       />
     </>
   );

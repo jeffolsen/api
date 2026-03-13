@@ -3,9 +3,9 @@ import { useForm } from "react-hook-form";
 import clsx from "clsx";
 import toast from "react-hot-toast";
 import Heading, { HeadingProps, HeadingLevelProvider } from "../common/Heading";
-import Button from "../common/Button";
-import { ButtonColor } from "../common/helpers/contentStyles";
 import FormInput, { FormComponentProps } from "../inputs/Input";
+import FormSubmit, { FormSubmitProps } from "../inputs/FormSubmit";
+import { FC } from "react";
 
 export type SubmitArgs = Record<string, unknown>;
 
@@ -17,18 +17,18 @@ export type FormReponseHandlerProps = {
 type FormProps = {
   fields?: FormComponentProps[];
   defaultValues?: Record<string, unknown>;
-  trySubmit?: (args: SubmitArgs) => Promise<void>;
-  submitButtonText?: string;
-  submitButtonColor?: ButtonColor;
+  submitAction?: (args: SubmitArgs) => Promise<void>;
+  SubmitInput?: FC<FormSubmitProps>;
+  submitInputConfig?: FormSubmitProps["submitInputConfig"];
   formStyles?: string;
 };
 
 function Form({
   fields = [],
   defaultValues = {},
-  trySubmit = async () => {},
-  submitButtonText,
-  submitButtonColor = "primary",
+  submitAction = async () => {},
+  SubmitInput = FormSubmit,
+  submitInputConfig = {},
   formStyles,
 }: FormProps) {
   const {
@@ -47,13 +47,9 @@ function Form({
     reset(defaultValues);
   }, [defaultValues, reset]);
 
-  useEffect(() => {
-    console.log("Form errors:", errors);
-  }, [errors]);
-
   const onSubmit = async (args: SubmitArgs) => {
     try {
-      await trySubmit(args);
+      await submitAction(args);
     } catch (error) {
       const errorData = JSON.parse((error as Error).message);
       errorData?.errors?.forEach((err: { message: string }) => {
@@ -62,11 +58,10 @@ function Form({
     }
   };
 
+  const triggerSubmit = handleSubmit(onSubmit);
+
   return (
-    <form
-      className={clsx(formStyles || "flex flex-col gap-4 w-full")}
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <form className={clsx(formStyles || "flex flex-col gap-4 w-full")}>
       {fields.map(({ ...props }, index) => (
         <div
           key={index}
@@ -83,12 +78,14 @@ function Form({
           />
         </div>
       ))}
-      <Button
-        as="submit"
-        color={submitButtonColor}
-        disabled={isSubmitting}
-        value={submitButtonText || "Submit"}
-        className={clsx(["sm:self-end", { disabled: isSubmitting }])}
+      <SubmitInput
+        isSubmitting={isSubmitting}
+        triggerSubmit={triggerSubmit}
+        register={register}
+        watch={watch}
+        control={control}
+        errors={errors}
+        submitInputConfig={submitInputConfig}
       />
     </form>
   );

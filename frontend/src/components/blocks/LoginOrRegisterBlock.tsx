@@ -94,7 +94,7 @@ function RequestLoginOrLoginWithOtp({ ...props }: TabPanelProps) {
           headingSize="md"
           headingStyles={"text-center uppercase font-bold text-accent"}
           headingDecorator="strike"
-          submitButtonText="Login"
+          submitInputConfig={{ text: "Login" }}
           {...props}
         />
       ) : (
@@ -134,7 +134,7 @@ function RequestLogoutAllModalContent({
             Enter the OTP sent to your email.
           </Text>
           <LogoutAllSessionsWithOTPForm
-            submitButtonText="Logout of all sessions"
+            submitInputConfig={{ text: "Logout of all sessions" }}
             handleSuccess={() => {
               toast.success("You have been logged out of all sessions.");
               setTabSelected("Login");
@@ -150,8 +150,10 @@ function RequestLogoutAllModalContent({
             here.
           </Text>
           <RequestLogoutAllSessionsForm
-            submitButtonText="Logout of all sessions"
-            submitButtonColor="error"
+            submitInputConfig={{
+              color: "error",
+              text: "Logout of all sessions",
+            }}
           />
         </>
       )}
@@ -173,7 +175,9 @@ function RequestResetPasswordOrResetWithOtp({
         headingSize="md"
         headingStyles={"text-center uppercase font-bold text-accent"}
         headingDecorator="strike"
-        submitButtonText="Reset Password"
+        submitInputConfig={{
+          text: "Reset Password",
+        }}
         handleSuccess={() => {
           toast.success("Password reset successful! You can now log in.");
           setTabSelected("Login");

@@ -22,8 +22,7 @@ function LoggedInDeleteProfileSection() {
         buttonColor="primary"
       >
         <ResetPasswordWithSessionForm
-          submitButtonColor="primary"
-          submitButtonText="Change Password"
+          submitInputConfig={{ text: "Change Password" }}
         />
       </RevealCard>
       <RevealCard
@@ -38,13 +37,17 @@ function LoggedInDeleteProfileSection() {
       >
         {otpStatus === OTP_STATUS_DELETE_PROFILE ? (
           <UnregisterWithOTPForm
-            submitButtonColor="error"
-            submitButtonText="Delete Profile"
+            submitInputConfig={{
+              color: "error",
+              text: "Delete Profile",
+            }}
           />
         ) : (
           <RequestUnregisterForm
-            submitButtonColor="error"
-            submitButtonText="Delete Profile"
+            submitInputConfig={{
+              color: "error",
+              text: "Delete Profile",
+            }}
           />
         )}
       </RevealCard>
