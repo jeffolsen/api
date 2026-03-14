@@ -9,6 +9,7 @@ export type BlockUrlIdentifier = {
 
 export interface BlockProps {
   path?: string;
+  params?: Record<string, string>;
   title: string;
   id: number;
   settings: {

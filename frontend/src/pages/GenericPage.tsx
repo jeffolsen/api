@@ -8,7 +8,25 @@ import Loading from "../components/common/Loading";
 export default function GenericPage() {
   const location = useLocation();
   const path = location.pathname.replace(/^\/|\/$/g, "") || "home";
-  const pageData: PageData = pages[path] || pages["404"];
+
+  let pageData: PageData = pages[path];
+  const params: Record<string, string> = {};
+
+  if (!pageData) {
+    for (const key of Object.keys(pages)) {
+      if (!key.includes(":")) continue;
+      const pattern = key.replace(/:([^/]+)/g, "([^/]+)");
+      const match = path.match(new RegExp(`^${pattern}$`));
+      if (match) {
+        pageData = pages[key];
+        const paramNames = [...key.matchAll(/:([^/]+)/g)].map((m) => m[1]);
+        paramNames.forEach((name, i) => (params[name] = match[i + 1]));
+        break;
+      }
+    }
+  }
+
+  pageData = pageData || pages["404"];
   const { isAuthenticated } = useAuthState();
 
   const isLoggedIn = isAuthenticated();
@@ -30,7 +48,7 @@ export default function GenericPage() {
         .filter((block) => block !== undefined)
         .map((block, index) => {
           const { type, data } = block;
-          const props = { ...data, path };
+          const props = { ...data, path, params };
           return (
             <Suspense key={index} fallback={<Loading />}>
               {type === "404" ? (
@@ -70,6 +88,11 @@ export default function GenericPage() {
                 />
               ) : type === "styleGuide" ? (
                 <LazyLoadedStyleGuideBlock
+                  key={index}
+                  {...(props as BlockProps)}
+                />
+              ) : type === "editItem" ? (
+                <LazyLoadedEditItemBlock
                   key={index}
                   {...(props as BlockProps)}
                 />
@@ -144,4 +167,7 @@ const LazyLoadedCreateItemBlock = lazy(
 );
 const LazyLoadedStyleGuideBlock = lazy(
   () => import("../components/blocks/StyleGuideBlock"),
+);
+const LazyLoadedEditItemBlock = lazy(
+  () => import("../components/blocks/EditItemBlock"),
 );

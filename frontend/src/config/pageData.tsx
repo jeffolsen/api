@@ -72,6 +72,22 @@ const pages = {
       },
     ],
   },
+  "items/:id": {
+    blocks: [
+      {
+        type: "editItem",
+        data: {
+          id: 3,
+          title: "Edit item",
+          settings: {
+            isprimaryContent: true,
+            showOnLoggedinState: "LOGGED_IN",
+            width: "md",
+          },
+        },
+      },
+    ],
+  },
   feeds: {
     blocks: [
       {
