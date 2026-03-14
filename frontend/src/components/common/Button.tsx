@@ -107,12 +107,28 @@ export const XButton = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ ...props }, ref) => {
     const { className, ...restProps } = props;
     const classes = clsx(
-      "btn btn-circle btn-ghost border-white/50",
+      "btn btn-circle btn-ghost border-neutral-content/20 text-neutral-content/70",
       className || "absolute right-2 top-2 btn-xs",
     );
     return (
       <Button as="button" ref={ref} className={classes} {...restProps}>
         ✕
+      </Button>
+    );
+  },
+);
+
+export const PlusButton = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ ...props }, ref) => {
+    const { className, ...restProps } = props;
+    const classes = clsx([
+      "flex items-center justify-center",
+      "btn btn-ghost border-base-content/20 text-primary-content/70",
+      className,
+    ]);
+    return (
+      <Button as="button" ref={ref} className={classes} {...restProps}>
+        +
       </Button>
     );
   },
