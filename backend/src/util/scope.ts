@@ -11,6 +11,7 @@ import {
   READ_COMPONENT_SCOPE,
   READ_ITEM_SCOPE,
   READ_TAG_SCOPE,
+  CREATE_ITEM_SCOPE,
 } from "../config/constants";
 
 export const defaultProfileScope = () =>
@@ -23,6 +24,7 @@ export const defaultProfileScope = () =>
     READ_VERIFICATION_CODE_SCOPE,
     READ_API_KEY_SCOPE,
     CREATE_API_KEY_SCOPE,
+    CREATE_ITEM_SCOPE,
     READ_TAG_SCOPE,
     READ_ITEM_SCOPE,
     READ_COMPONENT_SCOPE,
