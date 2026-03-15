@@ -222,7 +222,6 @@ export const DATE_RANGES_INPUT = {
           element: {
             type: "text",
           },
-          registerOpts: { required: "Description is required" },
         },
       },
     },

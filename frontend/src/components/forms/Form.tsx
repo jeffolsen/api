@@ -11,7 +11,7 @@ export type SubmitArgs = Record<string, unknown>;
 
 export type FormReponseHandlerProps = {
   handleError?: (error: Error) => void;
-  handleSuccess?: () => void;
+  handleSuccess?: (args: SubmitArgs) => void;
 };
 
 type FormProps = {

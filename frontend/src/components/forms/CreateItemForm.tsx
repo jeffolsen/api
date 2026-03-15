@@ -87,7 +87,7 @@ function CreateItemForm({
       submitAction={async (args) =>
         withFormHandling(
           async () => {
-            await createItem.mutateAsync(
+            return createItem.mutateAsync(
               mapFormValuesToCreateItemInput(args as FormValues),
             );
           },
