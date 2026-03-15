@@ -111,16 +111,18 @@ export const withErrorHandling = async <T>(
   }
 };
 
+export type ResArgs = Record<string, unknown>;
+
 export const withFormHandling = async <T>(
   fn: () => Promise<T>,
   options?: {
-    onSuccess?: () => void;
+    onSuccess?: (args: ResArgs) => void;
     onError?: (error: Error) => void;
   },
 ): Promise<void> => {
   try {
-    await fn();
-    options?.onSuccess?.();
+    const result = await fn();
+    options?.onSuccess?.(result as ResArgs);
   } catch (error) {
     if (options?.onError) {
       options.onError(error as Error);

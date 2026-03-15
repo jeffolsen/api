@@ -40,9 +40,8 @@ export const useCreateItem = () => {
     mutationFn: async (data: CreateItemInput) =>
       withErrorHandling(async () => {
         console.log("Creating item with data:", data);
-        return data;
-        // const response = await api.post(ITEMS_ENDPOINT, data);
-        // return response.data;
+        const response = await api.post(ITEMS_ENDPOINT, data);
+        return response.data;
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [ITEMS_KEY] });
