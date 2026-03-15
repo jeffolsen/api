@@ -9,6 +9,7 @@ import {
   FieldArrayMinMaxRule,
   FormError,
 } from "./Input";
+import clsx from "clsx";
 
 type TagnameField = {
   id: string;
@@ -59,6 +60,11 @@ function TagArrayInput(
     return [];
   }, [tags.data]);
 
+  const canSelectTags =
+    ((rules as FieldArrayMinMaxRule)?.minLength?.value || 0) +
+      selectedTagnames.length <
+    ((rules as FieldArrayMinMaxRule)?.maxLength?.value || Infinity);
+
   return (
     <>
       <fieldset className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20">
@@ -78,9 +84,19 @@ function TagArrayInput(
             >
               <input
                 type="checkbox"
-                className="checkbox checkbox-primary"
+                className={clsx(
+                  "checkbox",
+                  !selectedTagnames.includes(tag.name) && !canSelectTags
+                    ? "checkbox-disabled"
+                    : !selectedTagnames.includes(tag.name)
+                      ? "checkbox-neutral"
+                      : "checkbox-primary",
+                )}
                 checked={selectedTagnames.includes(tag.name)}
                 onChange={() => handleToggle(tag.name)}
+                disabled={
+                  !selectedTagnames.includes(tag.name) && !canSelectTags
+                }
               />
               <span>{tag.name}</span>
             </label>
