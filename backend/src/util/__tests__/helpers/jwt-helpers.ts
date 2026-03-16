@@ -6,12 +6,12 @@ import jwt from "jsonwebtoken";
 export const createValidAccessToken = (
   sessionId: number,
   secret: string,
-  expiresAt?: Date,
+  expiredAt?: Date,
 ) => {
   return jwt.sign(
     {
       sessionId,
-      expiresAt: expiresAt || new Date(Date.now() + 15 * 60 * 1000),
+      expiredAt: expiredAt || new Date(Date.now() + 15 * 60 * 1000),
     },
     secret,
     { expiresIn: "15m" },

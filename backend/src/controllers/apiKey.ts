@@ -137,7 +137,7 @@ export const connect: RequestHandler<
 
   setAuthCookies({
     res,
-    sessionExpiresAt: session.expiresAt,
+    sessionexpiredAt: session.expiredAt,
     ...tokens,
   }).sendStatus(OK);
 });

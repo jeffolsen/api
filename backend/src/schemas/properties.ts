@@ -35,11 +35,7 @@ export const idSchema = z.number(ERROR_ID);
 export const idArraySchema = z.array(z.number(ERROR_ID)).refine((items) => {
   return new Set(items).size === items.length;
 }, ERROR_IDS_UNIQUE);
-export const dateTimeSchema = z
-  .string()
-  .refine((val) => !isNaN(Date.parse(val)), {
-    message: ERROR_DATE_TIME_FORMAT,
-  });
+export const dateTimeSchema = z.iso.datetime();
 
 export const userAgentSchema = z.string(ERROR_SESSION_USER_AGENT);
 
@@ -96,12 +92,6 @@ export const tagNameArraySchema = z
     return new Set(items).size === items.length;
   }, ERROR_TAGS_UNIQUE);
 
-export const tagNameUniqueArraySchema = z
-  .union(tagArray.map((val) => z.literal(val)))
-  .refine((items) => {
-    return new Set(items).size === items.length;
-  });
-
 const imageTypeArray = [
   ImageType.ICON,
   ImageType.LANDSCAPE,
@@ -110,3 +100,22 @@ const imageTypeArray = [
 ] as const;
 
 export const imageTypeSchema = z.enum(imageTypeArray, ERROR_CODE_TYPE);
+
+const validItemSortValues = [
+  "name",
+  "publishedAt",
+  "expiredAt",
+  "-name",
+  "-publishedAt",
+  "-expiredAt",
+] as const;
+
+export type ItemSortValues = keyof typeof validItemSortValues;
+
+export const itemSortSchema = z.enum(validItemSortValues, "Invalid sort value");
+
+export const itemsSortArraySchema = z
+  .array(z.union(validItemSortValues.map((val) => z.literal(val))))
+  .refine((items) => {
+    return new Set(items).size === items.length;
+  }, "Sort values must be unique");

@@ -9,6 +9,8 @@ import verificationCodeRoutes from "./routes/verificationCode";
 import feedRoutes from "./routes/feed";
 import tagRoutes from "./routes/tag";
 import itemRoutes from "./routes/item";
+import itemTagRoutes from "./routes/itemTag";
+import itemImageRoutes from "./routes/itemImage";
 import componentRoutes from "./routes/component";
 import apiKeyRoutes from "./routes/apiKey";
 import imageRoutes from "./routes/image";
@@ -53,6 +55,8 @@ app.use(SESSION_ROUTES, sessionRoutes);
 app.use(IMAGE_ROUTES, imageRoutes);
 app.use(TAG_ROUTES, authenticate, tagRoutes);
 app.use(ITEM_ROUTES, authenticate, itemRoutes);
+app.use(ITEM_ROUTES, authenticate, itemTagRoutes);
+app.use(ITEM_ROUTES, authenticate, itemImageRoutes);
 app.use(COMPONENT_ROUTES, authenticate, componentRoutes);
 app.use(FEED_ROUTES, authenticate, feedRoutes);
 

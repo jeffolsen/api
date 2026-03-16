@@ -64,7 +64,7 @@ describe("setAuthCookies", () => {
 
       setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -84,7 +84,7 @@ describe("setAuthCookies", () => {
 
       setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -104,7 +104,7 @@ describe("setAuthCookies", () => {
 
       setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -120,7 +120,7 @@ describe("setAuthCookies", () => {
 
       const result = setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -137,7 +137,7 @@ describe("setAuthCookies", () => {
 
       setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -148,14 +148,14 @@ describe("setAuthCookies", () => {
       expect(accessTokenCall[2]).toHaveProperty("expires", ACCESS_TOKEN_EXPIRY);
     });
 
-    it("should set refreshToken with sessionExpiresAt", () => {
+    it("should set refreshToken with sessionexpiredAt", () => {
       const res = createMockResponse();
       const accessToken = "test-access-token";
       const refreshToken = "test-refresh-token";
 
       setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -173,7 +173,7 @@ describe("setAuthCookies", () => {
 
       setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -193,7 +193,7 @@ describe("setAuthCookies", () => {
 
       setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -210,7 +210,7 @@ describe("setAuthCookies", () => {
 
       setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -230,7 +230,7 @@ describe("setAuthCookies", () => {
 
       setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -251,7 +251,7 @@ describe("setAuthCookies", () => {
 
       setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -270,7 +270,7 @@ describe("setAuthCookies", () => {
 
       const result = setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -294,7 +294,7 @@ describe("setAuthCookies", () => {
 
       const result = setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -311,7 +311,7 @@ describe("setAuthCookies", () => {
 
       setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -336,7 +336,7 @@ describe("setAuthCookies", () => {
 
       setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -345,7 +345,7 @@ describe("setAuthCookies", () => {
       expect(resMock.cookie).toHaveBeenCalledTimes(2);
     });
 
-    it("should handle expired sessionExpiresAt (past date)", () => {
+    it("should handle expired sessionexpiredAt (past date)", () => {
       const res = createMockResponse();
       const accessToken = "test-access-token";
       const refreshToken = "test-refresh-token";
@@ -353,7 +353,7 @@ describe("setAuthCookies", () => {
 
       setAuthCookies({
         res,
-        sessionExpiresAt: pastDate,
+        sessionexpiredAt: pastDate,
         accessToken,
         refreshToken,
       });
@@ -363,7 +363,7 @@ describe("setAuthCookies", () => {
       expect(refreshTokenCall[2]).toHaveProperty("expires", pastDate);
     });
 
-    it("should handle far future sessionExpiresAt", () => {
+    it("should handle far future sessionexpiredAt", () => {
       const res = createMockResponse();
       const accessToken = "test-access-token";
       const refreshToken = "test-refresh-token";
@@ -371,7 +371,7 @@ describe("setAuthCookies", () => {
 
       setAuthCookies({
         res,
-        sessionExpiresAt: futureDate,
+        sessionexpiredAt: futureDate,
         accessToken,
         refreshToken,
       });
@@ -388,7 +388,7 @@ describe("setAuthCookies", () => {
 
       setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -415,7 +415,7 @@ describe("setAuthCookies", () => {
 
       setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });
@@ -436,7 +436,7 @@ describe("setAuthCookies", () => {
 
       setAuthCookies({
         res,
-        sessionExpiresAt: SESSION_EXPIRY,
+        sessionexpiredAt: SESSION_EXPIRY,
         accessToken,
         refreshToken,
       });

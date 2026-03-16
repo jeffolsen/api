@@ -79,6 +79,7 @@ export const DELETE_PROFILE_SCOPE = "auth:delete-profile";
 export const CREATE_API_KEY_SCOPE = "auth:create-apiKey";
 // image scopes
 export const READ_IMAGE_SCOPE = "read:image";
+export const DELETE_IMAGE_SCOPE = "delete:image";
 
 // http codes
 export const OK = 200;

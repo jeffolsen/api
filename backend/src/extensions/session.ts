@@ -14,7 +14,7 @@ export const sessionExtension = Prisma.defineExtension((client) => {
           return await newClient.session.create({
             data: {
               ...(await SessionCreateTransform.parseAsync(data)),
-              expiresAt: getNewRefreshTokenExpirationDate(),
+              expiredAt: getNewRefreshTokenExpirationDate(),
             },
           });
         },
@@ -23,7 +23,7 @@ export const sessionExtension = Prisma.defineExtension((client) => {
             return await newClient.session.update({
               where: {
                 id,
-                expiresAt: {
+                expiredAt: {
                   gt: new Date(Date.now()),
                 },
               },
@@ -40,7 +40,7 @@ export const sessionExtension = Prisma.defineExtension((client) => {
             return await newClient.session.updateMany({
               where: {
                 profileId,
-                expiresAt: {
+                expiredAt: {
                   gt: new Date(Date.now()),
                 },
               },
@@ -56,7 +56,7 @@ export const sessionExtension = Prisma.defineExtension((client) => {
           const sessions = await newClient.session.findMany({
             where: {
               profileId,
-              expiresAt: {
+              expiredAt: {
                 gt: new Date(Date.now()),
               },
               endedAt: null,
@@ -71,13 +71,13 @@ export const sessionExtension = Prisma.defineExtension((client) => {
     result: {
       session: {
         isCurrent: {
-          needs: { expiresAt: true, endedAt: true },
+          needs: { expiredAt: true, endedAt: true },
           compute(session) {
             return () => {
               return (
                 !session.endedAt &&
-                (session.expiresAt === null ||
-                  date(session.expiresAt).isAfterNow())
+                (session.expiredAt === null ||
+                  date(session.expiredAt).isAfterNow())
               );
             };
           },

@@ -17,10 +17,10 @@ const authenticate: RequestHandler = async (
 
   const payload = await verifyAccessToken(accessToken);
 
-  throwError(payload?.expiresAt, UNAUTHORIZED, ERROR_INVALID_TOKEN);
+  throwError(payload?.expiredAt, UNAUTHORIZED, ERROR_INVALID_TOKEN);
 
-  const { sessionId, expiresAt } = payload;
-  const accessTokenNotExpired = date(expiresAt).isAfterNow();
+  const { sessionId, expiredAt } = payload;
+  const accessTokenNotExpired = date(expiredAt).isAfterNow();
 
   throwError(accessTokenNotExpired, UNAUTHORIZED, ERROR_INVALID_TOKEN);
 

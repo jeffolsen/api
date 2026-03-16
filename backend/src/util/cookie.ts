@@ -21,24 +21,24 @@ const getAccessTokenCookieOptions = (): CookieOptions => {
     expires: getNewAccessTokenExpirationDate(),
   };
 };
-const getRefreshTokenCookieOptions = (expiresAt: Date): CookieOptions => {
+const getRefreshTokenCookieOptions = (expiredAt: Date): CookieOptions => {
   return {
     ...defaults,
-    ...(expiresAt && { expires: expiresAt }),
+    ...(expiredAt && { expires: expiredAt }),
     path: AUTH_ROUTES + AUTH_REFRESH_ENDPOINT,
   };
 };
 
 interface SetAuthCookieParams {
   res: Response;
-  sessionExpiresAt: Date;
+  sessionexpiredAt: Date;
   accessToken: string;
   refreshToken: string;
 }
 
 export const setAuthCookies = ({
   res,
-  sessionExpiresAt,
+  sessionexpiredAt,
   accessToken,
   refreshToken,
 }: SetAuthCookieParams) => {
@@ -47,7 +47,7 @@ export const setAuthCookies = ({
     .cookie(
       REFRESH_TOKEN_NAME,
       refreshToken,
-      getRefreshTokenCookieOptions(sessionExpiresAt),
+      getRefreshTokenCookieOptions(sessionexpiredAt),
     );
 };
 

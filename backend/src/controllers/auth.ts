@@ -72,7 +72,7 @@ export const login: RequestHandler<
 
   setAuthCookies({
     res,
-    sessionExpiresAt: session.expiresAt,
+    sessionexpiredAt: session.expiredAt,
     ...tokens,
   }).sendStatus(OK);
 });
@@ -89,7 +89,7 @@ export const refresh: RequestHandler = catchErrors(async (req, res, next) => {
 
   setAuthCookies({
     res,
-    sessionExpiresAt: session.expiresAt,
+    sessionexpiredAt: session.expiredAt,
     ...tokens,
   }).sendStatus(OK);
 });

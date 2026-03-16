@@ -11,6 +11,8 @@ import {
   READ_COMPONENT_SCOPE,
   READ_ITEM_SCOPE,
   READ_TAG_SCOPE,
+  READ_IMAGE_SCOPE,
+  DELETE_IMAGE_SCOPE,
   CREATE_ITEM_SCOPE,
 } from "../config/constants";
 
@@ -29,6 +31,8 @@ export const defaultProfileScope = () =>
     READ_ITEM_SCOPE,
     READ_COMPONENT_SCOPE,
     READ_FEED_SCOPE,
+    READ_IMAGE_SCOPE,
+    DELETE_IMAGE_SCOPE,
   ]);
 
 export const defaultApiKeyScope = () => createScopeString([READ_FEED_SCOPE]);

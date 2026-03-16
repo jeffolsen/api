@@ -20,7 +20,7 @@ export const getProfilesSessions: RequestHandler = catchErrors(
     const sessions = await prismaClient.session.findMany({
       where: {
         profileId,
-        expiresAt: { gt: new Date() },
+        expiredAt: { gt: new Date() },
         endedAt: null,
       },
       orderBy: { createdAt: "desc" },

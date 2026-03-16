@@ -70,11 +70,11 @@ describe("JWT utilities", () => {
       expect(decoded.sessionId).toBe(TEST_SESSION_ID);
     });
 
-    it("should include expiresAt in payload", () => {
+    it("should include expiredAt in payload", () => {
       const token = signAccessToken(TEST_SESSION_ID);
       const decoded = jwt.decode(token) as TokenPayload;
 
-      expect(decoded).toHaveProperty("expiresAt");
+      expect(decoded).toHaveProperty("expiredAt");
     });
 
     it("should use JWT_SECRET for signing", () => {

@@ -116,7 +116,7 @@ export const connectToApiSession = async ({
       where: { id: session.id },
       data: {
         ...(sessionIsntCurrent && {
-          expiresAt: getNewRefreshTokenExpirationDate(),
+          expiredAt: getNewRefreshTokenExpirationDate(),
         }),
         ...(sessionNeedsApiKeyId && {
           apiKeyId,
@@ -197,7 +197,7 @@ export const sendVerificationCode = async ({
   return await prismaClient.verificationCode.create({
     data: {
       ...verificationCodeProps,
-      expiresAt: getNewVerificationCodeExpirationDate(),
+      expiredAt: getNewVerificationCodeExpirationDate(),
     },
   });
 };
@@ -220,7 +220,7 @@ export const processVerificationCode = async ({
       profileId,
       usedAt: null,
       type: codeType,
-      expiresAt: { gt: new Date() },
+      expiredAt: { gt: new Date() },
       userAgent,
     },
     orderBy: { createdAt: "desc" },
