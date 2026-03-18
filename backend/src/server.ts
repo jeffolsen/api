@@ -11,6 +11,7 @@ import tagRoutes from "./routes/tag";
 import itemRoutes from "./routes/item";
 import itemTagRoutes from "./routes/itemTag";
 import itemImageRoutes from "./routes/itemImage";
+import itemDateRangeRoutes from "./routes/itemDateRange";
 import componentRoutes from "./routes/component";
 import apiKeyRoutes from "./routes/apiKey";
 import imageRoutes from "./routes/image";
@@ -54,11 +55,14 @@ apiRouter.use(PROFILE_ROUTES, profileRoutes);
 apiRouter.use(API_KEY_ROUTES, apiKeyRoutes);
 apiRouter.use(SESSION_ROUTES, sessionRoutes);
 
-apiRouter.use(IMAGE_ROUTES, imageRoutes);
+apiRouter.use(IMAGE_ROUTES, authenticate, imageRoutes);
 apiRouter.use(TAG_ROUTES, authenticate, tagRoutes);
+
 apiRouter.use(ITEM_ROUTES, authenticate, itemRoutes);
 apiRouter.use(ITEM_ROUTES, authenticate, itemTagRoutes);
 apiRouter.use(ITEM_ROUTES, authenticate, itemImageRoutes);
+apiRouter.use(ITEM_ROUTES, authenticate, itemDateRangeRoutes);
+
 apiRouter.use(COMPONENT_ROUTES, authenticate, componentRoutes);
 apiRouter.use(FEED_ROUTES, authenticate, feedRoutes);
 
