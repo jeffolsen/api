@@ -8,10 +8,6 @@ import {
   GetItemsResourcesSchema,
 } from "../schemas/item";
 
-export interface GetItemTagsParams {
-  id: string;
-}
-
 export const getItemImages: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;

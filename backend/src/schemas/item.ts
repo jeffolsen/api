@@ -15,7 +15,7 @@ export const CreateItemSchema = z
   .object({
     name: nameSchema,
     description: descriptionSchema.optional(),
-    tags: tagNameArraySchema.default([]),
+    tagNames: tagNameArraySchema.default([]),
     imageIds: idArraySchema.default([]),
     dateRanges: dateRangeArraySchema.default([]),
     publishedAt: dateTimeSchema.nullish(),
@@ -38,6 +38,35 @@ export const CreateItemSchema = z
       sortName: sortWord(data.name),
     };
   });
+
+export type CreateItemInput = z.infer<typeof CreateItemSchema>;
+
+export const UpdateItemSchema = z
+  .object({
+    name: nameSchema,
+    description: descriptionSchema.optional(),
+    publishedAt: dateTimeSchema.nullish(),
+    expiredAt: dateTimeSchema.nullish(),
+  })
+  .refine(
+    (data) => {
+      if (data.publishedAt && data.expiredAt) {
+        return new Date(data.publishedAt) <= new Date(data.expiredAt);
+      }
+      return true;
+    },
+    {
+      message: "publishedAt must be before expiredAt",
+    },
+  )
+  .transform((data) => {
+    return {
+      ...data,
+      sortName: sortWord(data.name),
+    };
+  });
+
+export type UpdateItemInput = z.infer<typeof UpdateItemSchema>;
 
 export const GetAllItemsQuerySchema = z.object({
   sort: z.preprocess((val) => {

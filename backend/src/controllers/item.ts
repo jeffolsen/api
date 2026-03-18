@@ -7,6 +7,7 @@ import {
   CreateItemSchema,
   GetAllItemsQuerySchema,
   GetItemByIdSchema,
+  UpdateItemSchema,
 } from "../schemas/item";
 
 export const getAllItems: RequestHandler = catchErrors(
@@ -17,13 +18,13 @@ export const getAllItems: RequestHandler = catchErrors(
     const items = await prismaClient.item.findMany({
       where: {
         authorId: profileId,
-        tags: tags
-          ? {
-              some: {
-                name: { in: Array.isArray(tags) ? tags : [tags] },
-              },
-            }
-          : undefined,
+        tags: {
+          some: {
+            tag: {
+              name: { in: tags },
+            },
+          },
+        },
       },
       orderBy: sort.map((sort: string) => {
         if (sort.startsWith("-")) {
@@ -60,8 +61,7 @@ export const getItemById: RequestHandler = catchErrors(
 interface CreateItemBody {
   name: string;
   description: string;
-  private: boolean;
-  tags: TagName[];
+  tagNames: TagName[];
   images: number[];
   publishedAt: string;
   expiredAt: string;
@@ -79,7 +79,7 @@ export const createItem: RequestHandler = catchErrors(
       name,
       description,
       sortName,
-      tags,
+      tagNames,
       imageIds,
       dateRanges,
       publishedAt,
@@ -88,12 +88,11 @@ export const createItem: RequestHandler = catchErrors(
       ...(req.body as CreateItemBody),
     });
 
-    const existingTags = await prismaClient.tag.findMany({
-      where: { name: { in: tags } },
-    });
-    const tagIds = existingTags.map(({ id }) => {
-      return { id };
-    });
+    const tags =
+      tagNames &&
+      (await prismaClient.tag.findMany({
+        where: { name: { in: tagNames } },
+      }));
 
     const item = await prismaClient.item.create({
       data: {
@@ -102,11 +101,15 @@ export const createItem: RequestHandler = catchErrors(
         sortName,
         publishedAt,
         expiredAt,
-        tags: { connect: tagIds },
+        tags: {
+          create: tags.map(({ id }) => ({ tagId: id })),
+        },
         images: {
           create: imageIds.map((imageId) => ({ imageId })),
         },
-        dateRanges: { create: dateRanges },
+        dateRanges: {
+          create: dateRanges,
+        },
         authorId: profileId,
         isPrivate: true,
       },
@@ -121,7 +124,55 @@ export const updateItem: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
     const { id } = req.params || {};
-    res.sendStatus(OK);
+    const {
+      name,
+      description,
+      sortName,
+      tagNames,
+      imageIds,
+      dateRanges,
+      publishedAt,
+      expiredAt,
+    } = CreateItemSchema.parse(req.body as CreateItemBody);
+
+    const item = await prismaClient.item.findFirst({
+      where: { id: Number(id), authorId: profileId },
+    });
+    throwError(item, NOT_FOUND, "item not found");
+
+    const tags =
+      tagNames &&
+      (await prismaClient.tag.findMany({
+        where: { name: { in: tagNames } },
+      }));
+
+    const updatedItem = await prismaClient.item.update({
+      where: { id: Number(id) },
+      data: {
+        name,
+        description,
+        sortName,
+        publishedAt,
+        expiredAt,
+        tags: {
+          deleteMany: {},
+          create: tags.map(({ id }) => ({ tagId: id })),
+        },
+        images: {
+          deleteMany: {},
+          create: imageIds.map((imageId) => ({ imageId })),
+        },
+        dateRanges: {
+          deleteMany: {},
+          create: dateRanges,
+        },
+        authorId: profileId,
+        isPrivate: true,
+      },
+      omit: { authorId: true },
+    });
+
+    res.status(OK).send(updatedItem);
   },
 );
 
