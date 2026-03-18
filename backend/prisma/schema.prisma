@@ -123,7 +123,7 @@ model Item {
   author      Profile?    @relation("ProfileItems", fields: [authorId], references: [id], onDelete: SetNull)
   authorId    Int?        @map("author_id")
   dateRanges  DateRange[] @relation("ItemDateRanges")
-  tags        Tag[]
+  tags        ItemTag[]
   images      ItemImage[]
 
   @@map("items")
@@ -158,11 +158,21 @@ enum TagName {
 }
 
 model Tag {
-  id    Int     @id @default(autoincrement())
-  name  TagName @unique
-  items Item[]
+  id    Int       @id @default(autoincrement())
+  name  TagName   @unique
+  items ItemTag[]
 
   @@map("tags")
+}
+
+model ItemTag {
+  item   Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId Int  @map("item_id")
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId  Int  @map("tag_id")
+
+  @@id([itemId, tagId])
+  @@map("items_tags")
 }
 
 enum ImageType {
