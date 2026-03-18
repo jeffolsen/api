@@ -4,7 +4,7 @@ import {
   COLLECTION_ENDPOINT,
   CREATE_FEED_SCOPE,
   DELETE_FEED_SCOPE,
-  ID_ENDPOINT,
+  ID_PARAM,
   READ_FEED_SCOPE,
   UPDATE_FEED_SCOPE,
 } from "../config/constants";
@@ -17,19 +17,15 @@ router.get(
   authorizeScope([READ_FEED_SCOPE]),
   feedApi.getAllFeeds,
 );
-router.get(ID_ENDPOINT, authorizeScope([READ_FEED_SCOPE]), feedApi.getFeedById);
+router.get(ID_PARAM, authorizeScope([READ_FEED_SCOPE]), feedApi.getFeedById);
 router.post(
   COLLECTION_ENDPOINT,
   authorizeScope([CREATE_FEED_SCOPE]),
   feedApi.createFeed,
 );
-router.patch(
-  ID_ENDPOINT,
-  authorizeScope([UPDATE_FEED_SCOPE]),
-  feedApi.updateFeed,
-);
+router.patch(ID_PARAM, authorizeScope([UPDATE_FEED_SCOPE]), feedApi.updateFeed);
 router.delete(
-  ID_ENDPOINT,
+  ID_PARAM,
   authorizeScope([DELETE_FEED_SCOPE]),
   feedApi.deleteFeed,
 );

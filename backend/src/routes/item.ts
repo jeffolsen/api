@@ -4,7 +4,7 @@ import {
   COLLECTION_ENDPOINT,
   CREATE_ITEM_SCOPE,
   DELETE_ITEM_SCOPE,
-  ID_ENDPOINT,
+  ID_PARAM,
   READ_ITEM_SCOPE,
   UPDATE_ITEM_SCOPE,
 } from "../config/constants";
@@ -17,19 +17,15 @@ router.get(
   authorizeScope([READ_ITEM_SCOPE]),
   itemApi.getAllItems,
 );
-router.get(ID_ENDPOINT, authorizeScope([READ_ITEM_SCOPE]), itemApi.getItemById);
+router.get(ID_PARAM, authorizeScope([READ_ITEM_SCOPE]), itemApi.getItemById);
 router.post(
   COLLECTION_ENDPOINT,
   authorizeScope([CREATE_ITEM_SCOPE]),
   itemApi.createItem,
 );
-router.patch(
-  ID_ENDPOINT,
-  authorizeScope([UPDATE_ITEM_SCOPE]),
-  itemApi.updateItem,
-);
+router.put(ID_PARAM, authorizeScope([UPDATE_ITEM_SCOPE]), itemApi.updateItem);
 router.delete(
-  ID_ENDPOINT,
+  ID_PARAM,
   authorizeScope([DELETE_ITEM_SCOPE]),
   itemApi.deleteItem,
 );

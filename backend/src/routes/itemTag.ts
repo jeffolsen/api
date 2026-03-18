@@ -3,27 +3,30 @@ import authorizeScope from "../middleware/authorizeScope";
 import {
   DELETE_ITEM_SCOPE,
   DELETE_TAG_SCOPE,
+  ID_PARAM,
+  ITEM_ID_PARAM,
   READ_ITEM_SCOPE,
   READ_TAG_SCOPE,
+  TAG_ROUTES,
 } from "../config/constants";
 import itemTagApi from "../controllers/itemTag";
 
 const router = express.Router();
 
 router.get(
-  "/:itemId/tags",
+  ITEM_ID_PARAM + TAG_ROUTES,
   authorizeScope([READ_ITEM_SCOPE, READ_TAG_SCOPE]),
   itemTagApi.getItemTags,
 );
 
 router.get(
-  "/:itemId/tags/:id",
+  ITEM_ID_PARAM + TAG_ROUTES + ID_PARAM,
   authorizeScope([READ_ITEM_SCOPE, READ_TAG_SCOPE]),
   itemTagApi.getItemTagById,
 );
 
 router.delete(
-  "/:itemId/tags/:id",
+  ITEM_ID_PARAM + TAG_ROUTES + ID_PARAM,
   authorizeScope([
     READ_ITEM_SCOPE,
     READ_TAG_SCOPE,

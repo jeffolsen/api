@@ -4,7 +4,7 @@ import {
   COLLECTION_ENDPOINT,
   CREATE_COMPONENT_SCOPE,
   DELETE_COMPONENT_SCOPE,
-  ID_ENDPOINT,
+  ID_PARAM,
   READ_COMPONENT_SCOPE,
   UPDATE_COMPONENT_SCOPE,
 } from "../config/constants";
@@ -18,7 +18,7 @@ router.get(
   componentApi.getAllComponents,
 );
 router.get(
-  ID_ENDPOINT,
+  ID_PARAM,
   authorizeScope([READ_COMPONENT_SCOPE]),
   componentApi.getComponentById,
 );
@@ -28,12 +28,12 @@ router.post(
   componentApi.createComponent,
 );
 router.patch(
-  ID_ENDPOINT,
+  ID_PARAM,
   authorizeScope([UPDATE_COMPONENT_SCOPE]),
   componentApi.updateComponent,
 );
 router.delete(
-  ID_ENDPOINT,
+  ID_PARAM,
   authorizeScope([DELETE_COMPONENT_SCOPE]),
   componentApi.deleteComponent,
 );

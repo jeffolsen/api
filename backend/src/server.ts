@@ -19,6 +19,7 @@ import authenticate from "./middleware/authenticate";
 import path from "path";
 
 import {
+  BASE_API_URL,
   API_KEY_ROUTES,
   AUTH_ROUTES,
   COMPONENT_ROUTES,
@@ -46,20 +47,22 @@ if (env.NODE_ENV !== "production") {
 app.use(cookieParser());
 // app.use(rateLimiter);
 
-app.use(VERIFICATION_CODE_ROUTES, verificationCodeRoutes);
-app.use(AUTH_ROUTES, authRoutes);
-app.use(PROFILE_ROUTES, profileRoutes);
-app.use(API_KEY_ROUTES, apiKeyRoutes);
-app.use(SESSION_ROUTES, sessionRoutes);
+const apiRouter = express.Router();
+apiRouter.use(VERIFICATION_CODE_ROUTES, verificationCodeRoutes);
+apiRouter.use(AUTH_ROUTES, authRoutes);
+apiRouter.use(PROFILE_ROUTES, profileRoutes);
+apiRouter.use(API_KEY_ROUTES, apiKeyRoutes);
+apiRouter.use(SESSION_ROUTES, sessionRoutes);
 
-app.use(IMAGE_ROUTES, imageRoutes);
-app.use(TAG_ROUTES, authenticate, tagRoutes);
-app.use(ITEM_ROUTES, authenticate, itemRoutes);
-app.use(ITEM_ROUTES, authenticate, itemTagRoutes);
-app.use(ITEM_ROUTES, authenticate, itemImageRoutes);
-app.use(COMPONENT_ROUTES, authenticate, componentRoutes);
-app.use(FEED_ROUTES, authenticate, feedRoutes);
+apiRouter.use(IMAGE_ROUTES, imageRoutes);
+apiRouter.use(TAG_ROUTES, authenticate, tagRoutes);
+apiRouter.use(ITEM_ROUTES, authenticate, itemRoutes);
+apiRouter.use(ITEM_ROUTES, authenticate, itemTagRoutes);
+apiRouter.use(ITEM_ROUTES, authenticate, itemImageRoutes);
+apiRouter.use(COMPONENT_ROUTES, authenticate, componentRoutes);
+apiRouter.use(FEED_ROUTES, authenticate, feedRoutes);
 
+app.use(BASE_API_URL, apiRouter);
 app.use(errorHandler);
 
 if (env.NODE_ENV === "production") {

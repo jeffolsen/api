@@ -4,42 +4,44 @@ import { SignOptions } from "jsonwebtoken";
 // routes
 export const COLLECTION_ENDPOINT = "/";
 export const SELF_ENDPOINT = "/me";
-export const ID_ENDPOINT = "/:id";
+export const ID_PARAM = "/:id";
 
-export const AUTH_ROUTES = "/api/auth";
+export const BASE_API_URL = "/api";
+
+export const AUTH_ROUTES = "/auth";
 export const AUTH_REGISTER_ENDPOINT = "/register";
 export const AUTH_LOGIN_ENDPOINT = "/login";
 export const AUTH_REFRESH_ENDPOINT = "/refresh";
 
-export const SESSION_ROUTES = "/api/sessions";
+export const SESSION_ROUTES = "/sessions";
 export const SESSION_LOGOUT_ENDPOINT = "/logout";
 export const SESSION_LOGOUT_ALL_ENDPOINT = "/logout-all";
 export const SESSION_RESET_ENDPOINT = "/reset";
 
-export const PROFILE_ROUTES = "/api/profiles";
+export const PROFILE_ROUTES = "/profiles";
 export const PROFILE_DELETE_PROFILE_ENDPOINT = "/unregister";
 export const PROFILE_PASSWORD_RESET_ENDPOINT = "/password-reset";
 export const PROFILE_PASSWORD_CHANGE_ENDPOINT = "/password-change";
 
-export const VERIFICATION_CODE_ROUTES = "/api/codes";
+export const VERIFICATION_CODE_ROUTES = "/codes";
 export const VERIFICATION_CODE_LOGIN_ENDPOINT = "/login";
 export const VERIFICATION_CODE_SESSION_RESET_ENDPOINT = "/sessions-reset";
 export const VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT = "/password-reset";
 export const VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT = "/unregister";
 export const VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT = "/manage-api-key";
 
-export const API_KEY_ROUTES = "/api/keys";
+export const API_KEY_ROUTES = "/keys";
 export const API_KEY_GENERATE_ENDPOINT = "/generate";
 export const API_KEY_PUBLIC_ENDPOINT = "/public";
 export const API_KEY_DESTROY_ENDPOINT = "/destroy";
 
-export const FEED_ROUTES = "/api/feeds";
-export const TAG_ROUTES = "/api/tags";
-export const TAG_NAME_ENDPOINT = "/:name";
-export const ITEM_ROUTES = "/api/items";
-export const COMPONENT_ROUTES = "/api/components";
-export const IMAGE_ROUTES = "/api/images";
-export const IMAGE_ID_ENDPOINT = "/:id";
+export const ITEM_ROUTES = "/items";
+export const ITEM_ID_PARAM = "/:itemId";
+export const TAG_ROUTES = "/tags";
+export const IMAGE_ROUTES = "/images";
+export const DATE_RANGE_ROUTES = "/date-ranges";
+export const COMPONENT_ROUTES = "/components";
+export const FEED_ROUTES = "/feeds";
 
 // profile scopes
 export const READ_PROFILE_SCOPE = "read:profile";
@@ -52,16 +54,23 @@ export const UPDATE_SESSION_SCOPE = "update:session";
 export const DELETE_SESSION_SCOPE = "delete:session";
 // api key scopes
 export const READ_API_KEY_SCOPE = "read:apiKey";
-// tag scopes
-export const READ_TAG_SCOPE = "read:tag";
-export const CREATE_TAG_SCOPE = "create:tag";
-export const UPDATE_TAG_SCOPE = "update:tag";
-export const DELETE_TAG_SCOPE = "delete:tag";
 // item scopes
 export const READ_ITEM_SCOPE = "read:item";
 export const CREATE_ITEM_SCOPE = "create:item";
 export const UPDATE_ITEM_SCOPE = "update:item";
 export const DELETE_ITEM_SCOPE = "delete:item";
+// tag scopes
+export const READ_TAG_SCOPE = "read:tag";
+export const DELETE_TAG_SCOPE = "delete:tag";
+// image scopes
+export const READ_IMAGE_SCOPE = "read:image";
+export const DELETE_IMAGE_SCOPE = "delete:image";
+// date range scopes
+export const READ_DATE_RANGE_SCOPE = "read:date-range";
+export const CREATE_DATE_RANGE_SCOPE = "create:date-range";
+export const UPDATE_DATE_RANGE_SCOPE = "update:date-range";
+export const DELETE_DATE_RANGE_SCOPE = "delete:date-range";
+
 // component scopes
 export const READ_COMPONENT_SCOPE = "read:component";
 export const CREATE_COMPONENT_SCOPE = "create:component";
@@ -77,9 +86,6 @@ export const LOGOUT_ALL_SCOPE = "auth:logout-all";
 export const PASSWORD_RESET_SCOPE = "auth:update-password";
 export const DELETE_PROFILE_SCOPE = "auth:delete-profile";
 export const CREATE_API_KEY_SCOPE = "auth:create-apiKey";
-// image scopes
-export const READ_IMAGE_SCOPE = "read:image";
-export const DELETE_IMAGE_SCOPE = "delete:image";
 
 // http codes
 export const OK = 200;
