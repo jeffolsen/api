@@ -13,9 +13,9 @@ function PublishInput({ control, triggerSubmit }: FormSubmitProps) {
     control,
     name: "publishedAt",
   });
-  const { field: expiresAtField } = useController({
+  const { field: expiredAtField } = useController({
     control,
-    name: "expiresAt",
+    name: "expiredAt",
   });
 
   const handleDraft = () => {
@@ -25,14 +25,14 @@ function PublishInput({ control, triggerSubmit }: FormSubmitProps) {
 
   const handlePublishNow = () => {
     publishedAtField.onChange(new Date().toISOString());
-    expiresAtField.onChange(null);
+    expiredAtField.onChange(null);
     setMode("publish_now");
     triggerSubmit();
   };
 
   const handleUnpublish = () => {
     publishedAtField.onChange(null);
-    expiresAtField.onChange(null);
+    expiredAtField.onChange(null);
     setMode("unpublish");
     triggerSubmit();
   };
@@ -43,7 +43,7 @@ function PublishInput({ control, triggerSubmit }: FormSubmitProps) {
 
   const handleScheduleCancel = () => {
     publishedAtField.onChange(null);
-    expiresAtField.onChange(null);
+    expiredAtField.onChange(null);
     setMode("draft");
   };
 
@@ -64,13 +64,13 @@ function PublishInput({ control, triggerSubmit }: FormSubmitProps) {
           </label>
           <label className={clsx("form-control gap-1")}>
             <span className="label-text text-sm text-neutral-content/70">
-              Expires At
+              Expired At
             </span>
             <input
               type="datetime-local"
               className="input input-bordered text-sm"
-              {...expiresAtField}
-              value={expiresAtField.value ?? ""}
+              {...expiredAtField}
+              value={expiredAtField.value ?? ""}
             />
           </label>
         </div>

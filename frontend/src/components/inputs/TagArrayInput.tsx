@@ -10,6 +10,7 @@ import {
   FormError,
 } from "./Input";
 import clsx from "clsx";
+import Loading from "../common/Loading";
 
 type TagnameField = {
   id: string;
@@ -64,6 +65,10 @@ function TagArrayInput(
     ((rules as FieldArrayMinMaxRule)?.minLength?.value || 0) +
       selectedTagnames.length <
     ((rules as FieldArrayMinMaxRule)?.maxLength?.value || Infinity);
+
+  if (tags.isLoading) {
+    return <Loading />;
+  }
 
   return (
     <>

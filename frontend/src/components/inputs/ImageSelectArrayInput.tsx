@@ -1,4 +1,4 @@
-import { useCallback, useState, MouseEvent } from "react";
+import { useCallback, useState } from "react";
 import { useFieldArray } from "react-hook-form";
 import { useGetImages } from "../../network/image";
 import {
@@ -11,8 +11,8 @@ import {
 
 import Modal from "../layout/Modal";
 import Image from "../common/Image";
-import Button from "../common/Button";
-import clsx from "clsx";
+import Button, { PlusButton, XButton } from "../common/Button";
+import Loading from "../common/Loading";
 
 const typeFilters = ["ICON", "LANDSCAPE", "PORTRAIT", "OTHER", ""] as const;
 
@@ -32,25 +32,24 @@ type ImageIdField = {
 
 type ImageIdArrayFields = Array<ImageIdField>;
 
+type SelectImageProps = {
+  image: Image;
+  height?: number;
+  width?: number;
+  onClick: () => void;
+};
+
 function SelectedImage({
   image,
   height = 100,
   width = 100,
   onClick,
-}: {
-  image: Image;
-  height?: number;
-  width?: number;
-  onClick: () => void;
-}) {
+}: SelectImageProps) {
+  console.log(image);
   return (
     <span
-      className="inline-flex border max-w-[75px] max-h-[75px] sm:max-w-[100px] sm:max-h-[100px] rounded border-base-content/20 cursor-pointer"
-      onClick={(e: MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onClick();
-      }}
+      className="relative inline-flex border max-w-[75px] max-h-[75px] sm:max-w-[100px] sm:max-h-[100px] rounded border-base-content/20 cursor-pointer"
+      onClick={onClick}
     >
       <Image
         src={image.url}
@@ -58,27 +57,6 @@ function SelectedImage({
         {...{ width, height, fit: "contain" }}
       />
     </span>
-  );
-}
-
-function AddImageButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      className={clsx([
-        "flex items-center justify-center",
-        "w-[75px] h-[75px] sm:w-[100px] sm:h-[100px]",
-        "border rounded border-base-content/20",
-        "text-3xl text-primary-content/70",
-      ])}
-      type="button"
-      onClick={(e: MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onClick();
-      }}
-    >
-      +
-    </button>
   );
 }
 
@@ -101,7 +79,7 @@ function ImageSelectInput(
     type: "hidden",
   };
   const registerProps = input?.registerOpts || {};
-  const rulesProps = input?.rules || {};
+  const rulesProps = (input?.rules || {}) as FieldArrayMinMaxRule;
 
   const selectedImages = useCallback(() => {
     const imageIds = (fields as ImageIdArrayFields).map(
@@ -112,27 +90,34 @@ function ImageSelectInput(
     );
   }, [fields, images.data]);
 
+  const canSelectImages =
+    (rulesProps?.minLength?.value || 0) + selectedImages().length <
+    (rulesProps?.maxLength?.value || Infinity);
+
+  if (images.isLoading) {
+    return <Loading />;
+  }
+
   return (
     <>
-      <label
-        className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
-      >
-        <span className="label-text text-sm font-semibold text-neutral-content/70 w-full">
+      <fieldset className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20">
+        <legend className="label-text text-sm font-semibold text-neutral-content/70 w-full float-start">
           {displayName}{" "}
           <FieldArrayMinAndMax
-            minLength={(rulesProps as FieldArrayMinMaxRule)?.minLength?.value}
-            maxLength={(rulesProps as FieldArrayMinMaxRule)?.maxLength?.value}
+            minLength={rulesProps?.minLength?.value}
+            maxLength={rulesProps?.maxLength?.value}
           />
-        </span>
-        <span className="flex flex-wrap gap-2 w-full">
+        </legend>
+        <span className="flex flex-wrap gap-4 w-full">
           {(fields as ImageIdArrayFields).map((field, index) => (
-            <span key={field.id}>
+            <span key={field.id} className="relative">
               <SelectedImage
                 image={selectedImages()[index]}
+                onClick={() => remove(index)}
+              />
+              <XButton
+                size="xs"
+                className="absolute -top-2 -right-2"
                 onClick={() => remove(index)}
               />
               <input
@@ -144,13 +129,16 @@ function ImageSelectInput(
               />
             </span>
           ))}
-          <AddImageButton
-            onClick={() => {
-              setShowImageSelector(true);
-            }}
-          />
+          {canSelectImages && (
+            <PlusButton
+              className="text-3xl w-[75px] h-[75px] sm:w-[100px] sm:h-[100px]"
+              onClick={() => {
+                setShowImageSelector(true);
+              }}
+            />
+          )}
         </span>
-      </label>
+      </fieldset>
       <FormError error={errors} />
       <Modal isOpen={showImageSelector} setIsOpen={setShowImageSelector}>
         <ImageSelector
@@ -158,7 +146,8 @@ function ImageSelectInput(
           selectedImages={selectedImages}
           onThumbnailClick={(imageId) => append({ imageId })}
           onPreviewClick={(index) => remove(index)}
-          rules={rulesProps as FieldArrayMinMaxRule}
+          rules={rulesProps}
+          canSelectImages={canSelectImages}
         />
       </Modal>
     </>
@@ -170,12 +159,14 @@ const ImageSelector = ({
   selectedImages = () => [],
   onThumbnailClick,
   onPreviewClick,
+  canSelectImages,
   rules,
 }: {
   images: Image[];
   selectedImages: () => Image[];
   onThumbnailClick: (imageId: number) => void;
   onPreviewClick?: (index: number) => void;
+  canSelectImages: boolean;
   rules: FieldArrayMinMaxRule;
 }) => {
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("");
@@ -200,53 +191,66 @@ const ImageSelector = ({
     <div className="flex flex-col items-center gap-6 w-full">
       <div className="w-full">
         <FieldArrayMinAndMax
-          minLength={(rules as FieldArrayMinMaxRule)?.minLength?.value}
-          maxLength={(rules as FieldArrayMinMaxRule)?.maxLength?.value}
+          minLength={rules?.minLength?.value}
+          maxLength={rules?.maxLength?.value}
         />
       </div>
       <div className="flex items-center gap-4 flex-wrap w-full">
         {selectedImages().map((image, index) => (
-          <span key={image.id} className="inline-flex items-center gap-2">
+          <span
+            key={image.id}
+            className="relative inline-flex items-center gap-2"
+          >
             <SelectedImage
               image={image}
               height={75}
               width={75}
               onClick={() => onPreviewClick?.(index)}
             />
+            <XButton
+              size="xs"
+              className="absolute -top-2 -right-2"
+              onClick={() => onPreviewClick?.(index)}
+            />
           </span>
         ))}
       </div>
-      <input
-        className="flex-grow input input-bordered w-full"
-        type="text"
-        placeholder="Search images..."
-        value={searchTerm}
-        onChange={(e) => {
-          if (e.target.value.length) setTypeFilter("");
-          setSearchTerm(e.target.value);
-        }}
-      />
-      <div className="grid grid-cols-2 sm:grid-cols-4 items-center gap-2 w-full">
-        {typeFilters.filter(Boolean).map((type) => (
-          <FilterButton
-            key={type}
-            active={typeFilter === type}
-            onClick={() => {
-              setSearchTerm("");
-              setTypeFilter((prev) => (prev === type ? "" : type));
-            }}
-          >
-            {type.toLowerCase()}
-          </FilterButton>
-        ))}
-      </div>
 
-      <ImageDrawer
-        images={filteredImages()}
-        onThumbnailClick={(imageId) => {
-          onThumbnailClick(imageId);
-        }}
-      />
+      {canSelectImages && (
+        <>
+          <input
+            className="flex-grow input input-bordered w-full"
+            type="text"
+            placeholder="Search images..."
+            value={searchTerm}
+            onChange={(e) => {
+              if (e.target.value.length) setTypeFilter("");
+              setSearchTerm(e.target.value);
+            }}
+          />
+          <div className="grid grid-cols-2 sm:grid-cols-4 items-center gap-2 w-full">
+            {typeFilters.filter(Boolean).map((type) => (
+              <FilterButton
+                key={type}
+                active={typeFilter === type}
+                onClick={() => {
+                  setSearchTerm("");
+                  setTypeFilter((prev) => (prev === type ? "" : type));
+                }}
+              >
+                {type.toLowerCase()}
+              </FilterButton>
+            ))}
+          </div>
+
+          <ImageDrawer
+            images={filteredImages()}
+            onThumbnailClick={(imageId) => {
+              onThumbnailClick(imageId);
+            }}
+          />
+        </>
+      )}
     </div>
   );
 };
