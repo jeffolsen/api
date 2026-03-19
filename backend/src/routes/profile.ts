@@ -2,14 +2,15 @@ import express from "express";
 import profileApi from "../controllers/profile";
 import authorizeScope from "../middleware/authorizeScope";
 import {
-  PROFILE_PASSWORD_RESET_ENDPOINT,
-  SELF_ENDPOINT,
-  PROFILE_DELETE_PROFILE_ENDPOINT,
   READ_PROFILE_SCOPE,
   DELETE_PROFILE_SCOPE,
   UPDATE_PROFILE_SCOPE,
+} from "../config/scopes";
+import {
+  PROFILE_PASSWORD_RESET_ENDPOINT,
+  SELF_ENDPOINT,
   PROFILE_PASSWORD_CHANGE_ENDPOINT,
-} from "../config/constants";
+} from "../config/routes";
 import authenticate from "../middleware/authenticate";
 
 const router = express.Router();

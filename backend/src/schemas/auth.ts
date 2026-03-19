@@ -1,4 +1,4 @@
-import { ERROR_PASSWORD_MATCH } from "../config/constants";
+import { MESSAGE_PASSWORD_MATCH } from "../config/errorMessages";
 import { z } from "zod";
 import { ProfileDataSchema } from "./profile";
 import { passwordSchema, verificationCodeValueSchema } from "./properties";
@@ -14,6 +14,6 @@ export const loginSchema = ProfileDataSchema.omit({
 export const RegisterSchema = ProfileDataSchema.extend({
   confirmPassword: passwordSchema,
 }).refine((data) => data.password === data.confirmPassword, {
-  message: ERROR_PASSWORD_MATCH,
+  message: MESSAGE_PASSWORD_MATCH,
   path: ["password", "confirmPassword"],
 });

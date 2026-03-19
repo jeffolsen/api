@@ -2,36 +2,9 @@ import env from "./config/env";
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import profileRoutes from "./routes/profile";
-import authRoutes from "./routes/auth";
-import sessionRoutes from "./routes/session";
-import verificationCodeRoutes from "./routes/verificationCode";
-import feedRoutes from "./routes/feed";
-import tagRoutes from "./routes/tag";
-import itemRoutes from "./routes/item";
-import itemTagRoutes from "./routes/itemTag";
-import itemImageRoutes from "./routes/itemImage";
-import itemDateRangeRoutes from "./routes/itemDateRange";
-import componentRoutes from "./routes/component";
-import apiKeyRoutes from "./routes/apiKey";
-import imageRoutes from "./routes/image";
 import errorHandler from "./middleware/errorHandler";
-import authenticate from "./middleware/authenticate";
 import path from "path";
-
-import {
-  BASE_API_URL,
-  API_KEY_ROUTES,
-  AUTH_ROUTES,
-  COMPONENT_ROUTES,
-  FEED_ROUTES,
-  ITEM_ROUTES,
-  PROFILE_ROUTES,
-  SESSION_ROUTES,
-  TAG_ROUTES,
-  VERIFICATION_CODE_ROUTES,
-  IMAGE_ROUTES,
-} from "./config/constants";
+import apiRouter, { BASE_API_URL } from "./api";
 // import rateLimiter from "./middleware/rateLimit";
 
 const app = express();
@@ -47,24 +20,6 @@ if (env.NODE_ENV !== "production") {
 }
 app.use(cookieParser());
 // app.use(rateLimiter);
-
-const apiRouter = express.Router();
-apiRouter.use(VERIFICATION_CODE_ROUTES, verificationCodeRoutes);
-apiRouter.use(AUTH_ROUTES, authRoutes);
-apiRouter.use(PROFILE_ROUTES, profileRoutes);
-apiRouter.use(API_KEY_ROUTES, apiKeyRoutes);
-apiRouter.use(SESSION_ROUTES, sessionRoutes);
-
-apiRouter.use(IMAGE_ROUTES, authenticate, imageRoutes);
-apiRouter.use(TAG_ROUTES, authenticate, tagRoutes);
-
-apiRouter.use(ITEM_ROUTES, authenticate, itemRoutes);
-apiRouter.use(ITEM_ROUTES, authenticate, itemTagRoutes);
-apiRouter.use(ITEM_ROUTES, authenticate, itemImageRoutes);
-apiRouter.use(ITEM_ROUTES, authenticate, itemDateRangeRoutes);
-
-apiRouter.use(COMPONENT_ROUTES, authenticate, componentRoutes);
-apiRouter.use(FEED_ROUTES, authenticate, feedRoutes);
 
 app.use(BASE_API_URL, apiRouter);
 app.use(errorHandler);

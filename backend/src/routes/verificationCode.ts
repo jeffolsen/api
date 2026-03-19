@@ -3,15 +3,17 @@ import verificationCodeApi from "../controllers/verificationCode";
 import authorizeScope from "../middleware/authorizeScope";
 import {
   READ_VERIFICATION_CODE_SCOPE,
+  CREATE_API_KEY_SCOPE,
+  DELETE_PROFILE_SCOPE,
+} from "../config/scopes";
+import {
+  COLLECTION_ENDPOINT,
   VERIFICATION_CODE_LOGIN_ENDPOINT,
   VERIFICATION_CODE_SESSION_RESET_ENDPOINT,
   VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT,
   VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
   VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT,
-  COLLECTION_ENDPOINT,
-  CREATE_API_KEY_SCOPE,
-  DELETE_PROFILE_SCOPE,
-} from "../config/constants";
+} from "../config/routes";
 import authenticate from "../middleware/authenticate";
 
 const router = express.Router();

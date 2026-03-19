@@ -1,6 +1,7 @@
 import express from "express";
 import authorizeScope from "../middleware/authorizeScope";
-import { COLLECTION_ENDPOINT, READ_TAG_SCOPE } from "../config/constants";
+import { READ_TAG_SCOPE } from "../config/scopes";
+import { COLLECTION_ENDPOINT } from "../config/routes";
 import tagApi from "../controllers/tag";
 
 const router = express.Router();

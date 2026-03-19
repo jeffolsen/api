@@ -1,7 +1,8 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import prismaClient from "../db/client";
 import { verifyAccessToken } from "../util/jwt";
-import { ERROR_INVALID_TOKEN, UNAUTHORIZED } from "../config/constants";
+import { MESSAGE_INVALID_TOKEN } from "../config/errorMessages";
+import { UNAUTHORIZED } from "../config/errorCodes";
 import date from "../util/date";
 import throwError from "../util/throwError";
 
@@ -13,25 +14,25 @@ const authenticate: RequestHandler = async (
   const { accessToken } = req.cookies;
 
   const userAgent = req.headers["user-agent"];
-  throwError(accessToken, UNAUTHORIZED, ERROR_INVALID_TOKEN);
+  throwError(accessToken, UNAUTHORIZED, MESSAGE_INVALID_TOKEN);
 
   const payload = await verifyAccessToken(accessToken);
 
-  throwError(payload?.expiredAt, UNAUTHORIZED, ERROR_INVALID_TOKEN);
+  throwError(payload?.expiredAt, UNAUTHORIZED, MESSAGE_INVALID_TOKEN);
 
   const { sessionId, expiredAt } = payload;
   const accessTokenNotExpired = date(expiredAt).isAfterNow();
 
-  throwError(accessTokenNotExpired, UNAUTHORIZED, ERROR_INVALID_TOKEN);
+  throwError(accessTokenNotExpired, UNAUTHORIZED, MESSAGE_INVALID_TOKEN);
 
   const session = await prismaClient.session.findUnique({
     where: { id: sessionId, userAgent },
   });
 
-  throwError(session, UNAUTHORIZED, ERROR_INVALID_TOKEN);
+  throwError(session, UNAUTHORIZED, MESSAGE_INVALID_TOKEN);
 
   const sessionStillCurrent = session.isCurrent();
-  throwError(sessionStillCurrent, UNAUTHORIZED, ERROR_INVALID_TOKEN);
+  throwError(sessionStillCurrent, UNAUTHORIZED, MESSAGE_INVALID_TOKEN);
 
   const { profileId, scope } = session;
 

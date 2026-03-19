@@ -1,11 +1,10 @@
 import { RequestHandler } from "express";
 import catchErrors from "../util/catchErrors";
 import {
-  ERROR_CREDENTIALS,
-  ERROR_SESSIONS_NOT_FOUND,
-  NOT_FOUND,
-  OK,
-} from "../config/constants";
+  MESSAGE_CREDENTIALS,
+  MESSAGE_SESSIONS_NOT_FOUND,
+} from "../config/errorMessages";
+import { NOT_FOUND, OK } from "../config/errorCodes";
 import prismaClient, { CodeType } from "../db/client";
 import throwError from "../util/throwError";
 import { processVerificationCode } from "../services/auth";
@@ -57,7 +56,7 @@ export const logoutAllWithSession: RequestHandler<
   throwError(
     profile && (await profile.comparePassword(password)),
     NOT_FOUND,
-    ERROR_CREDENTIALS,
+    MESSAGE_CREDENTIALS,
   );
 
   await prismaClient.session.logOutAll(profile.id);
@@ -83,7 +82,7 @@ export const logoutAllWithCode: RequestHandler<
   });
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
+  throwError(profile, NOT_FOUND, MESSAGE_CREDENTIALS);
 
   await processVerificationCode({
     profileId: profile.id,
@@ -93,7 +92,7 @@ export const logoutAllWithCode: RequestHandler<
   });
 
   const sessions = await prismaClient.session.logOutAll(profile.id);
-  throwError(sessions?.count, NOT_FOUND, ERROR_SESSIONS_NOT_FOUND);
+  throwError(sessions?.count, NOT_FOUND, MESSAGE_SESSIONS_NOT_FOUND);
 
   clearAuthCookies(res).sendStatus(OK);
 });

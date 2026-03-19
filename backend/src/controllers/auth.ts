@@ -3,13 +3,10 @@ import { initProfileSession, refreshAccessToken } from "../services/auth";
 import { setAuthCookies } from "../util/cookie";
 import catchErrors from "../util/catchErrors";
 import {
-  OK,
-  CREATED,
-  CONFLICT,
-  ERROR_EMAIL_TAKEN,
-  ERROR_CREDENTIALS,
-  NOT_FOUND,
-} from "../config/constants";
+  MESSAGE_EMAIL_TAKEN,
+  MESSAGE_CREDENTIALS,
+} from "../config/errorMessages";
+import { OK, CREATED, NOT_FOUND, CONFLICT } from "../config/errorCodes";
 import throwError from "../util/throwError";
 import prismaClient from "../db/client";
 import { loginSchema, RegisterSchema } from "../schemas/auth";
@@ -30,7 +27,7 @@ export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
     const emailFound = await prismaClient.profile.findUnique({
       where: { email },
     });
-    throwError(!emailFound, CONFLICT, ERROR_EMAIL_TAKEN);
+    throwError(!emailFound, CONFLICT, MESSAGE_EMAIL_TAKEN);
 
     await prismaClient.profile.create({
       data: await ProfileCreateTransform.parseAsync({ email, password }),
@@ -62,7 +59,7 @@ export const login: RequestHandler<
   });
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
+  throwError(profile, NOT_FOUND, MESSAGE_CREDENTIALS);
 
   const { session, ...tokens } = await initProfileSession({
     profile,
@@ -80,7 +77,7 @@ export const login: RequestHandler<
 export const refresh: RequestHandler = catchErrors(async (req, res, next) => {
   const { refreshToken } = req.cookies;
   const userAgent = req.headers["user-agent"];
-  throwError(refreshToken, NOT_FOUND, ERROR_CREDENTIALS);
+  throwError(refreshToken, NOT_FOUND, MESSAGE_CREDENTIALS);
 
   const { session, ...tokens } = await refreshAccessToken({
     refreshToken,

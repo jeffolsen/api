@@ -12,16 +12,14 @@ import {
   DELETE_ITEM_SCOPE,
   UPDATE_ITEM_SCOPE,
   READ_TAG_SCOPE,
-  DELETE_TAG_SCOPE,
   READ_IMAGE_SCOPE,
-  DELETE_IMAGE_SCOPE,
   READ_COMPONENT_SCOPE,
   READ_FEED_SCOPE,
   CREATE_DATE_RANGE_SCOPE,
   READ_DATE_RANGE_SCOPE,
   UPDATE_DATE_RANGE_SCOPE,
   DELETE_DATE_RANGE_SCOPE,
-} from "../config/constants";
+} from "../config/scopes";
 
 export const defaultProfileScope = () =>
   createScopeString([

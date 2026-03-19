@@ -1,6 +1,6 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import catchErrors from "../util/catchErrors";
-import { OK } from "../config/constants";
+import { OK } from "../config/errorCodes";
 
 export const getAllComponents: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {

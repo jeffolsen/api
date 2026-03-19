@@ -1,4 +1,4 @@
-import { ERROR_PROFILE_ID } from "../config/constants";
+import { MESSAGE_PROFILE_ID } from "../config/errorMessages";
 import { z } from "zod";
 import { hashValue } from "../util/bcrypt";
 import {
@@ -36,5 +36,5 @@ export const ApiKeyCreateTransform = z.object({
   value: apiKeyValueSchema.pipe(
     z.transform(async (val) => await hashValue(val)),
   ),
-  profileId: z.number(ERROR_PROFILE_ID),
+  profileId: z.number(MESSAGE_PROFILE_ID),
 });

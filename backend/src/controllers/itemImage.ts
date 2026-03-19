@@ -1,5 +1,5 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import { NOT_FOUND, OK } from "../config/constants";
+import { NOT_FOUND, OK } from "../config/errorCodes";
 import catchErrors from "../util/catchErrors";
 import throwError from "../util/throwError";
 import prismaClient from "../db/client";

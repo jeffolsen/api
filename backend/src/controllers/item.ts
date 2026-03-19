@@ -1,13 +1,12 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import catchErrors from "../util/catchErrors";
-import { NOT_FOUND, OK } from "../config/constants";
+import { NOT_FOUND, OK } from "../config/errorCodes";
 import prismaClient, { TagName } from "../db/client";
 import throwError from "../util/throwError";
 import {
   CreateItemSchema,
   GetAllItemsQuerySchema,
   GetItemByIdSchema,
-  UpdateItemSchema,
 } from "../schemas/item";
 
 export const getAllItems: RequestHandler = catchErrors(

@@ -1,20 +1,20 @@
 import z from "zod";
-
 import {
-  ERROR_API_KEY_ORIGIN,
-  ERROR_API_KEY_SLUG,
-  ERROR_API_KEY_VALUE,
-  ERROR_CODE_TYPE,
-  ERROR_CODE_VALUE,
-  ERROR_DATE_TIME_FORMAT,
-  ERROR_EMAIL_FORMAT,
-  ERROR_ID,
-  ERROR_IDS_UNIQUE,
-  ERROR_PASSWORD_FORMAT,
-  ERROR_SESSION_USER_AGENT,
+  MESSAGE_API_KEY_ORIGIN,
+  MESSAGE_API_KEY_SLUG,
+  MESSAGE_API_KEY_VALUE,
+  MESSAGE_CODE_TYPE,
+  MESSAGE_CODE_VALUE,
+  MESSAGE_EMAIL_FORMAT,
+  MESSAGE_ID,
+  MESSAGE_IDS_UNIQUE,
+  MESSAGE_PASSWORD_FORMAT,
+  MESSAGE_SESSION_USER_AGENT,
+  MESSAGE_TAGS_UNIQUE,
+} from "../config/errorMessages";
+import {
   NUMERIC_CODE_REGEX,
   PASSWORD_REGEX,
-  ERROR_TAGS_UNIQUE,
   SLUG_REGEX,
 } from "../config/constants";
 import { API_KEY_SESSION, PROFILE_SESSION } from "../util/scope";
@@ -28,38 +28,38 @@ export const verificationCodeTypeSchema = z.enum(
     CodeType.LOGOUT_ALL,
     CodeType.PASSWORD_RESET,
   ],
-  ERROR_CODE_TYPE,
+  MESSAGE_CODE_TYPE,
 );
 
-export const idSchema = z.number(ERROR_ID);
-export const idArraySchema = z.array(z.number(ERROR_ID)).refine((items) => {
+export const idSchema = z.number(MESSAGE_ID);
+export const idArraySchema = z.array(z.number(MESSAGE_ID)).refine((items) => {
   return new Set(items).size === items.length;
-}, ERROR_IDS_UNIQUE);
+}, MESSAGE_IDS_UNIQUE);
 export const dateTimeSchema = z.iso.datetime();
 
-export const userAgentSchema = z.string(ERROR_SESSION_USER_AGENT);
+export const userAgentSchema = z.string(MESSAGE_SESSION_USER_AGENT);
 
-export const emailSchema = z.email(ERROR_EMAIL_FORMAT);
+export const emailSchema = z.email(MESSAGE_EMAIL_FORMAT);
 
 export const passwordSchema = z
-  .string(ERROR_PASSWORD_FORMAT)
-  .regex(PASSWORD_REGEX, ERROR_PASSWORD_FORMAT);
+  .string(MESSAGE_PASSWORD_FORMAT)
+  .regex(PASSWORD_REGEX, MESSAGE_PASSWORD_FORMAT);
 
 export const apiKeySlugSchema = z
-  .string(ERROR_API_KEY_SLUG)
-  .max(100, ERROR_API_KEY_SLUG)
-  .regex(SLUG_REGEX, ERROR_API_KEY_SLUG);
+  .string(MESSAGE_API_KEY_SLUG)
+  .max(100, MESSAGE_API_KEY_SLUG)
+  .regex(SLUG_REGEX, MESSAGE_API_KEY_SLUG);
 
 export const apiKeyOriginSchema = z.url({
   protocol: /^https$/,
-  message: ERROR_API_KEY_ORIGIN,
+  message: MESSAGE_API_KEY_ORIGIN,
 });
 
-export const apiKeyValueSchema = z.uuid(ERROR_API_KEY_VALUE);
+export const apiKeyValueSchema = z.uuid(MESSAGE_API_KEY_VALUE);
 
 export const verificationCodeValueSchema = z
-  .string(ERROR_CODE_VALUE)
-  .regex(NUMERIC_CODE_REGEX, ERROR_CODE_VALUE);
+  .string(MESSAGE_CODE_VALUE)
+  .regex(NUMERIC_CODE_REGEX, MESSAGE_CODE_VALUE);
 
 export const scopeSchema = z.union([
   z.literal(API_KEY_SESSION),
@@ -84,13 +84,13 @@ const tagArray = [
   TagName.THING,
 ] as const;
 
-export const tagNameSchema = z.enum(tagArray, ERROR_CODE_TYPE);
+export const tagNameSchema = z.enum(tagArray, MESSAGE_CODE_TYPE);
 
 export const tagNameArraySchema = z
   .array(z.union(tagArray.map((val) => z.literal(val))))
   .refine((items) => {
     return new Set(items).size === items.length;
-  }, ERROR_TAGS_UNIQUE);
+  }, MESSAGE_TAGS_UNIQUE);
 
 const imageTypeArray = [
   ImageType.ICON,
@@ -99,7 +99,7 @@ const imageTypeArray = [
   ImageType.OTHER,
 ] as const;
 
-export const imageTypeSchema = z.enum(imageTypeArray, ERROR_CODE_TYPE);
+export const imageTypeSchema = z.enum(imageTypeArray, MESSAGE_CODE_TYPE);
 
 const validItemSortValues = [
   "name",

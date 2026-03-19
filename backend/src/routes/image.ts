@@ -1,5 +1,5 @@
 import express from "express";
-import { COLLECTION_ENDPOINT, ID_PARAM } from "../config/constants";
+import { COLLECTION_ENDPOINT, ID_PARAM } from "../config/routes";
 import imageApi from "../controllers/image";
 
 const router = express.Router();

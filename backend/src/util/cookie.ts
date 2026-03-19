@@ -1,6 +1,6 @@
 import { CookieOptions, Response } from "express";
 import { getNewAccessTokenExpirationDate } from "./date";
-import { AUTH_REFRESH_ENDPOINT, AUTH_ROUTES } from "../config/constants";
+import { AUTH_REFRESH_ENDPOINT, AUTH_ROUTES } from "../config/routes";
 import env from "../config/env";
 
 export const ACCESS_TOKEN_NAME = "accessToken";

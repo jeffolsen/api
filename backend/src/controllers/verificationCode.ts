@@ -1,18 +1,22 @@
 import {
-  OK,
-  NOT_FOUND,
   VERIFICATION_CODE_LOGIN_ENDPOINT,
   VERIFICATION_CODE_SESSION_RESET_ENDPOINT,
   VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
-  ERROR_ENDPOINT_NOT_FOUND,
-  ERROR_CREDENTIALS,
   VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT,
   VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT,
+} from "../config/routes";
+import {
+  MESSAGE_ENDPOINT_NOT_FOUND,
+  MESSAGE_CREDENTIALS,
+  MESSAGE_MALFORMED,
+  MESSAGE_SESSION_TOO_MANY,
+} from "../config/errorMessages";
+import {
+  NOT_FOUND,
+  OK,
   BAD_REQUEST,
-  ERROR_MALFORMED,
-  ERROR_SESSION_TOO_MANY,
   TOO_MANY_REQUESTS,
-} from "../config/constants";
+} from "../config/errorCodes";
 import { RequestHandler } from "express";
 import catchErrors from "../util/catchErrors";
 import prismaClient, { CodeType } from "../db/client";
@@ -54,69 +58,69 @@ export const requestVerificationCode: RequestHandler<
   switch (req.path) {
     // requires password + session
     case VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT:
-      throwError(profileId && password, NOT_FOUND, ERROR_CREDENTIALS);
+      throwError(profileId && password, NOT_FOUND, MESSAGE_CREDENTIALS);
       profile = await prismaClient.profile.findUnique({
         where: { id: profileId },
       });
       throwError(
         profile && profile.comparePassword(password),
         NOT_FOUND,
-        ERROR_CREDENTIALS,
+        MESSAGE_CREDENTIALS,
       );
       codeType = CodeType.DELETE_PROFILE;
       break;
     // requires password + session
     case VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT:
-      throwError(profileId && password, NOT_FOUND, ERROR_CREDENTIALS);
+      throwError(profileId && password, NOT_FOUND, MESSAGE_CREDENTIALS);
       profile = await prismaClient.profile.findUnique({
         where: { id: profileId },
       });
       throwError(
         profile && profile.comparePassword(password),
         NOT_FOUND,
-        ERROR_CREDENTIALS,
+        MESSAGE_CREDENTIALS,
       );
       codeType = CodeType.CREATE_API_KEY;
       break;
     // requires email + password
     case VERIFICATION_CODE_LOGIN_ENDPOINT:
-      throwError(email && password, NOT_FOUND, ERROR_CREDENTIALS);
+      throwError(email && password, NOT_FOUND, MESSAGE_CREDENTIALS);
       profile = await prismaClient.profile.findUnique({ where: { email } });
       throwError(
         profile && profile.comparePassword(password),
         NOT_FOUND,
-        ERROR_CREDENTIALS,
+        MESSAGE_CREDENTIALS,
       );
       throwError(
         !(await prismaClient.session.maxExceeded(profile.id)),
         TOO_MANY_REQUESTS,
-        ERROR_SESSION_TOO_MANY,
+        MESSAGE_SESSION_TOO_MANY,
       );
       codeType = CodeType.LOGIN;
       break;
     // requires email + password
     case VERIFICATION_CODE_SESSION_RESET_ENDPOINT:
-      throwError(email && password, NOT_FOUND, ERROR_CREDENTIALS);
+      throwError(email && password, NOT_FOUND, MESSAGE_CREDENTIALS);
       profile = await prismaClient.profile.findUnique({ where: { email } });
       throwError(
         profile && profile.comparePassword(password),
         NOT_FOUND,
-        ERROR_CREDENTIALS,
+        MESSAGE_CREDENTIALS,
       );
       codeType = CodeType.LOGOUT_ALL;
       break;
     // requires email only
     case VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT:
-      throwError(email, NOT_FOUND, ERROR_CREDENTIALS);
+      throwError(email, NOT_FOUND, MESSAGE_CREDENTIALS);
       profile = await prismaClient.profile.findUnique({ where: { email } });
-      throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
+      throwError(profile, NOT_FOUND, MESSAGE_CREDENTIALS);
       codeType = CodeType.PASSWORD_RESET;
       break;
     // bad url fragment
     default:
-      throwError(false, NOT_FOUND, ERROR_ENDPOINT_NOT_FOUND);
+      throwError(false, NOT_FOUND, MESSAGE_ENDPOINT_NOT_FOUND);
   }
-  throwError(profile && codeType, BAD_REQUEST, ERROR_MALFORMED);
+  throwError(profile && codeType, BAD_REQUEST, MESSAGE_MALFORMED);
 
   await sendVerificationCode({
     profile,

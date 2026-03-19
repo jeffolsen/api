@@ -4,7 +4,7 @@ import {
   AUTH_LOGIN_ENDPOINT,
   AUTH_REGISTER_ENDPOINT,
   AUTH_REFRESH_ENDPOINT,
-} from "../config/constants";
+} from "../config/routes";
 
 const router = express.Router();
 

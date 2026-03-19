@@ -1,14 +1,13 @@
 import express from "express";
 import sessionApi from "../controllers/session";
 import authorizeScope from "../middleware/authorizeScope";
+import { READ_SESSION_SCOPE, UPDATE_SESSION_SCOPE } from "../config/scopes";
 import {
   SESSION_LOGOUT_ALL_ENDPOINT,
-  READ_SESSION_SCOPE,
   SESSION_LOGOUT_ENDPOINT,
-  UPDATE_SESSION_SCOPE,
   COLLECTION_ENDPOINT,
   SESSION_RESET_ENDPOINT,
-} from "../config/constants";
+} from "../config/routes";
 import authenticate from "../middleware/authenticate";
 
 const router = express.Router();

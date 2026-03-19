@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import throwError from "../throwError";
-import { BAD_REQUEST, NOT_FOUND } from "../../config/constants";
+import { BAD_REQUEST, NOT_FOUND } from "../../config/errorCodes";
 
 describe("throwError", () => {
   describe("truthy conditions (no error thrown)", () => {

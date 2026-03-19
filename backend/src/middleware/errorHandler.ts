@@ -1,6 +1,6 @@
 import { ErrorRequestHandler } from "express";
 import { isHttpError } from "http-errors";
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../config/constants";
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../config/errorCodes";
 import { z } from "zod";
 
 const errorHandler: ErrorRequestHandler = async (error, req, res, next) => {

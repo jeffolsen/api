@@ -10,21 +10,22 @@ import {
   verifyRefreshToken,
 } from "../util/jwt";
 import {
-  BAD_REQUEST,
+  MESSAGE_UNAUTHORIZED,
+  MESSAGE_VERIFICATION_CODE_TOO_MANY,
+  MESSAGE_COULD_NOT_SEND_EMAIL,
+  MESSAGE_INVALID_TOKEN,
+  MESSAGE_SESSION_CANNOT_REFRESH,
+  MESSAGE_SESSION_TOO_MANY,
+  MESSAGE_INVALID_API_KEY,
+  MESSAGE_CREDENTIALS,
+} from "../config/errorMessages";
+import {
   TOO_MANY_REQUESTS,
+  BAD_REQUEST,
   INTERNAL_SERVER_ERROR,
   FORBIDDEN,
-  ERROR_UNAUTHORIZED,
-  ERROR_VERIFICATION_CODE_TOO_MANY,
-  ERROR_COULD_NOT_SEND_EMAIL,
-  ERROR_INVALID_TOKEN,
-  ERROR_SESSION_CANNOT_REFRESH,
-  ERROR_SESSION_TOO_MANY,
-  ERROR_INVALID_API_KEY,
   NOT_FOUND,
-  ERROR_CREDENTIALS,
-  ERROR_ENDPOINT_NOT_FOUND,
-} from "../config/constants";
+} from "../config/errorCodes";
 import throwError from "../util/throwError";
 import sendEmail from "../util/sendEmail";
 import generateCode from "../util/generateCode";
@@ -49,7 +50,7 @@ export const initProfileSession = async ({
   const { id: profileId } = profile;
 
   const tooManySessions = await prismaClient.session.maxExceeded(profileId);
-  throwError(!tooManySessions, TOO_MANY_REQUESTS, ERROR_SESSION_TOO_MANY);
+  throwError(!tooManySessions, TOO_MANY_REQUESTS, MESSAGE_SESSION_TOO_MANY);
 
   await processVerificationCode({
     profileId,
@@ -84,7 +85,7 @@ export const connectToApiSession = async ({
   userAgent,
 }: ConnectToApiSessionParams) => {
   const { slug, origin, sessionId, profileId, id: apiKeyId } = apiKey;
-  throwError(slug && origin && profileId, BAD_REQUEST, ERROR_INVALID_API_KEY);
+  throwError(slug && origin && profileId, BAD_REQUEST, MESSAGE_INVALID_API_KEY);
 
   let session;
   if (sessionId)
@@ -93,7 +94,7 @@ export const connectToApiSession = async ({
     });
 
   const needToExtendTheSession = !session?.isCurrent();
-  throwError(needToExtendTheSession, FORBIDDEN, ERROR_SESSION_CANNOT_REFRESH);
+  throwError(needToExtendTheSession, FORBIDDEN, MESSAGE_SESSION_CANNOT_REFRESH);
 
   if (!session) {
     session = await prismaClient.session.start({
@@ -145,15 +146,15 @@ export const refreshAccessToken = async ({
 }: RefreshAccessTokenParams) => {
   const payload = verifyRefreshToken(refreshToken);
 
-  throwError(payload?.sessionId, BAD_REQUEST, ERROR_INVALID_TOKEN);
+  throwError(payload?.sessionId, BAD_REQUEST, MESSAGE_INVALID_TOKEN);
 
   const { sessionId } = payload;
   const sessionWithProfile = await prismaClient.session.findUnique({
     where: { id: sessionId, ...(userAgent && { userAgent }) },
     include: { profile: true },
   });
-  throwError(sessionWithProfile?.profile, BAD_REQUEST, ERROR_INVALID_TOKEN);
-  throwError(sessionWithProfile.isCurrent(), FORBIDDEN, ERROR_UNAUTHORIZED);
+  throwError(sessionWithProfile?.profile, BAD_REQUEST, MESSAGE_INVALID_TOKEN);
+  throwError(sessionWithProfile.isCurrent(), FORBIDDEN, MESSAGE_UNAUTHORIZED);
 
   const { profile, ...session } = sessionWithProfile;
 
@@ -178,7 +179,7 @@ export const sendVerificationCode = async ({
   throwError(
     !tooManyVerifcationCodes,
     TOO_MANY_REQUESTS,
-    ERROR_VERIFICATION_CODE_TOO_MANY,
+    MESSAGE_VERIFICATION_CODE_TOO_MANY,
   );
 
   const code = generateCode();
@@ -192,7 +193,7 @@ export const sendVerificationCode = async ({
     });
 
   const validEmail = sendEmail(email, code, codeType);
-  throwError(validEmail, INTERNAL_SERVER_ERROR, ERROR_COULD_NOT_SEND_EMAIL);
+  throwError(validEmail, INTERNAL_SERVER_ERROR, MESSAGE_COULD_NOT_SEND_EMAIL);
 
   return await prismaClient.verificationCode.create({
     data: {
@@ -228,7 +229,7 @@ export const processVerificationCode = async ({
   throwError(
     verificationCode && (await verificationCode.validate(value)),
     NOT_FOUND,
-    ERROR_CREDENTIALS,
+    MESSAGE_CREDENTIALS,
   );
 
   const usedVerificationCode = await prismaClient.verificationCode.use(

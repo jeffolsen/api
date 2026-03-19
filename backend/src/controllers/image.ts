@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
-import { NOT_FOUND, OK, ERROR_IMAGE_NOT_FOUND } from "../config/constants";
+import { MESSAGE_IMAGE_NOT_FOUND } from "../config/errorMessages";
+import { NOT_FOUND, OK } from "../config/errorCodes";
 import catchErrors from "../util/catchErrors";
 import throwError from "../util/throwError";
 import prismaClient, { ImageType } from "../db/client";
@@ -43,7 +44,7 @@ export const getImageById: RequestHandler = catchErrors(
     const image = await prismaClient.image.findUnique({
       where: { id: Number(id) },
     });
-    throwError(image, NOT_FOUND, ERROR_IMAGE_NOT_FOUND);
+    throwError(image, NOT_FOUND, MESSAGE_IMAGE_NOT_FOUND);
     res.status(OK).json(image);
   },
 );

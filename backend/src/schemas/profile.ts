@@ -1,4 +1,4 @@
-import { ERROR_PASSWORD_MATCH } from "../config/constants";
+import { MESSAGE_PASSWORD_MATCH } from "../config/errorMessages";
 import { z } from "zod";
 import { hashValue } from "../util/bcrypt";
 import {
@@ -20,7 +20,7 @@ export const ResetPasswordWithCodeSchema = ProfileDataSchema.extend({
   verificationCode: verificationCodeValueSchema,
   userAgent: userAgentSchema,
 }).refine((data) => data.password === data.confirmPassword, {
-  message: ERROR_PASSWORD_MATCH,
+  message: MESSAGE_PASSWORD_MATCH,
   path: ["password", "confirmPassword"],
 });
 
@@ -31,7 +31,7 @@ export const ChangePasswordWithSessionSchema = z
     confirmNewPassword: passwordSchema,
   })
   .refine((data) => data.newPassword === data.confirmNewPassword, {
-    message: ERROR_PASSWORD_MATCH,
+    message: MESSAGE_PASSWORD_MATCH,
     path: ["newPassword", "confirmNewPassword"],
   });
 

@@ -1,13 +1,11 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import catchErrors from "../util/catchErrors";
+import { BAD_REQUEST, NO_CONTENT, OK, NOT_FOUND } from "../config/errorCodes";
 import {
-  BAD_REQUEST,
-  ERROR_CREDENTIALS,
-  ERROR_PROFILE_ID,
-  NO_CONTENT,
-  OK,
-  NOT_FOUND,
-} from "../config/constants";
+  MESSAGE_CREDENTIALS,
+  MESSAGE_PROFILE_ID,
+} from "../config/errorMessages";
+
 import throwError from "../util/throwError";
 import prismaClient, { CodeType } from "../db/client";
 import { processVerificationCode } from "../services/auth";
@@ -27,7 +25,7 @@ export const getAuthenticatedProfile: RequestHandler = catchErrors(
     const profile = await prismaClient.profile.findUnique({
       where: { id: profileId },
     });
-    throwError(profile, BAD_REQUEST, ERROR_PROFILE_ID);
+    throwError(profile, BAD_REQUEST, MESSAGE_PROFILE_ID);
 
     res.status(OK).json(profile.clientSafe());
   },
@@ -45,7 +43,7 @@ export const deleteProfile: RequestHandler = catchErrors(
     const profile = await prismaClient.profile.findUnique({
       where: { id: profileId },
     });
-    throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
+    throwError(profile, NOT_FOUND, MESSAGE_CREDENTIALS);
 
     await processVerificationCode({
       profileId: profile.id,
@@ -84,7 +82,7 @@ export const resetPasswordWithCode: RequestHandler<
     });
 
   const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
+  throwError(profile, NOT_FOUND, MESSAGE_CREDENTIALS);
 
   await processVerificationCode({
     profileId: profile.id,
@@ -134,7 +132,7 @@ export const changePasswordWithSession: RequestHandler<
   throwError(
     profile && (await profile.comparePassword(password)),
     NOT_FOUND,
-    ERROR_PROFILE_ID,
+    MESSAGE_PROFILE_ID,
   );
   const hashedNewPassword = await passwordTransform.parseAsync(newPassword);
 

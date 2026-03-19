@@ -1,17 +1,19 @@
 import {
-  OK,
-  CREATED,
+  MESSAGE_API_KEY_LIMIT_REACHED,
+  MESSAGE_API_KEY_SLUG_TAKEN,
+  MESSAGE_API_KEY_SLUG_NOT_FOUND,
+  MESSAGE_API_KEY_ORIGIN,
+  MESSAGE_API_KEY_VALUE,
+  MESSAGE_NO_ACCESS,
+  MESSAGE_CREDENTIALS,
+} from "../config/errorMessages";
+import {
   CONFLICT,
   FORBIDDEN,
   NOT_FOUND,
-  ERROR_API_KEY_LIMIT_REACHED,
-  ERROR_API_KEY_SLUG_TAKEN,
-  ERROR_API_KEY_SLUG_NOT_FOUND,
-  ERROR_API_KEY_ORIGIN,
-  ERROR_API_KEY_VALUE,
-  ERROR_NO_ACCESS,
-  ERROR_CREDENTIALS,
-} from "../config/constants";
+  OK,
+  CREATED,
+} from "../config/errorCodes";
 import { RequestHandler } from "express";
 import throwError from "../util/throwError";
 import catchErrors from "../util/catchErrors";
@@ -68,15 +70,15 @@ export const generate: RequestHandler<
   const profile = await prismaClient.profile.findUnique({
     where: { id: profileId },
   });
-  throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
+  throwError(profile, NOT_FOUND, MESSAGE_CREDENTIALS);
 
   const tooManyApiKeys = await prismaClient.apiKey.maxExceeded(profile.id);
-  throwError(!tooManyApiKeys, FORBIDDEN, ERROR_API_KEY_LIMIT_REACHED);
+  throwError(!tooManyApiKeys, FORBIDDEN, MESSAGE_API_KEY_LIMIT_REACHED);
 
   const slugExists = await prismaClient.apiKey.findUnique({
     where: { slug },
   });
-  throwError(!slugExists, CONFLICT, ERROR_API_KEY_SLUG_TAKEN);
+  throwError(!slugExists, CONFLICT, MESSAGE_API_KEY_SLUG_TAKEN);
 
   await processVerificationCode({
     profileId,
@@ -122,13 +124,13 @@ export const connect: RequestHandler<
   const apiKey = await prismaClient.apiKey.findUnique({
     where: { slug },
   });
-  throwError(apiKey, NOT_FOUND, ERROR_API_KEY_SLUG_NOT_FOUND);
+  throwError(apiKey, NOT_FOUND, MESSAGE_API_KEY_SLUG_NOT_FOUND);
 
   const originMatch = apiKey.origin === origin;
-  throwError(originMatch, NOT_FOUND, ERROR_API_KEY_ORIGIN);
+  throwError(originMatch, NOT_FOUND, MESSAGE_API_KEY_ORIGIN);
 
   const apiKeyIsValid = await apiKey.validate(value);
-  throwError(apiKeyIsValid, NOT_FOUND, ERROR_API_KEY_VALUE);
+  throwError(apiKeyIsValid, NOT_FOUND, MESSAGE_API_KEY_VALUE);
 
   const { session, ...tokens } = await connectToApiSession({
     apiKey,
@@ -170,13 +172,13 @@ export const destroy: RequestHandler<
   const profile = await prismaClient.profile.findUnique({
     where: { id: profileId },
   });
-  throwError(profile, NOT_FOUND, ERROR_CREDENTIALS);
+  throwError(profile, NOT_FOUND, MESSAGE_CREDENTIALS);
 
   const apiKey = await prismaClient.apiKey.findUnique({
     where: { slug },
   });
-  throwError(apiKey, NOT_FOUND, ERROR_API_KEY_SLUG_NOT_FOUND);
-  throwError(apiKey?.profileId === profileId, FORBIDDEN, ERROR_NO_ACCESS);
+  throwError(apiKey, NOT_FOUND, MESSAGE_API_KEY_SLUG_NOT_FOUND);
+  throwError(apiKey?.profileId === profileId, FORBIDDEN, MESSAGE_NO_ACCESS);
 
   await processVerificationCode({
     profileId,

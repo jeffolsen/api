@@ -1,14 +1,12 @@
 import express from "express";
 import authorizeScope from "../middleware/authorizeScope";
 import {
-  DELETE_ITEM_SCOPE,
+  UPDATE_ITEM_SCOPE,
   DELETE_DATE_RANGE_SCOPE,
   READ_ITEM_SCOPE,
   READ_DATE_RANGE_SCOPE,
-  DATE_RANGE_ROUTES,
-  ID_PARAM,
-  ITEM_ID_PARAM,
-} from "../config/constants";
+} from "../config/scopes";
+import { DATE_RANGE_ROUTES, ID_PARAM, ITEM_ID_PARAM } from "../config/routes";
 import itemDateRangeApi from "../controllers/itemDateRange";
 
 const router = express.Router();
@@ -30,7 +28,7 @@ router.delete(
   authorizeScope([
     READ_ITEM_SCOPE,
     READ_DATE_RANGE_SCOPE,
-    DELETE_ITEM_SCOPE,
+    UPDATE_ITEM_SCOPE,
     DELETE_DATE_RANGE_SCOPE,
   ]),
   itemDateRangeApi.deleteItemDateRange,

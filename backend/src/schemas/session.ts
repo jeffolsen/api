@@ -1,4 +1,4 @@
-import { ERROR_PROFILE_ID } from "../config/constants";
+import { MESSAGE_PROFILE_ID } from "../config/errorMessages";
 import { z } from "zod";
 import { getScope } from "../util/scope";
 import {
@@ -19,8 +19,8 @@ export const SessionLogoutAllSchema = z.object({
 export const SessionCreateTransform = z.object({
   scope: scopeSchema.pipe(z.transform((val) => getScope(val))),
   userAgent: userAgentSchema,
-  profileId: z.number(ERROR_PROFILE_ID),
-  apiKeyId: z.number(ERROR_PROFILE_ID).nullish(),
+  profileId: z.number(MESSAGE_PROFILE_ID),
+  apiKeyId: z.number(MESSAGE_PROFILE_ID).nullish(),
 });
 
 export type SessionCreateTransformType = z.infer<typeof SessionCreateTransform>;

@@ -1,13 +1,12 @@
 import express from "express";
 import authorizeScope from "../middleware/authorizeScope";
 import {
-  COLLECTION_ENDPOINT,
   CREATE_FEED_SCOPE,
   DELETE_FEED_SCOPE,
-  ID_PARAM,
   READ_FEED_SCOPE,
   UPDATE_FEED_SCOPE,
-} from "../config/constants";
+} from "../config/scopes";
+import { COLLECTION_ENDPOINT, ID_PARAM } from "../config/routes";
 import feedApi from "../controllers/feed";
 
 const router = express.Router();
