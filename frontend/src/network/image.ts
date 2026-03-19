@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { IMAGES_ENDPOINT } from "./api";
 import { useAuthState } from "../contexts/AuthContext";
 
-const IMAGES_KEY = "images" as const;
+export const IMAGES_KEY = "images" as const;
 
 export const useGetImages = () => {
   const { api } = useAuthState();
@@ -14,4 +14,21 @@ export const useGetImages = () => {
       return response.data;
     },
   });
+};
+
+export const imageTypes = [
+  "ICON",
+  "LANDSCAPE",
+  "PORTRAIT",
+  "OTHER",
+  "",
+] as const;
+
+export type TImageType = (typeof imageTypes)[number];
+
+export type TImage = {
+  id: number;
+  url: string;
+  type: TImageType;
+  alt: string;
 };

@@ -37,6 +37,7 @@ export const DESTROY_API_KEY_ENDPOINT = "/keys/destroy";
 export const IMAGES_ENDPOINT = "/images";
 export const ITEMS_ENDPOINT = "/items";
 export const TAGS_ENDPOINT = "/tags";
+export const DATE_RANGES_ENDPOINT = "/date-ranges";
 
 export const OK = 200;
 export const CREATED = 201;
