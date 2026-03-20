@@ -1,6 +1,10 @@
 import { CookieOptions, Response } from "express";
 import { getNewAccessTokenExpirationDate } from "./date";
-import { AUTH_REFRESH_ENDPOINT, AUTH_ROUTES } from "../config/routes";
+import {
+  BASE_API_URL,
+  AUTH_REFRESH_ENDPOINT,
+  AUTH_ROUTES,
+} from "../config/routes";
 import env from "../config/env";
 
 export const ACCESS_TOKEN_NAME = "accessToken";
@@ -25,7 +29,7 @@ const getRefreshTokenCookieOptions = (expiredAt: Date): CookieOptions => {
   return {
     ...defaults,
     ...(expiredAt && { expires: expiredAt }),
-    path: AUTH_ROUTES + AUTH_REFRESH_ENDPOINT,
+    path: BASE_API_URL + AUTH_ROUTES + AUTH_REFRESH_ENDPOINT,
   };
 };
 
@@ -53,6 +57,8 @@ export const setAuthCookies = ({
 
 export const clearAuthCookies = (res: Response) => {
   res.clearCookie(ACCESS_TOKEN_NAME);
-  res.clearCookie(REFRESH_TOKEN_NAME);
+  res.clearCookie(REFRESH_TOKEN_NAME, {
+    path: BASE_API_URL + AUTH_ROUTES + AUTH_REFRESH_ENDPOINT,
+  });
   return res;
 };

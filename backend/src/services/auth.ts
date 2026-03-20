@@ -145,7 +145,6 @@ export const refreshAccessToken = async ({
   userAgent,
 }: RefreshAccessTokenParams) => {
   const payload = verifyRefreshToken(refreshToken);
-
   throwError(payload?.sessionId, BAD_REQUEST, MESSAGE_INVALID_TOKEN);
 
   const { sessionId } = payload;

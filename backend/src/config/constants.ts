@@ -3,8 +3,8 @@ import { SignOptions } from "jsonwebtoken";
 // resource limits
 export const MAX_DAILY_SYSTEM_EMAILS = 2800;
 export const MAX_MONTHLY_SYSTEM_EMAILS = 90;
-export const MAX_PROFILE_SESSIONS = 1;
-export const MAX_PROFILE_CODES = 15;
+export const MAX_PROFILE_SESSIONS = 10;
+export const MAX_PROFILE_CODES = 30;
 export const MAX_PROFILE_API_KEYS = 2;
 
 // 4 days in ms
@@ -14,8 +14,8 @@ export const SESSION_TOKEN_OPTIONS = {
   expiresIn: SESSION_TOKEN_LIFESPAN,
 } as SignOptions;
 // 15 minutes in ms
-export const ACCESS_TOKEN_LIFESPAN = 15 * 60 * 1000;
-// export const ACCESS_TOKEN_LIFESPAN = 1 * 60 * 1000;
+// export const ACCESS_TOKEN_LIFESPAN = 15 * 60 * 1000;
+export const ACCESS_TOKEN_LIFESPAN = 1 * 60 * 1000;
 export const ACCESS_TOKEN_OPTIONS = {
   expiresIn: ACCESS_TOKEN_LIFESPAN,
 } as SignOptions;

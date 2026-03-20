@@ -17,18 +17,15 @@ const authenticate: RequestHandler = async (
   throwError(accessToken, UNAUTHORIZED, MESSAGE_INVALID_TOKEN);
 
   const payload = await verifyAccessToken(accessToken);
-
   throwError(payload?.expiredAt, UNAUTHORIZED, MESSAGE_INVALID_TOKEN);
 
   const { sessionId, expiredAt } = payload;
   const accessTokenNotExpired = date(expiredAt).isAfterNow();
-
   throwError(accessTokenNotExpired, UNAUTHORIZED, MESSAGE_INVALID_TOKEN);
 
   const session = await prismaClient.session.findUnique({
     where: { id: sessionId, userAgent },
   });
-
   throwError(session, UNAUTHORIZED, MESSAGE_INVALID_TOKEN);
 
   const sessionStillCurrent = session.isCurrent();
