@@ -18,8 +18,8 @@ model Profile {
   id                Int                @id @default(autoincrement())
   email             String             @unique
   password          String
-  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt         DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
   sessions          Session[]          @relation("ProfileSessions")
   verificationCodes VerificationCode[] @relation("ProfileCodes")
   apiKeys           ApiKey[]           @relation("ProfileApiKeys")
@@ -33,10 +33,10 @@ model Session {
   id        Int       @id @default(autoincrement())
   scope     String
   userAgent String    @map("user_agent")
-  expiredAt DateTime  @default(dbgenerated("(now() + '4 days'::interval)")) @map("expired_at") @db.Timestamptz(3)
-  endedAt   DateTime? @map("ended_at") @db.Timestamptz(3)
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  expiredAt DateTime  @default(dbgenerated("(now() + '4 days'::interval)")) @map("expired_at") @db.Timestamptz(6)
+  endedAt   DateTime? @map("ended_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
   profile   Profile   @relation("ProfileSessions", fields: [profileId], references: [id], onDelete: Cascade)
   profileId Int       @map("profile_id")
   apiKeyId  Int?      @map("api_key_id")
@@ -58,10 +58,10 @@ model VerificationCode {
   type      CodeType  @default(LOGIN)
   value     String
   userAgent String    @map("user_agent")
-  usedAt    DateTime? @map("used_at") @db.Timestamptz(3)
-  expiredAt DateTime  @default(dbgenerated("(now() + '08:00:00'::interval)")) @map("expired_at") @db.Timestamptz(3)
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  usedAt    DateTime? @map("used_at") @db.Timestamptz(6)
+  expiredAt DateTime  @default(dbgenerated("(now() + '08:00:00'::interval)")) @map("expired_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
   profile   Profile?  @relation("ProfileCodes", fields: [profileId], references: [id], onDelete: SetNull)
   profileId Int?      @map("profile_id")
 
@@ -73,8 +73,8 @@ model ApiKey {
   slug      String   @unique
   value     String?
   origin    String?
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
   profile   Profile  @relation("ProfileApiKeys", fields: [profileId], references: [id], onDelete: Cascade)
   profileId Int      @map("profile_id")
   session   Session? @relation("ApiKeySession", fields: [sessionId], references: [id], onDelete: SetNull)
@@ -102,8 +102,8 @@ model Component {
   type      ComponentType @default(BASIC_BLOCK)
   title     String?
   config    Json          @default("{}")
-  createdAt DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+  createdAt DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
   feed      Feed          @relation("FeedComponents", fields: [feedId], references: [id], onDelete: Cascade)
   feedId    Int
 
@@ -116,10 +116,10 @@ model Item {
   description String?
   sortName    String      @map("sort_name")
   isPrivate   Boolean     @default(true) @map("is_private")
-  createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
-  publishedAt DateTime?   @map("published_at") @db.Timestamptz(3)
-  expiredAt   DateTime?   @map("expired_at") @db.Timestamptz(3)
+  createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  publishedAt DateTime?   @map("published_at") @db.Timestamptz(6)
+  expiredAt   DateTime?   @map("expired_at") @db.Timestamptz(6)
   author      Profile?    @relation("ProfileItems", fields: [authorId], references: [id], onDelete: SetNull)
   authorId    Int?        @map("author_id")
   dateRanges  DateRange[] @relation("ItemDateRanges")
@@ -132,10 +132,10 @@ model Item {
 model DateRange {
   id          Int      @id @default(autoincrement())
   description String?
-  startAt     DateTime @map("start_at") @db.Timestamptz(3)
-  endAt       DateTime @map("end_at") @db.Timestamptz(3)
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  startAt     DateTime @map("start_at") @db.Timestamptz(6)
+  endAt       DateTime @map("end_at") @db.Timestamptz(6)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
   item        Item     @relation("ItemDateRanges", fields: [itemId], references: [id], onDelete: Cascade)
   itemId      Int
 
@@ -187,8 +187,8 @@ model Image {
   url       String      @unique
   alt       String?
   type      ImageType   @default(OTHER)
-  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
   items     ItemImage[]
 
   @@map("images")
