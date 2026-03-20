@@ -96,3 +96,13 @@ export const useConnectApiKey = () => {
       }),
   });
 };
+
+export type TApiKey = {
+  id: number;
+  apiSlug: string;
+  origin: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type TApiKeyInput = Omit<TApiKey, "id" | "createdAt" | "updatedAt">;

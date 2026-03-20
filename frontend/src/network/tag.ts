@@ -20,3 +20,5 @@ export type TTag = {
   id: number;
   name: string;
 };
+
+export type TTagInput = Omit<TTag, "id">;

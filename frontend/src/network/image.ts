@@ -31,4 +31,8 @@ export type TImage = {
   url: string;
   type: TImageType;
   alt: string;
+  createdAt: string;
+  updatedAt: string;
 };
+
+export type TImageInput = Omit<TImage, "id" | "createdAt" | "updatedAt">;

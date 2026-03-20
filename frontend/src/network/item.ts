@@ -6,10 +6,10 @@ import {
   IMAGES_ENDPOINT,
   DATE_RANGES_ENDPOINT,
 } from "./api";
-import { TAGS_KEY } from "./tag";
-import { IMAGES_KEY } from "./image";
+import { TAGS_KEY, TTagInput } from "./tag";
+import { IMAGES_KEY, TImage } from "./image";
 import { useAuthState } from "../contexts/AuthContext";
-import { DATE_RANGES_KEY, TDateRange } from "./dateRange";
+import { DATE_RANGES_KEY, TDateRangeInput } from "./dateRange";
 
 export const ITEMS_KEY = "items" as const;
 
@@ -77,14 +77,14 @@ export const useGetItemDateRanges = (id: number) => {
   });
 };
 
-export type CreateItemInput = {
+export type CreateItemRequest = {
   name?: string;
   description?: string;
   publishedAt?: string | null;
   expiredAt?: string | null;
-  imageIds?: number[];
-  tagNames?: string[];
-  dateRanges?: TDateRange[];
+  imageIds?: TImage["id"][];
+  tagNames?: TTagInput["name"][];
+  dateRanges?: TDateRangeInput[];
 };
 
 export const useCreateItem = () => {
@@ -92,7 +92,7 @@ export const useCreateItem = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: CreateItemInput) =>
+    mutationFn: async (data: CreateItemRequest) =>
       withErrorHandling(async () => {
         console.log("Creating item with data:", data);
         const response = await api.post(ITEMS_ENDPOINT, data);
@@ -109,7 +109,7 @@ export const useUpdateItem = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: CreateItemInput }) =>
+    mutationFn: async ({ id, data }: { id: number; data: CreateItemRequest }) =>
       withErrorHandling(async () => {
         console.log(`Editing item ${id} with data:`, data);
         const response = await api.put(`${ITEMS_ENDPOINT}/${id}`, data);
@@ -127,7 +127,7 @@ export const useUpdateItem = () => {
   });
 };
 
-export interface Item {
+export type TItem = {
   id: number;
   name: string;
   description: string;
@@ -137,4 +137,6 @@ export interface Item {
   authorId: number;
   createdAt: string;
   updatedAt: string;
-}
+};
+
+export type TItemInput = Omit<TItem, "id" | "createdAt" | "updatedAt">;
