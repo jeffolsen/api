@@ -11,17 +11,9 @@ import {
 } from "./Input";
 import clsx from "clsx";
 import Loading from "../common/Loading";
+import { TTagInput } from "../../network/tag";
 
-type TagnameField = {
-  id: string;
-  tagname: string;
-};
-
-type Tag = {
-  name: string;
-};
-
-type TagnameArrayFields = Array<TagnameField>;
+type TagnameArrayFields = Array<TTagInput & { id: string }>;
 
 function TagArrayInput(
   props: Omit<
@@ -43,20 +35,22 @@ function TagArrayInput(
   });
   const tags = useGetTags();
 
-  const selectedTagnames = (fields as TagnameArrayFields).map((f) => f.tagname);
+  const selectedTagnames = (fields as TagnameArrayFields).map((f) => f.name);
 
   const handleToggle = (tagname: string) => {
     const index = selectedTagnames.indexOf(tagname);
     if (index !== -1) {
       remove(index);
     } else {
-      append({ tagname });
+      append({ name: tagname });
     }
   };
 
   const getTags = useCallback(() => {
     if (tags.data) {
-      return tags.data.sort((a: Tag, b: Tag) => a.name.localeCompare(b.name));
+      return tags.data.sort((a: TTagInput, b: TTagInput) =>
+        a.name.localeCompare(b.name),
+      );
     }
     return [];
   }, [tags.data]);
@@ -82,7 +76,7 @@ function TagArrayInput(
         </legend>
         <Grid
           columns={{ base: "2", sm: "3", md: "4" }}
-          items={getTags().map((tag: { name: string }) => (
+          items={getTags().map((tag: TTagInput) => (
             <label
               key={tag.name}
               className="flex items-center gap-2 cursor-pointer"

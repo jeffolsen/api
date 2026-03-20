@@ -11,6 +11,7 @@ import {
 import { XButton, PlusButton } from "../common/Button";
 import TextInput, { TextInputProps } from "./TextInput";
 import { Fragment } from "react";
+import { TDateRangeInput } from "../../network/dateRange";
 
 function DateRangeSelectInput(
   props: CompoundFormComponentProps & FromFormProps,
@@ -87,7 +88,7 @@ function DateRangeSelectInput(
           <div>
             <PlusButton
               onClick={() => {
-                append({});
+                append({} as TDateRangeInput);
               }}
             />
           </div>
@@ -124,8 +125,11 @@ function DateRangeEntry({
     errors: FieldErrors<Record<string, unknown>>;
   }) {
   const now = new Date();
+  console.log("now", now);
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   const minDateTimeValue = now.toISOString().slice(0, 16);
+
+  console.log(minDateTimeValue);
 
   const startAt = {
     ...(inputs?.startAt || {}),

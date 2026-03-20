@@ -75,7 +75,7 @@ const pages = {
   "items/:id": {
     blocks: [
       {
-        type: "editItem",
+        type: "updateItem",
         data: {
           id: 3,
           title: "Edit item",

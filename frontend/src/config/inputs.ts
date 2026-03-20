@@ -188,7 +188,7 @@ export const tagnamesDefaultFromStrings = (tagnames: string[]) => ({
   tagNames: tagnames.map((tagname) => ({ tagname })),
 });
 
-import { CreateDateRange } from "../network/item";
+import { TDateRangeInput } from "../network/dateRange";
 export const DATE_RANGES_INPUT = {
   dataName: "dateRanges",
   displayName: "Date Ranges",
@@ -230,11 +230,11 @@ export const DATE_RANGES_INPUT = {
     },
   },
 } as FormComponentProps;
-export const DATE_RANGES_DEFAULT = { dateRanges: [] as CreateDateRange[] };
+export const DATE_RANGES_DEFAULT = { dateRanges: [] as TDateRangeInput[] };
 
 export const PUBLISH_DEFAULT = {
   publishedAt: null as string | null,
-  expiresAt: null as string | null,
+  expiredAt: null as string | null,
 };
 
 export const subheading = (displayName: string) =>

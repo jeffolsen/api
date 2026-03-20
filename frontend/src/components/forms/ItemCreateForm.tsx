@@ -1,0 +1,144 @@
+import {
+  IMAGE_IDS_INPUT,
+  DESCRIPTION_INPUT,
+  NAME_INPUT,
+  TAGNAMES_INPUT,
+  DATE_RANGES_INPUT,
+  NAME_DEFAULT,
+  DESCRIPTION_DEFAULT,
+  IMAGE_IDS_DEFAULT,
+  TAGNAMES_DEFAULT,
+  DATE_RANGES_DEFAULT,
+  PUBLISH_DEFAULT,
+  subheading,
+} from "../../config/inputs";
+import { withFormHandling } from "../../network/api";
+import { TDateRangeInput } from "../../network/dateRange";
+import { TTagInput } from "../../network/tag";
+import { TImage } from "../../network/image";
+import {
+  CreateItemRequest,
+  useCreateItem,
+  useUpdateItem,
+} from "../../network/item";
+import PublishInput from "../inputs/PublishInput";
+import {
+  FormWithHeading,
+  FormReponseHandlerProps,
+  FormWithHeadingProps,
+} from "./Form";
+import { convertLocalDateTimeToZulu } from "../../utils/time";
+
+export type FormValues = {
+  name?: string;
+  description?: string;
+  imageIds?: { imageId: TImage["id"] }[];
+  tagNames?: TTagInput[];
+  dateRanges?: TDateRangeInput[];
+  publishedAt?: string | null;
+  expiredAt?: string | null;
+};
+
+const mapFormValuesToCreateItemRequest = (
+  values: FormValues,
+): CreateItemRequest => ({
+  name: values.name,
+  description: values.description,
+  publishedAt: values.publishedAt
+    ? convertLocalDateTimeToZulu(values.publishedAt)
+    : null,
+  expiredAt: values.expiredAt
+    ? convertLocalDateTimeToZulu(values.expiredAt)
+    : null,
+  imageIds:
+    values.imageIds?.map((img: { imageId: TImage["id"] }) => img.imageId) || [],
+  tagNames: values.tagNames?.map((tag: TTagInput) => tag.name) || [],
+  dateRanges:
+    values.dateRanges?.map((dateRange: TDateRangeInput) => ({
+      startAt: convertLocalDateTimeToZulu(dateRange.startAt),
+      endAt: convertLocalDateTimeToZulu(dateRange.endAt),
+      description: dateRange.description,
+    })) || [],
+});
+
+function ItemCreateForm({
+  handleError,
+  handleSuccess,
+  defaultValues = {},
+  ...props
+}: FormWithHeadingProps & FormReponseHandlerProps) {
+  const createItem = useCreateItem();
+
+  return (
+    <FormWithHeading
+      fields={[
+        subheading("Item content"),
+        NAME_INPUT,
+        DESCRIPTION_INPUT,
+        IMAGE_IDS_INPUT,
+        subheading("Item meta"),
+        TAGNAMES_INPUT,
+        DATE_RANGES_INPUT,
+      ]}
+      defaultValues={{
+        ...NAME_DEFAULT,
+        ...DESCRIPTION_DEFAULT,
+        ...IMAGE_IDS_DEFAULT,
+        ...TAGNAMES_DEFAULT,
+        ...DATE_RANGES_DEFAULT,
+        ...PUBLISH_DEFAULT,
+        ...defaultValues,
+      }}
+      submitAction={async (args) =>
+        withFormHandling(
+          async () => {
+            return createItem.mutateAsync(
+              mapFormValuesToCreateItemRequest(args as FormValues),
+            );
+          },
+          {
+            onSuccess: handleSuccess,
+            onError: handleError,
+          },
+        )
+      }
+      SubmitInput={PublishInput}
+      {...props}
+    />
+  );
+}
+
+function ItemUpdateForm({
+  handleError,
+  handleSuccess,
+  defaultValues = {},
+  ...props
+}: FormWithHeadingProps & FormReponseHandlerProps) {
+  const updateItem = useUpdateItem();
+
+  return (
+    <ItemCreateForm
+      handleError={handleError}
+      handleSuccess={handleSuccess}
+      defaultValues={defaultValues}
+      submitAction={async (args) => {
+        const { id, ...data } = args;
+        return withFormHandling(
+          async () => {
+            return updateItem.mutateAsync({
+              id: Number(id),
+              data: mapFormValuesToCreateItemRequest(data as FormValues),
+            });
+          },
+          {
+            onSuccess: handleSuccess,
+            onError: handleError,
+          },
+        );
+      }}
+      {...props}
+    />
+  );
+}
+
+export { ItemCreateForm, ItemUpdateForm };

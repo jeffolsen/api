@@ -39,7 +39,7 @@ function Form({
     watch,
     formState: { errors, isSubmitting },
   } = useForm({
-    mode: "onChange",
+    mode: "onBlur",
     defaultValues: { ...defaultValues },
   });
 
