@@ -16,7 +16,7 @@ import {
   MESSAGE_INVALID_TOKEN,
   MESSAGE_SESSION_CANNOT_REFRESH,
   MESSAGE_SESSION_TOO_MANY,
-  MESSAGE_INVALID_API_KEY,
+  MESSAGE_API_KEY_VALUE,
   MESSAGE_CREDENTIALS,
 } from "../config/errorMessages";
 import {
@@ -85,7 +85,7 @@ export const connectToApiSession = async ({
   userAgent,
 }: ConnectToApiSessionParams) => {
   const { slug, origin, sessionId, profileId, id: apiKeyId } = apiKey;
-  throwError(slug && origin && profileId, BAD_REQUEST, MESSAGE_INVALID_API_KEY);
+  throwError(slug && origin && profileId, BAD_REQUEST, MESSAGE_API_KEY_VALUE);
 
   let session;
   if (sessionId)

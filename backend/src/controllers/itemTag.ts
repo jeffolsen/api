@@ -7,6 +7,10 @@ import {
   GetItemResourceByIdSchema,
   GetItemsResourcesSchema,
 } from "../schemas/item";
+import {
+  MESSAGE_ITEM_NOT_FOUND,
+  MESSAGE_TAGS_NOT_FOUND,
+} from "../config/errorMessages";
 
 export const getItemTags: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -18,11 +22,11 @@ export const getItemTags: RequestHandler = catchErrors(
       include: { tags: true },
     });
 
-    throwError(item, NOT_FOUND, "item not found");
+    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
     const tags = await prismaClient.tag.findMany({
       where: { id: { in: item.tags.map((tag) => tag.tagId) } },
     });
-    throwError(tags, NOT_FOUND, "tags not found");
+    throwError(tags, NOT_FOUND, MESSAGE_TAGS_NOT_FOUND);
 
     res.status(OK).send(tags);
   },
@@ -38,15 +42,15 @@ export const getItemTagById: RequestHandler = catchErrors(
       include: { tags: true },
     });
 
-    throwError(item, NOT_FOUND, "item not found");
+    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
 
     const itemTag = item.tags.find((tag) => tag.tagId === id);
-    throwError(itemTag, NOT_FOUND, "tag not found");
+    throwError(itemTag, NOT_FOUND, MESSAGE_TAGS_NOT_FOUND);
 
     const tag = await prismaClient.tag.findUnique({
       where: { id: itemTag.tagId },
     });
-    throwError(tag, NOT_FOUND, "tag not found");
+    throwError(tag, NOT_FOUND, MESSAGE_TAGS_NOT_FOUND);
 
     res.status(OK).send(tag);
   },
@@ -62,15 +66,15 @@ export const deleteItemTag: RequestHandler = catchErrors(
       include: { tags: true },
     });
 
-    throwError(item, NOT_FOUND, "item not found");
+    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
 
     const itemTag = item.tags.find((tag) => tag.tagId === id);
-    throwError(itemTag, NOT_FOUND, "tag not found");
+    throwError(itemTag, NOT_FOUND, MESSAGE_TAGS_NOT_FOUND);
 
     const tag = await prismaClient.tag.findUnique({
       where: { id: itemTag.tagId },
     });
-    throwError(tag, NOT_FOUND, "tag not found");
+    throwError(tag, NOT_FOUND, MESSAGE_TAGS_NOT_FOUND);
 
     await prismaClient.item.update({
       where: { id: itemId },

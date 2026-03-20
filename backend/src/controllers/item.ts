@@ -8,6 +8,7 @@ import {
   GetAllItemsQuerySchema,
   GetItemByIdSchema,
 } from "../schemas/item";
+import { MESSAGE_ITEM_NOT_FOUND } from "../config/errorMessages";
 
 export const getAllItems: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -51,7 +52,7 @@ export const getItemById: RequestHandler = catchErrors(
       include,
       omit: { authorId: true },
     });
-    throwError(item, NOT_FOUND, "item not found");
+    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
 
     res.status(OK).json(item);
   },
@@ -137,7 +138,7 @@ export const updateItem: RequestHandler = catchErrors(
     const item = await prismaClient.item.findFirst({
       where: { id: Number(id), authorId: profileId },
     });
-    throwError(item, NOT_FOUND, "item not found");
+    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
 
     const tags =
       tagNames &&

@@ -7,7 +7,10 @@ import {
   GetItemResourceByIdSchema,
   GetItemsResourcesSchema,
 } from "../schemas/item";
-import itemImageApi from "./itemImage";
+import {
+  MESSAGE_ITEM_NOT_FOUND,
+  MESSAGE_DATE_RANGES_NOT_FOUND,
+} from "../config/errorMessages";
 
 export const getItemDateRanges: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -23,13 +26,13 @@ export const getItemDateRanges: RequestHandler = catchErrors(
       include: { dateRanges: true },
     });
 
-    throwError(item, NOT_FOUND, "item not found");
+    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
     const dateRanges = await prismaClient.dateRange.findMany({
       where: {
         id: { in: item.dateRanges.map((dateRange) => dateRange.id) },
       },
     });
-    throwError(dateRanges, NOT_FOUND, "date ranges not found");
+    throwError(dateRanges, NOT_FOUND, MESSAGE_DATE_RANGES_NOT_FOUND);
 
     res.status(OK).send(dateRanges);
   },
@@ -45,10 +48,10 @@ export const getItemDateRangeById: RequestHandler = catchErrors(
       include: { dateRanges: true },
     });
 
-    throwError(item, NOT_FOUND, "item not found");
+    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
 
     const dateRange = item.dateRanges.find((dr) => dr.id === id);
-    throwError(dateRange, NOT_FOUND, "date range not found");
+    throwError(dateRange, NOT_FOUND, MESSAGE_DATE_RANGES_NOT_FOUND);
 
     res.status(OK).send(dateRange);
   },
@@ -63,10 +66,10 @@ export const deleteItemDateRange: RequestHandler = catchErrors(
       where: { id: itemId, authorId: profileId },
       include: { dateRanges: true },
     });
-    throwError(item, NOT_FOUND, "item not found");
+    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
 
     const dateRange = item.dateRanges.find((dr) => dr.id === id);
-    throwError(dateRange, NOT_FOUND, "date range not found");
+    throwError(dateRange, NOT_FOUND, MESSAGE_DATE_RANGES_NOT_FOUND);
 
     await prismaClient.dateRange.delete({
       where: { id: dateRange.id, itemId: item.id },

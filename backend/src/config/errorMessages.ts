@@ -1,7 +1,10 @@
+import e from "express";
+
 export const MESSAGE_ID = "Invalid id";
 export const MESSAGE_CODE_TYPE = "Invalid code type";
 export const MESSAGE_CODE_VALUE = "Invalid code value";
 export const MESSAGE_CODE_USED_AT_FORMAT = "Invalid usedAt date";
+
 export const MESSAGE_PROFILE_ID = "Invalid profile id";
 export const MESSAGE_SESSION_ID = "Invalid session id";
 export const MESSAGE_SESSION_USER_AGENT = "Invalid session user-agent";
@@ -13,10 +16,10 @@ export const MESSAGE_ENDPOINT_NOT_FOUND = "Endpoint does not exist";
 export const MESSAGE_CREDENTIALS = "Invalid credentials";
 export const MESSAGE_UNAUTHORIZED = "Unauthorized";
 export const MESSAGE_MALFORMED = "Malformed request";
+
 export const MESSAGE_API_KEY_SLUG = "Invalid slug";
 export const MESSAGE_API_KEY_ORIGIN = "Invalid origin";
 export const MESSAGE_API_KEY_VALUE = "Invalid api key";
-export const MESSAGE_INVALID_API_KEY = "Invalid api key";
 export const MESSAGE_API_KEY_LIMIT_REACHED = "Max number of apikeys reached";
 export const MESSAGE_API_KEY_SLUG_TAKEN = "Slug already taken";
 export const MESSAGE_API_KEY_SLUG_NOT_FOUND = "API slug not found";
@@ -38,3 +41,6 @@ export const MESSAGE_DATE_TIME_FORMAT = "Invalid date time format";
 export const MESSAGE_START_END_DATE = "Start date must be before end date";
 export const MESSAGE_TAGS_UNIQUE = "Tags must be unique";
 export const MESSAGE_IDS_UNIQUE = "IDs must be unique";
+export const MESSAGE_DATE_RANGES_NOT_FOUND = "Date range(s) not found";
+export const MESSAGE_IMAGES_NOT_FOUND = "Image(s) not found";
+export const MESSAGE_TAGS_NOT_FOUND = "Tag(s) not found";
