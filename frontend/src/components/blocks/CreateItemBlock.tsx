@@ -1,5 +1,5 @@
 import Block, { BlockProps } from "./Block";
-import { CreateItemForm } from "../forms/CreateItemForm";
+import { ItemCreateForm } from "../forms/ItemCreateForm";
 import EmptyCard from "../cards/EmptyCard";
 import { useNavigate } from "react-router";
 
@@ -9,7 +9,7 @@ function CreateItemBlock(props: BlockProps) {
     <Block {...props}>
       <EmptyCard>
         <div className="card-body">
-          <CreateItemForm
+          <ItemCreateForm
             handleSuccess={(args) => {
               navigate(`/items/${args.id}`);
             }}
