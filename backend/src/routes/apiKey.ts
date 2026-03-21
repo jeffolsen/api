@@ -24,7 +24,6 @@ router.post(
   authorizeScope([CREATE_API_KEY_SCOPE]),
   apiKeyApi.generate,
 );
-router.post(API_KEY_PUBLIC_ENDPOINT, apiKeyApi.connect);
 
 router.post(
   API_KEY_DESTROY_ENDPOINT,

@@ -2,8 +2,6 @@ import {
   MESSAGE_API_KEY_LIMIT_REACHED,
   MESSAGE_API_KEY_SLUG_TAKEN,
   MESSAGE_API_KEY_SLUG_NOT_FOUND,
-  MESSAGE_API_KEY_ORIGIN,
-  MESSAGE_API_KEY_VALUE,
   MESSAGE_NO_ACCESS,
   MESSAGE_CREDENTIALS,
 } from "../config/errorMessages";
@@ -17,11 +15,9 @@ import {
 import { RequestHandler } from "express";
 import throwError from "../util/throwError";
 import catchErrors from "../util/catchErrors";
-import { setAuthCookies } from "../util/cookie";
 import prismaClient, { CodeType } from "../db/client";
-import { connectToApiSession, processVerificationCode } from "../services/auth";
+import { processVerificationCode } from "../services/auth";
 import {
-  ApiKeyConnectSchema,
   ApiKeyCreateTransform,
   ApiKeyDestroySchema,
   ApiKeyGenerateSchema,
@@ -101,49 +97,6 @@ export const generate: RequestHandler<
   res.status(CREATED).json({ apiKey: value });
 });
 
-interface LoginWithApiKeyBody {
-  apiSlug: string;
-  apiKey: string;
-}
-
-export const connect: RequestHandler<
-  unknown,
-  unknown,
-  LoginWithApiKeyBody,
-  unknown
-> = catchErrors(async (req, res, next) => {
-  const {
-    apiSlug: slug,
-    apiKey: value,
-    userAgent,
-  } = ApiKeyConnectSchema.parse({
-    ...(req.body as LoginWithApiKeyBody),
-    userAgent: req.headers["user-agent"],
-  });
-  const origin = req.get("origin");
-  const apiKey = await prismaClient.apiKey.findUnique({
-    where: { slug },
-  });
-  throwError(apiKey, NOT_FOUND, MESSAGE_API_KEY_SLUG_NOT_FOUND);
-
-  const originMatch = apiKey.origin === origin;
-  throwError(originMatch, NOT_FOUND, MESSAGE_API_KEY_ORIGIN);
-
-  const apiKeyIsValid = await apiKey.validate(value);
-  throwError(apiKeyIsValid, NOT_FOUND, MESSAGE_API_KEY_VALUE);
-
-  const { session, ...tokens } = await connectToApiSession({
-    apiKey,
-    userAgent,
-  });
-
-  setAuthCookies({
-    res,
-    sessionexpiredAt: session.expiredAt,
-    ...tokens,
-  }).sendStatus(OK);
-});
-
 interface DestroyApiKeyBody {
   apiSlug: string;
 }
@@ -197,7 +150,6 @@ export const destroy: RequestHandler<
 const apiKeyApi = {
   getProfilesApiKeys,
   generate,
-  connect,
   destroy,
 };
 
