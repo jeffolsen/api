@@ -53,7 +53,15 @@ export const defaultProfileScope = () =>
     READ_FEED_SCOPE,
   ]);
 
-export const defaultApiKeyScope = () => createScopeString([READ_FEED_SCOPE]);
+export const defaultApiKeyScope = () =>
+  createScopeString([
+    READ_FEED_SCOPE,
+    READ_ITEM_SCOPE,
+    READ_COMPONENT_SCOPE,
+    READ_TAG_SCOPE,
+    READ_IMAGE_SCOPE,
+    READ_DATE_RANGE_SCOPE,
+  ]);
 
 export const API_KEY_SESSION = "API_KEY_SESSION";
 export const PROFILE_SESSION = "PROFILE_SESSION";
