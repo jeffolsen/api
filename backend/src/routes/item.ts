@@ -23,6 +23,7 @@ router.post(
   itemApi.createItem,
 );
 router.put(ID_PARAM, authorizeScope([UPDATE_ITEM_SCOPE]), itemApi.updateItem);
+router.patch(ID_PARAM, authorizeScope([UPDATE_ITEM_SCOPE]), itemApi.modifyItem);
 router.delete(
   ID_PARAM,
   authorizeScope([DELETE_ITEM_SCOPE]),

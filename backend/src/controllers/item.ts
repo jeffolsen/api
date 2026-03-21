@@ -1,12 +1,13 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import catchErrors from "../util/catchErrors";
-import { NOT_FOUND, OK } from "../config/errorCodes";
+import { NOT_FOUND, OK, NO_CONTENT } from "../config/errorCodes";
 import prismaClient, { TagName } from "../db/client";
 import throwError from "../util/throwError";
 import {
   CreateItemSchema,
   GetAllItemsQuerySchema,
   GetItemByIdSchema,
+  ModifyItemSchema,
 } from "../schemas/item";
 import { MESSAGE_ITEM_NOT_FOUND } from "../config/errorMessages";
 
@@ -15,16 +16,20 @@ export const getAllItems: RequestHandler = catchErrors(
     const { profileId } = req;
     const { tags, sort } = GetAllItemsQuerySchema.parse(req.query);
 
+    console.log("Received request to get all items with query:", tags, sort);
+
     const items = await prismaClient.item.findMany({
       where: {
         authorId: profileId,
-        tags: {
-          some: {
-            tag: {
-              name: { in: tags },
+        ...(tags.length && {
+          tags: {
+            some: {
+              tag: {
+                name: { in: tags },
+              },
             },
           },
-        },
+        }),
       },
       orderBy: sort.map((sort: string) => {
         if (sort.startsWith("-")) {
@@ -176,11 +181,48 @@ export const updateItem: RequestHandler = catchErrors(
   },
 );
 
+interface ModifyItemBody {
+  name?: string;
+  description?: string;
+  publishedAt?: string;
+  expiredAt?: string;
+}
+
+export const modifyItem: RequestHandler = catchErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { profileId } = req;
+    const { id } = req.params || {};
+    const data = ModifyItemSchema.parse(req.body as Partial<ModifyItemBody>);
+
+    const item = await prismaClient.item.findFirst({
+      where: { id: Number(id), authorId: profileId },
+    });
+    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
+
+    const updatedItem = await prismaClient.item.update({
+      where: { id: Number(id) },
+      data,
+      omit: { authorId: true },
+    });
+
+    res.status(OK).send(updatedItem);
+  },
+);
+
 export const deleteItem: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
     const { id } = req.params || {};
-    res.sendStatus(OK);
+
+    const item = await prismaClient.item.findFirst({
+      where: { id: Number(id), authorId: profileId },
+    });
+    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
+
+    await prismaClient.item.delete({
+      where: { id: item.id },
+    });
+    res.sendStatus(NO_CONTENT);
   },
 );
 
@@ -189,6 +231,7 @@ const itemApi = {
   getItemById,
   createItem,
   updateItem,
+  modifyItem,
   deleteItem,
 };
 export default itemApi;
