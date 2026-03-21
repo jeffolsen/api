@@ -68,12 +68,39 @@ export const UpdateItemSchema = z
 
 export type UpdateItemInput = z.infer<typeof UpdateItemSchema>;
 
+export const ModifyItemSchema = z
+  .object({
+    name: nameSchema.optional(),
+    description: descriptionSchema.optional(),
+    publishedAt: dateTimeSchema.nullish().optional(),
+    expiredAt: dateTimeSchema.nullish().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.publishedAt && data.expiredAt) {
+        return new Date(data.publishedAt) <= new Date(data.expiredAt);
+      }
+      return true;
+    },
+    {
+      message: "publishedAt must be before expiredAt",
+    },
+  )
+  .transform((data) => {
+    return {
+      ...data,
+      sortName: data.name ? sortWord(data.name) : undefined,
+    };
+  });
+
+export type ModifyItemInput = z.infer<typeof ModifyItemSchema>;
+
 export const GetAllItemsQuerySchema = z.object({
   sort: z.preprocess((val) => {
     if (typeof val === "string") {
       return val.split(",").map((tag) => tag.trim());
     }
-    return ["publishedAt"];
+    return ["-updatedAt"];
   }, itemsSortArraySchema),
   tags: z
     .preprocess((val) => {

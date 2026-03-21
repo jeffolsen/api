@@ -108,6 +108,8 @@ const validItemSortValues = [
   "-name",
   "-publishedAt",
   "-expiredAt",
+  "updatedAt",
+  "-updatedAt",
 ] as const;
 
 export type ItemSortValues = keyof typeof validItemSortValues;
