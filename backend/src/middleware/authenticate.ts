@@ -5,16 +5,31 @@ import { MESSAGE_INVALID_TOKEN } from "../config/errorMessages";
 import { UNAUTHORIZED } from "../config/errorCodes";
 import date from "../util/date";
 import throwError from "../util/throwError";
+import { authenticateWithApiKey } from "../services/auth";
+import { defaultApiKeyScope } from "../util/scope";
 
 const authenticate: RequestHandler = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const { accessToken } = req.cookies;
+  const origin = req.get("origin") || req.get("referer") || "";
+  const apiKey = req.get("X-Api-Key") as string;
+  const apiSlug = req.get("X-Api-Slug") as string;
+  const apiKeyRecord = await authenticateWithApiKey({
+    apiKey,
+    apiSlug,
+    origin,
+  });
+  if (apiKeyRecord) {
+    req.profileId = apiKeyRecord.profileId;
+    req.scope = defaultApiKeyScope();
+    return next();
+  }
 
+  const { accessToken } = req.cookies;
   const userAgent = req.headers["user-agent"];
-  throwError(accessToken, UNAUTHORIZED, MESSAGE_INVALID_TOKEN);
+  throwError(accessToken && userAgent, UNAUTHORIZED, MESSAGE_INVALID_TOKEN);
 
   const payload = await verifyAccessToken(accessToken);
   throwError(payload?.expiredAt, UNAUTHORIZED, MESSAGE_INVALID_TOKEN);

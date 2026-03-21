@@ -15,7 +15,6 @@ import {
 export const getItemImages: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    console.log("Received request to get item images with params:", req.params);
     const { itemId: id } = GetItemsResourcesSchema.parse(req.params);
 
     const item = await prismaClient.item.findFirst({

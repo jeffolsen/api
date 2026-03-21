@@ -14,9 +14,7 @@ import {
   MESSAGE_VERIFICATION_CODE_TOO_MANY,
   MESSAGE_COULD_NOT_SEND_EMAIL,
   MESSAGE_INVALID_TOKEN,
-  MESSAGE_SESSION_CANNOT_REFRESH,
   MESSAGE_SESSION_TOO_MANY,
-  MESSAGE_API_KEY_VALUE,
   MESSAGE_CREDENTIALS,
 } from "../config/errorMessages";
 import {
@@ -29,11 +27,8 @@ import {
 import throwError from "../util/throwError";
 import sendEmail from "../util/sendEmail";
 import generateCode from "../util/generateCode";
-import {
-  getNewRefreshTokenExpirationDate,
-  getNewVerificationCodeExpirationDate,
-} from "../util/date";
-import { API_KEY_SESSION, PROFILE_SESSION } from "../util/scope";
+import { getNewVerificationCodeExpirationDate } from "../util/date";
+import { PROFILE_SESSION } from "../util/scope";
 import { VerificationCodeCreateTransform } from "../schemas/verificationCode";
 
 interface LogInProfileParams {
@@ -66,66 +61,6 @@ export const initProfileSession = async ({
   });
 
   const refreshToken = signRefreshToken(session.id);
-  const accessToken = signAccessToken(session.id);
-
-  return {
-    session,
-    refreshToken,
-    accessToken,
-  };
-};
-
-interface ConnectToApiSessionParams {
-  apiKey: ApiKey;
-  userAgent: string;
-}
-
-export const connectToApiSession = async ({
-  apiKey,
-  userAgent,
-}: ConnectToApiSessionParams) => {
-  const { slug, origin, sessionId, profileId, id: apiKeyId } = apiKey;
-  throwError(slug && origin && profileId, BAD_REQUEST, MESSAGE_API_KEY_VALUE);
-
-  let session;
-  if (sessionId)
-    session = await prismaClient.session.findUnique({
-      where: { id: sessionId },
-    });
-
-  const needToExtendTheSession = !session?.isCurrent();
-  throwError(needToExtendTheSession, FORBIDDEN, MESSAGE_SESSION_CANNOT_REFRESH);
-
-  if (!session) {
-    session = await prismaClient.session.start({
-      profileId: profileId,
-      apiKeyId: apiKeyId,
-      scope: API_KEY_SESSION,
-      userAgent,
-    });
-    apiKey = await prismaClient.apiKey.update({
-      where: { slug },
-      data: { sessionId: session.id },
-    });
-  }
-
-  const sessionIsntCurrent = !session.isCurrent();
-  const sessionNeedsApiKeyId = session.apiKeyId !== apiKeyId;
-
-  if (sessionIsntCurrent || sessionNeedsApiKeyId)
-    session = await prismaClient.session.update({
-      where: { id: session.id },
-      data: {
-        ...(sessionIsntCurrent && {
-          expiredAt: getNewRefreshTokenExpirationDate(),
-        }),
-        ...(sessionNeedsApiKeyId && {
-          apiKeyId,
-        }),
-      },
-    });
-
-  const refreshToken = signRefreshToken(session.id, origin);
   const accessToken = signAccessToken(session.id);
 
   return {
@@ -236,4 +171,35 @@ export const processVerificationCode = async ({
   );
 
   return usedVerificationCode;
+};
+
+type AuthenticateWithApiKeyResult = ApiKey | null;
+
+type AuthenticateWithApiKeyInput = {
+  apiKey: string;
+  apiSlug: string;
+  origin: string;
+};
+
+export const authenticateWithApiKey = async ({
+  apiKey,
+  apiSlug,
+  origin,
+}: AuthenticateWithApiKeyInput): Promise<AuthenticateWithApiKeyResult> => {
+  if (!apiKey || !apiSlug) return null;
+
+  const apiKeyRecord = await prismaClient.apiKey.findFirst({
+    where: {
+      slug: apiSlug,
+      value: apiKey,
+    },
+  });
+
+  throwError(
+    apiKeyRecord && apiKeyRecord.origin === origin,
+    BAD_REQUEST,
+    MESSAGE_INVALID_TOKEN,
+  );
+
+  return apiKeyRecord;
 };
