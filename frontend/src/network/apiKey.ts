@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { OTP_STATUS_KEY, OTP_STATUS_NONE } from "./verificationCode";
 import {
   GENERATE_API_KEY_ENDPOINT,
-  CONNECT_API_KEY_ENDPOINT,
   GET_PROFILES_API_KEYS_ENDPOINT,
   DESTROY_API_KEY_ENDPOINT,
   withErrorHandling,
@@ -77,23 +76,6 @@ export const useDestroyApiKey = () => {
       queryClient.setQueryData([OTP_STATUS_KEY], OTP_STATUS_NONE);
       queryClient.invalidateQueries({ queryKey: [API_KEYS_KEY] });
     },
-  });
-};
-
-export type ConnectApiKeyInput = {
-  apiSlug: string;
-  apiKey: string;
-};
-
-export const useConnectApiKey = () => {
-  const { api } = useAuthState();
-
-  return useMutation({
-    mutationFn: async (data: ConnectApiKeyInput) =>
-      withErrorHandling(async () => {
-        const response = await api.post(CONNECT_API_KEY_ENDPOINT, data);
-        return response.data;
-      }),
   });
 };
 

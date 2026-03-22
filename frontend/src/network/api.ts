@@ -4,7 +4,7 @@ import jsCookie from "js-cookie";
 import { EMAIL_DEFAULT } from "../config/inputs";
 
 // these should match the backend routes, may need website url in front of them in production
-const BASE_URL =
+export const BASE_URL =
   import.meta.env.MODE === "development"
     ? import.meta.env.VITE_API_BASE_URL + "/api"
     : "/api";
@@ -61,13 +61,6 @@ const api = axios.create({
 export const isAuthenticated = () => {
   return jsCookie.get("authenticated") === "true";
 };
-
-export const fetcher = (
-  path: string,
-  method: "GET" | "POST" | "PUT" | "DELETE",
-  data?: Record<string, unknown>,
-): Promise<unknown> =>
-  fetch(BASE_URL + path, { method, body: JSON.stringify(data) });
 
 export const setIsAuthenticated = (value: boolean) => {
   if (value) {

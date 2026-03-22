@@ -101,3 +101,10 @@ export const usePasswordResetWithSession = () => {
       }),
   });
 };
+
+export type TProfile = {
+  id: number;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
+};
