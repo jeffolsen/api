@@ -19,15 +19,19 @@ import { TImage } from "../../network/image";
 import {
   CreateItemRequest,
   useCreateItem,
+  useModifyItem,
   useUpdateItem,
+  useDeleteItem,
 } from "../../network/item";
-import PublishInput from "../inputs/PublishInput";
-import {
+import FormScheduleSubmit from "../inputs/FormScheduleSubmit";
+import Form, {
   FormWithHeading,
   FormReponseHandlerProps,
   FormWithHeadingProps,
 } from "./Form";
 import { convertLocalDateTimeToZulu } from "../../utils/time";
+import FormPublishSubmit from "../inputs/FormPublishSubmit";
+import { Button } from "../common/Button";
 
 export type FormValues = {
   name?: string;
@@ -102,7 +106,7 @@ function ItemCreateForm({
           },
         )
       }
-      SubmitInput={PublishInput}
+      SubmitInput={FormScheduleSubmit}
       {...props}
     />
   );
@@ -141,4 +145,76 @@ function ItemUpdateForm({
   );
 }
 
-export { ItemCreateForm, ItemUpdateForm };
+function ItemRepublishForm({
+  handleError,
+  handleSuccess,
+  defaultValues,
+  ...props
+}: FormWithHeadingProps &
+  FormReponseHandlerProps & {
+    defaultValues: {
+      id: number;
+      publishedAt: string | null;
+      expiredAt: string | null;
+    };
+  }) {
+  const modifyItem = useModifyItem();
+
+  return (
+    <Form
+      formStyles="inline-flex"
+      defaultValues={defaultValues}
+      SubmitInput={FormPublishSubmit}
+      submitAction={async (args) => {
+        const { id, ...data } = args;
+        return withFormHandling(async () => {
+          return modifyItem.mutateAsync(
+            {
+              id: Number(id),
+              data: data,
+            },
+            {
+              onSuccess: handleSuccess,
+              onError: handleError,
+            },
+          );
+        });
+      }}
+      {...props}
+    />
+  );
+}
+
+function ItemDeleteButton({
+  handleError,
+  handleSuccess,
+  defaultValues,
+  ...props
+}: FormWithHeadingProps &
+  FormReponseHandlerProps & {
+    defaultValues: {
+      id: number;
+    };
+  }) {
+  const deleteItem = useDeleteItem();
+
+  return (
+    <Button
+      color="error"
+      onClick={() =>
+        confirm("Are you sure you want to delete this item?") &&
+        withFormHandling(async () => {
+          await deleteItem.mutateAsync(defaultValues.id, {
+            onSuccess: handleSuccess,
+            onError: handleError,
+          });
+        })
+      }
+      {...props}
+    >
+      Delete
+    </Button>
+  );
+}
+
+export { ItemCreateForm, ItemUpdateForm, ItemRepublishForm, ItemDeleteButton };

@@ -45,7 +45,6 @@ function SelectedImage({
   width = 100,
   onClick,
 }: SelectImageProps) {
-  console.log(image);
   return (
     <span
       className="relative inline-flex border max-w-[75px] max-h-[75px] sm:max-w-[100px] sm:max-h-[100px] rounded border-base-content/20 cursor-pointer"

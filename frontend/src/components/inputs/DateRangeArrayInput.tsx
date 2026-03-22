@@ -125,11 +125,8 @@ function DateRangeEntry({
     errors: FieldErrors<Record<string, unknown>>;
   }) {
   const now = new Date();
-  console.log("now", now);
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   const minDateTimeValue = now.toISOString().slice(0, 16);
-
-  console.log(minDateTimeValue);
 
   const startAt = {
     ...(inputs?.startAt || {}),

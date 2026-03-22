@@ -14,7 +14,7 @@ export type FormReponseHandlerProps = {
   handleSuccess?: (args: SubmitArgs) => void;
 };
 
-type FormProps = {
+export type FormProps = {
   fields?: FormComponentProps[];
   defaultValues?: Record<string, unknown>;
   submitAction?: (args: SubmitArgs) => Promise<void>;

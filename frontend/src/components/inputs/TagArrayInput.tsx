@@ -66,7 +66,7 @@ function TagArrayInput(
 
   return (
     <>
-      <fieldset className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20">
+      <fieldset className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20 text-neutral-content/70">
         <legend className="label-text text-sm font-semibold text-neutral-content/70 w-full float-start">
           {displayName}{" "}
           <FieldArrayMinAndMax
