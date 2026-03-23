@@ -34,7 +34,7 @@ export const getProfilesApiKeys: RequestHandler = catchErrors(
       omit: { value: true },
     });
 
-    res.status(OK).json(apiKeys);
+    res.status(OK).json({ apiKeys });
   },
 );
 

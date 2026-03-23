@@ -28,7 +28,7 @@ export const getItemTags: RequestHandler = catchErrors(
     });
     throwError(tags, NOT_FOUND, MESSAGE_TAGS_NOT_FOUND);
 
-    res.status(OK).send(tags);
+    res.status(OK).send({ tags });
   },
 );
 
@@ -52,7 +52,7 @@ export const getItemTagById: RequestHandler = catchErrors(
     });
     throwError(tag, NOT_FOUND, MESSAGE_TAGS_NOT_FOUND);
 
-    res.status(OK).send(tag);
+    res.status(OK).send({ tag });
   },
 );
 

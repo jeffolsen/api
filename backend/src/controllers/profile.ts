@@ -27,7 +27,7 @@ export const getAuthenticatedProfile: RequestHandler = catchErrors(
     });
     throwError(profile, BAD_REQUEST, MESSAGE_PROFILE_ID);
 
-    res.status(OK).json(profile.clientSafe());
+    res.status(OK).json({ profile: profile.clientSafe() });
   },
 );
 

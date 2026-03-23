@@ -1,46 +1,55 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import catchErrors from "../util/catchErrors";
-import { NOT_FOUND, OK, NO_CONTENT } from "../config/errorCodes";
 import prismaClient, { TagName } from "../db/client";
+import catchErrors from "../util/catchErrors";
 import throwError from "../util/throwError";
+import { NOT_FOUND, OK, NO_CONTENT } from "../config/errorCodes";
+import { MESSAGE_ITEM_NOT_FOUND } from "../config/errorMessages";
+import { getPagination, getSortOrders } from "../util/misc";
 import {
   CreateItemSchema,
   GetAllItemsQuerySchema,
   GetItemByIdSchema,
   ModifyItemSchema,
 } from "../schemas/item";
-import { MESSAGE_ITEM_NOT_FOUND } from "../config/errorMessages";
+
+type GetItemsQuery = {
+  tags?: string;
+  sort?: string;
+  page?: number;
+  pageSize?: number;
+};
 
 export const getAllItems: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const { tags, sort } = GetAllItemsQuerySchema.parse(req.query);
+    const { tags, sort, page, pageSize } = GetAllItemsQuerySchema.parse(
+      req.query as GetItemsQuery,
+    );
 
-    console.log("Received request to get all items with query:", tags, sort);
-
-    const items = await prismaClient.item.findMany({
-      where: {
-        authorId: profileId,
-        ...(tags.length && {
-          tags: {
-            some: {
-              tag: {
-                name: { in: tags },
-              },
+    const where = {
+      authorId: profileId,
+      ...(tags.length && {
+        tags: {
+          some: {
+            tag: {
+              name: { in: tags },
             },
           },
-        }),
-      },
-      orderBy: sort.map((sort: string) => {
-        if (sort.startsWith("-")) {
-          return { [sort.slice(1)]: "desc" };
-        }
-        return { [sort]: "asc" };
-      }) || [{ publishedAt: "desc" }],
-      omit: { authorId: true },
-    });
+        },
+      }),
+    } as const;
 
-    res.status(OK).json(items);
+    const [items, totalCount] = await prismaClient.$transaction([
+      prismaClient.item.findMany({
+        where,
+        ...getSortOrders(sort),
+        ...getPagination(page, pageSize),
+        omit: { authorId: true },
+      }),
+      prismaClient.item.count({ where }),
+    ]);
+
+    res.status(OK).json({ items, totalCount });
   },
 );
 
@@ -59,7 +68,7 @@ export const getItemById: RequestHandler = catchErrors(
     });
     throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
 
-    res.status(OK).json(item);
+    res.status(OK).json({ item });
   },
 );
 
@@ -121,7 +130,7 @@ export const createItem: RequestHandler = catchErrors(
       omit: { authorId: true },
     });
 
-    res.status(OK).send(item);
+    res.status(OK).send({ item });
   },
 );
 
@@ -177,7 +186,7 @@ export const updateItem: RequestHandler = catchErrors(
       omit: { authorId: true },
     });
 
-    res.status(OK).send(updatedItem);
+    res.status(OK).send({ item: updatedItem });
   },
 );
 
@@ -205,7 +214,7 @@ export const modifyItem: RequestHandler = catchErrors(
       omit: { authorId: true },
     });
 
-    res.status(OK).send(updatedItem);
+    res.status(OK).send({ item: updatedItem });
   },
 );
 

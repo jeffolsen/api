@@ -4,37 +4,32 @@ import { NOT_FOUND, OK } from "../config/errorCodes";
 import catchErrors from "../util/catchErrors";
 import throwError from "../util/throwError";
 import prismaClient, { ImageType } from "../db/client";
+import { GetAllImagesQuerySchema } from "../schemas/image";
+import { getSortOrders, getPagination } from "../util/misc";
 
 type ImageQuery = {
-  take?: number;
-  skip?: number;
-  url?: string;
   type?: string;
-  order?: "asc" | "desc";
+  sort?: string;
+  page?: number;
+  pageSize?: number;
 };
 export const getAllImages: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { take, skip, url, type, order } = req.query as ImageQuery;
-
-    const imageType = type ? (type.toUpperCase() as ImageType) : undefined;
+    const { type, sort, page, pageSize } = GetAllImagesQuerySchema.parse(
+      req.query as ImageQuery,
+    );
 
     const images = await prismaClient.image.findMany({
-      orderBy: { createdAt: order === "asc" ? "asc" : "desc" },
-      where: url
+      where: type
         ? {
-            url: { contains: url as string, mode: "insensitive" },
+            type: type as ImageType,
           }
-        : type
-          ? {
-              type: imageType,
-            }
-          : {},
-
-      take: take ? Number(take) : undefined,
-      skip: skip ? Number(skip) : undefined,
+        : undefined,
+      ...getSortOrders(sort),
+      ...getPagination(page, pageSize),
     });
 
-    res.status(OK).json(images);
+    res.status(OK).json({ images });
   },
 );
 
@@ -45,7 +40,7 @@ export const getImageById: RequestHandler = catchErrors(
       where: { id: Number(id) },
     });
     throwError(image, NOT_FOUND, MESSAGE_IMAGE_NOT_FOUND);
-    res.status(OK).json(image);
+    res.status(OK).json({ image });
   },
 );
 

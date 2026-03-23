@@ -28,7 +28,7 @@ export const getItemImages: RequestHandler = catchErrors(
     });
     throwError(images, NOT_FOUND, MESSAGE_IMAGES_NOT_FOUND);
 
-    res.status(OK).send(images);
+    res.status(OK).send({ images });
   },
 );
 
@@ -52,7 +52,7 @@ export const getItemImageById: RequestHandler = catchErrors(
     });
     throwError(image, NOT_FOUND, MESSAGE_IMAGES_NOT_FOUND);
 
-    res.status(OK).send(image);
+    res.status(OK).send({ image });
   },
 );
 

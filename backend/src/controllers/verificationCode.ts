@@ -33,7 +33,7 @@ export const getProfileVerificationCodes: RequestHandler = catchErrors(
       orderBy: { createdAt: "desc" },
       omit: { value: true },
     });
-    res.status(OK).json(codes);
+    res.status(OK).json({ codes });
   },
 );
 

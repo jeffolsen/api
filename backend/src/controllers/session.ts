@@ -26,7 +26,7 @@ export const getProfilesSessions: RequestHandler = catchErrors(
       omit: { scope: true },
     });
 
-    res.status(OK).json(sessions);
+    res.status(OK).json({ sessions });
   },
 );
 

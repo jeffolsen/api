@@ -9,19 +9,11 @@ export const getAllTags: RequestHandler = catchErrors(
       select: { name: true },
       orderBy: { name: "desc" },
     });
-    res.status(OK).json(tags);
-  },
-);
-
-export const getTagByName: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { name } = req.params || {};
-    res.sendStatus(OK);
+    res.status(OK).json({ tags });
   },
 );
 
 const tagApi = {
   getAllTags,
-  getTagByName,
 };
 export default tagApi;

@@ -30,7 +30,7 @@ export const getItemDateRanges: RequestHandler = catchErrors(
     });
     throwError(dateRanges, NOT_FOUND, MESSAGE_DATE_RANGES_NOT_FOUND);
 
-    res.status(OK).send(dateRanges);
+    res.status(OK).send({ dateRanges });
   },
 );
 
@@ -49,7 +49,7 @@ export const getItemDateRangeById: RequestHandler = catchErrors(
     const dateRange = item.dateRanges.find((dr) => dr.id === id);
     throwError(dateRange, NOT_FOUND, MESSAGE_DATE_RANGES_NOT_FOUND);
 
-    res.status(OK).send(dateRange);
+    res.status(OK).send({ dateRange });
   },
 );
 
