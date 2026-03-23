@@ -1,14 +1,38 @@
 import { z } from "zod";
 import {
   descriptionSchema,
-  tagNameArraySchema,
-  itemsSortArraySchema,
   nameSchema,
   idArraySchema,
   dateTimeSchema,
 } from "./properties";
+import { tagNameArraySchema } from "./tag";
 import { dateRangeArraySchema } from "./dateRange";
 import sortWord from "../util/sortWord";
+
+const validItemSortValues = [
+  "name",
+  "-name",
+  "publishedAt",
+  "-publishedAt",
+  "expiredAt",
+  "-expiredAt",
+  "createdAt",
+  "-createdAt",
+  "updatedAt",
+  "-updatedAt",
+] as const;
+
+export type ItemSortValues = keyof typeof validItemSortValues;
+
+export const itemSortSchema = z.enum(validItemSortValues, "Invalid sort value");
+
+export const itemsSortArraySchema = z
+  .array(z.union(validItemSortValues.map((val) => z.literal(val))))
+  .refine((items) => {
+    return (
+      new Set(items.map((item) => item.replace(/^-/, ""))).size === items.length
+    );
+  }, "Sort values must be unique");
 
 // controllers
 export const CreateItemSchema = z
@@ -98,7 +122,7 @@ export type ModifyItemInput = z.infer<typeof ModifyItemSchema>;
 export const GetAllItemsQuerySchema = z.object({
   sort: z.preprocess((val) => {
     if (typeof val === "string") {
-      return val.split(",").map((tag) => tag.trim());
+      return val.split(",").map((sort) => sort.trim());
     }
     return ["-updatedAt"];
   }, itemsSortArraySchema),
@@ -110,6 +134,8 @@ export const GetAllItemsQuerySchema = z.object({
       return [];
     }, tagNameArraySchema)
     .default([]),
+  page: z.coerce.number().min(1).default(1),
+  pageSize: z.coerce.number().min(1).max(100).default(10),
 });
 
 export const GetItemByIdSchema = z.object({
