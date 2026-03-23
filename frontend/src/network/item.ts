@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  QueryOptions,
+} from "@tanstack/react-query";
 import {
   ITEMS_ENDPOINT,
   withErrorHandling,
@@ -13,15 +18,26 @@ import { DATE_RANGES_KEY, TDateRangeInput } from "./dateRange";
 
 export const ITEMS_KEY = "items" as const;
 
-export const useGetItems = () => {
+type GetItemsParams = {
+  sort?: TItemSort[];
+  page?: number;
+  pageSize?: number;
+  tags?: TTagName[];
+};
+
+export const useGetItems = (
+  queryParams?: GetItemsParams,
+  options?: QueryOptions,
+) => {
   const { api } = useAuthState();
 
   return useQuery({
-    queryKey: [ITEMS_KEY],
-    queryFn: async () => {
-      const response = await api.get(ITEMS_ENDPOINT);
+    queryKey: [ITEMS_KEY, queryParams],
+    queryFn: async (): Promise<{ items: TItem[] }> => {
+      const response = await api.get(ITEMS_ENDPOINT, { params: queryParams });
       return response.data;
     },
+    ...options,
   });
 };
 
@@ -179,12 +195,12 @@ export type TItemInput = Omit<TItem, "id" | "createdAt" | "updatedAt">;
 export type TItemSort =
   | "createdAt"
   | "-createdAt"
+  | "updatedAt"
+  | "-updatedAt"
   | "publishedAt"
   | "-publishedAt"
   | "expiredAt"
   | "-expiredAt"
-  | "updatedAt"
-  | "-updatedAt"
   | "sortName"
   | "-sortName";
 
