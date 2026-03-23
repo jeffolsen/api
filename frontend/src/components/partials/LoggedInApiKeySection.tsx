@@ -20,7 +20,7 @@ import Text from "../common/Text";
 
 function LoggedInApiKeySection() {
   const getApiKeys = useGetProfilesApiKeys();
-  const apiKeys = getApiKeys.data;
+  const apiKeys = getApiKeys.data?.apiKeys || [];
   const otpStatus = useOtpStatus();
 
   if (getApiKeys.isLoading) {

@@ -24,7 +24,7 @@ function LogoutAllModalContent() {
 function LoggedInSessionSection() {
   const getSessions = useGetProfilesSessions();
   const logout = useLogout();
-  const sessions = getSessions.data;
+  const sessions = getSessions?.data?.sessions || [];
 
   const [openLogoutAllModal, setOpenLogoutAllModal] = useState(false);
 
@@ -34,7 +34,7 @@ function LoggedInSessionSection() {
     <>
       <div className="flex flex-col gap-4">
         <SectionHeading text="Current Sessions" description={description}>
-          <div className="grid gap-4 grid-cols-2 w-full">
+          <div className="grid gap-1 md:gap-4 grid-cols-2 w-full">
             <Button
               color="error"
               onClick={() => {
@@ -53,7 +53,7 @@ function LoggedInSessionSection() {
                 setOpenLogoutAllModal(true);
               }}
             >
-              Logout All Sessions
+              Logout All
             </Button>
           </div>
         </SectionHeading>

@@ -85,7 +85,9 @@ function ImageSelectInput(
       (field) => field.imageId,
     );
     return (
-      images.data?.filter((image: Image) => imageIds.includes(image.id)) || []
+      images.data?.images.filter((image: Image) =>
+        imageIds.includes(image.id),
+      ) || []
     );
   }, [fields, images.data]);
 
@@ -141,7 +143,7 @@ function ImageSelectInput(
       <FormError error={errors} />
       <Modal isOpen={showImageSelector} setIsOpen={setShowImageSelector}>
         <ImageSelector
-          images={images.data || []}
+          images={images.data?.images || []}
           selectedImages={selectedImages}
           onThumbnailClick={(imageId) => append({ imageId })}
           onPreviewClick={(index) => remove(index)}

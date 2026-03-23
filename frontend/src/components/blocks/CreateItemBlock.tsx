@@ -2,6 +2,7 @@ import Block, { BlockProps } from "./Block";
 import { ItemCreateForm } from "../forms/ItemCreateForm";
 import EmptyCard from "../cards/EmptyCard";
 import { useNavigate } from "react-router";
+import { TItem } from "../../network/item";
 
 function CreateItemBlock(props: BlockProps) {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ function CreateItemBlock(props: BlockProps) {
         <div className="card-body">
           <ItemCreateForm
             handleSuccess={(args) => {
-              navigate(`/items/${args.id}`);
+              navigate(`/items/${(args.item as TItem).id}`);
             }}
           />
         </div>

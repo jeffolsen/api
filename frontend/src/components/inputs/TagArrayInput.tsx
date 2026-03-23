@@ -1,5 +1,5 @@
 import { useFieldArray } from "react-hook-form";
-import { useGetTags } from "../../network/tag";
+import { TTagName, useGetTags } from "../../network/tag";
 import Grid from "../common/Grid";
 import { useCallback } from "react";
 import {
@@ -37,7 +37,7 @@ function TagArrayInput(
 
   const selectedTagnames = (fields as TagnameArrayFields).map((f) => f.name);
 
-  const handleToggle = (tagname: string) => {
+  const handleToggle = (tagname: TTagName) => {
     const index = selectedTagnames.indexOf(tagname);
     if (index !== -1) {
       remove(index);
@@ -47,8 +47,8 @@ function TagArrayInput(
   };
 
   const getTags = useCallback(() => {
-    if (tags.data) {
-      return tags.data.sort((a: TTagInput, b: TTagInput) =>
+    if (tags.data?.tags) {
+      return tags.data.tags.sort((a: TTagInput, b: TTagInput) =>
         a.name.localeCompare(b.name),
       );
     }

@@ -16,7 +16,10 @@ type VerificationCode = {
 function LoggedInCodesSection() {
   const getVerificationCodes = useGetProfileVerificationCodes();
 
-  const verificationCodes = getVerificationCodes.data;
+  const verificationCodes = useMemo(
+    () => getVerificationCodes?.data?.codes || [],
+    [getVerificationCodes.data],
+  );
 
   const today = useMemo(
     () =>
