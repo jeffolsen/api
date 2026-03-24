@@ -39,6 +39,9 @@ export const ITEMS_ENDPOINT = "/items";
 export const TAGS_ENDPOINT = "/tags";
 export const DATE_RANGES_ENDPOINT = "/date-ranges";
 
+export const FEEDS_ENDPOINT = "/feeds";
+export const COMPONENTS_ENDPOINT = "/components";
+
 export const OK = 200;
 export const CREATED = 201;
 export const NO_CONTENT = 204;

@@ -34,7 +34,9 @@ export const useGetItems = (
   return useQuery({
     queryKey: [ITEMS_KEY, queryParams],
     queryFn: async (): Promise<{ items: TItem[] }> => {
-      const response = await api.get(ITEMS_ENDPOINT, { params: queryParams });
+      const response = await api.get(ITEMS_ENDPOINT, {
+        params: { ...queryParams, tags: queryParams?.tags?.join(",") },
+      });
       return response.data;
     },
     ...options,
