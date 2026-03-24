@@ -19,7 +19,10 @@ const Wrapper = ({
   return (
     <div className="flex items-start justify-center px-4 w-full">
       <div
-        className={clsx(["w-full h-full flex flex-col gap-4", widths[width]])}
+        className={clsx([
+          "w-full h-full flex flex-col items-stretch gap-4",
+          widths[width],
+        ])}
       >
         {children}
       </div>

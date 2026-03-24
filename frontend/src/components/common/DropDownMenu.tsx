@@ -19,8 +19,10 @@ export type DropDownMenuProps = {
   buttonColor?: ButtonColor;
   optionsColor?: ButtonColor;
   selectedOptionColor?: ButtonColor;
+  value?: DropDownItem;
   onChange: (item: DropDownItem) => void;
   className?: ClassValue;
+  optionClasses?: ClassValue;
 };
 
 const DropDownMenu = ({
@@ -28,10 +30,14 @@ const DropDownMenu = ({
   buttonColor = "primary",
   optionsColor = "secondary",
   selectedOptionColor = "neutral",
+  value,
   onChange,
   className,
+  optionClasses,
 }: DropDownMenuProps) => {
-  const [selectedItem, setSelectedItem] = useState<DropDownItem>(items[0]);
+  const [selectedItem, setSelectedItem] = useState<DropDownItem>(
+    value || items[0],
+  );
 
   return (
     <Listbox
@@ -44,15 +50,18 @@ const DropDownMenu = ({
       }}
     >
       <ListboxButton as="div">
-        <Button className="w-full" color={buttonColor}>
+        <Button className={clsx("w-full", optionClasses)} color={buttonColor}>
           {selectedItem?.label}
         </Button>
       </ListboxButton>
-      <ListboxOptions className="w-full px-6 md:w-auto md:px-0" anchor="bottom">
+      <ListboxOptions
+        className="w-full px-6 md:w-auto md:px-0 [--anchor-max-height:20rem]"
+        anchor="bottom"
+      >
         {items.map((item) => (
           <ListboxOption as="div" key={item.id} value={item}>
             <Button
-              className="w-full"
+              className={clsx("w-full", optionClasses)}
               color={item === selectedItem ? selectedOptionColor : optionsColor}
             >
               {item.label}
