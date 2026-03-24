@@ -6,6 +6,7 @@ export type BlockType = {
 };
 
 export type PageData = {
+  redirectTo?: string;
   blocks: BlockType[];
 };
 
@@ -91,13 +92,29 @@ const pages = {
   feeds: {
     blocks: [
       {
+        type: "feedsList",
+        data: {
+          id: 4,
+          title: "Feeds",
+          settings: {
+            isprimaryContent: true,
+            showOnLoggedinState: "LOGGED_IN",
+            width: "lg",
+          },
+        },
+      },
+    ],
+  },
+  "feeds/new": {
+    blocks: [
+      {
         type: "generic",
         data: {
           id: 4,
           title: "Feeds",
           settings: {
             isprimaryContent: true,
-            showOnLoggedinState: "BOTH",
+            showOnLoggedinState: "LOGGED_IN",
             width: "md",
           },
         },

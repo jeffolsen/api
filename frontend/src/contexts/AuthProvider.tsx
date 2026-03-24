@@ -30,13 +30,9 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
           throw new Error("No refresh token available");
         }
 
-        console.log("refreshAuthLogic called, attempting to refresh token");
-
         const refreshResponse = await api.post(REFRESH_ENDPOINT, {
           skipAuthRefresh: true,
         });
-
-        console.log("refreshAuthLogic refreshResponse", refreshResponse);
 
         if (refreshResponse.status === 401) {
           await api.post(LOGOUT_ENDPOINT, { skipAuthRefresh: true });
@@ -48,7 +44,6 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
         return Promise.resolve();
       } catch (error) {
-        console.error("refreshAuthLogic error", error);
         setAuthenticated(false);
         return Promise.reject(error);
       }
