@@ -1,8 +1,32 @@
-import prismaClient, { TagName, ImageType } from "../src/db/client";
+import prismaClient, { ImageType } from "../src/db/client";
 import content from "content";
 
 async function main() {
-  content.images.forEach(async (image) => {
+  content.deletes.tags.forEach(async (name) => {
+    await prismaClient.tag.deleteMany({
+      where: { name },
+    });
+  });
+  content.deletes.images.forEach(async (url) => {
+    await prismaClient.image.deleteMany({
+      where: { url },
+    });
+  });
+  content.deletes.componentTypes.forEach(async (name) => {
+    await prismaClient.componentType.deleteMany({
+      where: { name },
+    });
+  });
+  content.upserts.tags.forEach(async (tag) => {
+    await prismaClient.tag.upsert({
+      where: { name: tag.name },
+      update: {},
+      create: {
+        name: tag.name,
+      },
+    });
+  });
+  content.upserts.images.forEach(async (image) => {
     await prismaClient.image.upsert({
       where: { url: image.url },
       update: {},
@@ -13,17 +37,15 @@ async function main() {
       },
     });
   });
-  const seedTag = async (name: TagName) => {
-    await prismaClient.tag.upsert({
-      where: { name },
+  content.upserts.componentTypes.forEach(async (componentType) => {
+    await prismaClient.componentType.upsert({
+      where: { name: componentType.name },
       update: {},
       create: {
-        name,
+        name: componentType.name,
+        itemBinding: componentType.itemBinding,
       },
     });
-  };
-  Object.keys(TagName).forEach((t) => {
-    seedTag(t as TagName);
   });
 }
 

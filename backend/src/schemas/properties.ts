@@ -10,7 +10,6 @@ import {
   MESSAGE_IDS_UNIQUE,
   MESSAGE_PASSWORD_FORMAT,
   MESSAGE_SESSION_USER_AGENT,
-  MESSAGE_TAGS_UNIQUE,
 } from "../config/errorMessages";
 import {
   NUMERIC_CODE_REGEX,
@@ -18,7 +17,7 @@ import {
   SLUG_REGEX,
 } from "../config/constants";
 import { API_KEY_SESSION, PROFILE_SESSION } from "../util/scope";
-import { CodeType, ImageType, TagName } from "../generated/prisma/client";
+import { CodeType, ImageType } from "../generated/prisma/client";
 
 export const verificationCodeTypeSchema = z.enum(
   [

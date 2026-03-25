@@ -60,7 +60,6 @@ export const sessionExtension = Prisma.defineExtension((client) => {
                 gt: new Date(Date.now()),
               },
               endedAt: null,
-              apiKey: null, // dont want to count sessions that are attached to apikeys
             },
             take: MAX_PROFILE_SESSIONS,
           });

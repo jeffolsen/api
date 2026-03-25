@@ -1,5 +1,5 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import prismaClient, { TagName } from "../db/client";
+import prismaClient from "../db/client";
 import catchErrors from "../util/catchErrors";
 import throwError from "../util/throwError";
 import { NOT_FOUND, OK, NO_CONTENT } from "../config/errorCodes";
@@ -75,7 +75,7 @@ export const getItemById: RequestHandler = catchErrors(
 interface CreateItemBody {
   name: string;
   description: string;
-  tagNames: TagName[];
+  tagNames: string[];
   images: number[];
   publishedAt: string;
   expiredAt: string;
