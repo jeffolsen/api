@@ -1,4 +1,4 @@
-import prismaClient, { ImageType } from "../src/db/client";
+import prismaClient, { ImageType, Prisma, SubjectType } from "../src/db/client";
 import content from "content";
 
 async function main() {
@@ -29,7 +29,10 @@ async function main() {
   content.upserts.images.forEach(async (image) => {
     await prismaClient.image.upsert({
       where: { url: image.url },
-      update: {},
+      update: {
+        alt: image.alt,
+        type: image.type as ImageType,
+      },
       create: {
         url: image.url,
         alt: image.alt,
@@ -40,10 +43,14 @@ async function main() {
   content.upserts.componentTypes.forEach(async (componentType) => {
     await prismaClient.componentType.upsert({
       where: { name: componentType.name },
-      update: {},
+      update: {
+        subjectType: componentType.subjectType as SubjectType,
+        propertySchema: componentType.propertySchema as Prisma.InputJsonValue,
+      },
       create: {
         name: componentType.name,
-        itemBinding: componentType.itemBinding,
+        subjectType: componentType.subjectType as SubjectType,
+        propertySchema: componentType.propertySchema as Prisma.InputJsonValue,
       },
     });
   });

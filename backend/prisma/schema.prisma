@@ -87,7 +87,7 @@ enum SubjectType {
 model Feed {
   id          Int         @id @default(autoincrement())
   path        String
-  // Use this field to determine how to interpret the "path" field. For example, if subject is SINGLE_ITEM, then path would be the item ID. If subject is COLLECTION, then path could be any arbitrary string that the user can use to identify the feed.
+  // Use this field to determine how to interpret the "path" field. For example, if subject is SINGLE, then path would be the item ID. If subject is COLLECTION, then path could be any arbitrary string that the user can use to identify the feed.
   subjectType SubjectType @default(COLLECTION) @map("subject_type")
   publishedAt DateTime?   @map("published_at") @db.Timestamptz(6)
   expiredAt   DateTime?   @map("expired_at") @db.Timestamptz(6)
@@ -99,16 +99,10 @@ model Feed {
   @@map("feeds")
 }
 
-enum ItemBinding {
-  BY_URL
-  FILTERED_BY_TAG
-  MANUAL_CURATED
-}
-
 model ComponentType {
   id             Int         @id @default(autoincrement())
   name           String      @unique
-  itemBinding    ItemBinding @default(FILTERED_BY_TAG) @map("item_binding")
+  subjectType    SubjectType @default(COLLECTION) @map("subject_type") // This field is used to determine which SubjectTypes this ComponentType can be used with. For example, if subjectType is SINGLE, then this ComponentType can only be used with Feeds that have a subjectType of SINGLE.
   propertySchema Json        @default("{}") // Use this field to store any additional settings for the component such as "grid columns": 3, or "show title": true, etc.
   components     Component[]
 
@@ -116,83 +110,45 @@ model ComponentType {
 }
 
 model Component {
-  id                Int             @id @default(autoincrement())
-  order             Int             @default(0)
-  type              ComponentType   @relation(fields: [typeId], references: [id])
-  typeId            Int             @map("component_type_id")
-  propertyValues    Json            @default("{}") @map("property_values") // Use this field to store the actual values for the settings defined in the ComponentType's propertySchema. For example, if the ComponentType has a setting called "grid columns", then this field would store the value for that setting such as "3".
-  collectionFilters ComponentTag[]
-  curatedItems      ComponentItem[]
-  feed              Feed            @relation("FeedComponents", fields: [feedId], references: [id], onDelete: Cascade)
-  feedId            Int
-  publishedAt       DateTime?       @map("published_at") @db.Timestamptz(6)
-  expiredAt         DateTime?       @map("expired_at") @db.Timestamptz(6)
-  createdAt         DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id             Int           @id @default(autoincrement())
+  order          Int           @default(0)
+  propertyValues Json          @default("{}") @map("property_values") // Use this field to store the actual values for the settings defined in the ComponentType's propertySchema. For example, if the ComponentType has a setting called "grid columns", then this field would store the value for that setting such as "3".
+  type           ComponentType @relation(fields: [typeId], references: [id])
+  typeId         Int           @map("component_type_id")
+  feed           Feed          @relation("FeedComponents", fields: [feedId], references: [id], onDelete: Cascade)
+  feedId         Int
+  publishedAt    DateTime?     @map("published_at") @db.Timestamptz(6)
+  expiredAt      DateTime?     @map("expired_at") @db.Timestamptz(6)
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@unique([feedId, order])
   @@map("components")
 }
 
-model ComponentTag {
-  component   Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
-  componentId Int       @map("component_id")
-  tag         Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
-  tagId       Int       @map("tag_id")
-
-  @@id([componentId, tagId])
-  @@map("components_tags")
-}
-
-model ComponentItem {
-  component   Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
-  componentId Int       @map("component_id")
-  item        Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  itemId      Int       @map("item_id")
-  order       Int?
-
-  @@id([componentId, itemId])
-  @@map("components_items")
-}
-
 model Item {
-  id             Int             @id @default(autoincrement())
-  name           String
-  description    String?
-  sortName       String          @map("sort_name")
-  isPrivate      Boolean         @default(true) @map("is_private")
-  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
-  publishedAt    DateTime?       @map("published_at") @db.Timestamptz(6)
-  expiredAt      DateTime?       @map("expired_at") @db.Timestamptz(6)
-  author         Profile?        @relation("ProfileItems", fields: [authorId], references: [id], onDelete: SetNull)
-  authorId       Int?            @map("author_id")
-  dateRanges     DateRange[]     @relation("ItemDateRanges")
-  tags           ItemTag[]
-  images         ItemImage[]
-  componentItems ComponentItem[]
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String?
+  sortName    String      @map("sort_name")
+  isPrivate   Boolean     @default(true) @map("is_private")
+  createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  publishedAt DateTime?   @map("published_at") @db.Timestamptz(6)
+  expiredAt   DateTime?   @map("expired_at") @db.Timestamptz(6)
+  author      Profile?    @relation("ProfileItems", fields: [authorId], references: [id], onDelete: SetNull)
+  authorId    Int?        @map("author_id")
+  dateRanges  DateRange[] @relation("ItemDateRanges")
+  tags        ItemTag[]
+  images      ItemImage[]
 
   @@map("items")
 }
 
-model DateRange {
-  id          Int      @id @default(autoincrement())
-  description String?
-  startAt     DateTime @map("start_at") @db.Timestamptz(6)
-  endAt       DateTime @map("end_at") @db.Timestamptz(6)
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-  item        Item     @relation("ItemDateRanges", fields: [itemId], references: [id], onDelete: Cascade)
-  itemId      Int
-
-  @@map("date_ranges")
-}
-
 model Tag {
-  id         Int            @id @default(autoincrement())
-  name       String         @unique
-  items      ItemTag[]
-  components ComponentTag[]
+  id    Int       @id @default(autoincrement())
+  name  String    @unique
+  items ItemTag[]
 
   @@map("tags")
 }
@@ -234,4 +190,17 @@ model ItemImage {
 
   @@id([itemId, imageId])
   @@map("items_images")
+}
+
+model DateRange {
+  id          Int      @id @default(autoincrement())
+  description String?
+  startAt     DateTime @map("start_at") @db.Timestamptz(6)
+  endAt       DateTime @map("end_at") @db.Timestamptz(6)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  item        Item     @relation("ItemDateRanges", fields: [itemId], references: [id], onDelete: Cascade)
+  itemId      Int
+
+  @@map("date_ranges")
 }
