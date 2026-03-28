@@ -74,12 +74,12 @@ export const getItemById: RequestHandler = catchErrors(
 
 interface CreateItemBody {
   name: string;
-  description: string;
-  tagNames: string[];
-  images: number[];
-  publishedAt: string;
-  expiredAt: string;
-  dateRanges: {
+  description?: string;
+  tagNames?: string[];
+  images?: number[];
+  publishedAt?: string;
+  expiredAt?: string;
+  dateRanges?: {
     startAt: string;
     endAt: string;
     description: string;

@@ -1,6 +1,9 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import catchErrors from "../util/catchErrors";
-import { OK } from "../config/errorCodes";
+import prismaClient, { type Prisma } from "../db/client";
+import { NOT_FOUND, OK } from "../config/errorCodes";
+import throwError from "../util/throwError";
+import { CreateComponentSchema } from "../schemas/component";
 
 export const getAllComponents: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -17,10 +20,50 @@ export const getComponentById: RequestHandler = catchErrors(
   },
 );
 
+type CreateComponentBody = {
+  feedId: number;
+  componentTypeName: string;
+  propertyValues?: Record<string, unknown>;
+  publishedAt?: string;
+  expiredAt?: string;
+};
+
 export const createComponent: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    res.sendStatus(OK);
+    const {
+      feedId,
+      componentTypeName,
+      propertyValues,
+      publishedAt,
+      expiredAt,
+    } = CreateComponentSchema.parse(req.body as CreateComponentBody);
+
+    const componentType = await prismaClient.componentType.findUnique({
+      where: { name: componentTypeName },
+    });
+    throwError(
+      componentType,
+      NOT_FOUND,
+      `ComponentType with name ${componentTypeName} not found`,
+    );
+
+    const feed = await prismaClient.feed.findUnique({
+      where: { id: feedId },
+    });
+    throwError(feed, NOT_FOUND, `Feed with id ${feedId} not found`);
+
+    const component = await prismaClient.component.create({
+      data: {
+        typeId: componentType.id,
+        feedId,
+        propertyValues: propertyValues as Prisma.InputJsonValue,
+        publishedAt: publishedAt ? new Date(publishedAt) : null,
+        expiredAt: expiredAt ? new Date(expiredAt) : null,
+      },
+    });
+
+    res.status(OK).json({ component });
   },
 );
 
