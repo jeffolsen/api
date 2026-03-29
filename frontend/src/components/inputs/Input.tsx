@@ -15,6 +15,7 @@ import TextAreaInput from "./TextAreaInput";
 import TagArrayInput from "./TagArrayInput";
 import ImageSelectArrayInput from "./ImageSelectArrayInput";
 import DateRangeArrayInput from "./DateRangeArrayInput";
+import ToggleInput from "./ToggleInput";
 
 export type FromFormProps = {
   control: Control;
@@ -36,7 +37,7 @@ export type AtomicFormComponentName =
   | "TextInput"
   | "TextAreaInput"
   | "DateTimeInput"
-  | "CheckboxInput"
+  | "ToggleInput"
   | "ImageSelectArrayInput"
   | "TagArrayInput";
 
@@ -99,6 +100,8 @@ export const FormInput = (props: FormComponentProps & FromFormProps) => {
       {...props}
       errors={get(props.errors || {}, props.dataName)}
     />
+  ) : props.componentName === "ToggleInput" ? (
+    <ToggleInput {...props} errors={get(props.errors || {}, props.dataName)} />
   ) : props.componentName === "ImageSelectArrayInput" ? (
     <ImageSelectArrayInput
       {...props}

@@ -32,6 +32,7 @@ import Form, {
 import { convertLocalDateTimeToZulu } from "../../utils/time";
 import FormPublishSubmit from "../inputs/FormPublishSubmit";
 import { Button } from "../common/Button";
+import { Trash } from "lucide-react";
 
 export type FormValues = {
   name?: string;
@@ -212,7 +213,7 @@ function ItemDeleteButton({
       }
       {...props}
     >
-      Delete
+      <Trash size={16} />
     </Button>
   );
 }
