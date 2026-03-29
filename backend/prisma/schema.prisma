@@ -91,6 +91,8 @@ model Feed {
   subjectType SubjectType @default(COLLECTION) @map("subject_type")
   publishedAt DateTime?   @map("published_at") @db.Timestamptz(6)
   expiredAt   DateTime?   @map("expired_at") @db.Timestamptz(6)
+  createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
   profileId   Int         @map("profile_id")
   profile     Profile     @relation("ProfileFeeds", fields: [profileId], references: [id], onDelete: Cascade)
   components  Component[] @relation("FeedComponents")

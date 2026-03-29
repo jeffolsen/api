@@ -17,7 +17,7 @@ import {
   SLUG_REGEX,
 } from "../config/constants";
 import { API_KEY_SESSION, PROFILE_SESSION } from "../util/scope";
-import { CodeType, ImageType } from "../generated/prisma/client";
+import { CodeType, ImageType, SubjectType } from "../generated/prisma/client";
 
 export const verificationCodeTypeSchema = z.enum(
   [
@@ -30,7 +30,15 @@ export const verificationCodeTypeSchema = z.enum(
   MESSAGE_CODE_TYPE,
 );
 
+export const idStringSchema = z.preprocess((val) => {
+  const parsed = parseInt(val as string);
+  if (isNaN(parsed)) {
+    throw new Error("ID should be a number");
+  }
+  return parsed;
+}, z.number());
 export const idSchema = z.number(MESSAGE_ID);
+
 export const idArraySchema = z.array(z.number(MESSAGE_ID)).refine((items) => {
   return new Set(items).size === items.length;
 }, MESSAGE_IDS_UNIQUE);
@@ -67,3 +75,5 @@ export const scopeSchema = z.union([
 
 export const nameSchema = z.string();
 export const descriptionSchema = z.string();
+
+export const subjectTypeSchema = z.enum(SubjectType);
