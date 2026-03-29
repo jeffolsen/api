@@ -16,7 +16,11 @@ export const getComponentById: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
     const { id } = req.params || {};
-    res.sendStatus(OK);
+    const component = await prismaClient.component.findFirst({
+      where: { id: Number(id), feed: { profileId } },
+    });
+    throwError(component, NOT_FOUND, `Component with id ${id} not found`);
+    res.status(OK).json({ component });
   },
 );
 
@@ -49,7 +53,7 @@ export const createComponent: RequestHandler = catchErrors(
     );
 
     const feed = await prismaClient.feed.findUnique({
-      where: { id: feedId },
+      where: { id: feedId, profileId },
     });
     throwError(feed, NOT_FOUND, `Feed with id ${feedId} not found`);
 

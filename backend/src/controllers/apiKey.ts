@@ -50,7 +50,7 @@ export const generate: RequestHandler<
   unknown
 > = catchErrors(async (req, res, next) => {
   const code = req.get("X-Verification-Code") as string;
-  console.log("Generate API Key - Received code:", code);
+
   const { profileId } = req;
   const {
     apiSlug: slug,
@@ -109,8 +109,6 @@ export const destroy: RequestHandler<
 > = catchErrors(async (req, res, next) => {
   const { profileId } = req;
   const code = req.get("X-Verification-Code") as string;
-
-  console.log("Destroy API Key - Received code:", code);
 
   const {
     apiSlug: slug,
