@@ -4,6 +4,7 @@ import profileRoutes from "./routes/profile";
 import sessionRoutes from "./routes/session";
 import verificationCodeRoutes from "./routes/verificationCode";
 import feedRoutes from "./routes/feed";
+import feedComponentRoutes from "./routes/feedComponent";
 import tagRoutes from "./routes/tag";
 import itemRoutes from "./routes/item";
 import itemTagRoutes from "./routes/itemTag";
@@ -43,7 +44,9 @@ apiRouter.use(ITEM_ROUTES, authenticate, itemImageRoutes);
 apiRouter.use(ITEM_ROUTES, authenticate, itemDateRangeRoutes);
 
 apiRouter.use(COMPONENT_ROUTES, authenticate, componentRoutes);
+
 apiRouter.use(FEED_ROUTES, authenticate, feedRoutes);
+apiRouter.use(FEED_ROUTES, authenticate, feedComponentRoutes);
 
 export default apiRouter;
 export { BASE_API_URL } from "./config/routes";
