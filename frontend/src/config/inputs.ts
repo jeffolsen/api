@@ -4,6 +4,7 @@ const EMAIL_REGEX =
   /^(?!\.)(?!.*\.\.)([a-z0-9_'+\-.]*)[a-z0-9_'+-]@([a-z0-9][a-z0-9-]*\.)+[a-z]{2,}$/i;
 export const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export const NUMERIC_CODE_REGEX = /^\d{6}/;
+export const RELATIVE_PATH_REGEX = /^[a-z]+(?:[/-][a-z]+)*$/;
 
 import { FormComponentProps } from "../components/inputs/Input";
 
@@ -161,6 +162,29 @@ export const DESCRIPTION_INPUT = {
   componentName: "TextAreaInput",
 } as FormComponentProps;
 export const DESCRIPTION_DEFAULT = { description: "" };
+
+export const PATH_INPUT = {
+  dataName: "path",
+  displayName: "Path",
+  componentName: "TextInput",
+  input: {
+    registerOpts: {
+      required: "Path is required",
+      pattern: {
+        value: RELATIVE_PATH_REGEX,
+        message: "Invalid Path format",
+      },
+    },
+  },
+} as FormComponentProps;
+export const PATH_DEFAULT = { path: "" };
+
+export const IS_SINGLE_SUBJECT_TYPE_INPUT = {
+  dataName: "isSingleSubjectType",
+  displayName: "Use dynamic Item ID in path",
+  componentName: "ToggleInput",
+} as FormComponentProps;
+export const IS_SINGLE_SUBJECT_TYPE_DEFAULT = { isSingleSubjectType: false };
 
 export const IMAGE_IDS_INPUT = {
   dataName: "imageIds",

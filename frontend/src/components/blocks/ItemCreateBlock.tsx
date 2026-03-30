@@ -4,7 +4,7 @@ import EmptyCard from "../cards/EmptyCard";
 import { useNavigate } from "react-router";
 import { TItem } from "../../network/item";
 
-function CreateItemBlock(props: BlockProps) {
+function ItemCreateBlock(props: BlockProps) {
   const navigate = useNavigate();
   return (
     <Block {...props}>
@@ -21,4 +21,4 @@ function CreateItemBlock(props: BlockProps) {
   );
 }
 
-export default CreateItemBlock;
+export default ItemCreateBlock;

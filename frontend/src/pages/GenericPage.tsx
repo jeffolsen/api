@@ -7,6 +7,7 @@ import Loading from "../components/common/Loading";
 
 export default function GenericPage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const path = location.pathname.replace(/^\/|\/$/g, "") || "home";
 
   let pageData: PageData = pages[path];
@@ -14,6 +15,8 @@ export default function GenericPage() {
 
   if (!pageData) {
     for (const key of Object.keys(pages)) {
+      // Only consider keys with dynamic segments for pattern matching
+
       if (!key.includes(":")) continue;
       const pattern = key.replace(/:([^/]+)/g, "([^/]+)");
       const match = path.match(new RegExp(`^${pattern}$`));
@@ -27,6 +30,10 @@ export default function GenericPage() {
   }
 
   pageData = pageData || pages["404"];
+
+  if (pageData.redirectTo) {
+    navigate(pageData.redirectTo);
+  }
   const { isAuthenticated } = useAuthState();
 
   const isLoggedIn = isAuthenticated();
@@ -82,7 +89,7 @@ export default function GenericPage() {
                   {...(props as BlockProps)}
                 />
               ) : type === "createItem" ? (
-                <LazyLoadedCreateItemBlock
+                <LazyLoadedItemCreateBlock
                   key={index}
                   {...(props as BlockProps)}
                 />
@@ -162,8 +169,8 @@ const LazyLoadedProfileActivityBlock = lazy(
 const LazyLoadedItemsListBlock = lazy(
   () => import("../components/blocks/ItemsListBlock"),
 );
-const LazyLoadedCreateItemBlock = lazy(
-  () => import("../components/blocks/CreateItemBlock"),
+const LazyLoadedItemCreateBlock = lazy(
+  () => import("../components/blocks/ItemCreateBlock"),
 );
 const LazyLoadedStyleGuideBlock = lazy(
   () => import("../components/blocks/StyleGuideBlock"),

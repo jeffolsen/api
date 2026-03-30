@@ -17,7 +17,6 @@ export interface BlockProps {
     showOnLoggedinState?: "LOGGED_IN" | "LOGGED_OUT" | "BOTH";
     width?: WrapperProps["width"];
     theme?: string;
-    contentFilter?: { id?: string; tags?: string[] };
   };
 }
 
