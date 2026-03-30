@@ -4,14 +4,15 @@ import {
   nameSchema,
   idArraySchema,
   dateTimeSchema,
+  idStringSchema,
 } from "./properties";
 import { tagNameArraySchema } from "./tag";
 import { dateRangeArraySchema } from "./dateRange";
 import sortWord from "../util/sortWord";
 
 const validItemSortValues = [
-  "name",
-  "-name",
+  "sortName",
+  "-sortName",
   "publishedAt",
   "-publishedAt",
   "expiredAt",
@@ -139,13 +140,7 @@ export const GetAllItemsQuerySchema = z.object({
 });
 
 export const GetItemByIdSchema = z.object({
-  id: z.preprocess((val) => {
-    const parsed = parseInt(val as string);
-    if (isNaN(parsed)) {
-      throw new Error("ID should be a number");
-    }
-    return parsed;
-  }, z.number()),
+  id: idStringSchema,
   include: z
     .preprocess(
       (val) => {
@@ -166,28 +161,10 @@ export const GetItemByIdSchema = z.object({
 });
 
 export const GetItemsResourcesSchema = z.object({
-  itemId: z.preprocess((val) => {
-    const parsed = parseInt(val as string);
-    if (isNaN(parsed)) {
-      throw new Error("ID should be a number");
-    }
-    return parsed;
-  }, z.number()),
+  itemId: idStringSchema,
 });
 
 export const GetItemResourceByIdSchema = z.object({
-  itemId: z.preprocess((val) => {
-    const parsed = parseInt(val as string);
-    if (isNaN(parsed)) {
-      throw new Error("Item ID should be a number");
-    }
-    return parsed;
-  }, z.number()),
-  id: z.preprocess((val) => {
-    const parsed = parseInt(val as string);
-    if (isNaN(parsed)) {
-      throw new Error("Tag ID should be a number");
-    }
-    return parsed;
-  }, z.number()),
+  itemId: idStringSchema,
+  id: idStringSchema,
 });

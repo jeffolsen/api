@@ -19,16 +19,9 @@ import {
 import { API_KEY_SESSION, PROFILE_SESSION } from "../util/scope";
 import { CodeType, ImageType, SubjectType } from "../generated/prisma/client";
 
-export const verificationCodeTypeSchema = z.enum(
-  [
-    CodeType.CREATE_API_KEY,
-    CodeType.DELETE_PROFILE,
-    CodeType.LOGIN,
-    CodeType.LOGOUT_ALL,
-    CodeType.PASSWORD_RESET,
-  ],
-  MESSAGE_CODE_TYPE,
-);
+export const verificationCodeTypeSchema = z.enum(CodeType, MESSAGE_CODE_TYPE);
+export const subjectTypeSchema = z.enum(SubjectType, "Invalid subject type");
+export const imageTypeSchema = z.enum(ImageType, "Invalid image type");
 
 export const idStringSchema = z.preprocess((val) => {
   const parsed = parseInt(val as string);
@@ -76,4 +69,8 @@ export const scopeSchema = z.union([
 export const nameSchema = z.string();
 export const descriptionSchema = z.string();
 
-export const subjectTypeSchema = z.enum(SubjectType);
+export const subjectTypesArraySchema = z
+  .array(subjectTypeSchema)
+  .refine((items) => {
+    return new Set(items).size === items.length;
+  }, MESSAGE_IDS_UNIQUE);

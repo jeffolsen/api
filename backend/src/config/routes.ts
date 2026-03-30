@@ -38,3 +38,4 @@ export const IMAGE_ROUTES = "/images";
 export const DATE_RANGE_ROUTES = "/date-ranges";
 export const COMPONENT_ROUTES = "/components";
 export const FEED_ROUTES = "/feeds";
+export const FEED_ID_PARAM = "/:feedId";
