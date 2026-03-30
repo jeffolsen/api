@@ -3,15 +3,40 @@ import prismaClient, { SubjectType } from "../db/client";
 import catchErrors from "../util/catchErrors";
 import { OK } from "../config/errorCodes";
 import { idStringSchema } from "../schemas/properties";
-import { CreateFeedBodySchema } from "../schemas/feed";
+import { CreateFeedBodySchema, GetAllFeedsQuerySchema } from "../schemas/feed";
+import { getPagination, getSortOrders } from "../util/misc";
+
+type GetFeedsQuery = {
+  subjectTypes?: string;
+  sort?: string;
+  page?: number;
+  pageSize?: number;
+};
 
 export const getAllFeeds: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const feeds = await prismaClient.feed.findMany({
-      where: { profileId },
-    });
-    res.status(OK).json({ feeds });
+    const { subjectTypes, sort, page, pageSize } = GetAllFeedsQuerySchema.parse(
+      req.query as GetFeedsQuery,
+    );
+
+    const where = {
+      profileId,
+      ...(subjectTypes.length && {
+        subjectType: { in: subjectTypes },
+      }),
+    } as const;
+
+    const [feeds, totalCount] = await prismaClient.$transaction([
+      prismaClient.feed.findMany({
+        where,
+        ...getSortOrders(sort),
+        ...getPagination(page, pageSize),
+        omit: { profileId: true },
+      }),
+      prismaClient.feed.count({ where }),
+    ]);
+    res.status(OK).json({ feeds, totalCount });
   },
 );
 
