@@ -98,8 +98,8 @@ export default function GenericPage() {
                   key={index}
                   {...(props as BlockProps)}
                 />
-              ) : type === "editItem" ? (
-                <LazyLoadedEditItemBlock
+              ) : type === "updateItem" ? (
+                <LazyLoadedItemUpdateBlock
                   key={index}
                   {...(props as BlockProps)}
                 />
@@ -175,6 +175,6 @@ const LazyLoadedItemCreateBlock = lazy(
 const LazyLoadedStyleGuideBlock = lazy(
   () => import("../components/blocks/StyleGuideBlock"),
 );
-const LazyLoadedEditItemBlock = lazy(
-  () => import("../components/blocks/EditItemBlock"),
+const LazyLoadedItemUpdateBlock = lazy(
+  () => import("../components/blocks/ItemUpdateBlock"),
 );
