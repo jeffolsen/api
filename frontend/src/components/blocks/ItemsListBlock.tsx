@@ -1,6 +1,12 @@
 import Block, { BlockProps } from "./Block";
 import Grid from "../common/Grid";
-import { useGetItems, TItem } from "../../network/item";
+import {
+  useGetItems,
+  TItem,
+  useGetItemsTags,
+  TItemSort,
+  GetItemsResponse,
+} from "../../network/item";
 import EmptyCard from "../cards/EmptyCard";
 import Heading, { HeadingLevelProvider } from "../common/Heading";
 import Text from "../common/Text";
@@ -14,13 +20,31 @@ import DashBoardLayout from "../layout/DashBoardLayout";
 import { useGetAuthenticatedProfile } from "../../network/profile";
 import SectionHeading from "../partials/SectionHeading";
 import { ScheduleStatus } from "../inputs/FormPublishSubmit";
+import DropDownMenu from "../common/DropDownMenu";
+import {
+  useSearchParamWithDefault,
+  useSearchParam,
+} from "../../hooks/useSearchParam";
+import { TTag, TTagName, useGetTags } from "../../network/tag";
+import { useMemo } from "react";
+import { ListNavigation } from "../partials/ListNavigation";
+import BasicCard from "../cards/BasicCard";
 
 function ItemsListBlock(props: BlockProps) {
-  const getItems = useGetItems({ page: 1, pageSize: 3 });
+  const initialPageSize = 3;
+  const [page] = useSearchParam("page");
+  const [tags] = useSearchParam("tags");
+  const [sort] = useSearchParam("sort");
+  const getItems = useGetItems({
+    page: page ? parseInt(page) : 1,
+    pageSize: initialPageSize,
+    tags: tags?.split(",") as TTagName[],
+    sort: sort?.split(",") as TItemSort[],
+  });
   const getProfile = useGetAuthenticatedProfile();
   const profile = getProfile.data?.profile;
   const { items = [], totalCount = 0 } =
-    (getItems.data as { items?: TItem[]; totalCount?: number }) || {};
+    (getItems.data as GetItemsResponse) || {};
 
   if (getItems.isLoading || getProfile.isLoading || !profile?.email) {
     return (
@@ -34,25 +58,28 @@ function ItemsListBlock(props: BlockProps) {
     <Block {...props}>
       <HeadingLevelProvider>
         <DashBoardLayout profile={profile}>
-          <SectionHeading
-            text="Your Items"
-            description="This lists all your created items. Click edit to update an item or create a new one."
-          >
-            <p>{totalCount} items found</p>
-            <Button
-              as="Link"
-              to="/items/new"
-              size="md"
-              color="primary"
-              className="w-full md:w-auto"
-            >
-              Create New Item
-            </Button>
+          <SectionHeading text="Your Items">
+            <ItemSortControl />
+            <ItemFilterControl />
           </SectionHeading>
+          <ListNavigation
+            initialPageSize={initialPageSize}
+            totalCount={totalCount}
+          />
           <Grid
             items={items.map((item: TItem) => (
               <ItemCard item={item} key={item.id} />
             ))}
+            onEmpty={() => (
+              <BasicCard
+                title={"No items found with tag: " + tags}
+                description="Try adjusting your filters."
+              />
+            )}
+          />
+          <ListNavigation
+            initialPageSize={initialPageSize}
+            totalCount={totalCount}
           />
         </DashBoardLayout>
       </HeadingLevelProvider>
@@ -62,6 +89,12 @@ function ItemsListBlock(props: BlockProps) {
 
 function ItemCard({ item }: { item: TItem }) {
   const { id, sortName, publishedAt, expiredAt, updatedAt } = item;
+  const getTags = useGetItemsTags(id);
+  const tags = getTags.data?.tags || [];
+
+  if (getTags.isLoading) {
+    return <Loading />;
+  }
   return (
     <EmptyCard>
       <div className="card-body md:flex-row gap-4 justify-between w-full">
@@ -72,10 +105,23 @@ function ItemCard({ item }: { item: TItem }) {
           >
             {sortName}
           </Heading>
-          <Text textSize="xs" className="italic flex-none">
-            Last updated:{" "}
-            {dayjs(convertZuluToLocalDateTime(updatedAt)).format(techDatetime)}
-          </Text>
+          <div className="flex flex-wrap gap-x-1 gap-y-2">
+            {tags.map((tag: TTag) => (
+              <Text
+                key={tag.id}
+                textSize="xs"
+                className="italic flex-none bg-neutral-content/10 px-1 rounded"
+              >
+                {tag.name}
+              </Text>
+            ))}
+            <Text textSize="xs" className="italic flex-none w-full">
+              Last updated:{" "}
+              {dayjs(convertZuluToLocalDateTime(updatedAt)).format(
+                techDatetime,
+              )}
+            </Text>
+          </div>
         </div>
         <div className="flex flex-col gap-2 items-end">
           <Text textSize="xs">
@@ -101,5 +147,84 @@ function ItemCard({ item }: { item: TItem }) {
     </EmptyCard>
   );
 }
+
+const ItemFilterControl = () => {
+  const getTags = useGetTags();
+  const tagOptions = useMemo(
+    () => [
+      { id: "", label: "Filter by Tag" },
+      ...(getTags.data?.tags || [])
+        .map((tag: TTag) => ({
+          id: tag.name,
+          label: tag.name.toLocaleLowerCase(),
+        }))
+        .sort((a: { label: string }, b: { label: string }) =>
+          a.label.localeCompare(b.label),
+        ),
+    ],
+    [getTags.data],
+  );
+  const [initialTags] = useSearchParam("tags");
+
+  const initialTagIndex = useMemo(() => {
+    if (!initialTags) return 0;
+    const foundIndex = tagOptions.findIndex(
+      (option) => option.id === initialTags,
+    );
+    return foundIndex !== -1 ? foundIndex : 0;
+  }, [initialTags, tagOptions]);
+
+  const [, setSelectedTag] = useSearchParamWithDefault(
+    "tags",
+    tagOptions[initialTagIndex]?.id,
+  );
+
+  if (getTags.isLoading) {
+    return <Loading />;
+  }
+  return (
+    <DropDownMenu
+      className="w-full sm:w-36"
+      optionClasses="capitalize"
+      value={tagOptions[initialTagIndex]}
+      items={tagOptions}
+      onChange={(item) => {
+        setSelectedTag(item.id);
+      }}
+    />
+  );
+};
+
+const ItemSortControl = () => {
+  const sortOptions = useMemo(
+    () => [
+      { id: "-updatedAt", label: "Updated At (Newest)" },
+      { id: "updatedAt", label: "Updated At (Oldest)" },
+      { id: "sortName", label: "Sort Name (A-Z)" },
+      { id: "-sortName", label: "Sort Name (Z-A)" },
+    ],
+    [],
+  );
+
+  const [sort] = useSearchParam("sort");
+  const [, setSort] = useSearchParam("sort");
+
+  const initialSortIndex = useMemo(() => {
+    if (!sort) return 0;
+    const foundIndex = sortOptions.findIndex((option) => option.id === sort);
+    return foundIndex !== -1 ? foundIndex : 0;
+  }, [sort, sortOptions]);
+
+  return (
+    <DropDownMenu
+      className="w-full sm:w-48"
+      value={sortOptions[initialSortIndex]}
+      items={sortOptions}
+      onChange={(item) => {
+        setSort(item.id);
+      }}
+    />
+  );
+};
 
 export default ItemsListBlock;
