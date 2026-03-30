@@ -153,4 +153,9 @@ export const useEmail = () => {
   };
 };
 
+export type PaginationParams = {
+  page?: number;
+  pageSize?: number;
+};
+
 export default api;

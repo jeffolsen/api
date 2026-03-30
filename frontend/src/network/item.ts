@@ -10,6 +10,7 @@ import {
   TAGS_ENDPOINT,
   IMAGES_ENDPOINT,
   DATE_RANGES_ENDPOINT,
+  PaginationParams,
 } from "./api";
 import { TAGS_KEY, TTagInput, TTagName } from "./tag";
 import { IMAGES_KEY, TImage } from "./image";
@@ -18,24 +19,26 @@ import { DATE_RANGES_KEY, TDateRangeInput } from "./dateRange";
 
 export const ITEMS_KEY = "items" as const;
 
-type GetItemsParams = {
-  sort?: TItemSort[];
-  page?: number;
-  pageSize?: number;
-  tags?: TTagName[];
+export type GetItemsResponse = {
+  items: TItem[];
+  totalCount: number;
 };
 
 export const useGetItems = (
-  queryParams?: GetItemsParams,
+  queryParams?: TItemQueryParams,
   options?: QueryOptions,
 ) => {
   const { api } = useAuthState();
 
   return useQuery({
     queryKey: [ITEMS_KEY, queryParams],
-    queryFn: async (): Promise<{ items: TItem[] }> => {
+    queryFn: async (): Promise<GetItemsResponse> => {
       const response = await api.get(ITEMS_ENDPOINT, {
-        params: { ...queryParams, tags: queryParams?.tags?.join(",") },
+        params: {
+          ...queryParams,
+          tags: queryParams?.tags?.join(","),
+          sort: queryParams?.sort?.join(","),
+        },
       });
       return response.data;
     },
@@ -206,13 +209,7 @@ export type TItemSort =
   | "sortName"
   | "-sortName";
 
-export type TItemStatus = "published" | "unpublished" | "expired";
-
 export type TItemQueryParams = {
-  sort?: TItemSort;
-  page?: number;
-  pageSize?: number;
-  limit?: number;
+  sort?: TItemSort[];
   tags?: TTagName[];
-  status?: TItemStatus;
-};
+} & PaginationParams;
