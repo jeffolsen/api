@@ -13,6 +13,7 @@ import itemDateRangeRoutes from "./routes/itemDateRange";
 import componentRoutes from "./routes/component";
 import apiKeyRoutes from "./routes/apiKey";
 import imageRoutes from "./routes/image";
+import componentTypeRoutes from "./routes/componentType";
 import authenticate from "./middleware/authenticate";
 import {
   API_KEY_ROUTES,
@@ -25,6 +26,7 @@ import {
   TAG_ROUTES,
   VERIFICATION_CODE_ROUTES,
   IMAGE_ROUTES,
+  COMPONENT_TYPE_ROUTES,
 } from "./config/routes";
 
 const apiRouter = express.Router();
@@ -37,6 +39,7 @@ apiRouter.use(SESSION_ROUTES, sessionRoutes);
 
 apiRouter.use(IMAGE_ROUTES, authenticate, imageRoutes);
 apiRouter.use(TAG_ROUTES, authenticate, tagRoutes);
+apiRouter.use(COMPONENT_TYPE_ROUTES, authenticate, componentTypeRoutes);
 
 apiRouter.use(ITEM_ROUTES, authenticate, itemRoutes);
 apiRouter.use(ITEM_ROUTES, authenticate, itemTagRoutes);

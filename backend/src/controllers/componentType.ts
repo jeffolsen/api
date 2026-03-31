@@ -10,6 +10,16 @@ export const getAllComponentTypes: RequestHandler = catchErrors(
   },
 );
 
+export const getComponentTypeById: RequestHandler = catchErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params || {};
+    const componentType = await prismaClient.componentType.findUnique({
+      where: { id: Number(id) },
+    });
+    res.status(OK).json({ componentType });
+  },
+);
+
 export const getComponentTypeByName: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { name } = req.params || {};
@@ -22,6 +32,7 @@ export const getComponentTypeByName: RequestHandler = catchErrors(
 
 const componentTypeApi = {
   getAllComponentTypes,
+  getComponentTypeById,
   getComponentTypeByName,
 };
 export default componentTypeApi;
