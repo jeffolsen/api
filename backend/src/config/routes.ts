@@ -1,6 +1,7 @@
 export const COLLECTION_ENDPOINT = "/";
 export const SELF_ENDPOINT = "/me";
 export const ID_PARAM = "/:id";
+export const NAME_PARAM = "/by-name/:name";
 
 export const BASE_API_URL = "/api";
 
@@ -33,9 +34,13 @@ export const API_KEY_DESTROY_ENDPOINT = "/destroy";
 
 export const ITEM_ROUTES = "/items";
 export const ITEM_ID_PARAM = "/:itemId";
-export const TAG_ROUTES = "/tags";
-export const IMAGE_ROUTES = "/images";
-export const DATE_RANGE_ROUTES = "/date-ranges";
-export const COMPONENT_ROUTES = "/components";
+
 export const FEED_ROUTES = "/feeds";
 export const FEED_ID_PARAM = "/:feedId";
+
+export const DATE_RANGE_ROUTES = "/date-ranges";
+export const COMPONENT_ROUTES = "/components";
+
+export const TAG_ROUTES = "/tags";
+export const IMAGE_ROUTES = "/images";
+export const COMPONENT_TYPE_ROUTES = "/component-types";
