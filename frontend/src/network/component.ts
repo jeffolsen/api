@@ -1,13 +1,20 @@
 export const COMPONENTS_KEY = "components" as const;
 
-export type TComponentTypes = "BASIC_BLOCK";
+export type TComponentTypes =
+  | "TeaserGrid"
+  | "HeroCarousel"
+  | "Detail"
+  | "RelatedContent";
 
 export type TComponent = {
   id: number;
-  title?: string;
   type: TComponentTypes;
   order: number;
-  config: Record<string, unknown>;
+  propertyValues: Record<string, unknown>;
+  publishedAt?: string;
+  expiredAt?: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type TComponentInput = Omit<TComponent, "id">;

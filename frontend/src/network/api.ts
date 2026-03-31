@@ -39,6 +39,7 @@ export const ITEMS_ENDPOINT = "/items";
 export const TAGS_ENDPOINT = "/tags";
 export const DATE_RANGES_ENDPOINT = "/date-ranges";
 
+export const COMPONENT_TYPES_ENDPOINT = "/component-types";
 export const FEEDS_ENDPOINT = "/feeds";
 export const COMPONENTS_ENDPOINT = "/components";
 
