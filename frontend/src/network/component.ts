@@ -1,14 +1,12 @@
-export const COMPONENTS_KEY = "components" as const;
+import { TComponentType } from "./componentType";
+import { TFeed } from "./feed";
 
-export type TComponentTypes =
-  | "TeaserGrid"
-  | "HeroCarousel"
-  | "Detail"
-  | "RelatedContent";
+export const COMPONENTS_KEY = "components" as const;
 
 export type TComponent = {
   id: number;
-  type: TComponentTypes;
+  typeId: TComponentType["id"];
+  feedId: TFeed["id"];
   order: number;
   propertyValues: Record<string, unknown>;
   publishedAt?: string;
@@ -17,4 +15,7 @@ export type TComponent = {
   updatedAt: string;
 };
 
-export type TComponentInput = Omit<TComponent, "id">;
+export type TComponentInput = Omit<
+  TComponent,
+  "id" | "createdAt" | "updatedAt"
+>;
