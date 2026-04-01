@@ -27,7 +27,7 @@ import {
 } from "../../hooks/useSearchParam";
 import { TTag, TTagName, useGetTags } from "../../network/tag";
 import { useMemo } from "react";
-import { ListNavigation } from "../partials/ListNavigation";
+import { ListNavigation, ListSortControl } from "../partials/ListNavigation";
 import BasicCard from "../cards/BasicCard";
 
 function ItemsListBlock(props: BlockProps) {
@@ -58,8 +58,11 @@ function ItemsListBlock(props: BlockProps) {
     <Block {...props}>
       <HeadingLevelProvider>
         <DashBoardLayout profile={profile}>
-          <SectionHeading text="Your Items">
-            <ItemSortControl />
+          <SectionHeading
+            text="Your Items"
+            description="Manage your items here."
+          >
+            <ListSortControl />
             <ItemFilterControl />
           </SectionHeading>
           <ListNavigation
@@ -72,7 +75,7 @@ function ItemsListBlock(props: BlockProps) {
             ))}
             onEmpty={() => (
               <BasicCard
-                title={"No items found with tag: " + tags}
+                title={"No items found" + (tags ? " with tag: " + tags : "")}
                 description="Try adjusting your filters."
               />
             )}
@@ -190,38 +193,6 @@ const ItemFilterControl = () => {
       items={tagOptions}
       onChange={(item) => {
         setSelectedTag(item.id);
-      }}
-    />
-  );
-};
-
-const ItemSortControl = () => {
-  const sortOptions = useMemo(
-    () => [
-      { id: "-updatedAt", label: "Updated At (Newest)" },
-      { id: "updatedAt", label: "Updated At (Oldest)" },
-      { id: "sortName", label: "Sort Name (A-Z)" },
-      { id: "-sortName", label: "Sort Name (Z-A)" },
-    ],
-    [],
-  );
-
-  const [sort] = useSearchParam("sort");
-  const [, setSort] = useSearchParam("sort");
-
-  const initialSortIndex = useMemo(() => {
-    if (!sort) return 0;
-    const foundIndex = sortOptions.findIndex((option) => option.id === sort);
-    return foundIndex !== -1 ? foundIndex : 0;
-  }, [sort, sortOptions]);
-
-  return (
-    <DropDownMenu
-      className="w-full sm:w-48"
-      value={sortOptions[initialSortIndex]}
-      items={sortOptions}
-      onChange={(item) => {
-        setSort(item.id);
       }}
     />
   );
