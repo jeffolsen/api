@@ -4,6 +4,7 @@ import prismaClient, { type Prisma } from "../db/client";
 import { NOT_FOUND, OK } from "../config/errorCodes";
 import throwError from "../util/throwError";
 import { CreateComponentSchema } from "../schemas/component";
+import { validateComponentPropertyValues } from "../services/auth";
 
 export const getAllComponents: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -51,6 +52,7 @@ export const createComponent: RequestHandler = catchErrors(
       NOT_FOUND,
       `ComponentType with name ${componentTypeName} not found`,
     );
+    await validateComponentPropertyValues(componentType, propertyValues || {});
 
     const feed = await prismaClient.feed.findUnique({
       where: { id: feedId, profileId },

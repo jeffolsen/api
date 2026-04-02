@@ -47,7 +47,6 @@ export const login: RequestHandler<
   unknown
 > = catchErrors(async (req, res, next) => {
   const code = req.get("X-Verification-Code") as string;
-  console.log("Login - Received code:", code);
   const { profileId } = req;
   const loggedIn = !!profileId;
   throwError(!loggedIn, CONFLICT, "Already logged in");
