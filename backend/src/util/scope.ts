@@ -25,6 +25,7 @@ import {
   DELETE_DATE_RANGE_SCOPE,
   DELETE_FEED_SCOPE,
   DELETE_COMPONENT_SCOPE,
+  READ_COMPONENT_TYPE_SCOPE,
 } from "../config/scopes";
 
 export const defaultProfileScope = () =>
@@ -44,6 +45,8 @@ export const defaultProfileScope = () =>
     READ_TAG_SCOPE,
 
     READ_IMAGE_SCOPE,
+
+    READ_COMPONENT_TYPE_SCOPE,
 
     CREATE_ITEM_SCOPE,
     READ_ITEM_SCOPE,
@@ -71,6 +74,7 @@ export const defaultApiKeyScope = () =>
     READ_FEED_SCOPE,
     READ_ITEM_SCOPE,
     READ_COMPONENT_SCOPE,
+    READ_COMPONENT_TYPE_SCOPE,
     READ_TAG_SCOPE,
     READ_IMAGE_SCOPE,
     READ_DATE_RANGE_SCOPE,
