@@ -105,7 +105,7 @@ model ComponentType {
   id             Int         @id @default(autoincrement())
   name           String      @unique
   subjectType    SubjectType @default(COLLECTION) @map("subject_type") // This field is used to determine which SubjectTypes this ComponentType can be used with. For example, if subjectType is SINGLE, then this ComponentType can only be used with Feeds that have a subjectType of SINGLE.
-  propertySchema Json        @default("{}") // Use this field to store any additional settings for the component such as "grid columns": 3, or "show title": true, etc.
+  propertySchema Json        @default("{}") @map("property_schema") // Use this field to store any additional settings for the component such as "grid columns": 3, or "show title": true, etc.
   components     Component[]
 
   @@map("component_types")
@@ -118,7 +118,7 @@ model Component {
   type           ComponentType @relation(fields: [typeId], references: [id])
   typeId         Int           @map("component_type_id")
   feed           Feed          @relation("FeedComponents", fields: [feedId], references: [id], onDelete: Cascade)
-  feedId         Int
+  feedId         Int           @map("feed_id")
   publishedAt    DateTime?     @map("published_at") @db.Timestamptz(6)
   expiredAt      DateTime?     @map("expired_at") @db.Timestamptz(6)
   createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
