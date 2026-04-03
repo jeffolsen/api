@@ -27,7 +27,7 @@ export const getComponentById: RequestHandler = catchErrors(
 
 type CreateComponentBody = {
   feedId: number;
-  componentTypeName: string;
+  typeId: number;
   propertyValues?: Record<string, unknown>;
   publishedAt?: string;
   expiredAt?: string;
@@ -36,21 +36,16 @@ type CreateComponentBody = {
 export const createComponent: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const {
-      feedId,
-      componentTypeName,
-      propertyValues,
-      publishedAt,
-      expiredAt,
-    } = CreateComponentSchema.parse(req.body as CreateComponentBody);
+    const { feedId, typeId, propertyValues, publishedAt, expiredAt } =
+      CreateComponentSchema.parse(req.body as CreateComponentBody);
 
     const componentType = await prismaClient.componentType.findUnique({
-      where: { name: componentTypeName },
+      where: { id: typeId },
     });
     throwError(
       componentType,
       NOT_FOUND,
-      `ComponentType with name ${componentTypeName} not found`,
+      `ComponentType with id ${typeId} not found`,
     );
     await validateComponentPropertyValues(componentType, propertyValues || {});
 

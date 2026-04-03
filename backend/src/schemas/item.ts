@@ -121,6 +121,7 @@ export const ModifyItemSchema = z
 export type ModifyItemInput = z.infer<typeof ModifyItemSchema>;
 
 export const GetAllItemsQuerySchema = z.object({
+  searchName: z.string().optional(),
   sort: z.preprocess((val) => {
     if (typeof val === "string") {
       return val.split(",").map((sort) => sort.trim());

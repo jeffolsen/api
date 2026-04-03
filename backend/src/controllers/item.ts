@@ -1,5 +1,5 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import prismaClient from "../db/client";
+import prismaClient, { Prisma } from "../db/client";
 import catchErrors from "../util/catchErrors";
 import throwError from "../util/throwError";
 import { NOT_FOUND, OK, NO_CONTENT } from "../config/errorCodes";
@@ -13,6 +13,7 @@ import {
 } from "../schemas/item";
 
 type GetItemsQuery = {
+  searchName?: string;
   tags?: string;
   sort?: string;
   page?: number;
@@ -22,12 +23,17 @@ type GetItemsQuery = {
 export const getAllItems: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const { tags, sort, page, pageSize } = GetAllItemsQuerySchema.parse(
-      req.query as GetItemsQuery,
-    );
+    const { tags, sort, page, pageSize, searchName } =
+      GetAllItemsQuerySchema.parse(req.query as GetItemsQuery);
 
     const where = {
       authorId: profileId,
+      ...(searchName && {
+        name: {
+          contains: searchName,
+          mode: "insensitive",
+        },
+      }),
       ...(tags.length && {
         tags: {
           some: {
@@ -37,7 +43,7 @@ export const getAllItems: RequestHandler = catchErrors(
           },
         },
       }),
-    } as const;
+    } as Prisma.ItemWhereInput;
 
     const [items, totalCount] = await prismaClient.$transaction([
       prismaClient.item.findMany({

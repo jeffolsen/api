@@ -1,11 +1,10 @@
 import { z } from "zod";
-import { dateTimeSchema, idArraySchema } from "./properties";
-import { tagNameArraySchema } from "./tag";
+import { dateTimeSchema } from "./properties";
 
 export const CreateComponentSchema = z
   .object({
     feedId: z.number(),
-    componentTypeName: z.string(),
+    typeId: z.number(),
     propertyValues: z.record(z.string(), z.unknown()).optional(),
     publishedAt: dateTimeSchema.nullish(),
     expiredAt: dateTimeSchema.nullish(),
