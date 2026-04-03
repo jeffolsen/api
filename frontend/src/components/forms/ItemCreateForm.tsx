@@ -17,11 +17,12 @@ import { TDateRangeInput } from "../../network/dateRange";
 import { TTagInput } from "../../network/tag";
 import { TImage } from "../../network/image";
 import {
-  CreateItemRequest,
   useCreateItem,
   useModifyItem,
   useUpdateItem,
   useDeleteItem,
+  TItemRelations,
+  TItemInput,
 } from "../../network/item";
 import FormScheduleSubmit from "../inputs/FormScheduleSubmit";
 import Form, {
@@ -35,7 +36,7 @@ import { Button } from "../common/Button";
 import { Trash } from "lucide-react";
 
 export type FormValues = {
-  name?: string;
+  name: string;
   description?: string;
   imageIds?: { imageId: TImage["id"] }[];
   tagNames?: TTagInput[];
@@ -46,7 +47,7 @@ export type FormValues = {
 
 const mapFormValuesToCreateItemRequest = (
   values: FormValues,
-): CreateItemRequest => ({
+): TItemInput & TItemRelations => ({
   name: values.name,
   description: values.description,
   publishedAt: values.publishedAt
@@ -155,8 +156,8 @@ function ItemRepublishForm({
   FormReponseHandlerProps & {
     defaultValues: {
       id: number;
-      publishedAt: string | null;
-      expiredAt: string | null;
+      publishedAt?: string | null;
+      expiredAt?: string | null;
     };
   }) {
   const modifyItem = useModifyItem();

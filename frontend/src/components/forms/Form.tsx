@@ -48,6 +48,7 @@ function Form({
   }, [defaultValues, reset]);
 
   const onSubmit = async (args: SubmitArgs) => {
+    console.log("Submitting form with args:", args);
     try {
       await submitAction(args);
     } catch (error) {

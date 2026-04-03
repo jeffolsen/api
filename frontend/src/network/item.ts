@@ -19,6 +19,46 @@ import { DATE_RANGES_KEY, TDateRangeInput } from "./dateRange";
 
 export const ITEMS_KEY = "items" as const;
 
+export type TItem = {
+  id: number;
+  name: string;
+  description?: string;
+  sortName: string;
+  publishedAt?: string | null;
+  expiredAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type TItemRelations = {
+  imageIds?: TImage["id"][];
+  tagNames?: TTagInput["name"][];
+  dateRanges?: TDateRangeInput[];
+};
+
+export type TItemInput = Omit<
+  TItem,
+  "id" | "createdAt" | "updatedAt" | "sortName"
+>;
+
+export type TItemSort =
+  | "createdAt"
+  | "-createdAt"
+  | "updatedAt"
+  | "-updatedAt"
+  | "publishedAt"
+  | "-publishedAt"
+  | "expiredAt"
+  | "-expiredAt"
+  | "sortName"
+  | "-sortName";
+
+export type TItemQueryParams = {
+  searchName?: string;
+  sort?: TItemSort[];
+  tags?: TTagName[];
+} & PaginationParams;
+
 export type GetItemsResponse = {
   items: TItem[];
   totalCount: number;
@@ -98,22 +138,12 @@ export const useGetItemDateRanges = (id: number) => {
   });
 };
 
-export type CreateItemRequest = {
-  name?: string;
-  description?: string;
-  publishedAt?: string | null;
-  expiredAt?: string | null;
-  imageIds?: TImage["id"][];
-  tagNames?: TTagInput["name"][];
-  dateRanges?: TDateRangeInput[];
-};
-
 export const useCreateItem = () => {
   const { api } = useAuthState();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: CreateItemRequest) =>
+    mutationFn: async (data: TItemInput & TItemRelations) =>
       withErrorHandling(async () => {
         console.log("Creating item with data:", data);
         const response = await api.post(ITEMS_ENDPOINT, data);
@@ -130,7 +160,13 @@ export const useUpdateItem = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: CreateItemRequest }) =>
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: Partial<TItemInput & TItemRelations>;
+    }) =>
       withErrorHandling(async () => {
         console.log(`Updating item ${id} with data:`, data);
         const response = await api.put(`${ITEMS_ENDPOINT}/${id}`, data);
@@ -153,7 +189,13 @@ export const useModifyItem = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: CreateItemRequest }) =>
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: Partial<TItemInput & TItemRelations>;
+    }) =>
       withErrorHandling(async () => {
         console.log(`Modifying item ${id} with data:`, data);
         const response = await api.patch(`${ITEMS_ENDPOINT}/${id}`, data);
@@ -182,34 +224,3 @@ export const useDeleteItem = () => {
     },
   });
 };
-
-export type TItem = {
-  id: number;
-  name: string;
-  description: string;
-  sortName: string;
-  publishedAt: string | null;
-  expiredAt: string | null;
-  authorId: number;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type TItemInput = Omit<TItem, "id" | "createdAt" | "updatedAt">;
-
-export type TItemSort =
-  | "createdAt"
-  | "-createdAt"
-  | "updatedAt"
-  | "-updatedAt"
-  | "publishedAt"
-  | "-publishedAt"
-  | "expiredAt"
-  | "-expiredAt"
-  | "sortName"
-  | "-sortName";
-
-export type TItemQueryParams = {
-  sort?: TItemSort[];
-  tags?: TTagName[];
-} & PaginationParams;
