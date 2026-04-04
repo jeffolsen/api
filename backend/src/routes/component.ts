@@ -26,7 +26,7 @@ router.post(
   authorizeScope([CREATE_COMPONENT_SCOPE]),
   componentApi.createComponent,
 );
-router.patch(
+router.put(
   ID_PARAM,
   authorizeScope([UPDATE_COMPONENT_SCOPE]),
   componentApi.updateComponent,

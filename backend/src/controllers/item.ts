@@ -15,6 +15,7 @@ import {
 type GetItemsQuery = {
   searchName?: string;
   tags?: string;
+  ids?: string;
   sort?: string;
   page?: number;
   pageSize?: number;
