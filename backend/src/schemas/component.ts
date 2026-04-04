@@ -5,6 +5,8 @@ export const CreateComponentSchema = z
   .object({
     feedId: z.number(),
     typeId: z.number(),
+    order: z.number(),
+    name: z.string(),
     propertyValues: z.record(z.string(), z.unknown()).optional(),
     publishedAt: dateTimeSchema.nullish(),
     expiredAt: dateTimeSchema.nullish(),

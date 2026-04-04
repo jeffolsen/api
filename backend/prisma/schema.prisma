@@ -113,6 +113,7 @@ model ComponentType {
 
 model Component {
   id             Int           @id @default(autoincrement())
+  name           String
   order          Int           @default(0)
   propertyValues Json          @default("{}") @map("property_values") // Use this field to store the actual values for the settings defined in the ComponentType's propertySchema. For example, if the ComponentType has a setting called "grid columns", then this field would store the value for that setting such as "3".
   type           ComponentType @relation(fields: [typeId], references: [id])

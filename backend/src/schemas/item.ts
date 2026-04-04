@@ -121,6 +121,17 @@ export const ModifyItemSchema = z
 export type ModifyItemInput = z.infer<typeof ModifyItemSchema>;
 
 export const GetAllItemsQuerySchema = z.object({
+  ids: z
+    .preprocess((val) => {
+      if (typeof val === "string") {
+        const idArray = val.split(",").map((id) => id.trim());
+        if (idArray.every((id) => !isNaN(Number(id)))) {
+          return idArray.map((id) => Number(id));
+        }
+      }
+      return [];
+    }, idArraySchema)
+    .default([]),
   searchName: z.string().optional(),
   sort: z.preprocess((val) => {
     if (typeof val === "string") {
