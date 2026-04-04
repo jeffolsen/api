@@ -6,8 +6,8 @@ export function convertTagnameArrayToStrings(
 
 export function convertStringsToTagnameArray(
   tagNames: string[],
-): Array<{ tagname: string }> {
-  return tagNames.map((name) => ({ tagname: name }));
+): Array<{ name: string }> {
+  return tagNames.map((name) => ({ name }));
 }
 
 export function convertIdArrayToNumbers(

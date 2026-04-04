@@ -134,9 +134,9 @@ export default function convertJSONSchemaToFormInputs(
             valueOptions:
               "enum" in value && Array.isArray(value.enum)
                 ? value.enum.map((option: string, index: number) => ({
-                    label: option,
-                    value: value?.["enumNames"]?.[index] || option,
-                    default: !!value?.["default"],
+                    label: value?.["enumNames"]?.[index] || option,
+                    value: option,
+                    default: option === value.default,
                   }))
                 : [],
           },
@@ -146,5 +146,5 @@ export default function convertJSONSchemaToFormInputs(
     }
   }
 
-  return { inputs, defaults };
+  return { inputs, defaults: { propertyValues: defaults } };
 }
