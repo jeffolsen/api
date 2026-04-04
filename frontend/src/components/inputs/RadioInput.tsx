@@ -18,6 +18,11 @@ export const RadioInput = (props: RadioInputProps) => {
   const valueOptions = input?.valueOptions || [];
   const watchedValue = watch(dataName);
 
+  console.log(
+    `Rendering RadioInput for ${dataName} with options:`,
+    valueOptions,
+  );
+
   return (
     <>
       <fieldset
@@ -39,9 +44,9 @@ export const RadioInput = (props: RadioInputProps) => {
             {displayName}
           </span>
         </legend>
-        <div className="flex flex-row gap-4">
+        <div className="flex flex-wrap gap-4">
           {valueOptions?.map((option: SelectableOption) => (
-            <label key={option.value}>
+            <label key={option.value} className="flex items-center gap-2">
               <input
                 className="radio"
                 {...register(dataName)}
