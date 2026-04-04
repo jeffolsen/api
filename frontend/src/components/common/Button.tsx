@@ -134,6 +134,22 @@ export const PlusButton = forwardRef<HTMLButtonElement, ButtonProps>(
   },
 );
 
+export const IconButton = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ children, ...props }, ref) => {
+    const { className, ...restProps } = props;
+    const classes = clsx(
+      "btn btn-ghost border-base-content/20 text-primary-content/70",
+      "flex items-center justify-center",
+      className,
+    );
+    return (
+      <Button as="button" ref={ref} className={classes} {...restProps}>
+        {children}
+      </Button>
+    );
+  },
+);
+
 Button.displayName = "Button";
 
 export default Button;
