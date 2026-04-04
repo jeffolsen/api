@@ -7,6 +7,24 @@ import { FEEDS_KEY } from "./feed";
 
 export const COMPONENTS_KEY = "components" as const;
 
+export type TComponent = {
+  id: number;
+  typeId: TComponentType["id"];
+  feedId: TFeed["id"];
+  order: number;
+  name: string;
+  propertyValues: Record<string, unknown>;
+  publishedAt?: string | null;
+  expiredAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type TComponentInput = Omit<
+  TComponent,
+  "id" | "createdAt" | "updatedAt"
+>;
+
 export const useCreateComponent = () => {
   const { api } = useAuthState();
   const queryClient = useQueryClient();
@@ -26,25 +44,22 @@ export const useCreateComponent = () => {
   });
 };
 
-export type ModifyComponentRequest = Partial<TComponentInput> & {
-  feedId: TFeed["id"];
-};
-
-export const useModifyComponent = (componentId: number) => {
+export const useUpdateComponent = () => {
   const { api } = useAuthState();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: ModifyComponentRequest) =>
-      withErrorHandling(async () => {
-        console.log("Modifying component with data:", data);
-        const response = await api.patch(
-          `${COMPONENTS_ENDPOINT}/${componentId}`,
-          data,
-        );
+    mutationFn: async ({ id, data }: { id: number; data: TComponentInput }) =>
+      withErrorHandling(async (): Promise<TComponent> => {
+        console.log(`Modifying component ${id} with data:`, data);
+        const response = await api.put(`${COMPONENTS_ENDPOINT}/${id}`, data);
         return response.data;
       }),
-    onSuccess: (_, { feedId }) => {
+    onSuccess: (_, { data, id }) => {
+      const feedId = data.feedId;
+      queryClient.invalidateQueries({
+        queryKey: [FEEDS_KEY, feedId, COMPONENTS_KEY, id],
+      });
       queryClient.invalidateQueries({
         queryKey: [FEEDS_KEY, feedId, COMPONENTS_KEY],
       });
@@ -52,19 +67,53 @@ export const useModifyComponent = (componentId: number) => {
   });
 };
 
-export type TComponent = {
-  id: number;
-  typeId: TComponentType["id"];
+export type ModifyComponentRequest = Partial<TComponentInput> & {
   feedId: TFeed["id"];
-  order: number;
-  propertyValues: Record<string, unknown>;
-  publishedAt?: string | null;
-  expiredAt?: string | null;
-  createdAt: string;
-  updatedAt: string;
 };
 
-export type TComponentInput = Omit<
-  TComponent,
-  "id" | "createdAt" | "updatedAt"
->;
+export const useModifyComponent = () => {
+  const { api } = useAuthState();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: Partial<TComponentInput> & { feedId: TFeed["id"] };
+    }) =>
+      withErrorHandling(async (): Promise<TComponent> => {
+        console.log(`Modifying component ${id} with data:`, data);
+        const response = await api.patch(`${COMPONENTS_ENDPOINT}/${id}`, data);
+        return response.data;
+      }),
+    onSuccess: (_, { data, id }) => {
+      const feedId = data.feedId;
+      queryClient.invalidateQueries({
+        queryKey: [FEEDS_KEY, feedId, COMPONENTS_KEY, id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [FEEDS_KEY, feedId, COMPONENTS_KEY],
+      });
+    },
+  });
+};
+
+export const useDeleteComponent = () => {
+  const { api } = useAuthState();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: number) =>
+      withErrorHandling(async () => {
+        console.log(`Deleting component ${id}`);
+        const response = await api.delete(`${COMPONENTS_ENDPOINT}/${id}`);
+        return response.data;
+      }),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: [COMPONENTS_KEY, id] });
+      queryClient.invalidateQueries({ queryKey: [COMPONENTS_KEY] });
+    },
+  });
+};

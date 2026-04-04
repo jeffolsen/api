@@ -57,6 +57,7 @@ export type TItemQueryParams = {
   searchName?: string;
   sort?: TItemSort[];
   tags?: TTagName[];
+  ids?: TItem["id"][];
 } & PaginationParams;
 
 export type GetItemsResponse = {
@@ -76,6 +77,7 @@ export const useGetItems = (
       const response = await api.get(ITEMS_ENDPOINT, {
         params: {
           ...queryParams,
+          ids: queryParams?.ids?.join(","),
           tags: queryParams?.tags?.join(","),
           sort: queryParams?.sort?.join(","),
         },
