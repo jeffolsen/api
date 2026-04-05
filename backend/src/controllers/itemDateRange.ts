@@ -15,18 +15,10 @@ import {
 export const getItemDateRanges: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const { itemId: id } = GetItemsResourcesSchema.parse(req.params);
+    const { itemId } = GetItemsResourcesSchema.parse(req.params);
 
-    const item = await prismaClient.item.findFirst({
-      where: { id, authorId: profileId },
-      include: { dateRanges: true },
-    });
-
-    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
     const dateRanges = await prismaClient.dateRange.findMany({
-      where: {
-        id: { in: item.dateRanges.map((dateRange) => dateRange.id) },
-      },
+      where: { itemId },
     });
     throwError(dateRanges, NOT_FOUND, MESSAGE_DATE_RANGES_NOT_FOUND);
 
@@ -39,14 +31,9 @@ export const getItemDateRangeById: RequestHandler = catchErrors(
     const { profileId } = req;
     const { itemId, id } = GetItemResourceByIdSchema.parse(req.params);
 
-    const item = await prismaClient.item.findFirst({
-      where: { id: itemId, authorId: profileId },
-      include: { dateRanges: true },
+    const dateRange = await prismaClient.dateRange.findUnique({
+      where: { id, itemId },
     });
-
-    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
-
-    const dateRange = item.dateRanges.find((dr) => dr.id === id);
     throwError(dateRange, NOT_FOUND, MESSAGE_DATE_RANGES_NOT_FOUND);
 
     res.status(OK).send({ dateRange });

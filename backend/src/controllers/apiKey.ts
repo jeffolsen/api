@@ -50,7 +50,6 @@ export const generate: RequestHandler<
   unknown
 > = catchErrors(async (req, res, next) => {
   const code = req.get("X-Verification-Code") as string;
-
   const { profileId } = req;
   const {
     apiSlug: slug,

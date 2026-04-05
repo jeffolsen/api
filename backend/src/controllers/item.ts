@@ -13,6 +13,7 @@ import {
 } from "../schemas/item";
 
 type GetItemsQuery = {
+  privateOnly?: boolean;
   searchName?: string;
   tags?: string;
   ids?: string;
@@ -24,11 +25,18 @@ type GetItemsQuery = {
 export const getAllItems: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const { tags, sort, page, pageSize, searchName } =
+    const { ids, tags, sort, page, pageSize, searchName, privateOnly } =
       GetAllItemsQuerySchema.parse(req.query as GetItemsQuery);
 
     const where = {
-      authorId: profileId,
+      ...(privateOnly
+        ? {
+            authorId: profileId,
+          }
+        : { OR: [{ isPrivate: false }, { authorId: profileId }] }),
+      ...(ids.length && {
+        id: { in: ids },
+      }),
       ...(searchName && {
         name: {
           contains: searchName,
@@ -51,7 +59,6 @@ export const getAllItems: RequestHandler = catchErrors(
         where,
         ...getSortOrders(sort),
         ...getPagination(page, pageSize),
-        omit: { authorId: true },
       }),
       prismaClient.item.count({ where }),
     ]);
@@ -69,9 +76,8 @@ export const getItemById: RequestHandler = catchErrors(
     });
 
     const item = await prismaClient.item.findUnique({
-      where: { id, authorId: profileId },
+      where: { id, OR: [{ isPrivate: false }, { authorId: profileId }] },
       include,
-      omit: { authorId: true },
     });
     throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
 
@@ -134,7 +140,6 @@ export const createItem: RequestHandler = catchErrors(
         authorId: profileId,
         isPrivate: true,
       },
-      omit: { authorId: true },
     });
 
     res.status(OK).send({ item });
@@ -168,7 +173,7 @@ export const updateItem: RequestHandler = catchErrors(
       }));
 
     const updatedItem = await prismaClient.item.update({
-      where: { id: Number(id) },
+      where: { id: Number(id), authorId: profileId },
       data: {
         name,
         description,
@@ -190,7 +195,6 @@ export const updateItem: RequestHandler = catchErrors(
         authorId: profileId,
         isPrivate: true,
       },
-      omit: { authorId: true },
     });
 
     res.status(OK).send({ item: updatedItem });
@@ -216,9 +220,12 @@ export const modifyItem: RequestHandler = catchErrors(
     throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
 
     const updatedItem = await prismaClient.item.update({
-      where: { id: Number(id) },
-      data,
-      omit: { authorId: true },
+      where: { id: Number(id), authorId: profileId },
+      data: {
+        ...data,
+        authorId: profileId,
+        isPrivate: true,
+      },
     });
 
     res.status(OK).send({ item: updatedItem });
@@ -236,7 +243,7 @@ export const deleteItem: RequestHandler = catchErrors(
     throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
 
     await prismaClient.item.delete({
-      where: { id: item.id },
+      where: { id: item.id, authorId: profileId },
     });
     res.sendStatus(NO_CONTENT);
   },

@@ -15,16 +15,10 @@ import {
 export const getItemTags: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const { itemId: id } = GetItemsResourcesSchema.parse(req.params);
+    const { itemId } = GetItemsResourcesSchema.parse(req.params);
 
-    const item = await prismaClient.item.findFirst({
-      where: { id, authorId: profileId },
-      include: { tags: true },
-    });
-
-    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
     const tags = await prismaClient.tag.findMany({
-      where: { id: { in: item.tags.map((tag) => tag.tagId) } },
+      where: { items: { some: { itemId } } },
     });
     throwError(tags, NOT_FOUND, MESSAGE_TAGS_NOT_FOUND);
 
@@ -37,18 +31,8 @@ export const getItemTagById: RequestHandler = catchErrors(
     const { profileId } = req;
     const { itemId, id } = GetItemResourceByIdSchema.parse(req.params);
 
-    const item = await prismaClient.item.findFirst({
-      where: { id: itemId, authorId: profileId },
-      include: { tags: true },
-    });
-
-    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
-
-    const itemTag = item.tags.find((tag) => tag.tagId === id);
-    throwError(itemTag, NOT_FOUND, MESSAGE_TAGS_NOT_FOUND);
-
     const tag = await prismaClient.tag.findUnique({
-      where: { id: itemTag.tagId },
+      where: { id, items: { some: { itemId } } },
     });
     throwError(tag, NOT_FOUND, MESSAGE_TAGS_NOT_FOUND);
 
