@@ -32,7 +32,6 @@ export const useCreateComponent = () => {
   return useMutation({
     mutationFn: async (data: TComponentInput) =>
       withErrorHandling(async () => {
-        console.log("Creating component with data:", data);
         const response = await api.post(COMPONENTS_ENDPOINT, data);
         return response.data;
       }),
@@ -51,7 +50,6 @@ export const useUpdateComponent = () => {
   return useMutation({
     mutationFn: async ({ id, data }: { id: number; data: TComponentInput }) =>
       withErrorHandling(async (): Promise<TComponent> => {
-        console.log(`Modifying component ${id} with data:`, data);
         const response = await api.put(`${COMPONENTS_ENDPOINT}/${id}`, data);
         return response.data;
       }),
@@ -84,7 +82,6 @@ export const useModifyComponent = () => {
       data: Partial<TComponentInput> & { feedId: TFeed["id"] };
     }) =>
       withErrorHandling(async (): Promise<TComponent> => {
-        console.log(`Modifying component ${id} with data:`, data);
         const response = await api.patch(`${COMPONENTS_ENDPOINT}/${id}`, data);
         return response.data;
       }),
@@ -107,7 +104,6 @@ export const useDeleteComponent = () => {
   return useMutation({
     mutationFn: async (id: number) =>
       withErrorHandling(async () => {
-        console.log(`Deleting component ${id}`);
         const response = await api.delete(`${COMPONENTS_ENDPOINT}/${id}`);
         return response.data;
       }),

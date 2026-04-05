@@ -104,7 +104,6 @@ export const useUpdateFeed = () => {
   return useMutation({
     mutationFn: async ({ id, data }: { id: number; data: TFeedInput }) =>
       withErrorHandling(async () => {
-        console.log(`Updating feed ${id} with data:`, data);
         const response = await api.put(`${FEEDS_ENDPOINT}/${id}`, data);
         return response.data;
       }),
@@ -121,7 +120,6 @@ export const useModifyFeed = () => {
   return useMutation({
     mutationFn: async ({ id, data }: { id: number; data: TFeedInput }) =>
       withErrorHandling(async () => {
-        console.log(`Modifying feed ${id} with data:`, data);
         const response = await api.patch(`${FEEDS_ENDPOINT}/${id}`, data);
         return response.data;
       }),
@@ -138,7 +136,6 @@ export const useDeleteFeed = () => {
   return useMutation({
     mutationFn: async (id: number) =>
       withErrorHandling(async () => {
-        console.log(`Deleting feed ${id}`);
         const response = await api.delete(`${FEEDS_ENDPOINT}/${id}`);
         return response.data;
       }),

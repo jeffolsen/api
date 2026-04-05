@@ -54,6 +54,7 @@ export type TItemSort =
   | "-sortName";
 
 export type TItemQueryParams = {
+  privateOnly?: boolean;
   searchName?: string;
   sort?: TItemSort[];
   tags?: TTagName[];
@@ -147,7 +148,6 @@ export const useCreateItem = () => {
   return useMutation({
     mutationFn: async (data: TItemInput & TItemRelations) =>
       withErrorHandling(async () => {
-        console.log("Creating item with data:", data);
         const response = await api.post(ITEMS_ENDPOINT, data);
         return response.data;
       }),
@@ -170,7 +170,6 @@ export const useUpdateItem = () => {
       data: Partial<TItemInput & TItemRelations>;
     }) =>
       withErrorHandling(async () => {
-        console.log(`Updating item ${id} with data:`, data);
         const response = await api.put(`${ITEMS_ENDPOINT}/${id}`, data);
         return response.data;
       }),
@@ -199,7 +198,6 @@ export const useModifyItem = () => {
       data: Partial<TItemInput & TItemRelations>;
     }) =>
       withErrorHandling(async () => {
-        console.log(`Modifying item ${id} with data:`, data);
         const response = await api.patch(`${ITEMS_ENDPOINT}/${id}`, data);
         return response.data;
       }),
@@ -217,7 +215,6 @@ export const useDeleteItem = () => {
   return useMutation({
     mutationFn: async (id: number) =>
       withErrorHandling(async () => {
-        console.log(`Deleting item ${id}`);
         const response = await api.delete(`${ITEMS_ENDPOINT}/${id}`);
         return response.data;
       }),
