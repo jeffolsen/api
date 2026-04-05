@@ -2,10 +2,24 @@ import { NextFunction, Request, RequestHandler, Response } from "express";
 import catchErrors from "../util/catchErrors";
 import prismaClient from "../db/client";
 import { OK } from "../config/errorCodes";
+import { GetAllComponentTypesQuerySchema } from "../schemas/componentType";
+
+type GetComponentTypesQuery = {
+  subjectType?: string;
+};
 
 export const getAllComponentTypes: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
-    const componentTypes = await prismaClient.componentType.findMany();
+    const { subjectType } = GetAllComponentTypesQuerySchema.parse(
+      req.query as GetComponentTypesQuery,
+    );
+    const componentTypes = await prismaClient.componentType.findMany({
+      ...(subjectType && {
+        where: {
+          subjectType: { equals: subjectType },
+        },
+      }),
+    });
     res.status(OK).json({ componentTypes });
   },
 );
