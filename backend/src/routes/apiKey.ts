@@ -3,7 +3,6 @@ import apiKeyApi from "../controllers/apiKey";
 import authorizeScope from "../middleware/authorizeScope";
 import {
   API_KEY_GENERATE_ENDPOINT,
-  API_KEY_PUBLIC_ENDPOINT,
   API_KEY_DESTROY_ENDPOINT,
   COLLECTION_ENDPOINT,
 } from "../config/routes";
@@ -18,6 +17,7 @@ router.get(
   authorizeScope([READ_API_KEY_SCOPE]),
   apiKeyApi.getProfilesApiKeys,
 );
+
 router.post(
   API_KEY_GENERATE_ENDPOINT,
   authenticate,
