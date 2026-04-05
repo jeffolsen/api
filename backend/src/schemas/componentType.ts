@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { SubjectType } from "../db/client";
 
 export const TagAllowListSchema = z.object({
   itemAllowList: z.array(z.string()),
@@ -17,3 +18,7 @@ export const validatePropertySchema = async (
   const schema = z.fromJSONSchema(property);
   return await schema.parseAsync(value);
 };
+
+export const GetAllComponentTypesQuerySchema = z.object({
+  subjectType: z.enum(SubjectType).optional(),
+});

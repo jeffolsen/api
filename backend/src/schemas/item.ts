@@ -3,8 +3,8 @@ import {
   descriptionSchema,
   nameSchema,
   idArraySchema,
-  dateTimeSchema,
   idStringSchema,
+  publishedAtAndExpiredAtSchema,
 } from "./properties";
 import { tagNameArraySchema } from "./tag";
 import { dateRangeArraySchema } from "./dateRange";
@@ -43,20 +43,8 @@ export const CreateItemSchema = z
     tagNames: tagNameArraySchema.default([]),
     imageIds: idArraySchema.default([]),
     dateRanges: dateRangeArraySchema.default([]),
-    publishedAt: dateTimeSchema.nullish(),
-    expiredAt: dateTimeSchema.nullish(),
   })
-  .refine(
-    (data) => {
-      if (data.publishedAt && data.expiredAt) {
-        return new Date(data.publishedAt) <= new Date(data.expiredAt);
-      }
-      return true;
-    },
-    {
-      message: "publishedAt must be before expiredAt",
-    },
-  )
+  .extend(publishedAtAndExpiredAtSchema.shape)
   .transform((data) => {
     return {
       ...data,
@@ -70,20 +58,8 @@ export const UpdateItemSchema = z
   .object({
     name: nameSchema,
     description: descriptionSchema.optional(),
-    publishedAt: dateTimeSchema.nullish(),
-    expiredAt: dateTimeSchema.nullish(),
   })
-  .refine(
-    (data) => {
-      if (data.publishedAt && data.expiredAt) {
-        return new Date(data.publishedAt) <= new Date(data.expiredAt);
-      }
-      return true;
-    },
-    {
-      message: "publishedAt must be before expiredAt",
-    },
-  )
+  .extend(publishedAtAndExpiredAtSchema.shape)
   .transform((data) => {
     return {
       ...data,
@@ -97,20 +73,8 @@ export const ModifyItemSchema = z
   .object({
     name: nameSchema.optional(),
     description: descriptionSchema.optional(),
-    publishedAt: dateTimeSchema.nullish().optional(),
-    expiredAt: dateTimeSchema.nullish().optional(),
   })
-  .refine(
-    (data) => {
-      if (data.publishedAt && data.expiredAt) {
-        return new Date(data.publishedAt) <= new Date(data.expiredAt);
-      }
-      return true;
-    },
-    {
-      message: "publishedAt must be before expiredAt",
-    },
-  )
+  .extend(publishedAtAndExpiredAtSchema.shape)
   .transform((data) => {
     return {
       ...data,
@@ -121,6 +85,7 @@ export const ModifyItemSchema = z
 export type ModifyItemInput = z.infer<typeof ModifyItemSchema>;
 
 export const GetAllItemsQuerySchema = z.object({
+  privateOnly: z.coerce.boolean().default(false),
   ids: z
     .preprocess((val) => {
       if (typeof val === "string") {

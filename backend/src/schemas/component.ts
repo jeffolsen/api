@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { dateTimeSchema } from "./properties";
+import { dateTimeSchema, publishedAtAndExpiredAtSchema } from "./properties";
 
 export const CreateComponentSchema = z
   .object({
@@ -8,17 +8,21 @@ export const CreateComponentSchema = z
     order: z.number(),
     name: z.string(),
     propertyValues: z.record(z.string(), z.unknown()).optional(),
-    publishedAt: dateTimeSchema.nullish(),
-    expiredAt: dateTimeSchema.nullish(),
   })
-  .refine(
-    (data) => {
-      if (data.publishedAt && data.expiredAt) {
-        return new Date(data.publishedAt) <= new Date(data.expiredAt);
-      }
-      return true;
-    },
-    {
-      message: "publishedAt must be before expiredAt",
-    },
-  );
+  .extend(publishedAtAndExpiredAtSchema.shape);
+
+export type CreateComponentInput = z.infer<typeof CreateComponentSchema>;
+
+export const UpdateComponentSchema = z
+  .object({
+    order: z.number(),
+    name: z.string(),
+    propertyValues: z.record(z.string(), z.unknown()).optional(),
+  })
+  .extend(publishedAtAndExpiredAtSchema.shape);
+
+export type UpdateComponentInput = z.infer<typeof UpdateComponentSchema>;
+
+export const ModifyComponentSchema = UpdateComponentSchema.partial();
+
+export type ModifyComponentInput = z.infer<typeof ModifyComponentSchema>;

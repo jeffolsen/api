@@ -74,3 +74,20 @@ export const subjectTypesArraySchema = z
   .refine((items) => {
     return new Set(items).size === items.length;
   }, MESSAGE_IDS_UNIQUE);
+
+export const publishedAtAndExpiredAtSchema = z
+  .object({
+    publishedAt: dateTimeSchema.nullish(),
+    expiredAt: dateTimeSchema.nullish(),
+  })
+  .refine(
+    (data) => {
+      if (data.publishedAt && data.expiredAt) {
+        return new Date(data.publishedAt) <= new Date(data.expiredAt);
+      }
+      return true;
+    },
+    {
+      message: "publishedAt must be before expiredAt",
+    },
+  );
