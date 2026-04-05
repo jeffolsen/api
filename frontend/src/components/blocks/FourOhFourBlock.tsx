@@ -1,8 +1,11 @@
 import Block, { BlockProps } from "./Block";
 import Text from "../common/Text";
+import Button from "../common/Button";
+import { useNavigate } from "react-router";
 
 function FourOhFourBlock(props: BlockProps) {
   const { path } = props;
+  const navigate = useNavigate();
   return (
     <Block {...props}>
       <Text textSize="md" className="text-center">
@@ -14,6 +17,9 @@ function FourOhFourBlock(props: BlockProps) {
         <br />
         could not be found.
       </Text>
+      <Button onClick={() => navigate(-1)} color="primary" className="mx-auto">
+        Go Back
+      </Button>
     </Block>
   );
 }
