@@ -3,7 +3,11 @@ import catchErrors from "../util/catchErrors";
 import prismaClient, { type Prisma } from "../db/client";
 import { NOT_FOUND, OK } from "../config/errorCodes";
 import throwError from "../util/throwError";
-import { CreateComponentSchema } from "../schemas/component";
+import {
+  CreateComponentSchema,
+  ModifyComponentSchema,
+  UpdateComponentSchema,
+} from "../schemas/component";
 import { validateComponentPropertyValues } from "../services/auth";
 
 export const getAllComponents: RequestHandler = catchErrors(
@@ -25,7 +29,7 @@ export const getComponentById: RequestHandler = catchErrors(
   },
 );
 
-type CreateComponentBody = {
+interface CreateComponentBody {
   feedId: number;
   typeId: number;
   order: number;
@@ -33,7 +37,7 @@ type CreateComponentBody = {
   propertyValues?: Record<string, unknown>;
   publishedAt?: string;
   expiredAt?: string;
-};
+}
 
 export const createComponent: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -79,19 +83,20 @@ export const createComponent: RequestHandler = catchErrors(
   },
 );
 
+interface UpdateComponentBody {
+  order: number;
+  name: string;
+  propertyValues?: Record<string, unknown>;
+  publishedAt?: string;
+  expiredAt?: string;
+}
+
 export const updateComponent: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
     const { id } = req.params || {};
-    const {
-      feedId,
-      typeId,
-      order,
-      name,
-      propertyValues,
-      publishedAt,
-      expiredAt,
-    } = CreateComponentSchema.parse(req.body as CreateComponentBody);
+    const { order, name, propertyValues, publishedAt, expiredAt } =
+      UpdateComponentSchema.parse(req.body as UpdateComponentBody);
 
     const component = await prismaClient.component.findUnique({
       where: { id: Number(id), feed: { profileId } },
@@ -99,12 +104,12 @@ export const updateComponent: RequestHandler = catchErrors(
     throwError(component, NOT_FOUND, `Component with id ${id} not found`);
 
     const componentType = await prismaClient.componentType.findUnique({
-      where: { id: typeId },
+      where: { id: component.typeId },
     });
     throwError(
       componentType,
       NOT_FOUND,
-      `ComponentType with id ${typeId} not found`,
+      `ComponentType with id ${component.typeId} not found`,
     );
     await validateComponentPropertyValues(componentType, propertyValues || {});
 
@@ -112,12 +117,59 @@ export const updateComponent: RequestHandler = catchErrors(
       where: { id: Number(id) },
       data: {
         typeId: componentType.id,
-        feedId,
+        feedId: component.feedId,
         order,
         name,
         propertyValues: propertyValues as Prisma.InputJsonValue,
         publishedAt: publishedAt ? new Date(publishedAt) : null,
         expiredAt: expiredAt ? new Date(expiredAt) : null,
+      },
+    });
+
+    res.status(OK).json({ component: updatedComponent });
+  },
+);
+
+interface ModifyComponentBody {
+  name?: string;
+  order?: number;
+  propertyValues?: Record<string, unknown>;
+  publishedAt?: string;
+  expiredAt?: string;
+}
+
+export const modifyComponent: RequestHandler = catchErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { profileId } = req;
+    const { id } = req.params || {};
+    const { name, order, propertyValues, publishedAt, expiredAt } =
+      ModifyComponentSchema.parse(req.body as ModifyComponentBody);
+
+    const component = await prismaClient.component.findUnique({
+      where: { id: Number(id), feed: { profileId } },
+    });
+    throwError(component, NOT_FOUND, `Component with id ${id} not found`);
+
+    if (typeof propertyValues === "object" && propertyValues !== null) {
+      const componentType = await prismaClient.componentType.findUnique({
+        where: { id: component.typeId },
+      });
+      throwError(
+        componentType,
+        NOT_FOUND,
+        `ComponentType with id ${component.typeId} not found`,
+      );
+      await validateComponentPropertyValues(componentType, propertyValues);
+    }
+
+    const updatedComponent = await prismaClient.component.update({
+      where: { id: Number(id) },
+      data: {
+        name,
+        order,
+        propertyValues: propertyValues as Prisma.InputJsonValue,
+        publishedAt,
+        expiredAt,
       },
     });
 
