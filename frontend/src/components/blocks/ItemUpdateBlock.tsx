@@ -6,15 +6,12 @@ import {
   useGetItemImages,
   useGetItemsTags,
 } from "../../network/item";
-import { TImage } from "../../network/image";
-import { TTag } from "../../network/tag";
 import Loading from "../common/Loading";
 import {
   ItemDeleteButton,
   ItemRepublishForm,
   ItemUpdateForm,
 } from "../forms/ItemCreateForm";
-import { TDateRange } from "../../network/dateRange";
 import { convertZuluToLocalDateTime } from "../../utils/time";
 import Text from "../common/Text";
 import dayjs, { techDatetime } from "../../utils/dayjs";
@@ -30,6 +27,11 @@ function ItemUpdateBlock(props: BlockProps) {
   const getTags = useGetItemsTags(id);
   const getImages = useGetItemImages(id);
   const getDateRanges = useGetItemDateRanges(id);
+
+  if (getItem.error) {
+    navigate("/404", { replace: true });
+  }
+
   const item = getItem.data?.item;
   const tags = getTags.data?.tags || [];
   const images = getImages.data?.images || [];
@@ -44,30 +46,19 @@ function ItemUpdateBlock(props: BlockProps) {
     return <Loading />;
   }
 
-  const defaultValues = {
-    id: item.id,
-    name: item.name,
-    description: item.description,
-    publishedAt: item.publishedAt
-      ? convertZuluToLocalDateTime(item.publishedAt)
-      : null,
-    expiredAt: item.expiredAt
-      ? convertZuluToLocalDateTime(item.expiredAt)
-      : null,
-    imageIds: images.map((img: TImage) => ({
-      imageId: img.id,
-    })),
-    tagNames: tags.map((tag: TTag) => ({
-      name: tag.name,
-    })),
-    dateRanges: dateRanges.map((dateRange: TDateRange) => ({
-      startAt: convertZuluToLocalDateTime(dateRange.startAt),
-      endAt: convertZuluToLocalDateTime(dateRange.endAt),
-      description: dateRange.description,
-    })),
+  const itemWithResources = {
+    ...item,
+    tags,
+    images,
+    dateRanges,
   };
 
-  const { publishedAt, expiredAt } = defaultValues;
+  const publishedAt = item.publishedAt
+    ? convertZuluToLocalDateTime(item.publishedAt)
+    : null;
+  const expiredAt = item.expiredAt
+    ? convertZuluToLocalDateTime(item.expiredAt)
+    : null;
 
   return (
     <Block {...props}>
@@ -110,7 +101,7 @@ function ItemUpdateBlock(props: BlockProps) {
       <EmptyCard>
         <div className="card-body">
           <ItemUpdateForm
-            defaultValues={defaultValues}
+            defaultValues={itemWithResources}
             handleSuccess={() => toast.success("Item updated successfully")}
           />
         </div>

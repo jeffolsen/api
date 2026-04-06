@@ -23,6 +23,7 @@ import {
   useDeleteItem,
   TItemRelations,
   TItemInput,
+  TItem,
 } from "../../network/item";
 import FormScheduleSubmit from "../inputs/FormScheduleSubmit";
 import Form, {
@@ -30,7 +31,10 @@ import Form, {
   FormReponseHandlerProps,
   FormWithHeadingProps,
 } from "./Form";
-import { convertLocalDateTimeToZulu } from "../../utils/time";
+import {
+  convertLocalDateTimeToZulu,
+  convertZuluToLocalDateTime,
+} from "../../utils/time";
 import FormPublishSubmit from "../inputs/FormPublishSubmit";
 import { Button } from "../common/Button";
 import { Trash } from "lucide-react";
@@ -44,6 +48,8 @@ export type FormValues = {
   publishedAt?: string | null;
   expiredAt?: string | null;
 };
+
+export type ItemFormValues = FormValues;
 
 const mapFormValuesToCreateItemRequest = (
   values: FormValues,
@@ -63,6 +69,30 @@ const mapFormValuesToCreateItemRequest = (
     values.dateRanges?.map((dateRange: TDateRangeInput) => ({
       startAt: convertLocalDateTimeToZulu(dateRange.startAt),
       endAt: convertLocalDateTimeToZulu(dateRange.endAt),
+      description: dateRange.description,
+    })) || [],
+});
+
+const mapGetItemToFormValues = (
+  item: TItem & {
+    tags?: TTagInput[];
+    images?: TImage[];
+    dateRanges?: TDateRangeInput[];
+  },
+): FormValues & { id: number } => ({
+  id: item.id,
+  name: item.name,
+  description: item.description,
+  publishedAt: item.publishedAt
+    ? convertZuluToLocalDateTime(item.publishedAt)
+    : null,
+  expiredAt: item.expiredAt ? convertZuluToLocalDateTime(item.expiredAt) : null,
+  imageIds: item.images?.map(({ id }) => ({ imageId: id })) || [],
+  tagNames: item.tags?.map(({ name }) => ({ name })) || [],
+  dateRanges:
+    item.dateRanges?.map((dateRange) => ({
+      startAt: convertZuluToLocalDateTime(dateRange.startAt),
+      endAt: convertZuluToLocalDateTime(dateRange.endAt),
       description: dateRange.description,
     })) || [],
 });
@@ -122,11 +152,19 @@ function ItemUpdateForm({
 }: FormWithHeadingProps & FormReponseHandlerProps) {
   const updateItem = useUpdateItem();
 
+  const defaults = mapGetItemToFormValues(
+    defaultValues as TItem & {
+      tags?: TTagInput[];
+      images?: TImage[];
+      dateRanges?: TDateRangeInput[];
+    },
+  );
+
   return (
     <ItemCreateForm
       handleError={handleError}
       handleSuccess={handleSuccess}
-      defaultValues={defaultValues}
+      defaultValues={defaults}
       submitAction={async (args) => {
         const { id, ...data } = args;
         return withFormHandling(

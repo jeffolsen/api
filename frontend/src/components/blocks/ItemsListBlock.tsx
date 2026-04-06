@@ -36,6 +36,7 @@ function ItemsListBlock(props: BlockProps) {
   const [tags] = useSearchParam("tags");
   const [sort] = useSearchParam("sort");
   const getItems = useGetItems({
+    privateOnly: true,
     page: page ? parseInt(page) : 1,
     pageSize: initialPageSize,
     tags: tags?.split(",") as TTagName[],
