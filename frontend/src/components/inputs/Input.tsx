@@ -16,6 +16,8 @@ import TagArrayInput from "./TagArrayInput";
 import ImageSelectArrayInput from "./ImageSelectArrayInput";
 import DateRangeArrayInput from "./DateRangeArrayInput";
 import ToggleInput from "./ToggleInput";
+import RadioInput from "./RadioInput";
+import ItemArrayInput from "./ItemArrayInput";
 
 export type FromFormProps = {
   control: Control;
@@ -38,13 +40,22 @@ export type AtomicFormComponentName =
   | "TextAreaInput"
   | "DateTimeInput"
   | "ToggleInput"
+  | "RadioInput"
   | "ImageSelectArrayInput"
-  | "TagArrayInput";
+  | "TagArrayInput"
+  | "ItemArrayInput";
 
 export type CompoundFormComponentName = "DateRangeArrayInput";
 
+export type SelectableOption = {
+  label: string;
+  value: string;
+  default: boolean;
+};
+
 export type FormInputProps = {
   element?: InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>;
+  valueOptions?: SelectableOption[];
   registerOpts?: RegisterOptions;
   rules?: UseFieldArrayProps["rules"];
 };
@@ -102,6 +113,8 @@ export const FormInput = (props: FormComponentProps & FromFormProps) => {
     />
   ) : props.componentName === "ToggleInput" ? (
     <ToggleInput {...props} errors={get(props.errors || {}, props.dataName)} />
+  ) : props.componentName === "RadioInput" ? (
+    <RadioInput {...props} errors={get(props.errors || {}, props.dataName)} />
   ) : props.componentName === "ImageSelectArrayInput" ? (
     <ImageSelectArrayInput
       {...props}
@@ -114,6 +127,11 @@ export const FormInput = (props: FormComponentProps & FromFormProps) => {
     />
   ) : props.componentName === "DateRangeArrayInput" ? (
     <DateRangeArrayInput
+      {...props}
+      errors={get(props.errors || {}, props.dataName)}
+    />
+  ) : props.componentName === "ItemArrayInput" ? (
+    <ItemArrayInput
       {...props}
       errors={get(props.errors || {}, props.dataName)}
     />

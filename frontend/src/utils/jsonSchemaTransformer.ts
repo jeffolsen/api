@@ -82,7 +82,6 @@ export default function convertJSONSchemaToFormInputs(
 } {
   const inputs: FormComponentProps[] = [];
   const defaults: Record<string, unknown> = {};
-  console.log("Converting JSON schema to form inputs:", schema);
 
   for (const [key, value] of Object.entries(schema)) {
     switch (key) {

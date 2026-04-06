@@ -18,11 +18,6 @@ export const RadioInput = (props: RadioInputProps) => {
   const valueOptions = input?.valueOptions || [];
   const watchedValue = watch(dataName);
 
-  console.log(
-    `Rendering RadioInput for ${dataName} with options:`,
-    valueOptions,
-  );
-
   return (
     <>
       <fieldset
@@ -52,7 +47,7 @@ export const RadioInput = (props: RadioInputProps) => {
                 {...register(dataName)}
                 type="radio"
                 value={option.value}
-                defaultChecked={option.default}
+                checked={watchedValue === option.value}
               />
               {option.label}
             </label>
