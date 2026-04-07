@@ -6,7 +6,10 @@ import {
   useDeleteFeed,
   TFeedInput,
 } from "../../network/feed";
-import { convertLocalDateTimeToZulu } from "../../utils/time";
+import {
+  convertLocalDateTimeToZulu,
+  convertZuluToLocalDateTime,
+} from "../../utils/time";
 import FormScheduleSubmit from "../inputs/FormScheduleSubmit";
 import { withFormHandling } from "../../network/api";
 import Form, {
@@ -41,6 +44,20 @@ const mapFormValuesToCreateFeedRequest = (values: FormValues): TFeedInput => ({
     ? convertLocalDateTimeToZulu(values.expiredAt)
     : null,
 });
+
+const mapGetFeedToFormValues = (feed: TFeedInput & { id: number }) => {
+  return {
+    id: feed.id,
+    path: feed.path,
+    isSingleSubject: feed.subjectType === "SINGLE",
+    publishedAt: feed.publishedAt
+      ? convertZuluToLocalDateTime(feed.publishedAt)
+      : null,
+    expiredAt: feed.expiredAt
+      ? convertZuluToLocalDateTime(feed.expiredAt)
+      : null,
+  };
+};
 
 function FeedCreateForm({
   handleError,
@@ -83,11 +100,14 @@ function FeedUpdateForm({
   ...props
 }: FormWithHeadingProps & FormReponseHandlerProps) {
   const updateFeed = useUpdateFeed();
+  const defaults = mapGetFeedToFormValues(
+    defaultValues as TFeedInput & { id: number },
+  );
   return (
     <FormWithHeading
       defaultValues={{
         ...PATH_DEFAULT,
-        ...defaultValues,
+        ...defaults,
       }}
       fields={[PATH_INPUT]}
       submitAction={async (args) => {
