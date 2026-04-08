@@ -111,7 +111,13 @@ function ComponentCreateForm({
   defaultValues,
   ...props
 }: FormWithHeadingProps &
-  FormReponseHandlerProps & { defaultValues: FormValues }) {
+  FormReponseHandlerProps & {
+    defaultValues: Partial<FormValues> & {
+      typeId: TComponentType["id"];
+      feedId: TFeed["id"];
+      order: number;
+    };
+  }) {
   const { typeId } = defaultValues;
   const createComponent = useCreateComponent();
   const componentTypesQuery = useGetComponentTypeById(typeId);

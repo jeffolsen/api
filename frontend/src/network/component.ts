@@ -107,9 +107,14 @@ export const useDeleteComponent = () => {
         const response = await api.delete(`${COMPONENTS_ENDPOINT}/${id}`);
         return response.data;
       }),
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: [COMPONENTS_KEY, id] });
-      queryClient.invalidateQueries({ queryKey: [COMPONENTS_KEY] });
+    onSuccess: (data, id) => {
+      const feedId = data.feedId;
+      queryClient.invalidateQueries({
+        queryKey: [FEEDS_KEY, feedId, COMPONENTS_KEY, id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [FEEDS_KEY, feedId, COMPONENTS_KEY],
+      });
     },
   });
 };

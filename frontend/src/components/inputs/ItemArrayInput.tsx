@@ -12,18 +12,12 @@ import {
   FieldArrayMinMaxRule,
   FormError,
 } from "./Input";
-import {
-  TItem,
-  GetItemsResponse,
-  useGetItems,
-  useGetItemById,
-} from "../../network/item";
+import { TItem, GetItemsResponse, useGetItems } from "../../network/item";
 import { useFieldArray } from "react-hook-form";
 import Grid from "../common/Grid";
 import useDebounce from "../../hooks/useDebounce";
 import { IconButton, XButton } from "../common/Button";
 import { ChevronDown, ChevronUp, Plus } from "lucide-react";
-import Loading from "../common/Loading";
 
 type ItemIdField = { id: string; itemId: TItem["id"]; name: TItem["name"] };
 type ItemIdArrayFields = Array<ItemIdField>;
@@ -41,7 +35,7 @@ function ItemArrayInput(
     errors,
     input: { rules },
   } = props;
-  const { fields, append, remove, swap, update } = useFieldArray({
+  const { fields, append, remove, swap } = useFieldArray({
     control,
     name: dataName,
     rules,
