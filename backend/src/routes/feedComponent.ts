@@ -23,15 +23,4 @@ router.get(
   feedComponentsApi.getFeedComponentsById,
 );
 
-router.delete(
-  FEED_ID_PARAM + COMPONENT_ROUTES + ID_PARAM,
-  authorizeScope([
-    READ_FEED_SCOPE,
-    READ_COMPONENT_SCOPE,
-    UPDATE_FEED_SCOPE,
-    DELETE_COMPONENT_SCOPE,
-  ]),
-  feedComponentsApi.deleteFeedComponent,
-);
-
 export default router;

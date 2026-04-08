@@ -31,6 +31,11 @@ router.put(
   authorizeScope([UPDATE_COMPONENT_SCOPE]),
   componentApi.updateComponent,
 );
+router.patch(
+  ID_PARAM,
+  authorizeScope([UPDATE_COMPONENT_SCOPE]),
+  componentApi.modifyComponent,
+);
 router.delete(
   ID_PARAM,
   authorizeScope([DELETE_COMPONENT_SCOPE]),

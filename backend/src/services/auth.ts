@@ -31,12 +31,6 @@ import generateCode from "../util/generateCode";
 import { getNewVerificationCodeExpirationDate } from "../util/date";
 import { PROFILE_SESSION } from "../util/scope";
 import { VerificationCodeCreateTransform } from "../schemas/verificationCode";
-import {
-  ItemAllowListSchema,
-  ObjectSchema,
-  TagAllowListSchema,
-  validatePropertySchema,
-} from "../schemas/componentType";
 
 interface LogInProfileParams {
   profile: Profile;
@@ -209,23 +203,4 @@ export const authenticateWithApiKey = async ({
   );
 
   return apiKeyRecord;
-};
-
-export const validateComponentPropertyValues = async (
-  componentType: ComponentType,
-  propertyValues: Record<string, unknown>,
-) => {
-  // const { tagAllowList, itemAllowList, ...propertySchema }
-  const propertySchema = ObjectSchema.parse(componentType.propertySchema);
-  const values = ObjectSchema.parse(propertyValues);
-  // there are two special properties for content filtering: tagAllowList and itemAllowList.
-  // these are validated as arrays of strings and numeric ids.
-  // await TagAllowListSchema.parseAsync({ tagAllowList });
-  // await ItemAllowListSchema.parseAsync({ itemAllowList });
-
-  // for simplicity, all other properties will be enums and the values must be found in the corresponding schema's list.
-  for (const property in propertySchema) {
-    const schema = ObjectSchema.parse(propertySchema[property]);
-    await validatePropertySchema(schema, values[property]);
-  }
 };

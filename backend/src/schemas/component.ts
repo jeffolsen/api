@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { dateTimeSchema, publishedAtAndExpiredAtSchema } from "./properties";
+import { publishedAtAndExpiredAtSchema, idStringSchema } from "./properties";
 
 export const CreateComponentSchema = z
   .object({
     feedId: z.number(),
     typeId: z.number(),
-    order: z.number(),
     name: z.string(),
+    order: z.number().gt(0).optional(),
     propertyValues: z.record(z.string(), z.unknown()).optional(),
   })
   .extend(publishedAtAndExpiredAtSchema.shape);
@@ -15,8 +15,9 @@ export type CreateComponentInput = z.infer<typeof CreateComponentSchema>;
 
 export const UpdateComponentSchema = z
   .object({
-    order: z.number(),
+    id: idStringSchema,
     name: z.string(),
+    order: z.number().gt(0).optional(),
     propertyValues: z.record(z.string(), z.unknown()).optional(),
   })
   .extend(publishedAtAndExpiredAtSchema.shape);
