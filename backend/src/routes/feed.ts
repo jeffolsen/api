@@ -6,7 +6,7 @@ import {
   READ_FEED_SCOPE,
   UPDATE_FEED_SCOPE,
 } from "../config/scopes";
-import { COLLECTION_ENDPOINT, ID_PARAM } from "../config/routes";
+import { COLLECTION_ENDPOINT, ID_PARAM, PATH_PARAM } from "../config/routes";
 import feedApi from "../controllers/feed";
 
 const router = express.Router();
@@ -17,6 +17,11 @@ router.get(
   feedApi.getAllFeeds,
 );
 router.get(ID_PARAM, authorizeScope([READ_FEED_SCOPE]), feedApi.getFeedById);
+router.get(
+  PATH_PARAM,
+  authorizeScope([READ_FEED_SCOPE]),
+  feedApi.getFeedByPath,
+);
 router.post(
   COLLECTION_ENDPOINT,
   authorizeScope([CREATE_FEED_SCOPE]),

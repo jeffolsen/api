@@ -56,6 +56,20 @@ export const getFeedById: RequestHandler = catchErrors(
   },
 );
 
+export const getFeedByPath: RequestHandler = catchErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { profileId } = req;
+    const { path } = req.params;
+
+    const feed = await prismaClient.feed.findFirst({
+      where: { path, profileId },
+    });
+
+    throwError(feed, NOT_FOUND, MESSAGE_FEED_NOT_FOUND);
+    res.status(OK).json({ feed });
+  },
+);
+
 type CreateFeedBody = {
   path: string;
   subjectType: SubjectType;
@@ -99,6 +113,7 @@ export const deleteFeed: RequestHandler = catchErrors(
 const feedApi = {
   getAllFeeds,
   getFeedById,
+  getFeedByPath,
   createFeed,
   updateFeed,
   deleteFeed,

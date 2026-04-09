@@ -2,6 +2,7 @@ export const COLLECTION_ENDPOINT = "/";
 export const SELF_ENDPOINT = "/me";
 export const ID_PARAM = "/:id";
 export const NAME_PARAM = "/by-name/:name";
+export const PATH_PARAM = "/by-path/:path";
 
 export const BASE_API_URL = "/api";
 
