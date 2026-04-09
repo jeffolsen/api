@@ -21,7 +21,7 @@ const pages = {
           id: 1,
           title: "Login or register",
           settings: {
-            isprimaryContent: true,
+            isPrimaryContent: true,
             showOnLoggedinState: "LOGGED_OUT",
             width: "sm",
           },
@@ -33,7 +33,7 @@ const pages = {
           id: 2,
           title: "Dashboard",
           settings: {
-            isprimaryContent: true,
+            isPrimaryContent: true,
             showOnLoggedinState: "LOGGED_IN",
             width: "lg",
           },
@@ -49,7 +49,7 @@ const pages = {
           id: 3,
           title: "Items",
           settings: {
-            isprimaryContent: true,
+            isPrimaryContent: true,
             showOnLoggedinState: "LOGGED_IN",
             width: "lg",
           },
@@ -65,7 +65,7 @@ const pages = {
           id: 3,
           title: "Create a new item",
           settings: {
-            isprimaryContent: true,
+            isPrimaryContent: true,
             showOnLoggedinState: "LOGGED_IN",
             width: "md",
           },
@@ -81,7 +81,7 @@ const pages = {
           id: 3,
           title: "Edit item",
           settings: {
-            isprimaryContent: true,
+            isPrimaryContent: true,
             showOnLoggedinState: "LOGGED_IN",
             width: "md",
           },
@@ -97,7 +97,7 @@ const pages = {
           id: 4,
           title: "Feeds",
           settings: {
-            isprimaryContent: true,
+            isPrimaryContent: true,
             showOnLoggedinState: "LOGGED_IN",
             width: "lg",
           },
@@ -108,12 +108,28 @@ const pages = {
   "feeds/new": {
     blocks: [
       {
-        type: "generic",
+        type: "feedCreate",
         data: {
           id: 4,
-          title: "Feeds",
+          title: "Create a new feed",
           settings: {
-            isprimaryContent: true,
+            isPrimaryContent: true,
+            showOnLoggedinState: "LOGGED_IN",
+            width: "md",
+          },
+        },
+      },
+    ],
+  },
+  "feeds/:id": {
+    blocks: [
+      {
+        type: "feedUpdate",
+        data: {
+          id: 4,
+          title: "Edit feed",
+          settings: {
+            isPrimaryContent: true,
             showOnLoggedinState: "LOGGED_IN",
             width: "md",
           },
@@ -129,7 +145,7 @@ const pages = {
           id: 5,
           title: "About me",
           settings: {
-            isprimaryContent: true,
+            isPrimaryContent: true,
             showOnLoggedinState: "BOTH",
             width: "md",
           },
@@ -145,7 +161,7 @@ const pages = {
           id: 6,
           title: "Style guide",
           settings: {
-            isprimaryContent: true,
+            isPrimaryContent: true,
             showOnLoggedinState: "BOTH",
             width: "md",
           },
@@ -161,7 +177,7 @@ const pages = {
           id: 8,
           title: "Access denied",
           settings: {
-            isprimaryContent: true,
+            isPrimaryContent: true,
             showOnLoggedinState: "BOTH",
             width: "sm",
           },
@@ -177,7 +193,7 @@ const pages = {
           id: 7,
           title: "Page not found",
           settings: {
-            isprimaryContent: true,
+            isPrimaryContent: true,
             showOnLoggedinState: "BOTH",
             width: "sm",
           },

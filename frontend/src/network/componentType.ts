@@ -16,7 +16,7 @@ export type GetComponentTypesResponse = {
 
 export const useGetComponentTypes = (
   queryParams?: TComponentTypesQueryParams,
-  options?: QueryOptions,
+  options?: QueryOptions<GetComponentTypesResponse>,
 ) => {
   const { api } = useAuthState();
 

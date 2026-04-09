@@ -1,4 +1,4 @@
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import pages, { PageData, BlockType } from "../config/pageData";
 import { BlockProps } from "../components/blocks/Block";
 import { useAuthState } from "../contexts/AuthContext";
@@ -32,7 +32,7 @@ export default function GenericPage() {
   pageData = pageData || pages["404"];
 
   if (pageData.redirectTo) {
-    navigate(pageData.redirectTo);
+    navigate(pageData.redirectTo, { replace: true });
   }
   const { isAuthenticated } = useAuthState();
 
@@ -103,6 +103,21 @@ export default function GenericPage() {
                   key={index}
                   {...(props as BlockProps)}
                 />
+              ) : type === "feedsList" ? (
+                <LazyLoadedFeedsListBlock
+                  key={index}
+                  {...(props as BlockProps)}
+                />
+              ) : type === "feedCreate" ? (
+                <LazyLoadedFeedCreateBlock
+                  key={index}
+                  {...(props as BlockProps)}
+                />
+              ) : type === "feedUpdate" ? (
+                <LazyLoadedFeedUpdateBlock
+                  key={index}
+                  {...(props as BlockProps)}
+                />
               ) : (
                 <LazyLoadedFourOhFourBlock
                   key={index}
@@ -134,7 +149,7 @@ const filterBlocksByLoginState = (
 };
 
 const includeOnePrimaryContent = (blocks: BlockType[]): BlockType[] => {
-  if (blocks.some((block) => block.data?.settings?.isprimaryContent)) {
+  if (blocks.some((block) => block.data?.settings?.isPrimaryContent)) {
     return blocks;
   }
   const [firstBlock, ...restBlocks] = blocks;
@@ -144,7 +159,7 @@ const includeOnePrimaryContent = (blocks: BlockType[]): BlockType[] => {
       ...firstBlock,
       data: {
         ...(firstBlock?.data || {}),
-        settings: { ...firstBlock?.data?.settings, isprimaryContent: true },
+        settings: { ...firstBlock?.data?.settings, isPrimaryContent: true },
       },
     },
     ...restBlocks,
