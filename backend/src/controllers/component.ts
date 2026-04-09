@@ -118,7 +118,7 @@ export const updateComponent: RequestHandler = catchErrors(
     const { profileId } = req;
     const { id } = req.params || {};
     const { order, name, propertyValues, publishedAt, expiredAt } =
-      UpdateComponentSchema.parse(req.body as UpdateComponentBody);
+      UpdateComponentSchema.parse({ ...(req.body as UpdateComponentBody), id });
 
     const component = await prismaClient.component.findUnique({
       where: { id: Number(id), feed: { profileId } },
