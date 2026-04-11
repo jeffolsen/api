@@ -1,4 +1,4 @@
-import Block, { BlockProps } from "../Block";
+import Block, { BlockStandardProps } from "../Block";
 import { FeedDeleteButton, FeedUpdateForm } from "../../forms/FeedCreateForm";
 import EmptyCard from "../../cards/EmptyCard";
 import { useNavigate } from "react-router";
@@ -34,12 +34,28 @@ import {
   ComponentModifyOrderControls,
   ComponentUpdateForm,
 } from "../../forms/ComponentCreateForm";
-import useFeedUpdateBlockData from "./data";
+import useFeedUpdateBlockData, { UseFeedListSuccessReturnType } from "./data";
+import { paths } from "../../../config/routes";
 
 type ComponentWithType = TComponent & { type?: TComponentType };
 
-function CmsFeedUpdateBlock(props: BlockProps) {
-  const result = useFeedUpdateBlockData({ pageProps: props });
+export default function Component({
+  component,
+  params,
+  path,
+}: BlockStandardProps) {
+  const result = useFeedUpdateBlockData({ component, params, path });
+  const { blockProps, blockData } = result;
+  return <CmsFeedUpdateBlock blockProps={blockProps} blockData={blockData} />;
+}
+
+function CmsFeedUpdateBlock({
+  blockProps,
+  blockData,
+}: {
+  blockProps: UseFeedListSuccessReturnType["blockProps"];
+  blockData: UseFeedListSuccessReturnType["blockData"];
+}) {
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const [newComponent, setNewComponent] = useState<Pick<
@@ -48,10 +64,7 @@ function CmsFeedUpdateBlock(props: BlockProps) {
   > | null>(null);
 
   const componentsWithTypes = useMemo(() => {
-    if (result.error || !result.blockData) {
-      return [];
-    }
-    const { feedComponentsData, componentTypesData } = result.blockData;
+    const { feedComponentsData, componentTypesData } = blockData;
     if (
       feedComponentsData.error ||
       !feedComponentsData.data ||
@@ -73,14 +86,8 @@ function CmsFeedUpdateBlock(props: BlockProps) {
           type,
         };
       }) as ComponentWithType[];
-  }, [result]);
+  }, [blockData]);
 
-  if ("error" in result) {
-    navigate("/401", { replace: true });
-    return null;
-  }
-
-  const { blockProps, blockData } = result;
   const settings = blockProps?.settings || {};
   const getFeed = blockData?.feedData;
   const getFeedComponents = blockData?.feedComponentsData;
@@ -120,7 +127,7 @@ function CmsFeedUpdateBlock(props: BlockProps) {
                 defaultValues={{ id: feed.id }}
                 handleSuccess={() => {
                   toast.success("Feed deleted successfully");
-                  navigate("/feeds");
+                  navigate(paths.cmsFeedsList);
                 }}
               />
             </div>
@@ -177,7 +184,7 @@ function CmsFeedUpdateBlock(props: BlockProps) {
 }
 
 function ComponentCard({ component }: { component: ComponentWithType }) {
-  const { id, publishedAt, expiredAt, type } = component;
+  const { id, publishedAt, expiredAt, type, feedId } = component;
   const [openModal, setOpenModal] = useState(false);
 
   return (
@@ -218,7 +225,7 @@ function ComponentCard({ component }: { component: ComponentWithType }) {
                 defaultValues={{ id, publishedAt, expiredAt }}
               />
               <ComponentDeleteButton
-                defaultValues={{ id }}
+                defaultValues={{ id, feedId }}
                 handleSuccess={() => {
                   toast.success("Component deleted successfully");
                 }}
@@ -411,5 +418,3 @@ function UpdateComponentModal({
     />
   );
 }
-
-export default CmsFeedUpdateBlock;

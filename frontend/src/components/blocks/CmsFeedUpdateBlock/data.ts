@@ -5,7 +5,8 @@ import {
   useGetFeedById,
   useGetFeedComponents,
 } from "../../../network/feed";
-import { BlockProps, TBlockDataProps } from "../Block";
+import { BlockProps, BlockStandardProps } from "../Block";
+import { NotFoundError } from "../../../utils/errors";
 
 const variants = {
   default: {
@@ -13,25 +14,17 @@ const variants = {
   },
 } as const;
 
-function useFeedUpdateBlockData(feedProps?: TBlockDataProps) {
-  const { feedComponent, pageProps } = feedProps || {};
-  const component =
-    feedComponent ||
-    ({
-      id: 1000,
-      name: "Create a new feed",
-      propertyValues: {
-        variant: "default",
-        isPrimaryContent: true,
-      },
-    } as TFeedUpdateBlockData);
-
+function useFeedUpdateBlockData({ component, params }: BlockStandardProps) {
   const { id, name, propertyValues } = component;
 
-  const { variant, isPrimaryContent } =
-    propertyValues as TFeedUpdateBlockData["propertyValues"];
+  const { variant, isPrimaryContent } = propertyValues as {
+    variant: TFeedUpdateBlockVariant;
+    isPrimaryContent: boolean;
+  };
 
-  const feedId = parseInt(pageProps?.params?.id || "");
+  const blockSettings = variants[variant] || variants["default"];
+
+  const feedId = parseInt(params.id || "");
   const getFeed = useGetFeedById(feedId);
   const getFeedComponents = useGetFeedComponents(feedId);
   const getComponentTypes = useGetComponentTypes({
@@ -41,28 +34,24 @@ function useFeedUpdateBlockData(feedProps?: TBlockDataProps) {
   });
 
   if (getFeed.error) {
-    return {
-      error: getFeed.error,
-    };
+    throw new NotFoundError();
   }
   if (getFeedComponents.error) {
-    return {
-      error: getFeedComponents.error,
-    };
+    throw new NotFoundError();
   }
   if (getComponentTypes.error) {
-    return {
-      error: getComponentTypes.error,
-    };
+    throw new NotFoundError();
   }
 
   return {
     blockProps: {
-      settings: variants[variant],
+      settings: {
+        ...blockSettings,
+        isPrimaryContent,
+      },
       id,
       title: name,
-      isPrimaryContent,
-    } as BlockProps,
+    },
     blockData: {
       feedData: getFeed,
       feedComponentsData: getFeedComponents,
@@ -81,3 +70,29 @@ export type TFeedUpdateBlockData = TComponent & {
     isPrimaryContent: boolean;
   };
 };
+
+export type UseFeedListFailedDataReturnType = {
+  blockProps: never;
+  blockData: never;
+  error: string;
+  params: Record<string, string>;
+  path: string;
+};
+
+export type UseFeedListSuccessReturnType = {
+  blockProps: Omit<BlockProps, "id"> & {
+    settings: BlockProps["settings"];
+  };
+  blockData: {
+    feedData: ReturnType<typeof useGetFeedById>;
+    feedComponentsData: ReturnType<typeof useGetFeedComponents>;
+    componentTypesData: ReturnType<typeof useGetComponentTypes>;
+  };
+  error: never;
+  params: never;
+  path: never;
+};
+
+export type UseFeedListBlockDataReturnType =
+  | UseFeedListFailedDataReturnType
+  | UseFeedListSuccessReturnType;

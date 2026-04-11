@@ -1,6 +1,6 @@
 import { isAuthenticated } from "../../../network/api";
 import { TComponent } from "../../../network/component";
-import { BlockProps, TBlockDataProps } from "../Block";
+import { BlockProps, BlockStandardProps } from "../Block";
 
 const variants = {
   default: {
@@ -8,40 +8,39 @@ const variants = {
   },
 } as const;
 
-function useItemCreateBlockData(feedProps?: TBlockDataProps) {
-  const { feedComponent } = feedProps || {};
-  const component =
-    feedComponent ||
-    ({
-      id: 1000,
-      name: "Create a new item",
-      propertyValues: {
-        variant: "default",
-        isPrimaryContent: true,
-      },
-    } as TItemCreateBlockData);
-
+function useItemCreateBlockData({
+  component,
+  params,
+  path,
+}: BlockStandardProps): UseItemCreateBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
   const { variant, isPrimaryContent } =
     propertyValues as TItemCreateBlockData["propertyValues"];
 
+  const blockSettings = variants[variant] || variants["default"];
+
   const isLoggedIn = isAuthenticated();
 
-  if (isLoggedIn) {
+  if (!isLoggedIn) {
     return {
-      error: "User is already authenticated",
-    };
+      error: "User is not authenticated",
+      params,
+      path,
+    } as UseItemCreateFailedReturnType;
   }
 
   return {
     blockProps: {
-      settings: variants[variant],
+      settings: {
+        ...blockSettings,
+        isPrimaryContent,
+      },
       id,
       title: name,
-      isPrimaryContent,
-    } as BlockProps,
-  };
+    },
+    blockData: {},
+  } as UseItemCreateSuccessReturnType;
 }
 
 export default useItemCreateBlockData;
@@ -54,3 +53,23 @@ export type TItemCreateBlockData = TComponent & {
     isPrimaryContent: boolean;
   };
 };
+
+export type UseItemCreateFailedReturnType = {
+  blockProps: never;
+  blockData: never;
+  error: string;
+  params: Record<string, string>;
+  path: string;
+};
+
+export type UseItemCreateSuccessReturnType = {
+  blockProps: BlockProps;
+  blockData: object;
+  error: never;
+  params: never;
+  path: never;
+};
+
+export type UseItemCreateBlockDataReturnType =
+  | UseItemCreateFailedReturnType
+  | UseItemCreateSuccessReturnType;

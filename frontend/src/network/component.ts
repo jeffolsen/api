@@ -7,24 +7,6 @@ import { FEEDS_KEY } from "./feed";
 
 export const COMPONENTS_KEY = "components" as const;
 
-export type TComponent = {
-  id: number;
-  typeId: TComponentType["id"];
-  feedId: TFeed["id"];
-  order: number;
-  name: string;
-  propertyValues: Record<string, unknown>;
-  publishedAt?: string | null;
-  expiredAt?: string | null;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type TComponentInput = Omit<
-  TComponent,
-  "id" | "createdAt" | "updatedAt"
->;
-
 export const useCreateComponent = () => {
   const { api } = useAuthState();
   const queryClient = useQueryClient();
@@ -102,13 +84,15 @@ export const useDeleteComponent = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: number) =>
+    mutationFn: async (params: { id: number; feedId: TFeed["id"] }) =>
       withErrorHandling(async () => {
-        const response = await api.delete(`${COMPONENTS_ENDPOINT}/${id}`);
+        const response = await api.delete(
+          `${COMPONENTS_ENDPOINT}/${params.id}`,
+        );
         return response.data;
       }),
-    onSuccess: (data, id) => {
-      const feedId = data.feedId;
+    onSuccess: (_, params) => {
+      const { id, feedId } = params;
       queryClient.invalidateQueries({
         queryKey: [FEEDS_KEY, feedId, COMPONENTS_KEY, id],
       });
@@ -118,3 +102,24 @@ export const useDeleteComponent = () => {
     },
   });
 };
+
+export type TComponent = {
+  id: number;
+  typeId: TComponentType["id"];
+  typeName: TComponentType["name"];
+  feedId: TFeed["id"];
+  order: number;
+  name: string;
+  propertyValues: Record<string, unknown>;
+  publishedAt?: string | null;
+  expiredAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type TComponentInput = Omit<
+  TComponent,
+  "id" | "createdAt" | "updatedAt" | "typeName"
+>;
+
+export type TComponentWithType = TComponent & TComponentType;

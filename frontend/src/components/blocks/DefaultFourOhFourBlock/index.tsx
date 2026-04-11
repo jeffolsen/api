@@ -1,13 +1,15 @@
-import Block, { BlockProps } from "../Block";
+import Block, { BlockStandardProps } from "../Block";
 import Text from "../../common/Text";
 import Button from "../../common/Button";
 import { useNavigate } from "react-router";
+import useFourOhFourBlockData from "./data";
 
-function FourOhFourBlock(props: BlockProps) {
-  const { path } = props;
+function FourOhFourBlock({ component, params, path }: BlockStandardProps) {
+  const result = useFourOhFourBlockData({ component, params, path });
+  const { blockProps } = result;
   const navigate = useNavigate();
   return (
-    <Block {...props}>
+    <Block {...blockProps}>
       <Text textSize="md" className="text-center">
         Sorry, the page
         <br />

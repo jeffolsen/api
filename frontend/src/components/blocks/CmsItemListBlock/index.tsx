@@ -1,7 +1,6 @@
-import Block from "../Block";
+import Block, { BlockStandardProps } from "../Block";
 import Grid from "../../common/Grid";
 import {
-  useGetItems,
   TItem,
   useGetItemsTags,
   GetItemsResponse,
@@ -19,7 +18,6 @@ import { toast } from "react-hot-toast/headless";
 import Button from "../../common/Button";
 import Loading from "../../common/Loading";
 import DashBoardLayout from "../../layout/DashBoardLayout";
-import { useGetAuthenticatedProfile } from "../../../network/profile";
 import SectionHeading from "../../partials/SectionHeading";
 import { ScheduleStatus } from "../../inputs/FormPublishSubmit";
 import DropDownMenu from "../../common/DropDownMenu";
@@ -31,24 +29,33 @@ import { TTag, useGetTags } from "../../../network/tag";
 import { useMemo } from "react";
 import { ListNavigation, ListSortControl } from "../../partials/ListNavigation";
 import BasicCard from "../../cards/BasicCard";
-import useItemListBlockData from "./data";
-import { useNavigate } from "react-router";
+import useItemListBlockData, { UseItemListSuccessReturnType } from "./data";
+import { paths } from "../../../config/routes";
 
-function CmsItemsListBlock() {
-  const result = useItemListBlockData();
-  const navigate = useNavigate();
+export default function Component({
+  component,
+  params,
+  path,
+}: BlockStandardProps) {
+  const result = useItemListBlockData({ component, params, path });
+  const { blockProps, blockData, error } = result;
 
-  if ("error" in result) {
-    navigate("/401", { replace: true });
+  if (error && !blockProps && !blockData) {
     return null;
   }
 
-  const { blockProps, blockData } = result;
-  const { pageSize, queryTags, ...settings } = blockProps?.settings || {};
-  const { profileData, itemsData } = blockData as {
-    profileData: ReturnType<typeof useGetAuthenticatedProfile>;
-    itemsData: ReturnType<typeof useGetItems>;
-  };
+  return <CmsItemsListBlock blockProps={blockProps} blockData={blockData} />;
+}
+
+function CmsItemsListBlock({
+  blockProps,
+  blockData,
+}: {
+  blockProps: UseItemListSuccessReturnType["blockProps"];
+  blockData: UseItemListSuccessReturnType["blockData"];
+}) {
+  const { pageSize, queryTags, ...settings } = blockProps.settings;
+  const { profileData, itemsData } = blockData;
 
   if (itemsData.isLoading || profileData.isLoading) {
     return (
@@ -141,7 +148,12 @@ function ItemCard({ item }: { item: TItem }) {
             <ScheduleStatus publishedAt={publishedAt} expiredAt={expiredAt} />
           </Text>
           <div className="flex gap-1">
-            <Button as="Link" to={`/items/${id}`} size="md" color="primary">
+            <Button
+              as="Link"
+              to={paths.cmsItemUpdate.replace(":id", id.toString())}
+              size="md"
+              color="primary"
+            >
               Edit
             </Button>
             <ItemRepublishForm
@@ -207,5 +219,3 @@ const ItemFilterControl = () => {
     />
   );
 };
-
-export default CmsItemsListBlock;

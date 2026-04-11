@@ -29,20 +29,20 @@ const LazyLoadedStyleGuideBlock = lazy(
 );
 
 // CMS Blocks
-const LazyLoadedLoginOrRegisterBlock = lazy(
+const LazyLoadedLoginRegisterBlock = lazy(
   () => import("./CmsLoginOrRegisterBlock/index"),
 );
-const LazyLoadedProfileActivityBlock = lazy(
+const LazyLoadedProfileDashboardBlock = lazy(
   () => import("./CmsProfileDashboardBlock/index"),
 );
-const LazyLoadedItemsListBlock = lazy(() => import("./CmsItemListBlock/index"));
+const LazyLoadedItemListBlock = lazy(() => import("./CmsItemListBlock/index"));
 const LazyLoadedItemCreateBlock = lazy(
   () => import("./CmsItemCreateBlock/index"),
 );
 const LazyLoadedItemUpdateBlock = lazy(
   () => import("./CmsItemUpdateBlock/index"),
 );
-const LazyLoadedFeedsListBlock = lazy(() => import("./CmsFeedListBlock/index"));
+const LazyLoadedFeedListBlock = lazy(() => import("./CmsFeedListBlock/index"));
 const LazyLoadedFeedCreateBlock = lazy(
   () => import("./CmsFeedCreateBlock/index"),
 );
@@ -51,22 +51,22 @@ const LazyLoadedFeedUpdateBlock = lazy(
 );
 
 const Blocks = {
-  DetailBlock: LazyLoadedBuildDetailBlock,
-  HeroCarouselBlock: LazyLoadedBuildHeroCarouselBlock,
-  RelatedContentBlock: LazyLoadedRelatedContentBlock,
-  TeaserGridBlock: LazyLoadedTeaserGridBlock,
-  GenericBlock: LazyLoadedGenericBlock,
-  FourOhFourBlock: LazyLoadedFourOhFourBlock,
-  FourOhOneBlock: LazyLoadedFourOhOneBlock,
-  StyleGuideBlock: LazyLoadedStyleGuideBlock,
-  LoginOrRegisterBlock: LazyLoadedLoginOrRegisterBlock,
-  ProfileActivityBlock: LazyLoadedProfileActivityBlock,
-  ItemsListBlock: LazyLoadedItemsListBlock,
-  ItemCreateBlock: LazyLoadedItemCreateBlock,
-  ItemUpdateBlock: LazyLoadedItemUpdateBlock,
-  FeedsListBlock: LazyLoadedFeedsListBlock,
-  FeedCreateBlock: LazyLoadedFeedCreateBlock,
-  FeedUpdateBlock: LazyLoadedFeedUpdateBlock,
+  Detail: LazyLoadedBuildDetailBlock,
+  HeroCarousel: LazyLoadedBuildHeroCarouselBlock,
+  RelatedContent: LazyLoadedRelatedContentBlock,
+  TeaserGrid: LazyLoadedTeaserGridBlock,
+  Generic: LazyLoadedGenericBlock,
+  FourOhFour: LazyLoadedFourOhFourBlock,
+  FourOhOne: LazyLoadedFourOhOneBlock,
+  StyleGuide: LazyLoadedStyleGuideBlock,
+  LoginRegister: LazyLoadedLoginRegisterBlock,
+  ProfileDashboard: LazyLoadedProfileDashboardBlock,
+  ItemList: LazyLoadedItemListBlock,
+  ItemCreate: LazyLoadedItemCreateBlock,
+  ItemUpdate: LazyLoadedItemUpdateBlock,
+  FeedList: LazyLoadedFeedListBlock,
+  FeedCreate: LazyLoadedFeedCreateBlock,
+  FeedUpdate: LazyLoadedFeedUpdateBlock,
 };
 
 export default Blocks;

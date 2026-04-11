@@ -3,6 +3,7 @@ import { HeadingLevelProvider } from "../../contexts/HeadingLevelProvider";
 import Wrapper, { WrapperProps } from "../common/Wrapper";
 import Heading from "../common/Heading";
 import { TComponent } from "../../network/component";
+import { LocalFeedComponent } from "../../config/routes";
 
 export type TBlockDataProps =
   | {
@@ -22,7 +23,6 @@ export interface BlockProps {
   id: number;
   settings: {
     isPrimaryContent?: boolean;
-    showOnLoggedinState?: "LOGGED_IN" | "LOGGED_OUT" | "BOTH";
     width?: WrapperProps["width"];
   } & Record<string, unknown>;
 }
@@ -60,5 +60,11 @@ function InnerBlock({
     </Wrapper>
   );
 }
+
+export type BlockStandardProps = {
+  component: LocalFeedComponent;
+  params: Record<string, string>;
+  path: string;
+};
 
 export default Block;

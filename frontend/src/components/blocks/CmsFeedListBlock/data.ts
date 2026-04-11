@@ -1,6 +1,6 @@
 import { TComponent } from "../../../network/component";
 import { useGetAuthenticatedProfile } from "../../../network/profile";
-import { BlockProps, TBlockDataProps } from "../Block";
+import { BlockProps, BlockStandardProps } from "../Block";
 import { useSearchParam } from "../../../hooks/useSearchParam";
 import { TFeedSort, TSubjectType, useGetFeeds } from "../../../network/feed";
 
@@ -11,25 +11,20 @@ const variants = {
   },
 } as const;
 
-function useFeedListBlockData(feedProps?: TBlockDataProps) {
-  const { feedComponent } = feedProps || {};
-  const component =
-    feedComponent ||
-    ({
-      id: 1000,
-      name: "Feeds List",
-      propertyValues: {
-        variant: "default",
-        isPrimaryContent: true,
-      },
-    } as TFeedListBlockData);
-
+function useFeedListBlockData({
+  component,
+  params,
+  path,
+}: BlockStandardProps): UseFeedListBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, isPrimaryContent } =
-    propertyValues as TFeedListBlockData["propertyValues"];
+  const { variant, isPrimaryContent } = propertyValues as {
+    variant: TFeedListBlockVariant;
+    isPrimaryContent: boolean;
+  };
 
-  const { pageSize, ...blockSettings } = variants[variant];
+  const { pageSize, ...blockSettings } =
+    variants[variant] || variants["default"];
 
   const profile = useGetAuthenticatedProfile();
 
@@ -46,14 +41,18 @@ function useFeedListBlockData(feedProps?: TBlockDataProps) {
 
   if (profile.error) {
     return {
-      error: profile.error,
-    };
+      error: "Failed to load profile data",
+      params,
+      path,
+    } as UseFeedListFailedDataReturnType;
   }
 
   if (feeds.error) {
     return {
-      error: feeds.error,
-    };
+      error: "Failed to load feed data",
+      params,
+      path,
+    } as UseFeedListFailedDataReturnType;
   }
 
   return {
@@ -65,12 +64,9 @@ function useFeedListBlockData(feedProps?: TBlockDataProps) {
       },
       id,
       title: name,
-      isPrimaryContent,
-    } as Omit<BlockProps, "id"> & {
-      settings: BlockProps["settings"] & { pageSize: number };
     },
     blockData: { profileData: profile, feedData: feeds },
-  };
+  } as UseFeedListSuccessReturnType;
 }
 
 export default useFeedListBlockData;
@@ -84,16 +80,27 @@ export type TFeedListBlockData = TComponent & {
   };
 };
 
+export type UseFeedListFailedDataReturnType = {
+  blockProps: never;
+  blockData: never;
+  error: string;
+  params: Record<string, string>;
+  path: string;
+};
+
+export type UseFeedListSuccessReturnType = {
+  blockProps: BlockProps & {
+    settings: BlockProps["settings"] & { pageSize: number };
+  };
+  blockData: {
+    profileData: ReturnType<typeof useGetAuthenticatedProfile>;
+    feedData: ReturnType<typeof useGetFeeds>;
+  };
+  error: never;
+  params: never;
+  path: never;
+};
+
 export type UseFeedListBlockDataReturnType =
-  | {
-      blockProps: Omit<BlockProps, "id"> & {
-        settings: BlockProps["settings"] & { pageSize: number };
-      };
-      blockData: {
-        profileData: ReturnType<typeof useGetAuthenticatedProfile>;
-        feedData: ReturnType<typeof useGetFeeds>;
-      };
-    }
-  | {
-      error: Error;
-    };
+  | UseFeedListFailedDataReturnType
+  | UseFeedListSuccessReturnType;

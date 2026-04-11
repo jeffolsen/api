@@ -1,19 +1,35 @@
-import Block from "../Block";
+import Block, { BlockStandardProps } from "../Block";
 import { FeedCreateForm } from "../../forms/FeedCreateForm";
 import EmptyCard from "../../cards/EmptyCard";
 import { useNavigate } from "react-router";
 import { TFeed } from "../../../network/feed";
-import useFeedCreateBlockData from "./data";
+import useFeedCreateBlockData, {
+  UseFeedCreateBlockDataReturnType,
+} from "./data";
+import { paths } from "../../../config/routes";
 
-function CmsFeedCreateBlock() {
-  const result = useFeedCreateBlockData();
-  const navigate = useNavigate();
+export default function Component({
+  component,
+  params,
+  path,
+}: BlockStandardProps) {
+  const result = useFeedCreateBlockData({ component, params, path });
+  const { blockProps, blockData, error } = result;
 
-  if ("error" in result) {
-    navigate("/401", { replace: true });
+  if (error && !blockProps && !blockData) {
     return null;
   }
-  const { blockProps } = result;
+
+  return <CmsFeedCreateBlock blockProps={blockProps} blockData={blockData} />;
+}
+
+function CmsFeedCreateBlock({
+  blockProps,
+}: {
+  blockProps: UseFeedCreateBlockDataReturnType["blockProps"];
+  blockData: UseFeedCreateBlockDataReturnType["blockData"];
+}) {
+  const navigate = useNavigate();
 
   return (
     <Block {...blockProps}>
@@ -21,7 +37,12 @@ function CmsFeedCreateBlock() {
         <div className="card-body">
           <FeedCreateForm
             handleSuccess={(args) => {
-              navigate(`/feeds/${(args.feed as TFeed).id}`);
+              navigate(
+                paths.cmsFeedUpdate.replace(
+                  ":id",
+                  (args.feed as TFeed).id.toString(),
+                ),
+              );
             }}
           />
         </div>
@@ -29,5 +50,3 @@ function CmsFeedCreateBlock() {
     </Block>
   );
 }
-
-export default CmsFeedCreateBlock;

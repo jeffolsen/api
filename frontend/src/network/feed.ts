@@ -9,8 +9,9 @@ import {
   COMPONENTS_ENDPOINT,
   withErrorHandling,
   PaginationParams,
+  FEED_PATH_ENDPOINT,
 } from "./api";
-import { TComponent, COMPONENTS_KEY } from "./component";
+import { TComponent, COMPONENTS_KEY, TComponentWithType } from "./component";
 import { useAuthState } from "../contexts/AuthContext";
 import { GetItemsResponse } from "./item";
 
@@ -49,7 +50,7 @@ export const useGetFeedByPath = (path: string) => {
   return useQuery({
     queryKey: [FEEDS_KEY, path],
     queryFn: async () => {
-      const response = await api.get(`${FEEDS_ENDPOINT}/by-path/${path}`);
+      const response = await api.get(`${FEED_PATH_ENDPOINT}/${path}`);
       return response.data;
     },
   });
@@ -157,6 +158,11 @@ export type TFeedSort =
   | "expiredAt"
   | "-expiredAt";
 
+export type TFeedsParams = {
+  sort?: TFeedSort[];
+  subjectTypes?: TSubjectType[];
+} & PaginationParams;
+
 export type TFeed = {
   id: number;
   path: string;
@@ -173,7 +179,6 @@ export type TFeedWithComponents = TFeed & {
   components: TComponent[];
 };
 
-export type TFeedsParams = {
-  sort?: TFeedSort[];
-  subjectTypes?: TSubjectType[];
-} & PaginationParams;
+export type TFeedWithComponentsWithTypes = TFeed & {
+  components: TComponentWithType[];
+};

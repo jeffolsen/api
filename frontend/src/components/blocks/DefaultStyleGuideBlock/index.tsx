@@ -2,15 +2,18 @@ import Button from "../../common/Button";
 import Heading, { HeadingLevelProvider } from "../../common/Heading";
 import List from "../../common/List";
 import Text from "../../common/Text";
-import Block, { BlockProps } from "../Block";
+import Block, { BlockStandardProps } from "../Block";
 import Modal from "../../layout/Modal";
 import { useState } from "react";
+import useStyleGuideeBlockData from "./data";
 
-function StyleGuideBlock(props: BlockProps) {
+function StyleGuideBlock({ component, params, path }: BlockStandardProps) {
+  const result = useStyleGuideeBlockData({ component, params, path });
+  const { blockProps } = result;
   const [openModal, setOpenModal] = useState(false);
 
   return (
-    <Block {...props}>
+    <Block {...blockProps}>
       <HeadingLevelProvider>
         <Heading headingSize="xxl" headingStyles="uppercase">
           Heading xxl

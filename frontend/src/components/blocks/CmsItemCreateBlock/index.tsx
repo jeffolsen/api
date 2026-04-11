@@ -1,19 +1,35 @@
-import Block from "../Block";
+import Block, { BlockStandardProps } from "../Block";
 import { ItemCreateForm } from "../../forms/ItemCreateForm";
 import EmptyCard from "../../cards/EmptyCard";
 import { useNavigate } from "react-router";
 import { TItem } from "../../../network/item";
-import useItemCreateBlockData from "./data";
+import useItemCreateBlockData, {
+  UseItemCreateBlockDataReturnType,
+} from "./data";
+import { paths } from "../../../config/routes";
 
-function CmsItemCreateBlock() {
-  const result = useItemCreateBlockData();
-  const navigate = useNavigate();
+export default function Component({
+  component,
+  params,
+  path,
+}: BlockStandardProps) {
+  const result = useItemCreateBlockData({ component, params, path });
+  const { blockProps, blockData, error } = result;
 
-  if ("error" in result) {
-    navigate("/401", { replace: true });
+  if (error && !blockProps && !blockData) {
     return null;
   }
-  const { blockProps } = result;
+
+  return <CmsItemCreateBlock blockProps={blockProps} blockData={blockData} />;
+}
+
+function CmsItemCreateBlock({
+  blockProps,
+}: {
+  blockProps: UseItemCreateBlockDataReturnType["blockProps"];
+  blockData: UseItemCreateBlockDataReturnType["blockData"];
+}) {
+  const navigate = useNavigate();
 
   return (
     <Block {...blockProps}>
@@ -21,7 +37,12 @@ function CmsItemCreateBlock() {
         <div className="card-body">
           <ItemCreateForm
             handleSuccess={(args) => {
-              navigate(`/items/${(args.item as TItem).id}`);
+              navigate(
+                paths.cmsItemUpdate.replace(
+                  ":id",
+                  (args.item as TItem).id.toString(),
+                ),
+              );
             }}
           />
         </div>
@@ -29,5 +50,3 @@ function CmsItemCreateBlock() {
     </Block>
   );
 }
-
-export default CmsItemCreateBlock;

@@ -1,4 +1,4 @@
-import Block, { BlockProps } from "../Block";
+import Block, { BlockStandardProps } from "../Block";
 import EmptyCard from "../../cards/EmptyCard";
 import Loading from "../../common/Loading";
 import {
@@ -13,17 +13,27 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import Heading from "../../common/Heading";
 import { ScheduleStatus } from "../../inputs/FormPublishSubmit";
-import useItemUpdateBlockData from "./data";
+import useItemUpdateBlockData, { UseItemUpdateSuccessReturnType } from "./data";
+import { paths } from "../../../config/routes";
 
-function CmsItemUpdateBlock(props: BlockProps) {
-  const result = useItemUpdateBlockData({ pageProps: props });
-  const navigate = useNavigate();
-
-  if ("error" in result) {
-    navigate("/401", { replace: true });
-    return null;
-  }
+export default function Component({
+  component,
+  params,
+  path,
+}: BlockStandardProps) {
+  const result = useItemUpdateBlockData({ component, params, path });
   const { blockProps, blockData } = result;
+  return <CmsItemUpdateBlock blockProps={blockProps} blockData={blockData} />;
+}
+
+function CmsItemUpdateBlock({
+  blockProps,
+  blockData,
+}: {
+  blockProps: UseItemUpdateSuccessReturnType["blockProps"];
+  blockData: UseItemUpdateSuccessReturnType["blockData"];
+}) {
+  const navigate = useNavigate();
 
   const {
     itemData: getItem,
@@ -90,7 +100,7 @@ function CmsItemUpdateBlock(props: BlockProps) {
                 defaultValues={{ id: item.id }}
                 handleSuccess={() => {
                   toast.success("Item deleted successfully");
-                  navigate("/items");
+                  navigate(paths.cmsItemsList);
                 }}
               />
             </div>
@@ -108,5 +118,3 @@ function CmsItemUpdateBlock(props: BlockProps) {
     </Block>
   );
 }
-
-export default CmsItemUpdateBlock;

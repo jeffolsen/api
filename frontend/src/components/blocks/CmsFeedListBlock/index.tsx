@@ -1,4 +1,4 @@
-import Block from "../Block";
+import Block, { BlockStandardProps } from "../Block";
 import Heading, { HeadingLevelProvider } from "../../common/Heading";
 import Button from "../../common/Button";
 import Loading from "../../common/Loading";
@@ -25,19 +25,31 @@ import {
 } from "../../../hooks/useSearchParam";
 import DropDownMenu from "../../common/DropDownMenu";
 import { useMemo } from "react";
-import useFeedListBlockData from "./data";
-import { useNavigate } from "react-router";
+import useFeedListBlockData, { UseFeedListSuccessReturnType } from "./data";
+import { paths } from "../../../config/routes";
 
-function CmsFeedsListBlock() {
-  const result = useFeedListBlockData();
-  const navigate = useNavigate();
+export default function Component({
+  component,
+  params,
+  path,
+}: BlockStandardProps) {
+  const result = useFeedListBlockData({ component, params, path });
+  const { blockProps, blockData, error } = result;
 
-  if ("error" in result) {
-    navigate("/401", { replace: true });
+  if (error && !blockProps && !blockData) {
     return null;
   }
 
-  const { blockProps, blockData } = result;
+  return <CmsFeedsListBlock blockProps={blockProps} blockData={blockData} />;
+}
+
+function CmsFeedsListBlock({
+  blockProps,
+  blockData,
+}: {
+  blockProps: UseFeedListSuccessReturnType["blockProps"];
+  blockData: UseFeedListSuccessReturnType["blockData"];
+}) {
   const { pageSize, ...settings } = blockProps.settings;
   const { profileData, feedData } = blockData as {
     profileData: ReturnType<typeof useGetAuthenticatedProfile>;
@@ -75,7 +87,7 @@ function CmsFeedsListBlock() {
             pageSize={pageSize as number}
             totalCount={totalCount}
             text="New Feed"
-            newPath="/feeds/new"
+            newPath={paths.cmsFeedCreate}
           />
           <Grid
             items={feeds.map((feed: TFeed) => (
@@ -87,7 +99,7 @@ function CmsFeedsListBlock() {
             pageSize={pageSize as number}
             totalCount={totalCount}
             text="New Feed"
-            newPath="/feeds/new"
+            newPath={paths.cmsFeedCreate}
           />
         </DashBoardLayout>
       </HeadingLevelProvider>
@@ -120,7 +132,12 @@ function FeedCard({ feed }: { feed: TFeed }) {
             <ScheduleStatus publishedAt={publishedAt} expiredAt={expiredAt} />
           </Text>
           <div className="flex gap-1">
-            <Button as="Link" to={`/feeds/${id}`} size="md" color="primary">
+            <Button
+              as="Link"
+              to={paths.cmsFeedUpdate.replace(":id", id.toString())}
+              size="md"
+              color="primary"
+            >
               Edit
             </Button>
             <FeedRepublishForm
@@ -176,5 +193,3 @@ const FeedFilterControl = () => {
     />
   );
 };
-
-export default CmsFeedsListBlock;

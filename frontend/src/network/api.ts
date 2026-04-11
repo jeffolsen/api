@@ -41,6 +41,7 @@ export const DATE_RANGES_ENDPOINT = "/date-ranges";
 
 export const COMPONENT_TYPES_ENDPOINT = "/component-types";
 export const FEEDS_ENDPOINT = "/feeds";
+export const FEED_PATH_ENDPOINT = "/feeds/by-path";
 export const COMPONENTS_ENDPOINT = "/components";
 
 export const OK = 200;

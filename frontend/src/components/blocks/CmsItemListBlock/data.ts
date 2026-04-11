@@ -2,7 +2,7 @@ import { TComponent } from "../../../network/component";
 import { useGetAuthenticatedProfile } from "../../../network/profile";
 import { useGetItems, TItemSort } from "../../../network/item";
 import { TTagName } from "../../../network/tag";
-import { BlockProps, TBlockDataProps } from "../Block";
+import { BlockProps, BlockStandardProps } from "../Block";
 import { useSearchParam } from "../../../hooks/useSearchParam";
 
 const variants = {
@@ -13,25 +13,17 @@ const variants = {
   },
 } as const;
 
-function useItemListBlockData(feedProps?: TBlockDataProps) {
-  const { feedComponent } = feedProps || {};
-  const component =
-    feedComponent ||
-    ({
-      id: 1000,
-      name: "Items List",
-      propertyValues: {
-        variant: "default",
-        isPrimaryContent: true,
-      },
-    } as TItemListBlockData);
-
+function useItemListBlockData({
+  component,
+  params,
+  path,
+}: BlockStandardProps): UseItemListBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
   const { variant, isPrimaryContent } =
     propertyValues as TItemListBlockData["propertyValues"];
 
-  const { pageSize, privateOnly, ...blockSettings } = variants[variant];
+  const { pageSize, privateOnly, ...blockSettings } = variants[variant] || variants["default"];
 
   const profile = useGetAuthenticatedProfile();
 
@@ -49,24 +41,27 @@ function useItemListBlockData(feedProps?: TBlockDataProps) {
   if (profile.error) {
     return {
       error: profile.error,
-    };
+      params,
+      path,
+    } as UseItemListFailedReturnType;
   }
 
   if (items.error) {
     return {
       error: items.error,
-    };
+      params,
+      path,
+    } as UseItemListFailedReturnType;
   }
 
   return {
     blockProps: {
-      settings: { ...blockSettings, pageSize, queryTags: tags },
+      settings: { ...blockSettings, isPrimaryContent, pageSize, queryTags: tags },
       id,
       title: name,
-      isPrimaryContent,
-    } as BlockProps,
+    },
     blockData: { profileData: profile, itemsData: items },
-  };
+  } as UseItemListSuccessReturnType;
 }
 
 export default useItemListBlockData;
@@ -79,3 +74,31 @@ export type TItemListBlockData = TComponent & {
     isPrimaryContent: boolean;
   };
 };
+
+export type UseItemListFailedReturnType = {
+  blockProps: never;
+  blockData: never;
+  error: unknown;
+  params: Record<string, string>;
+  path: string;
+};
+
+export type UseItemListSuccessReturnType = {
+  blockProps: BlockProps & {
+    settings: BlockProps["settings"] & {
+      pageSize: number;
+      queryTags: string | undefined;
+    };
+  };
+  blockData: {
+    profileData: ReturnType<typeof useGetAuthenticatedProfile>;
+    itemsData: ReturnType<typeof useGetItems>;
+  };
+  error: never;
+  params: never;
+  path: never;
+};
+
+export type UseItemListBlockDataReturnType =
+  | UseItemListFailedReturnType
+  | UseItemListSuccessReturnType;

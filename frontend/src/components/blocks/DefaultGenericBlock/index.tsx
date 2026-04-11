@@ -1,9 +1,12 @@
 import Text from "../../common/Text";
-import Block, { BlockProps } from "../Block";
+import Block, { BlockStandardProps } from "../Block";
+import useGenericBlockData from "./data";
 
-function GenericBlock(props: BlockProps) {
+function GenericBlock({ component, params, path }: BlockStandardProps) {
+  const result = useGenericBlockData({ component, params, path });
+  const { blockProps } = result;
   return (
-    <Block {...props}>
+    <Block {...blockProps}>
       <Text textSize="md">Not implemented</Text>
     </Block>
   );

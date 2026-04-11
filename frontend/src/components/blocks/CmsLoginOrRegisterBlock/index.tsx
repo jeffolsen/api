@@ -15,14 +15,16 @@ import {
   LogoutAllSessionsWithOTPForm,
 } from "../../forms/LogoutAllSessionsForm";
 import RegisterForm from "../../forms/RegisterForm";
-import Block, { BlockProps } from "../Block";
+import Block, { BlockStandardProps } from "../Block";
 import Text from "../../common/Text";
 import Tabs, { TabsProps, TabPanelProps } from "../../common/Tabs";
 import { useSearchParam } from "../../../hooks/useSearchParam";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
 import Modal from "../../layout/Modal";
-import useCmsLoginOrRegisterBlockData from "./data";
+import useCmsLoginOrRegisterBlockData, {
+  UseLoginOrRegisterBlockDataReturnType,
+} from "./data";
 
 const tabs: TabsProps["tabs"] = [
   {
@@ -42,12 +44,29 @@ const tabs: TabsProps["tabs"] = [
   },
 ];
 
-function CmsLoginOrRegisterBlock(props: BlockProps) {
-  const result = useCmsLoginOrRegisterBlockData({ pageProps: props });
-  if ("error" in result) {
+export default function Component({
+  component,
+  params,
+  path,
+}: BlockStandardProps) {
+  const result = useCmsLoginOrRegisterBlockData({ component, params, path });
+  const { blockProps, blockData, error } = result;
+
+  if (error && !blockProps && !blockData) {
     return null;
   }
-  const { blockProps } = result;
+
+  return (
+    <CmsLoginOrRegisterBlock blockProps={blockProps} blockData={blockData} />
+  );
+}
+
+function CmsLoginOrRegisterBlock({
+  blockProps,
+}: {
+  blockProps: UseLoginOrRegisterBlockDataReturnType["blockProps"];
+  blockData: UseLoginOrRegisterBlockDataReturnType["blockData"];
+}) {
   const { id, ...rest } = blockProps;
 
   return (
@@ -203,5 +222,3 @@ function RequestResetPasswordOrResetWithOtp({
     />
   );
 }
-
-export default CmsLoginOrRegisterBlock;
