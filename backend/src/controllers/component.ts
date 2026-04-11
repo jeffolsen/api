@@ -92,6 +92,7 @@ export const createComponent: RequestHandler = catchErrors(
         data: {
           feedId,
           typeId,
+          typeName: componentType.name,
           name,
           order: newOrder,
           propertyValues: propertyValues as Prisma.InputJsonValue,

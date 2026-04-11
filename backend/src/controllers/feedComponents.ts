@@ -11,7 +11,6 @@ import {
   MESSAGE_FEED_NOT_FOUND,
   MESSAGE_COMPONENTS_NOT_FOUND,
 } from "../config/errorMessages";
-import component from "./component";
 
 export const getFeedComponents: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -76,6 +75,5 @@ export const deleteFeedComponent: RequestHandler = catchErrors(
 const feedComponentsApi = {
   getFeedComponents,
   getFeedComponentsById,
-  deleteFeedComponent,
 };
 export default feedComponentsApi;

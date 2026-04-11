@@ -116,8 +116,9 @@ model Component {
   name           String
   order          Int           @default(0)
   propertyValues Json          @default("{}") @map("property_values") // Use this field to store the actual values for the settings defined in the ComponentType's propertySchema. For example, if the ComponentType has a setting called "grid columns", then this field would store the value for that setting such as "3".
-  type           ComponentType @relation(fields: [typeId], references: [id])
+  type           ComponentType @relation(fields: [typeId], references: [id], onDelete: Restrict) // We want to restrict deleting a ComponentType if there are still Components using it. This is to prevent orphaned Components that reference a non-existent ComponentType.
   typeId         Int           @map("component_type_id")
+  typeName       String        @map("type_name") // Store the name of the ComponentType here for easier querying and to avoid having to join with the ComponentType table when we just want to know the type of the component.
   feed           Feed          @relation("FeedComponents", fields: [feedId], references: [id], onDelete: Cascade)
   feedId         Int           @map("feed_id")
   publishedAt    DateTime?     @map("published_at") @db.Timestamptz(6)
