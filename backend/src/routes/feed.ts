@@ -27,7 +27,7 @@ router.post(
   authorizeScope([CREATE_FEED_SCOPE]),
   feedApi.createFeed,
 );
-router.patch(ID_PARAM, authorizeScope([UPDATE_FEED_SCOPE]), feedApi.updateFeed);
+router.put(ID_PARAM, authorizeScope([UPDATE_FEED_SCOPE]), feedApi.updateFeed);
 router.delete(
   ID_PARAM,
   authorizeScope([DELETE_FEED_SCOPE]),

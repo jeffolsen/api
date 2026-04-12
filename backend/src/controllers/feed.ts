@@ -3,9 +3,13 @@ import prismaClient, { SubjectType } from "../db/client";
 import catchErrors from "../util/catchErrors";
 import { NOT_FOUND, OK } from "../config/errorCodes";
 import { idStringSchema } from "../schemas/properties";
-import { CreateFeedBodySchema, GetAllFeedsQuerySchema } from "../schemas/feed";
+import {
+  GetAllFeedsQuerySchema,
+  CreateFeedBodySchema,
+  UpdateFeedBodySchema,
+  DeleteFeedParamsSchema,
+} from "../schemas/feed";
 import { getPagination, getSortOrders } from "../util/misc";
-import { th } from "zod/v4/locales";
 import throwError from "../util/throwError";
 import { MESSAGE_FEED_NOT_FOUND } from "../config/errorMessages";
 
@@ -91,21 +95,48 @@ export const createFeed: RequestHandler = catchErrors(
   },
 );
 
+type UpdateFeedBody = {
+  path?: string;
+  publishedAt?: string;
+  expiredAt?: string;
+};
+
 export const updateFeed: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const { id } = req.params || {};
-    console.log(`Updating feed with id: ${id} for profileId: ${profileId}`); // Debug log
-    console.log("UpdateFeed request body:", req.body);
-    res.sendStatus(OK);
+    const { id, path, publishedAt, expiredAt } = UpdateFeedBodySchema.parse({
+      ...(req.body as UpdateFeedBody),
+      id: req.params.id,
+    });
+    const feed = await prismaClient.feed.findFirst({
+      where: { id, profileId },
+    });
+    throwError(feed, NOT_FOUND, MESSAGE_FEED_NOT_FOUND);
+
+    const updatedFeed = await prismaClient.feed.update({
+      where: { id, profileId },
+      data: {
+        path,
+        publishedAt,
+        expiredAt,
+      },
+    });
+    res.status(OK).json({ feed: updatedFeed });
   },
 );
 
 export const deleteFeed: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const { id } = req.params || {};
-    console.log("DeleteFeed request body:", req.body);
+    const { id } = DeleteFeedParamsSchema.parse(req.params);
+    const feed = await prismaClient.feed.findFirst({
+      where: { id, profileId },
+    });
+    throwError(feed, NOT_FOUND, MESSAGE_FEED_NOT_FOUND);
+
+    await prismaClient.feed.delete({
+      where: { id, profileId },
+    });
     res.sendStatus(OK);
   },
 );

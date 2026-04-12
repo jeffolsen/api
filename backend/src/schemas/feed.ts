@@ -23,6 +23,7 @@ const validFeedSortValues = [
 export type FeedSortValues = keyof typeof validFeedSortValues;
 
 export const feedSortSchema = z.enum(validFeedSortValues, "Invalid sort value");
+const pathSchema = z.string().min(1).max(255).regex(RELATIVE_PATH_REGEX);
 
 export const feedsSortArraySchema = z
   .array(z.union(validFeedSortValues.map((val) => z.literal(val))))
@@ -53,10 +54,21 @@ export const GetAllFeedsQuerySchema = z.object({
 
 export const CreateFeedBodySchema = z
   .object({
-    path: z.string().min(1).max(255).regex(RELATIVE_PATH_REGEX),
+    path: pathSchema,
     subjectType: subjectTypeSchema,
   })
   .extend(publishedAtAndExpiredAtSchema.shape);
+
+export const UpdateFeedBodySchema = z
+  .object({
+    id: idStringSchema,
+    path: pathSchema.optional(),
+  })
+  .extend(publishedAtAndExpiredAtSchema.shape);
+
+export const DeleteFeedParamsSchema = z.object({
+  id: idStringSchema,
+});
 
 export const GetFeedsResourcesSchema = z.object({
   feedId: idStringSchema,
