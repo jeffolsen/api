@@ -13,7 +13,6 @@ import {
 } from "./api";
 import { TComponent, COMPONENTS_KEY, TComponentWithType } from "./component";
 import { useAuthState } from "../contexts/AuthContext";
-import { GetItemsResponse } from "./item";
 
 export const FEEDS_KEY = "feeds" as const;
 
@@ -24,13 +23,13 @@ export type GetFeedsResponse = {
 
 export const useGetFeeds = (
   queryParams?: TFeedsParams,
-  options?: QueryOptions,
+  options?: QueryOptions<GetFeedsResponse>,
 ) => {
   const { api } = useAuthState();
 
   return useQuery({
     queryKey: [FEEDS_KEY, queryParams],
-    queryFn: async (): Promise<GetItemsResponse> => {
+    queryFn: async (): Promise<GetFeedsResponse> => {
       const response = await api.get(FEEDS_ENDPOINT, {
         params: {
           ...queryParams,

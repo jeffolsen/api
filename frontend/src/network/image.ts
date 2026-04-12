@@ -9,7 +9,7 @@ export const useGetImages = () => {
 
   return useQuery({
     queryKey: [IMAGES_KEY],
-    queryFn: async () => {
+    queryFn: async (): Promise<GetImagesResponse> => {
       const response = await api.get(IMAGES_ENDPOINT);
       return response.data;
     },
@@ -36,3 +36,7 @@ export type TImage = {
 };
 
 export type TImageInput = Omit<TImage, "id" | "createdAt" | "updatedAt">;
+
+export type GetImagesResponse = {
+  images: TImage[];
+};
