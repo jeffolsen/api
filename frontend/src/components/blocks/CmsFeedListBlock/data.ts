@@ -7,7 +7,7 @@ import { TFeedSort, TSubjectType, useGetFeeds } from "../../../network/feed";
 const variants = {
   default: {
     width: "lg",
-    pageSize: 3,
+    pageSize: 5,
   },
 } as const;
 

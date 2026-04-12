@@ -295,6 +295,7 @@ function ComponentDeleteButton({
   FormReponseHandlerProps & {
     defaultValues: {
       id: number;
+      feedId: number;
     };
   }) {
   const deleteComponent = useDeleteComponent();
@@ -305,10 +306,16 @@ function ComponentDeleteButton({
       onClick={() =>
         confirm("Are you sure you want to delete this component?") &&
         withFormHandling(async () => {
-          await deleteComponent.mutateAsync(defaultValues.id, {
-            onSuccess: handleSuccess,
-            onError: handleError,
-          });
+          await deleteComponent.mutateAsync(
+            {
+              id: defaultValues.id,
+              feedId: defaultValues.feedId as number,
+            },
+            {
+              onSuccess: handleSuccess,
+              onError: handleError,
+            },
+          );
         })
       }
       {...props}

@@ -8,7 +8,7 @@ import { useSearchParam } from "../../../hooks/useSearchParam";
 const variants = {
   default: {
     width: "lg",
-    pageSize: 3,
+    pageSize: 10,
     privateOnly: true,
   },
 } as const;
@@ -23,7 +23,8 @@ function useItemListBlockData({
   const { variant, isPrimaryContent } =
     propertyValues as TItemListBlockData["propertyValues"];
 
-  const { pageSize, privateOnly, ...blockSettings } = variants[variant] || variants["default"];
+  const { pageSize, privateOnly, ...blockSettings } =
+    variants[variant] || variants["default"];
 
   const profile = useGetAuthenticatedProfile();
 
@@ -56,7 +57,12 @@ function useItemListBlockData({
 
   return {
     blockProps: {
-      settings: { ...blockSettings, isPrimaryContent, pageSize, queryTags: tags },
+      settings: {
+        ...blockSettings,
+        isPrimaryContent,
+        pageSize,
+        queryTags: tags,
+      },
       id,
       title: name,
     },

@@ -9,7 +9,7 @@ function Layout({ children }: PropsWithChildren) {
     <HeadingLevelProvider>
       <div className="min-h-screen flex flex-col justify-between bg-base-100">
         <Header />
-        <main className="flex-grow flex flex-col gap-6 items-center justify-center py-6">
+        <main className="flex-grow flex flex-col gap-6 items-center justify-start py-6">
           <BreadCrumbs />
           {children}
         </main>

@@ -31,6 +31,7 @@ export const buttonColorClasses = {
   warning: "btn-warning",
   error: "btn-error",
   disabled: "btn-disabled",
+  ghost: "btn-ghost",
 };
 
 export type ButtonColor = keyof typeof buttonColorClasses;
