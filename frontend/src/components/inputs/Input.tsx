@@ -18,6 +18,7 @@ import DateRangeArrayInput from "./DateRangeArrayInput";
 import ToggleInput from "./ToggleInput";
 import RadioInput from "./RadioInput";
 import ItemArrayInput from "./ItemArrayInput";
+import ReferenceFeedInput from "./ReferenceFeedInput";
 
 export type FromFormProps = {
   control: Control;
@@ -43,7 +44,8 @@ export type AtomicFormComponentName =
   | "RadioInput"
   | "ImageSelectArrayInput"
   | "TagArrayInput"
-  | "ItemArrayInput";
+  | "ItemArrayInput"
+  | "ReferenceFeedInput";
 
 export type CompoundFormComponentName = "DateRangeArrayInput";
 
@@ -63,6 +65,7 @@ export type FormInputProps = {
 export type FormSectionProps = {
   dataName: string;
   displayName: string;
+  description?: string;
 };
 export type DecorativeFormComponentProps = {
   componentName: DecorativeFormComponentName;
@@ -132,6 +135,11 @@ export const FormInput = (props: FormComponentProps & FromFormProps) => {
     />
   ) : props.componentName === "ItemArrayInput" ? (
     <ItemArrayInput
+      {...props}
+      errors={get(props.errors || {}, props.dataName)}
+    />
+  ) : props.componentName === "ReferenceFeedInput" ? (
+    <ReferenceFeedInput
       {...props}
       errors={get(props.errors || {}, props.dataName)}
     />

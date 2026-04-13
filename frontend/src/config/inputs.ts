@@ -183,6 +183,8 @@ export const IS_SINGLE_SUBJECT_TYPE_INPUT = {
   dataName: "isSingleSubjectType",
   displayName: "Use dynamic Item ID in path",
   componentName: "ToggleInput",
+  description:
+    "Toggle to use a dynamic Item ID in the feed path, e.g. /feed/{itemId}",
 } as FormComponentProps;
 export const IS_SINGLE_SUBJECT_TYPE_DEFAULT = { isSingleSubjectType: false };
 

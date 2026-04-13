@@ -12,6 +12,7 @@ import {
 import clsx from "clsx";
 import Loading from "../common/Loading";
 import { TTagInput } from "../../network/tag";
+import Tooltip from "../common/Tooltip";
 
 type TagnameArrayFields = Array<TTagInput & { id: string }>;
 
@@ -24,6 +25,7 @@ function TagArrayInput(
   const {
     dataName,
     displayName,
+    description,
     control,
     errors,
     input: { rules },
@@ -67,12 +69,13 @@ function TagArrayInput(
   return (
     <>
       <fieldset className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20 text-neutral-content/70">
-        <legend className="label-text text-sm font-semibold text-neutral-content/70 w-full float-start">
+        <legend className="label-text text-sm font-semibold text-neutral-content/70 w-full float-start flex items-center gap-3">
           {displayName}{" "}
           <FieldArrayMinAndMax
             minLength={(rules as FieldArrayMinMaxRule)?.minLength?.value}
             maxLength={(rules as FieldArrayMinMaxRule)?.maxLength?.value}
           />
+          {description && <Tooltip text={description} />}
         </legend>
         <Grid
           columns={{ base: "2", sm: "3", md: "4" }}

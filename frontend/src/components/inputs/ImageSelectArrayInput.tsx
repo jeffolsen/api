@@ -13,6 +13,7 @@ import Modal from "../layout/Modal";
 import Image from "../common/Image";
 import Button, { PlusButton, XButton } from "../common/Button";
 import Loading from "../common/Loading";
+import Tooltip from "../common/Tooltip";
 
 const typeFilters = ["ICON", "LANDSCAPE", "PORTRAIT", "OTHER", ""] as const;
 
@@ -65,7 +66,15 @@ function ImageSelectInput(
     "watch" | "registerOptions" | "componentName"
   >,
 ) {
-  const { displayName, dataName, control, register, errors, input } = props;
+  const {
+    displayName,
+    dataName,
+    description,
+    control,
+    register,
+    errors,
+    input,
+  } = props;
   const { fields, append, remove } = useFieldArray({
     control,
     name: dataName,
@@ -102,12 +111,13 @@ function ImageSelectInput(
   return (
     <>
       <fieldset className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20">
-        <legend className="label-text text-sm font-semibold text-neutral-content/70 w-full float-start">
+        <legend className="label-text text-sm font-semibold text-neutral-content/70 w-full float-start flex items-center gap-3">
           {displayName}{" "}
           <FieldArrayMinAndMax
             minLength={rulesProps?.minLength?.value}
             maxLength={rulesProps?.maxLength?.value}
           />
+          {description && <Tooltip text={description} />}
         </legend>
         <span className="flex flex-wrap gap-4 w-full">
           {(fields as ImageIdArrayFields).map((field, index) => (

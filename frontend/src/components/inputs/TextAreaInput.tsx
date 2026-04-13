@@ -7,7 +7,10 @@ import {
 } from "./Input";
 
 export const TextAreaInput = (
-  props: Omit<AtomicFormComponentProps & ChildFromFormProps, "control" | "rules">,
+  props: Omit<
+    AtomicFormComponentProps & ChildFromFormProps,
+    "control" | "rules"
+  >,
 ) => {
   const { dataName, displayName, register, watch, errors, input } = props;
   const required = !!input?.registerOpts?.required;

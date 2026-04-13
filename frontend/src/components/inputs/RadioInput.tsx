@@ -6,6 +6,7 @@ import {
   FormError,
   SelectableOption,
 } from "./Input";
+import Tooltip from "../common/Tooltip";
 
 export type RadioInputProps = Omit<
   AtomicFormComponentProps & ChildFromFormProps,
@@ -13,7 +14,8 @@ export type RadioInputProps = Omit<
 >;
 
 export const RadioInput = (props: RadioInputProps) => {
-  const { dataName, displayName, register, watch, errors, input } = props;
+  const { dataName, displayName, description, register, watch, errors, input } =
+    props;
   const required = !!input?.registerOpts?.required;
   const valueOptions = input?.valueOptions || [];
   const watchedValue = watch(dataName);
@@ -30,13 +32,14 @@ export const RadioInput = (props: RadioInputProps) => {
             "label-text text-sm font-semibold text-neutral-content/70 w-full float-start",
           ])}
         >
-          <span>
+          <span className="flex gap-3 items-center">
             <RequiredLabel
               watchedValue={watchedValue}
               required={required}
               position="absolute"
             />
             {displayName}
+            {description && <Tooltip text={description} />}
           </span>
         </legend>
         <div className="flex flex-wrap gap-4">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Combobox,
   ComboboxInput,
@@ -12,7 +12,7 @@ import {
   FieldArrayMinMaxRule,
   FormError,
 } from "./Input";
-import { TItem, GetItemsResponse, useGetItems } from "../../network/item";
+import { TFeed, GetFeedsResponse, useGetFeeds } from "../../network/feed";
 import { useFieldArray } from "react-hook-form";
 import Grid from "../common/Grid";
 import useDebounce from "../../hooks/useDebounce";
@@ -20,10 +20,10 @@ import { IconButton, XButton } from "../common/Button";
 import { ChevronDown, ChevronUp, Plus } from "lucide-react";
 import Tooltip from "../common/Tooltip";
 
-type ItemIdField = { id: string; itemId: TItem["id"]; name: TItem["name"] };
-type ItemIdArrayFields = Array<ItemIdField>;
+type FeedIdField = { id: string; feedId: TFeed["id"]; path: TFeed["path"] };
+type feedIdArrayFields = Array<FeedIdField>;
 
-function ItemArrayInput(
+function ReferenceFeedInput(
   props: Omit<
     AtomicFormComponentProps & ChildFromFormProps,
     "watch" | "registerOptions" | "componentName"
@@ -44,16 +44,23 @@ function ItemArrayInput(
   });
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce<string>(searchTerm, 3000);
-  const getItems = useGetItems({
-    ...(debouncedSearchTerm && { searchName: debouncedSearchTerm }),
+  const geTFeeds = useGetFeeds({
+    ...(debouncedSearchTerm && { searchPath: debouncedSearchTerm }),
+    subjectTypes: ["SINGLE"],
     pageSize: 10,
   });
-  const items = (getItems.data as GetItemsResponse)?.items || [];
+  const feeds = (geTFeeds.data as GetFeedsResponse)?.feeds || [];
 
-  const getExistingItemQuery = useGetItems({
-    ids: (fields as ItemIdArrayFields).map((field) => field.itemId),
+  const getExistingFeedQuery = useGetFeeds({
+    ids: (fields as feedIdArrayFields).map((field) => field.feedId),
   });
-  const existingItems = (getExistingItemQuery.data as GetItemsResponse)?.items;
+  const existingFeeds = (getExistingFeedQuery.data as GetFeedsResponse)?.feeds;
+
+  const canAddMore = useMemo(() => {
+    const maxLength = (rules as FieldArrayMinMaxRule)?.maxLength?.value;
+    const check = !maxLength || maxLength > fields.length;
+    return check;
+  }, [fields.length, rules]);
 
   return (
     <>
@@ -67,32 +74,37 @@ function ItemArrayInput(
           {description && <Tooltip text={description} />}
         </legend>
         <Grid
-          items={(fields as ItemIdArrayFields).map((field, index) => (
+          items={(fields as feedIdArrayFields).map((field, index) => (
             <div
               key={field.id}
               className="relative flex items-center gap-2 border-base-content/20 border rounded px-4 py-3"
             >
-              <div className="flex flex-col gap-2">
-                <IconButton
-                  disabled={index === 0}
-                  onClick={() => swap(index, Math.max(0, index - 1))}
-                  size="xs"
-                >
-                  <ChevronUp />
-                </IconButton>
-                <IconButton
-                  disabled={index === fields.length - 1}
-                  onClick={() =>
-                    swap(index, Math.min(index + 1, fields.length - 1))
-                  }
-                  size="xs"
-                >
-                  <ChevronDown />
-                </IconButton>
-              </div>
+              {fields.length > 1 && (
+                <div className="flex flex-col gap-2">
+                  <IconButton
+                    disabled={index === 0}
+                    onClick={() => swap(index, Math.max(0, index - 1))}
+                    size="xs"
+                  >
+                    <ChevronUp />
+                  </IconButton>
+                  <IconButton
+                    disabled={index === fields.length - 1}
+                    onClick={() =>
+                      swap(index, Math.min(index + 1, fields.length - 1))
+                    }
+                    size="xs"
+                  >
+                    <ChevronDown />
+                  </IconButton>
+                </div>
+              )}
               <span className="truncate max-w-full mr-6">
-                {field.name ||
-                  existingItems?.find((item) => item.id === field.itemId)?.name}
+                {`/${
+                  field.path ||
+                  existingFeeds?.find((f) => f.id === field.feedId)?.path
+                }
+                /:id`}
               </span>
               <XButton
                 onClick={() => {
@@ -104,31 +116,33 @@ function ItemArrayInput(
           ))}
         />
         <Combobox
-          onChange={(e: ItemIdField | null) => {
+          onChange={(e: FeedIdField | null) => {
             if (e) {
               append(e);
               setSearchTerm("");
             }
           }}
         >
-          <ComboboxInput
-            className="input input-bordered w-full"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          {canAddMore && (
+            <ComboboxInput
+              className="input input-bordered w-full"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          )}
           <ComboboxOptions className="w-[var(--input-width)]">
-            {items?.map((item) => (
+            {feeds?.map((feed) => (
               <ComboboxOption
                 className="flex items-center gap-2 cursor-pointer rounded px-4 py-3"
-                key={item.id}
+                key={feed.id}
                 value={{
                   id: crypto.randomUUID(),
-                  itemId: item.id,
-                  name: item.name,
+                  feedId: feed.id,
+                  name: feed.path,
                 }}
               >
                 <Plus />
-                <span className="truncate max-w-full">{item.name}</span>
+                <span className="truncate max-w-full">{`/${feed.path}/:id`}</span>
               </ComboboxOption>
             ))}
           </ComboboxOptions>
@@ -139,4 +153,4 @@ function ItemArrayInput(
   );
 }
 
-export default ItemArrayInput;
+export default ReferenceFeedInput;

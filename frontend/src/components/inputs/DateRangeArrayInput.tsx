@@ -12,6 +12,7 @@ import { XButton, PlusButton } from "../common/Button";
 import TextInput, { TextInputProps } from "./TextInput";
 import { Fragment } from "react";
 import { TDateRangeInput } from "../../network/dateRange";
+import Tooltip from "../common/Tooltip";
 
 function DateRangeSelectInput(
   props: CompoundFormComponentProps & FromFormProps,
@@ -19,6 +20,7 @@ function DateRangeSelectInput(
   const {
     dataName,
     displayName,
+    description,
     control,
     register,
     watch,
@@ -57,12 +59,13 @@ function DateRangeSelectInput(
   return (
     <>
       <fieldset className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20">
-        <legend className="label-text text-sm font-semibold text-neutral-content/70 w-full float-start">
+        <legend className="label-text text-sm font-semibold text-neutral-content/70 w-full float-start flex items-center gap-3">
           {displayName}{" "}
           <FieldArrayMinAndMax
             minLength={rulesProps?.minLength?.value}
             maxLength={rulesProps?.maxLength?.value}
           />
+          {description && <Tooltip text={description} />}
         </legend>
         {fields.length > 0 && (
           <div className="flex flex-col items-center gap-8 w-full">

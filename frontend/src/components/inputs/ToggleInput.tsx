@@ -5,6 +5,7 @@ import {
   RequiredLabel,
   FormError,
 } from "./Input";
+import Tooltip from "../common/Tooltip";
 
 export type ToggleInputProps = Omit<
   AtomicFormComponentProps & ChildFromFormProps,
@@ -12,7 +13,8 @@ export type ToggleInputProps = Omit<
 >;
 
 export const ToggleInput = (props: ToggleInputProps) => {
-  const { dataName, displayName, register, watch, errors, input } = props;
+  const { dataName, displayName, description, register, watch, errors, input } =
+    props;
   const required = !!input?.registerOpts?.required;
   const watchedValue = watch(dataName);
   const elementProps = { ...input?.element };
@@ -26,13 +28,14 @@ export const ToggleInput = (props: ToggleInputProps) => {
           "border rounded p-4 pl-6 border-base-content/20 text-neutral-content/70 text-sm",
         ])}
       >
-        <span>
+        <span className="flex gap-3 items-center">
           <RequiredLabel
             watchedValue={watchedValue}
             required={required}
             position="absolute"
           />
           {displayName}
+          {description && <Tooltip text={description} />}
         </span>
         <input
           className="toggle"

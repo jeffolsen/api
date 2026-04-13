@@ -90,6 +90,7 @@ export default function convertJSONSchemaToFormInputs(
           dataName: `propertyValues.${key}`,
           displayName: value?.["title"] || key,
           componentName: "TagArrayInput",
+          description: value?.["description"],
           input: {
             rules: {
               ...getMaxItems(value),
@@ -105,6 +106,23 @@ export default function convertJSONSchemaToFormInputs(
           dataName: `propertyValues.${key}`,
           displayName: value?.["title"] || key,
           componentName: "ItemArrayInput",
+          description: value?.["description"],
+          input: {
+            rules: {
+              ...getMaxItems(value),
+              ...getMinItems(value),
+              ...getUniqueItems(value),
+            },
+          },
+        });
+        defaults[key] = [];
+        break;
+      case "referenceFeed":
+        inputs.push({
+          dataName: `propertyValues.${key}`,
+          displayName: value?.["title"] || key,
+          componentName: "ReferenceFeedInput",
+          description: value?.["description"],
           input: {
             rules: {
               ...getMaxItems(value),
@@ -120,6 +138,8 @@ export default function convertJSONSchemaToFormInputs(
           dataName: `propertyValues.${key}`,
           displayName: value?.["title"] || key,
           componentName: "ToggleInput",
+          description: value?.["description"],
+
           input: {},
         });
         defaults[key] = false;
@@ -129,6 +149,7 @@ export default function convertJSONSchemaToFormInputs(
           dataName: `propertyValues.${key}`,
           displayName: value?.["title"] || key,
           componentName: "RadioInput",
+          description: value?.["description"],
           input: {
             valueOptions:
               "enum" in value && Array.isArray(value.enum)
