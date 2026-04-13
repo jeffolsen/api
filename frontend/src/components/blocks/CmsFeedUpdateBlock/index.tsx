@@ -24,6 +24,8 @@ import {
   LayoutGrid,
   BookUser,
   ZodiacGemini,
+  List,
+  Spotlight,
 } from "lucide-react";
 import Modal from "../../layout/Modal";
 import clsx from "clsx";
@@ -346,6 +348,8 @@ function ComponentTypeButton({
     TeaserGrid: <LayoutGrid size={48} />,
     RelatedContent: <ZodiacGemini size={48} />,
     Detail: <BookUser size={48} />,
+    CuratedList: <List size={48} />,
+    ContentHeader: <Spotlight size={48} />,
   };
   return (
     <button

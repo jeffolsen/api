@@ -13,6 +13,12 @@ const LazyLoadedRelatedContentBlock = lazy(
 const LazyLoadedTeaserGridBlock = lazy(
   () => import("./BuildTeaserGridBlock/index"),
 );
+const LazyLoadedBuildCuratedListBlock = lazy(
+  () => import("./BuildCuratedListBlock/index"),
+);
+const LazyLoadedBuildContentHeaderBlock = lazy(
+  () => import("./BuildContentHeaderBlock/index"),
+);
 
 // Default blocks
 const LazyLoadedGenericBlock = lazy(
@@ -67,6 +73,8 @@ const Blocks = {
   FeedList: LazyLoadedFeedListBlock,
   FeedCreate: LazyLoadedFeedCreateBlock,
   FeedUpdate: LazyLoadedFeedUpdateBlock,
+  CuratedList: LazyLoadedBuildCuratedListBlock,
+  ContentHeader: LazyLoadedBuildContentHeaderBlock,
 };
 
 export default Blocks;
