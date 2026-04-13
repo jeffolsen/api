@@ -14,7 +14,9 @@ import throwError from "../util/throwError";
 import { MESSAGE_FEED_NOT_FOUND } from "../config/errorMessages";
 
 type GetFeedsQuery = {
+  searchPath?: string;
   subjectTypes?: string;
+  ids?: string;
   sort?: string;
   page?: number;
   pageSize?: number;
@@ -23,12 +25,17 @@ type GetFeedsQuery = {
 export const getAllFeeds: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const { subjectTypes, sort, page, pageSize } = GetAllFeedsQuerySchema.parse(
-      req.query as GetFeedsQuery,
-    );
+    const { ids, subjectTypes, sort, page, pageSize, searchPath } =
+      GetAllFeedsQuerySchema.parse(req.query as GetFeedsQuery);
 
     const where = {
       profileId,
+      ...(searchPath && {
+        path: { contains: searchPath },
+      }),
+      ...(ids.length && {
+        id: { in: ids },
+      }),
       ...(subjectTypes.length && {
         subjectType: { in: subjectTypes },
       }),
@@ -60,13 +67,25 @@ export const getFeedById: RequestHandler = catchErrors(
   },
 );
 
+type GetFeedByPathParams = {
+  path: string;
+};
+
+type GetFeedByPathQuery = {
+  subjectType?: string;
+};
+
 export const getFeedByPath: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const { path } = req.params;
+    const { path } = req.params as GetFeedByPathParams;
+    const { subjectType: st } = req.query as GetFeedByPathQuery;
+
+    const subjectType =
+      st === "SINGLE" ? "SINGLE" : ("COLLECTION" as SubjectType);
 
     const feed = await prismaClient.feed.findFirst({
-      where: { path, profileId },
+      where: { path, profileId, subjectType },
     });
 
     throwError(feed, NOT_FOUND, MESSAGE_FEED_NOT_FOUND);
@@ -84,10 +103,14 @@ type CreateFeedBody = {
 export const createFeed: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
-    const data = CreateFeedBodySchema.parse(req.body as CreateFeedBody);
+    const { path, subjectType, publishedAt, expiredAt } =
+      CreateFeedBodySchema.parse(req.body as CreateFeedBody);
     const feed = await prismaClient.feed.create({
       data: {
-        ...data,
+        path,
+        subjectType,
+        publishedAt,
+        expiredAt,
         profileId,
       },
     });

@@ -1,7 +1,6 @@
 import prismaClient, {
   ApiKey,
   CodeType,
-  ComponentType,
   ExtendedProfile,
   Profile,
 } from "../db/client";

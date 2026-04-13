@@ -2,11 +2,15 @@ import { z } from "zod";
 import { SubjectType } from "../db/client";
 
 export const TagAllowListSchema = z.object({
-  itemAllowList: z.array(z.string()),
+  tagAllowList: z.array(z.string()),
 });
 
 export const ItemAllowListSchema = z.object({
   itemAllowList: z.array(z.number()),
+});
+
+export const ReferenceFeedSchema = z.object({
+  referenceFeedId: z.array(z.number()),
 });
 
 export const ObjectSchema = z.record(z.string(), z.unknown());

@@ -109,7 +109,7 @@ async function main() {
             sortName: sortWord(name),
             description,
             authorId: profile.id,
-            isPrivate: false,
+            isPrivate: !!item.isPrivate,
             publishedAt: new Date(),
             tags: {
               create: tags.map(({ id }) => ({ tagId: id })),

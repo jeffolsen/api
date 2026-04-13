@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { RELATIVE_PATH_REGEX } from "../config/constants";
 import {
-  dateTimeSchema,
+  idArraySchema,
   idStringSchema,
   publishedAtAndExpiredAtSchema,
   subjectTypesArraySchema,
@@ -34,6 +34,18 @@ export const feedsSortArraySchema = z
   }, "Sort values must be unique");
 
 export const GetAllFeedsQuerySchema = z.object({
+  ids: z
+    .preprocess((val) => {
+      if (typeof val === "string") {
+        const idArray = val.split(",").map((id) => id.trim());
+        if (idArray.every((id) => !isNaN(Number(id)))) {
+          return idArray.map((id) => Number(id));
+        }
+      }
+      return [];
+    }, idArraySchema)
+    .default([]),
+  searchPath: z.string().optional(),
   sort: z.preprocess((val) => {
     if (typeof val === "string") {
       return val.split(",").map((sort) => sort.trim());
