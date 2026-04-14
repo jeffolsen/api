@@ -26,6 +26,7 @@ import {
   ZodiacGemini,
   List,
   Spotlight,
+  CornerDownLeft,
 } from "lucide-react";
 import Modal from "../../layout/Modal";
 import clsx from "clsx";
@@ -321,7 +322,7 @@ function ComponentTypeModal({
           >
             Collection Subject
           </Heading>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {collectionSubjectTypes.map((ct: TComponentType) => (
               <ComponentTypeButton
                 key={ct.id}
@@ -350,6 +351,7 @@ function ComponentTypeButton({
     Detail: <BookUser size={48} />,
     CuratedList: <List size={48} />,
     ContentHeader: <Spotlight size={48} />,
+    Redirect: <CornerDownLeft size={48} />,
   };
   return (
     <button

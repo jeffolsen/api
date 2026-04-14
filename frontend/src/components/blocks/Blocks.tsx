@@ -19,6 +19,9 @@ const LazyLoadedBuildCuratedListBlock = lazy(
 const LazyLoadedBuildContentHeaderBlock = lazy(
   () => import("./BuildContentHeaderBlock/index"),
 );
+const LazyLoadedBuildRedirectBlock = lazy(
+  () => import("./BuildRedirectBlock/index"),
+);
 
 // Default blocks
 const LazyLoadedGenericBlock = lazy(
@@ -75,6 +78,7 @@ const Blocks = {
   FeedUpdate: LazyLoadedFeedUpdateBlock,
   CuratedList: LazyLoadedBuildCuratedListBlock,
   ContentHeader: LazyLoadedBuildContentHeaderBlock,
+  Redirect: LazyLoadedBuildRedirectBlock,
 };
 
 export default Blocks;
