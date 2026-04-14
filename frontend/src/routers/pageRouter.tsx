@@ -15,6 +15,9 @@ import {
   fetchUserFeedById,
   fetchUserItemById,
   userItemQueryKey,
+  fetchUserRefresh,
+  fetchUserFeedComponents,
+  userFeedComponentsQueryKey,
 } from "../network/user";
 import { QueryClient } from "@tanstack/react-query";
 import { TFeed } from "../network/feed";
@@ -41,8 +44,22 @@ const loader =
     const cmsHomePath = paths.cmsHome.slice(1);
     const cmsPreviewPath = paths.cmsPreview.slice(1);
 
+    // login check for any cms path
+    if (path.startsWith(cmsHomePath) && path !== cmsHomePath) {
+      try {
+        await fetchUserRefresh();
+      } catch (error) {
+        throw new Response(
+          error instanceof Error ? error.message : "Unknown error",
+          { status: 404 },
+        );
+      }
+    }
+
     // select feeds and prefix for cms preview.
-    if (path.startsWith(cmsPreviewPath) && path !== cmsPreviewPath) {
+    const isPreviewLink =
+      path.startsWith(cmsPreviewPath) && path !== cmsPreviewPath;
+    if (isPreviewLink) {
       try {
         dbRoutes = await queryClient.fetchQuery({
           queryKey: userFeedsQueryKey(),
@@ -58,22 +75,6 @@ const loader =
           { status: 404 },
         );
       }
-      // select feeds for caching but really this is just a login check.
-    } else if (path.startsWith(cmsHomePath) && path !== cmsHomePath) {
-      try {
-        dbRoutes = await queryClient.fetchQuery({
-          queryKey: userFeedsQueryKey(),
-          queryFn: async () => {
-            return fetchUserFeeds();
-          },
-        });
-      } catch (error) {
-        throw new Response(
-          error instanceof Error ? error.message : "Unknown error",
-          { status: 404 },
-        );
-      }
-      // select feeds for app if not a cms path
     } else {
       dbRoutes = await queryClient.fetchQuery({
         queryKey: appFeedsQueryKey(),
@@ -91,8 +92,6 @@ const loader =
           rootPath + (f.subjectType === "SINGLE" ? `${f.path}/:id` : f.path),
       })) || []),
     ];
-
-    console.log("All routes available to the router:", allRoutes);
 
     let feed = allRoutes.find((r) => r.path === path);
 
@@ -163,7 +162,17 @@ const loader =
       });
     }
 
-    if (feed && !feed.components) {
+    // we need to ensure the feed has components. Either grab components for the site or preview.
+    const needsComponents = feed && !feed.components;
+    if (needsComponents && isPreviewLink) {
+      const feedComponents = await queryClient.fetchQuery({
+        queryKey: userFeedComponentsQueryKey(feed.id),
+        queryFn: async () => {
+          return fetchUserFeedComponents(feed.id);
+        },
+      });
+      feed = { ...feed, components: feedComponents.components };
+    } else if (needsComponents) {
       const feedComponents = await queryClient.fetchQuery({
         queryKey: appFeedComponentsQueryKey(feed.id),
         queryFn: async () => {
