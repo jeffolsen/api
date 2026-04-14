@@ -1,9 +1,7 @@
 import { TFeed } from "../network/feed";
 import { TComponent } from "../network/component";
 
-export const paths = {
-  notFound: "/404",
-  unauthorized: "/401",
+export const cmsPaths = {
   cmsHome: "/cms",
   cmsFeedsList: "/cms/feeds",
   cmsFeedCreate: "/cms/feeds/new",
@@ -11,6 +9,20 @@ export const paths = {
   cmsItemsList: "/cms/items",
   cmsItemCreate: "/cms/items/new",
   cmsItemUpdate: "/cms/items/:id",
+  cmsPreview: "/cms/preview",
+} as const;
+
+export const defaultPaths = {
+  notFound: "/404",
+  unauthorized: "/401",
+  // contact: "/contact",
+  // styleGuide: "/style-guide",
+  // siteMap: "/sitemap",
+} as const;
+
+export const paths = {
+  ...defaultPaths,
+  ...cmsPaths,
 } as const;
 
 type CmsComponentTypeName =
