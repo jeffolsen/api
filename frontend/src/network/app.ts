@@ -37,6 +37,8 @@ export const appFeedByPathQueryKey = (path: string) =>
   [APP_KEY, FEEDS_KEY, path] as const;
 export const appFeedComponentsQueryKey = (feedId: number) =>
   [APP_KEY, FEEDS_KEY, feedId, COMPONENTS_KEY] as const;
+export const appItemQueryKey = (id: number) =>
+  [APP_KEY, ITEMS_KEY, id] as const;
 export const appImagesQueryKey = () => [APP_KEY, IMAGES_KEY] as const;
 
 export const fetchAppFeeds = async () => {
@@ -56,6 +58,13 @@ export const fetchAppFeedComponents = async (feedId: number) => {
       headers,
     },
   );
+  return response.data;
+};
+
+export const fetchAppItemById = async (id: number) => {
+  const response = await app.get(`${ITEMS_ENDPOINT}/${id}`, {
+    headers,
+  });
   return response.data;
 };
 
