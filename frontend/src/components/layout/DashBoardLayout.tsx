@@ -4,6 +4,7 @@ import Text from "../common/Text";
 import dayjs, { longDatetime, techDatetime } from "../../utils/dayjs";
 import { TProfile } from "../../network/profile";
 import { PropsWithChildren } from "react";
+import { paths } from "../../config/routes";
 
 type DashBoardLayoutProps = PropsWithChildren<{
   profile: TProfile;
@@ -32,7 +33,7 @@ function DashBoardLayout({ profile, children }: DashBoardLayoutProps) {
           as="Link"
           color="primary"
           className="flex-1 md:w-auto"
-          to="/items"
+          to={paths.cmsItemsList}
         >
           Items
         </Button>
@@ -40,11 +41,16 @@ function DashBoardLayout({ profile, children }: DashBoardLayoutProps) {
           as="Link"
           color="primary"
           className="flex-1 md:w-auto"
-          to="/feeds"
+          to={paths.cmsFeedsList}
         >
           Feeds
         </Button>
-        <Button as="Link" color="primary" className="flex-1 md:w-auto" to="/">
+        <Button
+          as="Link"
+          color="primary"
+          className="flex-1 md:w-auto"
+          to={paths.cmsHome}
+        >
           Home
         </Button>
       </div>

@@ -1,3 +1,4 @@
+import { paths } from "../../config/routes";
 import { useSearchParam } from "../../hooks/useSearchParam";
 import Button from "../common/Button";
 import DropDownMenu from "../common/DropDownMenu";
@@ -6,19 +7,24 @@ import { Plus } from "lucide-react";
 import { useMemo } from "react";
 
 export const ListNavigation = ({
-  initialPageSize,
+  pageSize,
   totalCount,
   text = "New Item",
-  newPath = "/items/new",
+  newPath = paths.cmsItemCreate,
 }: {
-  initialPageSize: number;
+  pageSize: number;
   totalCount: number;
   text?: string;
   newPath?: string;
 }) => {
+  console.log(
+    "Rendering ListNavigation with totalCount:",
+    totalCount,
+    typeof totalCount,
+  );
   return (
     <div className="flex flex-col md:flex-row gap-4 sm:justify-between items-center">
-      <PaginateItemBar pageSize={initialPageSize} itemCount={totalCount} />
+      <PaginateItemBar pageSize={pageSize} itemCount={totalCount} />
       <Button
         as="Link"
         to={newPath}
