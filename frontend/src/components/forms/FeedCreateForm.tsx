@@ -72,7 +72,7 @@ const mapGetFeedToFormValues = (feed: TFeedInput & { id: number }) => {
   return {
     id: feed.id,
     path: feed.path,
-    isSingleSubject: feed.subjectType === "SINGLE",
+    isSingleSubjectType: feed.subjectType === "SINGLE",
     publishedAt: feed.publishedAt
       ? convertZuluToLocalDateTime(feed.publishedAt)
       : null,

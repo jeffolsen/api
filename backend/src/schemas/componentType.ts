@@ -10,7 +10,7 @@ export const ItemAllowListSchema = z.object({
 });
 
 export const ReferenceFeedSchema = z.object({
-  referenceFeedId: z.array(z.number()),
+  referenceFeed: z.array(z.number()),
 });
 
 export const ObjectSchema = z.record(z.string(), z.unknown());

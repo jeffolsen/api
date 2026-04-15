@@ -1,5 +1,11 @@
 import { EmptyObject } from "react-hook-form";
 import { FormComponentProps } from "../components/inputs/Input";
+import {
+  convertIdArrayToNumbers,
+  convertNumbersToIdArray,
+  convertStringsToTagnameArray,
+  convertTagnameArrayToStrings,
+} from "./formToApiMapper";
 
 function getMaxItems(schema: JSONSchemaForArray): {
   maxLength?: { value: number; message: string };
@@ -156,15 +162,66 @@ export default function convertJSONSchemaToFormInputs(
                 ? value.enum.map((option: string, index: number) => ({
                     label: value?.["enumNames"]?.[index] || option,
                     value: option,
-                    default: option === value.default,
                   }))
                 : [],
           },
         });
-        defaults[key] = "";
+        defaults[key] = value.default;
         break;
     }
   }
 
   return { inputs, defaults: { propertyValues: defaults } };
 }
+
+export const propertyValuesFromFormMapper = (values: {
+  propertyValues: Record<string, unknown>;
+}) => {
+  const { tagAllowList, itemAllowList, referenceFeed, ...rest } =
+    values.propertyValues;
+  return {
+    ...rest,
+    ...(!!tagAllowList && {
+      tagAllowList: convertTagnameArrayToStrings(
+        tagAllowList as { name: string }[],
+      ),
+    }),
+    ...(!!itemAllowList && {
+      itemAllowList: convertIdArrayToNumbers(
+        "itemId",
+        itemAllowList as { itemId: number }[],
+      ),
+    }),
+    ...(!!referenceFeed && {
+      referenceFeed: convertIdArrayToNumbers(
+        "feedId",
+        referenceFeed as { feedId: number }[],
+      ),
+    }),
+  };
+};
+
+export const propertyValuesToFormMapper = (
+  propertyValues: Record<string, unknown>,
+) => {
+  const { tagAllowList, itemAllowList, referenceFeed, ...rest } =
+    propertyValues;
+  return {
+    ...rest,
+    ...(!!tagAllowList && {
+      tagAllowList: convertStringsToTagnameArray(tagAllowList as string[]),
+    }),
+    ...(!!itemAllowList && {
+      itemAllowList: convertNumbersToIdArray(
+        "itemId",
+        itemAllowList as number[],
+      ),
+    }),
+    ...(!!referenceFeed && {
+      referenceFeed: convertNumbersToIdArray(
+        "feedId",
+        referenceFeed as number[],
+      ),
+    }),
+  };
+};

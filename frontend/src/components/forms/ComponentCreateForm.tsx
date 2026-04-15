@@ -25,13 +25,10 @@ import {
 import FormScheduleSubmit from "../inputs/FormScheduleSubmit";
 import Loading from "../common/Loading";
 import { useMemo } from "react";
-import convertJSONSchemaToFormInputs from "../../utils/jsonSchemaTransformer";
-import {
-  convertIdArrayToNumbers,
-  convertNumbersToIdArray,
-  convertStringsToTagnameArray,
-  convertTagnameArrayToStrings,
-} from "../../utils/formToApiMapper";
+import convertJSONSchemaToFormInputs, {
+  propertyValuesFromFormMapper,
+  propertyValuesToFormMapper,
+} from "../../utils/jsonSchemaTransformer";
 import Button, { IconButton } from "../common/Button";
 import { ChevronUp, ChevronDown, Trash } from "lucide-react";
 import FormPublishSubmit from "../inputs/FormPublishSubmit";
@@ -53,20 +50,7 @@ const mapFormValuesToCreateComponentRequest = (
   feedId: values.feedId,
   name: values.name,
   order: values.order,
-  propertyValues: {
-    ...(values.propertyValues || {}),
-    ...(!!values.propertyValues?.tagAllowList && {
-      tagAllowList: convertTagnameArrayToStrings(
-        values.propertyValues.tagAllowList as { name: string }[],
-      ),
-    }),
-    ...(!!values.propertyValues?.itemAllowList && {
-      itemAllowList: convertIdArrayToNumbers(
-        "itemId",
-        values.propertyValues.itemAllowList as { itemId: number }[],
-      ),
-    }),
-  },
+  propertyValues: propertyValuesFromFormMapper(values),
   publishedAt: values.publishedAt
     ? convertLocalDateTimeToZulu(values.publishedAt)
     : null,
@@ -85,20 +69,7 @@ const mapFormValuesToPatchComponentRequest = (
   ...(values.name && { name: values.name }),
   ...(values.order && { order: values.order }),
   ...(values.propertyValues && {
-    propertyValues: {
-      ...values.propertyValues,
-      ...(!!values.propertyValues?.tagAllowList && {
-        tagAllowList: convertTagnameArrayToStrings(
-          values.propertyValues.tagAllowList as { name: string }[],
-        ),
-      }),
-      ...(!!values.propertyValues?.itemAllowList && {
-        itemAllowList: convertIdArrayToNumbers(
-          "itemId",
-          values.propertyValues.itemAllowList as { itemId: number }[],
-        ),
-      }),
-    },
+    propertyValues: propertyValuesFromFormMapper(values as FormValues),
   }),
   ...(values.publishedAt
     ? {
@@ -124,20 +95,7 @@ const mapGetComponentToFormValues = (
   feedId: component.feedId,
   name: component.name,
   order: component.order,
-  propertyValues: {
-    ...component.propertyValues,
-    ...(!!component.propertyValues?.tagAllowList && {
-      tagAllowList: convertStringsToTagnameArray(
-        component.propertyValues.tagAllowList as string[],
-      ),
-    }),
-    ...(!!component.propertyValues?.itemAllowList && {
-      itemAllowList: convertNumbersToIdArray(
-        "itemId",
-        component.propertyValues.itemAllowList as number[],
-      ),
-    }),
-  },
+  propertyValues: propertyValuesToFormMapper(component.propertyValues),
   publishedAt: component.publishedAt
     ? convertZuluToLocalDateTime(component.publishedAt)
     : null,
