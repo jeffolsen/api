@@ -143,29 +143,31 @@ export const updateComponent: RequestHandler = catchErrors(
     });
 
     const updatedComponent = await prismaClient.$transaction(async (tx) => {
-      const tempOrder = component.feed.components.length + 1;
-      await tx.component.update({
-        where: { id: Number(id) },
-        data: { order: tempOrder },
-      });
-
-      for (const comp of componentsToReorder) {
+      if (componentsToReorder.length !== 0) {
+        const tempOrder = component.feed.components.length + 1;
         await tx.component.update({
-          where: { id: comp.id },
-          data: { order: comp.order },
+          where: { id: Number(id) },
+          data: { order: tempOrder },
         });
+
+        for (const comp of componentsToReorder) {
+          await tx.component.update({
+            where: { id: comp.id },
+            data: { order: comp.order },
+          });
+        }
       }
 
       return tx.component.update({
         where: { id: Number(id) },
         data: {
           name,
-          order: newOrder,
+          ...(newOrder && { order: newOrder }),
           ...(propertyValues && {
             propertyValues: propertyValues as Prisma.InputJsonValue,
           }),
-          ...(publishedAt && { publishedAt: new Date(publishedAt) }),
-          ...(expiredAt && { expiredAt: new Date(expiredAt) }),
+          publishedAt: publishedAt ? new Date(publishedAt) : null,
+          expiredAt: expiredAt ? new Date(expiredAt) : null,
         },
       });
     });
@@ -213,29 +215,39 @@ export const modifyComponent: RequestHandler = catchErrors(
     });
 
     const updatedComponent = await prismaClient.$transaction(async (tx) => {
-      const tempOrder = component.feed.components.length + 1;
-      await tx.component.update({
-        where: { id: Number(id) },
-        data: { order: tempOrder },
-      });
-
-      for (const comp of componentsToReorder) {
+      if (componentsToReorder.length !== 0) {
+        const tempOrder = component.feed.components.length + 1;
         await tx.component.update({
-          where: { id: comp.id },
-          data: { order: comp.order },
+          where: { id: Number(id) },
+          data: { order: tempOrder },
         });
+
+        for (const comp of componentsToReorder) {
+          await tx.component.update({
+            where: { id: comp.id },
+            data: { order: comp.order },
+          });
+        }
       }
 
       return tx.component.update({
         where: { id: Number(id) },
         data: {
           ...(name && { name }),
-          ...(order && { order: newOrder }),
+          ...(newOrder && { order: newOrder }),
           ...(propertyValues && {
             propertyValues: propertyValues as Prisma.InputJsonValue,
           }),
-          ...(publishedAt && { publishedAt: new Date(publishedAt) }),
-          ...(expiredAt && { expiredAt: new Date(expiredAt) }),
+          ...(publishedAt === undefined
+            ? {}
+            : publishedAt === null
+              ? { publishedAt: null }
+              : { publishedAt: new Date(publishedAt) }),
+          ...(expiredAt === undefined
+            ? {}
+            : expiredAt === null
+              ? { expiredAt: null }
+              : { expiredAt: new Date(expiredAt) }),
         },
       });
     });

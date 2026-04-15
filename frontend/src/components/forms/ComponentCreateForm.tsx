@@ -75,6 +75,47 @@ const mapFormValuesToCreateComponentRequest = (
     : null,
 });
 
+type MapFormValuesToUpdateComponentRequest = Partial<
+  Omit<FormValues, "typeId" | "feedId">
+>;
+
+const mapFormValuesToPatchComponentRequest = (
+  values: MapFormValuesToUpdateComponentRequest,
+): Partial<TComponentInput> => ({
+  ...(values.name && { name: values.name }),
+  ...(values.order && { order: values.order }),
+  ...(values.propertyValues && {
+    propertyValues: {
+      ...values.propertyValues,
+      ...(!!values.propertyValues?.tagAllowList && {
+        tagAllowList: convertTagnameArrayToStrings(
+          values.propertyValues.tagAllowList as { name: string }[],
+        ),
+      }),
+      ...(!!values.propertyValues?.itemAllowList && {
+        itemAllowList: convertIdArrayToNumbers(
+          "itemId",
+          values.propertyValues.itemAllowList as { itemId: number }[],
+        ),
+      }),
+    },
+  }),
+  ...(values.publishedAt
+    ? {
+        publishedAt: convertLocalDateTimeToZulu(values.publishedAt),
+      }
+    : values.publishedAt === null
+      ? { publishedAt: null }
+      : {}),
+  ...(values.expiredAt
+    ? {
+        expiredAt: convertLocalDateTimeToZulu(values.expiredAt),
+      }
+    : values.expiredAt === null
+      ? { expiredAt: null }
+      : {}),
+});
+
 const mapGetComponentToFormValues = (
   component: TComponent,
 ): FormValues & { id: TComponent["id"] } => ({
@@ -255,6 +296,7 @@ function ComponentRepublishForm({
   FormReponseHandlerProps & {
     defaultValues: {
       id: number;
+      feedId: number;
       publishedAt: string | null | undefined;
       expiredAt: string | null | undefined;
     };
@@ -272,7 +314,12 @@ function ComponentRepublishForm({
           return modifyComponent.mutateAsync(
             {
               id: Number(id),
-              data: mapFormValuesToCreateComponentRequest(data as FormValues),
+              data: {
+                ...mapFormValuesToPatchComponentRequest(
+                  data as MapFormValuesToUpdateComponentRequest,
+                ),
+                feedId: defaultValues.feedId,
+              },
             },
             {
               onSuccess: handleSuccess,

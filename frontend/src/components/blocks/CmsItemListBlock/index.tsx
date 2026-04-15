@@ -85,7 +85,7 @@ function CmsItemsListBlock({
           />
           <Grid
             items={items.map((item: TItem) => (
-              <ItemCard item={item} key={item.id} />
+              <ItemCard item={item} />
             ))}
             onEmpty={() => (
               <BasicCard

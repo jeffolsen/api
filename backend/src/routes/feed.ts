@@ -28,6 +28,8 @@ router.post(
   feedApi.createFeed,
 );
 router.put(ID_PARAM, authorizeScope([UPDATE_FEED_SCOPE]), feedApi.updateFeed);
+router.patch(ID_PARAM, authorizeScope([UPDATE_FEED_SCOPE]), feedApi.modifyFeed);
+
 router.delete(
   ID_PARAM,
   authorizeScope([DELETE_FEED_SCOPE]),

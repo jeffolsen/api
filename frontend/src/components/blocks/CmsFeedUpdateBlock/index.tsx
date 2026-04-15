@@ -225,7 +225,7 @@ function ComponentCard({ component }: { component: ComponentWithType }) {
               </Button>
               <ComponentRepublishForm
                 formStyles="inline-flex"
-                defaultValues={{ id, publishedAt, expiredAt }}
+                defaultValues={{ id, feedId, publishedAt, expiredAt }}
               />
               <ComponentDeleteButton
                 defaultValues={{ id, feedId }}

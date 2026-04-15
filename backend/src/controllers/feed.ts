@@ -8,6 +8,7 @@ import {
   CreateFeedBodySchema,
   UpdateFeedBodySchema,
   DeleteFeedParamsSchema,
+  ModifyFeedBodySchema,
 } from "../schemas/feed";
 import { getPagination, getSortOrders } from "../util/misc";
 import throwError from "../util/throwError";
@@ -109,8 +110,8 @@ export const createFeed: RequestHandler = catchErrors(
       data: {
         path,
         subjectType,
-        publishedAt,
-        expiredAt,
+        publishedAt: publishedAt ? new Date(publishedAt) : null,
+        expiredAt: expiredAt ? new Date(expiredAt) : null,
         profileId,
       },
     });
@@ -140,8 +141,46 @@ export const updateFeed: RequestHandler = catchErrors(
       where: { id, profileId },
       data: {
         path,
-        publishedAt,
-        expiredAt,
+        publishedAt: publishedAt ? new Date(publishedAt) : null,
+        expiredAt: expiredAt ? new Date(expiredAt) : null,
+      },
+    });
+    res.status(OK).json({ feed: updatedFeed });
+  },
+);
+
+type ModifFeedBody = {
+  path?: string;
+  publishedAt?: string;
+  expiredAt?: string;
+};
+
+export const modifyFeed: RequestHandler = catchErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { profileId } = req;
+    const { id, path, publishedAt, expiredAt } = ModifyFeedBodySchema.parse({
+      ...(req.body as ModifFeedBody),
+      id: req.params.id,
+    });
+    const feed = await prismaClient.feed.findFirst({
+      where: { id, profileId },
+    });
+    throwError(feed, NOT_FOUND, MESSAGE_FEED_NOT_FOUND);
+
+    const updatedFeed = await prismaClient.feed.update({
+      where: { id, profileId },
+      data: {
+        ...(path && { path }),
+        ...(publishedAt === undefined
+          ? {}
+          : publishedAt === null
+            ? { publishedAt: null }
+            : { publishedAt: new Date(publishedAt) }),
+        ...(expiredAt === undefined
+          ? {}
+          : expiredAt === null
+            ? { expiredAt: null }
+            : { expiredAt: new Date(expiredAt) }),
       },
     });
     res.status(OK).json({ feed: updatedFeed });
@@ -170,6 +209,7 @@ const feedApi = {
   getFeedByPath,
   createFeed,
   updateFeed,
+  modifyFeed,
   deleteFeed,
 };
 export default feedApi;

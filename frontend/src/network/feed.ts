@@ -9,7 +9,6 @@ import {
   COMPONENTS_ENDPOINT,
   withErrorHandling,
   PaginationParams,
-  FEED_PATH_ENDPOINT,
 } from "./api";
 import { TComponent, COMPONENTS_KEY, TComponentWithType } from "./component";
 import { useAuthState } from "../contexts/AuthContext";
@@ -34,24 +33,13 @@ export const useGetFeeds = (
         params: {
           ...queryParams,
           sort: queryParams?.sort?.join(","),
+          ids: queryParams?.ids?.join(","),
           subjectTypes: queryParams?.subjectTypes?.join(","),
         },
       });
       return response.data;
     },
     ...options,
-  });
-};
-
-export const useGetFeedByPath = (path: string) => {
-  const { api } = useAuthState();
-
-  return useQuery({
-    queryKey: [FEEDS_KEY, path],
-    queryFn: async () => {
-      const response = await api.get(`${FEED_PATH_ENDPOINT}/${path}`);
-      return response.data;
-    },
   });
 };
 
@@ -118,8 +106,15 @@ export const useModifyFeed = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: TFeedInput }) =>
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: Partial<TFeedInput>;
+    }) =>
       withErrorHandling(async () => {
+        console.log("Modifying feed with data:", data);
         const response = await api.patch(`${FEEDS_ENDPOINT}/${id}`, data);
         return response.data;
       }),
@@ -160,6 +155,7 @@ export type TFeedSort =
 export type TFeedsParams = {
   sort?: TFeedSort[];
   subjectTypes?: TSubjectType[];
+  ids?: number[];
 } & PaginationParams;
 
 export type TFeed = {

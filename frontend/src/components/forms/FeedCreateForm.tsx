@@ -45,6 +45,29 @@ const mapFormValuesToCreateFeedRequest = (values: FormValues): TFeedInput => ({
     : null,
 });
 
+const mapFormValuesToPatchFeedRequest = (
+  values: FormValues,
+): Partial<TFeedInput> => ({
+  ...(values.path && { path: values.path }),
+  ...(values.isSingleSubjectType !== undefined && {
+    subjectType: values.isSingleSubjectType ? "SINGLE" : "COLLECTION",
+  }),
+  ...(values.publishedAt
+    ? {
+        publishedAt: convertLocalDateTimeToZulu(values.publishedAt),
+      }
+    : values.publishedAt === null
+      ? { publishedAt: null }
+      : {}),
+  ...(values.expiredAt
+    ? {
+        expiredAt: convertLocalDateTimeToZulu(values.expiredAt),
+      }
+    : values.expiredAt === null
+      ? { expiredAt: null }
+      : {}),
+});
+
 const mapGetFeedToFormValues = (feed: TFeedInput & { id: number }) => {
   return {
     id: feed.id,
@@ -154,10 +177,11 @@ function FeedRepublishForm({
       submitAction={async (args) => {
         const { id, ...data } = args;
         return withFormHandling(async () => {
+          console.log("Republishing feed with data:", data);
           return modifyFeed.mutateAsync(
             {
               id: Number(id),
-              data: mapFormValuesToCreateFeedRequest(data as FormValues),
+              data: mapFormValuesToPatchFeedRequest(data as FormValues),
             },
             {
               onSuccess: handleSuccess,

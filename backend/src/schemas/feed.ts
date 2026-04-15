@@ -78,6 +78,8 @@ export const UpdateFeedBodySchema = z
   })
   .extend(publishedAtAndExpiredAtSchema.shape);
 
+export const ModifyFeedBodySchema = UpdateFeedBodySchema;
+
 export const DeleteFeedParamsSchema = z.object({
   id: idStringSchema,
 });

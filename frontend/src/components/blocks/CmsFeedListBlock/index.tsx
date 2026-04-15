@@ -27,6 +27,7 @@ import DropDownMenu from "../../common/DropDownMenu";
 import { useMemo } from "react";
 import useFeedListBlockData, { UseFeedListSuccessReturnType } from "./data";
 import { paths } from "../../../config/routes";
+import { GetItemsResponse, useGetItems } from "../../../network/item";
 
 export default function Component({
   component,
@@ -91,7 +92,7 @@ function CmsFeedsListBlock({
           />
           <Grid
             items={feeds.map((feed: TFeed) => (
-              <FeedCard feed={feed} key={feed.id} />
+              <FeedCard feed={feed} />
             ))}
             onEmpty={() => <BasicCard title={"No feeds found"} />}
           />
@@ -109,6 +110,11 @@ function CmsFeedsListBlock({
 
 function FeedCard({ feed }: { feed: TFeed }) {
   const { id, path, subjectType, publishedAt, expiredAt } = feed;
+  const getTestItem = useGetItems({
+    pageSize: 1,
+  });
+
+  const testItem = (getTestItem.data as GetItemsResponse)?.items?.[0];
 
   return (
     <EmptyCard>
@@ -132,6 +138,21 @@ function FeedCard({ feed }: { feed: TFeed }) {
             <ScheduleStatus publishedAt={publishedAt} expiredAt={expiredAt} />
           </Text>
           <div className="flex gap-1">
+            {(feed.subjectType === "COLLECTION" || testItem) && (
+              <Button
+                as="Link"
+                to={
+                  paths.cmsPreview +
+                  "/" +
+                  feed.path +
+                  (feed.subjectType === "SINGLE" ? `/${testItem?.id}` : "")
+                }
+                size="md"
+                color="secondary"
+              >
+                Preview
+              </Button>
+            )}
             <Button
               as="Link"
               to={paths.cmsFeedUpdate.replace(":id", id.toString())}
