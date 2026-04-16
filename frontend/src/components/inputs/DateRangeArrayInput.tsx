@@ -5,14 +5,13 @@ import {
   FromFormProps,
   ChildInputProps,
   FormError,
-  FieldArrayMinAndMax,
   FieldArrayMinMaxRule,
 } from "./Input";
 import { XButton, PlusButton } from "../common/Button";
 import TextInput, { TextInputProps } from "./TextInput";
 import { Fragment } from "react";
 import { TDateRangeInput } from "../../network/dateRange";
-import Tooltip from "../common/Tooltip";
+import FieldSetWrapperWithMinMax from "./FieldSetWrapper";
 
 function DateRangeSelectInput(
   props: CompoundFormComponentProps & FromFormProps,
@@ -58,15 +57,11 @@ function DateRangeSelectInput(
 
   return (
     <>
-      <fieldset className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20">
-        <legend className="label-text text-sm font-semibold text-neutral-content/70 w-full float-start flex items-center gap-3">
-          {displayName}{" "}
-          <FieldArrayMinAndMax
-            minLength={rulesProps?.minLength?.value}
-            maxLength={rulesProps?.maxLength?.value}
-          />
-          {description && <Tooltip text={description} />}
-        </legend>
+      <FieldSetWrapperWithMinMax
+        displayName={displayName}
+        description={description}
+        rules={rulesProps}
+      >
         {fields.length > 0 && (
           <div className="flex flex-col items-center gap-8 w-full">
             {fields.map((field, index) => (
@@ -96,7 +91,7 @@ function DateRangeSelectInput(
             />
           </div>
         )}
-      </fieldset>
+      </FieldSetWrapperWithMinMax>
       <FormError error={errors?.root as FieldError} />
     </>
   );
@@ -168,7 +163,7 @@ function DateRangeEntry({
 
   return (
     <div className="flex gap-4 w-full" {...props}>
-      <div className="flex flex-col gap-4 w-full text-neutral-content/70 text-sm">
+      <div className="flex flex-col gap-4 w-full text-neutral-content/80 text-sm">
         <div className="flex flex-wrap gap-4 w-full">
           <div className="flex-1">
             <TextInput

@@ -5,14 +5,13 @@ import { useCallback } from "react";
 import {
   AtomicFormComponentProps,
   ChildFromFormProps,
-  FieldArrayMinAndMax,
   FieldArrayMinMaxRule,
   FormError,
 } from "./Input";
 import clsx from "clsx";
 import Loading from "../common/Loading";
 import { TTagInput } from "../../network/tag";
-import Tooltip from "../common/Tooltip";
+import FieldSetWrapperWithMinMax from "./FieldSetWrapper";
 
 type TagnameArrayFields = Array<TTagInput & { id: string }>;
 
@@ -68,46 +67,61 @@ function TagArrayInput(
 
   return (
     <>
-      <fieldset className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20 text-neutral-content/70">
-        <legend className="label-text text-sm font-semibold text-neutral-content/70 w-full float-start flex items-center gap-3">
-          {displayName}{" "}
-          <FieldArrayMinAndMax
-            minLength={(rules as FieldArrayMinMaxRule)?.minLength?.value}
-            maxLength={(rules as FieldArrayMinMaxRule)?.maxLength?.value}
-          />
-          {description && <Tooltip text={description} />}
-        </legend>
+      <FieldSetWrapperWithMinMax
+        displayName={displayName}
+        description={description}
+        rules={rules as FieldArrayMinMaxRule}
+      >
         <Grid
           columns={{ base: "2", sm: "3", md: "4" }}
           items={getTags().map((tag: TTagInput) => (
-            <label
+            <TagCheckbox
               key={tag.name}
-              className="flex items-center gap-2 cursor-pointer"
-            >
-              <input
-                type="checkbox"
-                className={clsx(
-                  "checkbox",
-                  !selectedTagnames.includes(tag.name) && !canSelectTags
-                    ? "checkbox-disabled"
-                    : !selectedTagnames.includes(tag.name)
-                      ? "checkbox-neutral"
-                      : "checkbox-primary",
-                )}
-                checked={selectedTagnames.includes(tag.name)}
-                onChange={() => handleToggle(tag.name)}
-                disabled={
-                  !selectedTagnames.includes(tag.name) && !canSelectTags
-                }
-              />
-              <span>{tag.name}</span>
-            </label>
+              tag={tag}
+              isChecked={selectedTagnames.includes(tag.name)}
+              isDisabled={
+                !selectedTagnames.includes(tag.name) && !canSelectTags
+              }
+              onChange={handleToggle}
+            />
           ))}
         />
-      </fieldset>
+      </FieldSetWrapperWithMinMax>
       <FormError error={errors} />
     </>
   );
 }
+
+const TagCheckbox = ({
+  tag,
+  isChecked,
+  isDisabled,
+  onChange,
+}: {
+  tag: TTagInput;
+  isChecked: boolean;
+  isDisabled: boolean;
+  onChange: (tagname: TTagName) => void;
+}) => {
+  return (
+    <label key={tag.name} className="flex items-center gap-2 cursor-pointer">
+      <input
+        type="checkbox"
+        className={clsx(
+          "checkbox",
+          !isChecked && isDisabled
+            ? "checkbox-disabled"
+            : !isChecked
+              ? "checkbox-neutral"
+              : "checkbox-primary",
+        )}
+        checked={isChecked}
+        onChange={() => onChange(tag.name)}
+        disabled={!isChecked && isDisabled}
+      />
+      <span>{tag.name}</span>
+    </label>
+  );
+};
 
 export default TagArrayInput;

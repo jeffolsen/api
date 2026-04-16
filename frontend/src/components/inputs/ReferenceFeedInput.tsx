@@ -8,7 +8,6 @@ import {
 import {
   AtomicFormComponentProps,
   ChildFromFormProps,
-  FieldArrayMinAndMax,
   FieldArrayMinMaxRule,
   FormError,
 } from "./Input";
@@ -16,12 +15,12 @@ import { TFeed, GetFeedsResponse, useGetFeeds } from "../../network/feed";
 import { useFieldArray } from "react-hook-form";
 import Grid from "../common/Grid";
 import useDebounce from "../../hooks/useDebounce";
-import { IconButton, XButton } from "../common/Button";
-import { ChevronDown, ChevronUp, Plus } from "lucide-react";
-import Tooltip from "../common/Tooltip";
+import { Plus } from "lucide-react";
+import ComponentSchemaArrayOrderable from "./ComponentSchemaArrayOrderable";
+import FieldSetWrapperWithMinMax from "./FieldSetWrapper";
 
 type FeedIdField = { id: string; feedId: TFeed["id"]; path: TFeed["path"] };
-type feedIdArrayFields = Array<FeedIdField>;
+type FeedIdArrayFields = Array<FeedIdField>;
 
 function ReferenceFeedInput(
   props: Omit<
@@ -52,7 +51,7 @@ function ReferenceFeedInput(
   const feeds = (geTFeeds.data as GetFeedsResponse)?.feeds || [];
 
   const getExistingFeedQuery = useGetFeeds({
-    ids: (fields as feedIdArrayFields).map((field) => field.feedId),
+    ids: (fields as FeedIdArrayFields).map((field) => field.feedId),
   });
   const existingFeeds = (getExistingFeedQuery.data as GetFeedsResponse)?.feeds;
 
@@ -64,55 +63,24 @@ function ReferenceFeedInput(
 
   return (
     <>
-      <fieldset className="w-full form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20 text-neutral-content/70">
-        <legend className="label-text text-sm font-semibold text-neutral-content/70 w-full float-start flex items-center gap-3">
-          {displayName}{" "}
-          <FieldArrayMinAndMax
-            minLength={(rules as FieldArrayMinMaxRule)?.minLength?.value}
-            maxLength={(rules as FieldArrayMinMaxRule)?.maxLength?.value}
-          />
-          {description && <Tooltip text={description} />}
-        </legend>
+      <FieldSetWrapperWithMinMax
+        displayName={displayName}
+        description={description}
+        rules={rules as FieldArrayMinMaxRule}
+      >
         <Grid
-          items={(fields as feedIdArrayFields).map((field, index) => (
-            <div
+          items={(fields as FeedIdArrayFields).map((field, index) => (
+            <ComponentSchemaArrayOrderable
               key={field.id}
-              className="relative flex items-center gap-2 border-base-content/20 border rounded px-4 py-3"
-            >
-              {fields.length > 1 && (
-                <div className="flex flex-col gap-2">
-                  <IconButton
-                    disabled={index === 0}
-                    onClick={() => swap(index, Math.max(0, index - 1))}
-                    size="xs"
-                  >
-                    <ChevronUp />
-                  </IconButton>
-                  <IconButton
-                    disabled={index === fields.length - 1}
-                    onClick={() =>
-                      swap(index, Math.min(index + 1, fields.length - 1))
-                    }
-                    size="xs"
-                  >
-                    <ChevronDown />
-                  </IconButton>
-                </div>
-              )}
-              <span className="truncate max-w-full mr-6">
-                {`/${
-                  field.path ||
-                  existingFeeds?.find((f) => f.id === field.feedId)?.path
-                }
-                /:id`}
-              </span>
-              <XButton
-                onClick={() => {
-                  remove(index);
-                }}
-                size="xs"
-              />
-            </div>
+              label={`/${
+                field.path ||
+                existingFeeds?.find((f) => f.id === field.feedId)?.path
+              }/:id`}
+              fields={fields}
+              index={index}
+              remove={remove}
+              swap={swap}
+            />
           ))}
         />
         <Combobox
@@ -147,7 +115,7 @@ function ReferenceFeedInput(
             ))}
           </ComboboxOptions>
         </Combobox>
-      </fieldset>
+      </FieldSetWrapperWithMinMax>
       <FormError error={errors} />
     </>
   );

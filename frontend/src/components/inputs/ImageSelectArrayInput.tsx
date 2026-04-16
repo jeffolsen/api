@@ -13,7 +13,7 @@ import Modal from "../layout/Modal";
 import Image from "../common/Image";
 import Button, { PlusButton, XButton } from "../common/Button";
 import Loading from "../common/Loading";
-import Tooltip from "../common/Tooltip";
+import FieldSetWrapperWithMinMax from "./FieldSetWrapper";
 
 const typeFilters = ["ICON", "LANDSCAPE", "PORTRAIT", "OTHER", ""] as const;
 
@@ -110,15 +110,11 @@ function ImageSelectInput(
 
   return (
     <>
-      <fieldset className="form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20">
-        <legend className="label-text text-sm font-semibold text-neutral-content/70 w-full float-start flex items-center gap-3">
-          {displayName}{" "}
-          <FieldArrayMinAndMax
-            minLength={rulesProps?.minLength?.value}
-            maxLength={rulesProps?.maxLength?.value}
-          />
-          {description && <Tooltip text={description} />}
-        </legend>
+      <FieldSetWrapperWithMinMax
+        displayName={displayName}
+        description={description}
+        rules={rulesProps}
+      >
         <span className="flex flex-wrap gap-4 w-full">
           {(fields as ImageIdArrayFields).map((field, index) => (
             <span key={field.id} className="relative">
@@ -149,7 +145,7 @@ function ImageSelectInput(
             />
           )}
         </span>
-      </fieldset>
+      </FieldSetWrapperWithMinMax>
       <FormError error={errors} />
       <Modal isOpen={showImageSelector} setIsOpen={setShowImageSelector}>
         <ImageSelector

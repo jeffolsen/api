@@ -63,8 +63,8 @@ function InnerBlock({
 
 export type BlockStandardProps = {
   component: LocalFeedComponent;
-  params: Record<string, string>;
-  path: string;
+  params?: Record<string, string>;
+  path?: string;
 };
 
 export default Block;
