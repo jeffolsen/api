@@ -6,16 +6,26 @@ import prismaClient from "../db/client";
 import {
   GetFeedsResourcesSchema,
   GetFeedsResourceByIdSchema,
+  GetFeedComponentsQuery,
 } from "../schemas/feed";
 import {
   MESSAGE_FEED_NOT_FOUND,
   MESSAGE_COMPONENTS_NOT_FOUND,
 } from "../config/errorMessages";
 
+type GetComponentsQuery = {
+  published?: boolean;
+  page?: number;
+  pageSize?: number;
+};
+
 export const getFeedComponents: RequestHandler = catchErrors(
   async (req: Request, res: Response, next: NextFunction) => {
     const { profileId } = req;
     const { feedId: id } = GetFeedsResourcesSchema.parse(req.params);
+    const { published, page, pageSize } = GetFeedComponentsQuery.parse(
+      req.query,
+    );
 
     const feed = await prismaClient.feed.findFirst({
       where: { id, profileId },
@@ -26,7 +36,18 @@ export const getFeedComponents: RequestHandler = catchErrors(
     const components = await prismaClient.component.findMany({
       where: {
         id: { in: feed.components.map((component) => component.id) },
+        ...(published === true && {
+          OR: [
+            { publishedAt: { lte: new Date() } },
+            { publishedAt: null },
+            { expiredAt: { gt: new Date() } },
+            { expiredAt: null },
+          ],
+        }),
       },
+      orderBy: { order: "asc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
     });
     throwError(components, NOT_FOUND, MESSAGE_COMPONENTS_NOT_FOUND);
 

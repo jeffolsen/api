@@ -38,7 +38,7 @@ export const fetchUserFeedComponents = async (feedId: number) => {
     `${FEEDS_ENDPOINT}/${feedId}${COMPONENTS_ENDPOINT}`,
     {
       params: {
-        pageSize: 100,
+        published: true,
       },
     },
   );

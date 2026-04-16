@@ -92,3 +92,16 @@ export const GetFeedsResourceByIdSchema = z.object({
   feedId: idStringSchema,
   id: idStringSchema,
 });
+
+export const GetFeedComponentsQuery = z.object({
+  published: z
+    .preprocess((val) => {
+      if (typeof val === "string") {
+        return val.toLowerCase() === "true";
+      }
+      return false;
+    }, z.boolean())
+    .optional(),
+  page: z.coerce.number().min(1).default(1),
+  pageSize: z.coerce.number().min(1).max(100).default(10),
+});

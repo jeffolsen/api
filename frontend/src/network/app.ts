@@ -56,6 +56,9 @@ export const fetchAppFeedComponents = async (feedId: number) => {
     `${FEEDS_ENDPOINT}/${feedId}${COMPONENTS_ENDPOINT}`,
     {
       headers,
+      params: {
+        published: true,
+      },
     },
   );
   return response.data;
