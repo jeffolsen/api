@@ -2,15 +2,17 @@ import { PropsWithChildren } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import { HeadingLevelProvider } from "../common/Heading";
-import BreadCrumbs from "./BreadCrumbs";
+import { TComponent } from "../../network/component";
 
-function Layout({ children }: PropsWithChildren) {
+function Layout({
+  headerHero,
+  children,
+}: PropsWithChildren & { headerHero?: TComponent | null }) {
   return (
     <HeadingLevelProvider>
       <div className="min-h-screen flex flex-col justify-between bg-base-100">
-        <Header />
+        <Header hero={headerHero} />
         <main className="flex-grow flex flex-col gap-6 items-center justify-start py-6">
-          <BreadCrumbs />
           {children}
         </main>
         <Footer />
