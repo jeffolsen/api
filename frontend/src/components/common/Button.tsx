@@ -107,7 +107,7 @@ export const XButton = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ ...props }, ref) => {
     const { className, ...restProps } = props;
     const classes = clsx(
-      "btn btn-circle btn-ghost border-neutral-content/20 text-neutral-content/70",
+      "btn btn-circle btn-ghost border-neutral-content/20 text-neutral-content/80",
       className || "absolute right-2 top-2 btn-xs",
     );
     return (

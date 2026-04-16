@@ -23,7 +23,7 @@ export const ListNavigation = ({
     typeof totalCount,
   );
   return (
-    <div className="flex flex-col md:flex-row gap-4 sm:justify-between items-center">
+    <div className="flex flex-col md:flex-row gap-4 sm:justify-between md:items-center">
       <PaginateItemBar pageSize={pageSize} itemCount={totalCount} />
       <Button
         as="Link"

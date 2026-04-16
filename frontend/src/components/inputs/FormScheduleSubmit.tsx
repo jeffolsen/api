@@ -65,7 +65,7 @@ function FormScheduleSubmit({ control, triggerSubmit }: FormSubmitProps) {
       {showSchedule ? (
         <div className="flex flex-col md:flex-row gap-4">
           <label className={clsx("form-control gap-1 flex-1")}>
-            <span className="label-text text-sm text-neutral-content/70">
+            <span className="label-text text-sm text-neutral-content/80">
               Publish At
             </span>
             <input
@@ -77,7 +77,7 @@ function FormScheduleSubmit({ control, triggerSubmit }: FormSubmitProps) {
             />
           </label>
           <label className={clsx("form-control gap-1 flex-1")}>
-            <span className="label-text text-sm text-neutral-content/70">
+            <span className="label-text text-sm text-neutral-content/80">
               Expired At
             </span>
             <input
@@ -91,7 +91,7 @@ function FormScheduleSubmit({ control, triggerSubmit }: FormSubmitProps) {
         </div>
       ) : (
         <div className="border rounded p-4 pl-6 border-base-content/20">
-          <Text textSize="sm" className="text-neutral-content/70">
+          <Text textSize="sm" className="text-neutral-content/80">
             <SchedulingMessage
               publishedAt={publishedAtField.value}
               expiredAt={expiredAtField.value}

@@ -110,7 +110,7 @@ function CmsFeedUpdateBlock({
     <Block {...blockProps} settings={settings}>
       <EmptyCard>
         <div className="card-body gap-3">
-          <div className="flex flex-col md:flex-row gap-4 justify-between w-full text-neutral-content/70">
+          <div className="flex flex-col md:flex-row gap-4 justify-between w-full text-neutral-content/80">
             <div className="flex flex-col flex-grow justify-between gap-3">
               <Heading
                 headingSize="xs"

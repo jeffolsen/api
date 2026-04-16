@@ -35,70 +35,93 @@ function LoggedInApiKeySection() {
       />
       <Grid
         items={apiKeys.map((apiKey: { slug: string; origin: string }) => (
-          <RevealCard
-            buttonLabel="Destroy API Key"
-            buttonColor="error"
-            title={apiKey.slug}
-            description={apiKey.origin}
-          >
-            {otpStatus === OTP_STATUS_DESTROY_API_KEY ? (
-              <>
-                <Text textSize="sm" className="mt-4">
-                  A code has been sent to your email. Please verify it to
-                  destroy this API key.
-                </Text>
-                <DestroyApiKeyWithOTPForm
-                  submitInputConfig={{
-                    color: "error",
-                    text: "Destroy API Key",
-                  }}
-                  defaultValues={{
-                    apiSlug: apiKey.slug,
-                    origin: apiKey.origin,
-                  }}
-                />
-              </>
-            ) : (
-              <RequestDestroyApiKeyForm
-                submitInputConfig={{
-                  color: "error",
-                  text: "Destroy API Key",
-                }}
-              />
-            )}
-          </RevealCard>
+          <ApiKeyCard
+            key={apiKey.slug}
+            slug={apiKey.slug}
+            origin={apiKey.origin}
+            otpStatus={otpStatus}
+          />
         ))}
-        onEmpty={() => (
-          <RevealCard
-            buttonLabel="Generate API Key"
-            buttonColor="success"
-            title="No API Keys"
-            description={
-              otpStatus === OTP_STATUS_CREATE_API_KEY
-                ? "A code has been sent to your email. Please verify it to generate an API key."
-                : "You currently have no API keys. Generate one to get started!"
-            }
-          >
-            {otpStatus === OTP_STATUS_CREATE_API_KEY ? (
-              <GenerateApiKeyWithOTPForm
-                submitInputConfig={{
-                  color: "success",
-                  text: "Generate API Key",
-                }}
-              />
-            ) : (
-              <RequestGenerateApiKeyForm
-                submitInputConfig={{
-                  color: "success",
-                  text: "Generate API Key",
-                }}
-              />
-            )}
-          </RevealCard>
-        )}
+        onEmpty={() => <ApiKeyInstructionCard otpStatus={otpStatus} />}
       />
     </div>
   );
 }
+
+const ApiKeyCard = ({
+  slug,
+  origin,
+  otpStatus,
+}: {
+  slug: string;
+  origin: string;
+  otpStatus: string;
+}) => {
+  return (
+    <RevealCard
+      buttonLabel="Destroy API Key"
+      buttonColor="error"
+      title={slug}
+      description={origin}
+    >
+      {otpStatus === OTP_STATUS_DESTROY_API_KEY ? (
+        <>
+          <Text textSize="sm" className="mt-4">
+            A code has been sent to your email. Please verify it to destroy this
+            API key.
+          </Text>
+          <DestroyApiKeyWithOTPForm
+            submitInputConfig={{
+              color: "error",
+              text: "Destroy API Key",
+            }}
+            defaultValues={{
+              apiSlug: slug,
+              origin: origin,
+            }}
+          />
+        </>
+      ) : (
+        <RequestDestroyApiKeyForm
+          submitInputConfig={{
+            color: "error",
+            text: "Destroy API Key",
+          }}
+        />
+      )}
+    </RevealCard>
+  );
+};
+
+const ApiKeyInstructionCard = ({ otpStatus }: { otpStatus: string }) => {
+  return (
+    <RevealCard
+      buttonLabel="Generate API Key"
+      buttonColor="success"
+      title="No API Keys"
+      description={
+        otpStatus === OTP_STATUS_CREATE_API_KEY
+          ? "A code has been sent to your email. Please verify it to generate an API key."
+          : "You currently have no API keys. Generate one to get started!"
+      }
+    >
+      {otpStatus === OTP_STATUS_CREATE_API_KEY ? (
+        <GenerateApiKeyWithOTPForm
+          submitInputConfig={{
+            color: "success",
+            text: "Generate API Key",
+          }}
+        />
+      ) : (
+        <RequestGenerateApiKeyForm
+          submitInputConfig={{
+            color: "success",
+            text: "Generate API Key",
+          }}
+        />
+      )}
+    </RevealCard>
+  );
+};
 
 export default LoggedInApiKeySection;

@@ -95,7 +95,7 @@ const FormSubheading = ({ displayName }: { displayName: string }) => {
     <div className="flex gap-2 items-center pl-4">
       <Text
         textSize="md"
-        className="sm:flex-none uppercase text-left text-neutral-content/70"
+        className="sm:flex-none uppercase text-left text-neutral-content/80"
       >
         {displayName}
       </Text>

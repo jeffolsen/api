@@ -127,13 +127,12 @@ function ItemCard({ item }: { item: TItem }) {
           </Heading>
           <div className="flex flex-wrap gap-x-1 gap-y-2">
             {tags.map((tag: TTag) => (
-              <Text
+              <div
                 key={tag.id}
-                textSize="xs"
-                className="italic flex-none bg-neutral-content/10 px-1 rounded"
+                className="badge badge-secondary badge-md lowercase"
               >
                 {tag.name}
-              </Text>
+              </div>
             ))}
             <Text textSize="xs" className="italic flex-none w-full">
               Last updated:{" "}

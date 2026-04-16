@@ -30,6 +30,7 @@ export const TextAreaInput = (
         />
         <textarea
           className="flex-grow textarea textarea-bordered textarea-lg text-sm"
+          style={{ fieldSizing: "content" }}
           {...register(dataName, registerProps)}
           {...elementProps}
         />
