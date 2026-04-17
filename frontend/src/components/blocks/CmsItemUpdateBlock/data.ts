@@ -1,11 +1,15 @@
-import { TComponent } from "../../../network/component";
 import {
   useGetItemById,
   useGetItemDateRanges,
   useGetItemImages,
   useGetItemsTags,
 } from "../../../network/item";
-import { BlockProps, BlockStandardProps } from "../Block";
+import {
+  BlockProps,
+  BlockData,
+  BlockComponentStandardProps,
+  BlockComponentDataReturnType,
+} from "../Block";
 import { NotFoundError } from "../../../utils/errors";
 
 const variants = {
@@ -17,15 +21,14 @@ const variants = {
 function useItemUpdateBlockData({
   component,
   params,
-}: BlockStandardProps): UseItemUpdateBlockDataReturnType {
+}: BlockComponentStandardProps): UseItemUpdateBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, isPrimaryContent } =
-    propertyValues as TItemUpdateBlockData["propertyValues"];
+  const { variant, isPrimaryContent } = propertyValues as PropertyValues;
 
   const blockSettings = variants[variant] || variants["default"];
 
-  const itemId = parseInt(params.id || "");
+  const itemId = parseInt(params?.id || "");
   const getItem = useGetItemById(itemId);
   const getTags = useGetItemsTags(itemId);
   const getImages = useGetItemImages(itemId);
@@ -45,55 +48,44 @@ function useItemUpdateBlockData({
   }
 
   return {
+    type: "success" as const,
     blockProps: {
       settings: {
         ...blockSettings,
         isPrimaryContent,
       },
-      id,
-      title: name,
+      name,
     },
     blockData: {
+      id,
       itemData: getItem,
       tagsData: getTags,
       imagesData: getImages,
       dateRangesData: getDateRanges,
     },
-  } as UseItemUpdateSuccessReturnType;
+  };
 }
 
 export default useItemUpdateBlockData;
 
-type TItemUpdateBlockVariant = keyof typeof variants;
+type VariantNames = keyof typeof variants;
 
-export type TItemUpdateBlockData = TComponent & {
-  propertyValues: {
-    variant: TItemUpdateBlockVariant;
-    isPrimaryContent: boolean;
-  };
+type PropertyValues = {
+  variant: VariantNames;
+  isPrimaryContent: boolean;
 };
 
-export type UseItemUpdateFailedReturnType = {
-  blockProps: never;
-  blockData: never;
-  error: unknown;
-  params: Record<string, string>;
-  path: string;
+type BlockSettings = (typeof variants)[VariantNames];
+type LocalBlockData = {
+  itemData: ReturnType<typeof useGetItemById>;
+  tagsData: ReturnType<typeof useGetItemsTags>;
+  imagesData: ReturnType<typeof useGetItemImages>;
+  dateRangesData: ReturnType<typeof useGetItemDateRanges>;
 };
 
-export type UseItemUpdateSuccessReturnType = {
-  blockProps: BlockProps;
-  blockData: {
-    itemData: ReturnType<typeof useGetItemById>;
-    tagsData: ReturnType<typeof useGetItemsTags>;
-    imagesData: ReturnType<typeof useGetItemImages>;
-    dateRangesData: ReturnType<typeof useGetItemDateRanges>;
-  };
-  error: never;
-  params: never;
-  path: never;
-};
-
-export type UseItemUpdateBlockDataReturnType =
-  | UseItemUpdateFailedReturnType
-  | UseItemUpdateSuccessReturnType;
+export type UseItemUpdateBlockProps = BlockProps<BlockSettings>;
+export type UseItemUpdateBlockData = BlockData<LocalBlockData>;
+export type UseItemUpdateBlockDataReturnType = BlockComponentDataReturnType<
+  BlockSettings,
+  LocalBlockData
+>;

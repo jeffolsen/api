@@ -2,69 +2,90 @@ import { PropsWithChildren } from "react";
 import { HeadingLevelProvider } from "../../contexts/HeadingLevelProvider";
 import Wrapper, { WrapperProps } from "../common/Wrapper";
 import Heading from "../common/Heading";
-import { TComponent } from "../../network/component";
 import { LocalFeedComponent } from "../../config/routes";
+import { TComponent } from "../../network/component";
 
-export type TBlockDataProps =
-  | {
-      feedComponent?: TComponent;
-      pageProps?: BlockProps;
-    }
-  | undefined;
-
-export type BlockUrlIdentifier = {
-  urlIdentifier: string;
-};
-
-export interface BlockProps {
-  path?: string;
-  params?: Record<string, string>;
-  title: string;
-  id: number;
-  settings: {
-    isPrimaryContent?: boolean;
-    width?: WrapperProps["width"];
-  } & Record<string, unknown>;
-}
-
-function Block({
-  title,
+function BlockWrapper<T extends Record<string, unknown>>({
+  name,
   settings,
   children,
-}: PropsWithChildren<Omit<BlockProps, "id">>) {
-  if (settings?.isPrimaryContent) {
-    return <InnerBlock {...{ title, settings, children }} />;
+}: PropsWithChildren<BlockProps<T>>) {
+  if (settings.isPrimaryContent) {
+    return (
+      <InnerBlockWrapper name={name} settings={settings}>
+        {children}
+      </InnerBlockWrapper>
+    );
   }
   return (
     <HeadingLevelProvider>
-      <InnerBlock {...{ title, settings, children }} />
+      <InnerBlockWrapper name={name} settings={settings}>
+        {children}
+      </InnerBlockWrapper>
     </HeadingLevelProvider>
   );
 }
 
-function InnerBlock({
-  title,
-  settings: { isPrimaryContent, width } = {},
+function InnerBlockWrapper<T extends Record<string, unknown>>({
+  name,
+  settings,
   children,
-}: PropsWithChildren<Omit<BlockProps, "id">>) {
+}: PropsWithChildren<BlockProps<T>>) {
   return (
-    <Wrapper width={width || "md"}>
+    <Wrapper width={settings.width || "md"}>
       <Heading
         headingSize="lg"
         headingStyles={"uppercase font-bold text-primary-content text-center"}
-        headingDecorator={isPrimaryContent ? "strike" : "none"}
+        headingDecorator={settings.isPrimaryContent ? "strike" : "none"}
       >
-        {title}
+        {name}
       </Heading>
       {children}
     </Wrapper>
   );
 }
 
-export type BlockStandardProps = {
-  component: LocalFeedComponent;
-  params?: Record<string, string>;
-  path?: string;
+// I think the plan with this is to create unique searchParams to avoid collisions between blocks and their sub-components, ie filterSetlect_{componentId}
+export type BlockUrlIdentifier = {
+  urlIdentifier: string;
 };
 
-export default Block;
+// passed into top level block component default elements and associated data hooks.
+export type BlockComponentStandardProps = {
+  component: LocalFeedComponent;
+  params: Record<string, string>;
+  path: string;
+};
+
+// returned as the result of the data hook for a block component, passed into the block component for rendering.
+// blockProps are generally unique to the block component with some common ones like name, and settings.width and settings.isPrimaryContent.
+export type BlockProps<T> = {
+  name: string;
+  settings: {
+    width: WrapperProps["width"];
+    isPrimaryContent: boolean;
+  } & T;
+};
+
+// returned as the result of the data hook for a block component, passed into the block component for rendering.
+// blockData is generally unique to the block component.
+export type BlockData<T> = { id: TComponent["id"] } & T;
+
+export type BlockComponentStandardSuccessReturnType<T, U> = {
+  type: "success";
+  blockProps: BlockProps<T>;
+  blockData: BlockData<U>;
+};
+
+export type BlockStandardFailedDataReturnType = {
+  type: "error";
+  error: string;
+  params: Record<string, string>;
+  path: string;
+};
+
+export type BlockComponentDataReturnType<T, U> =
+  | BlockStandardFailedDataReturnType
+  | BlockComponentStandardSuccessReturnType<T, U>;
+
+export default BlockWrapper;

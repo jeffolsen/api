@@ -1,15 +1,18 @@
-import { BlockProps, BlockStandardProps } from "../Block";
+import {
+  BlockProps,
+  BlockData,
+  BlockComponentStandardProps,
+  BlockComponentDataReturnType,
+} from "../Block";
 import { isAuthenticated } from "../../../network/api";
 
 function useRedirectBlockData({
   component,
-}: BlockStandardProps): UseRedirectBlockDataReturnType {
+}: BlockComponentStandardProps): UseRedirectBlockDataReturnType {
   const { id, name, propertyValues } = component;
   const authenticated = isAuthenticated();
 
-  const { redirectFor } = propertyValues as {
-    redirectFor: string;
-  };
+  const { redirectFor } = propertyValues as PropertyValues;
 
   let destination;
   let message;
@@ -24,21 +27,33 @@ function useRedirectBlockData({
   }
 
   return {
+    type: "success" as const,
     blockProps: {
-      settings: {},
-      id,
-      title: name,
+      settings: { isPrimaryContent: false, width: "sm" },
+      name,
     },
-    blockData: { destination, message },
+    blockData: { id, destination, message },
   };
 }
 
 export default useRedirectBlockData;
 
-export type UseRedirectBlockDataReturnType = {
-  blockProps: BlockProps;
-  blockData: {
-    destination?: string;
-    message?: string;
-  };
+type PropertyValues = {
+  redirectFor: "everyone" | "authenticated" | "unauthenticated";
 };
+
+type BlockSettings = {
+  isPrimaryContent: boolean;
+  width: "sm";
+};
+type LocalBlockData = {
+  destination?: string;
+  message?: string;
+};
+
+export type UseRedirectBlockProps = BlockProps<BlockSettings>;
+export type UseRedirectBlockData = BlockData<LocalBlockData>;
+export type UseRedirectBlockDataReturnType = BlockComponentDataReturnType<
+  BlockSettings,
+  LocalBlockData
+>;

@@ -1,7 +1,8 @@
 import { HeadingLevelProvider } from "../../common/Heading";
-import Block, { BlockStandardProps } from "../Block";
+import Block, { BlockComponentStandardProps } from "../Block";
 import useProfileDashboardBlockData, {
-  UseProfileDashboardSuccessReturnType,
+  UseProfileDashboardBlockProps,
+  UseProfileDashboardBlockData,
 } from "./data";
 import Loading from "../../common/Loading";
 import DashBoardLayout from "../../layout/DashBoardLayout";
@@ -15,10 +16,10 @@ export default function Component({
   component,
   params,
   path,
-}: BlockStandardProps) {
+}: BlockComponentStandardProps) {
   const result = useProfileDashboardBlockData({ component, params, path });
 
-  if ("error" in result) return null;
+  if (result.type === "error") return null;
 
   const { blockProps, blockData } = result;
 
@@ -31,8 +32,8 @@ function CmsProfileDashboardBlock({
   blockProps,
   blockData,
 }: {
-  blockProps: UseProfileDashboardSuccessReturnType["blockProps"];
-  blockData: UseProfileDashboardSuccessReturnType["blockData"];
+  blockProps: UseProfileDashboardBlockProps;
+  blockData: UseProfileDashboardBlockData;
 }) {
   const { profileData } = blockData;
 

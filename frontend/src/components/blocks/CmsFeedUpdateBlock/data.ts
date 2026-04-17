@@ -1,12 +1,15 @@
-import { TComponent } from "../../../network/component";
 import { useGetComponentTypes } from "../../../network/componentType";
 import {
   TSubjectType,
   useGetFeedById,
   useGetFeedComponents,
 } from "../../../network/feed";
-import { BlockProps, BlockStandardProps } from "../Block";
-import { NotFoundError } from "../../../utils/errors";
+import {
+  BlockProps,
+  BlockData,
+  BlockComponentStandardProps,
+  BlockComponentDataReturnType,
+} from "../Block";
 
 const variants = {
   default: {
@@ -14,17 +17,18 @@ const variants = {
   },
 } as const;
 
-function useFeedUpdateBlockData({ component, params }: BlockStandardProps) {
+function useFeedUpdateBlockData({
+  component,
+  params,
+  path,
+}: BlockComponentStandardProps) {
   const { id, name, propertyValues } = component;
 
-  const { variant, isPrimaryContent } = propertyValues as {
-    variant: TFeedUpdateBlockVariant;
-    isPrimaryContent: boolean;
-  };
+  const { variant, isPrimaryContent } = propertyValues as PropertyValues;
 
   const blockSettings = variants[variant] || variants["default"];
 
-  const feedId = parseInt(params.id || "");
+  const feedId = parseInt(params?.id || "");
   const getFeed = useGetFeedById(feedId);
   const getFeedComponents = useGetFeedComponents(feedId);
   const getComponentTypes = useGetComponentTypes({
@@ -34,25 +38,41 @@ function useFeedUpdateBlockData({ component, params }: BlockStandardProps) {
   });
 
   if (getFeed.error) {
-    throw new NotFoundError();
+    return {
+      type: "error" as const,
+      error: "Failed to fetch feed data",
+      params,
+      path,
+    };
   }
   if (getFeedComponents.error) {
-    throw new NotFoundError();
+    return {
+      type: "error" as const,
+      error: "Failed to fetch feed components data",
+      params,
+      path,
+    };
   }
   if (getComponentTypes.error) {
-    throw new NotFoundError();
+    return {
+      type: "error" as const,
+      error: "Failed to fetch component types data",
+      params,
+      path,
+    };
   }
 
   return {
+    type: "success" as const,
     blockProps: {
       settings: {
         ...blockSettings,
         isPrimaryContent,
       },
-      id,
-      title: name,
+      name,
     },
     blockData: {
+      id,
       feedData: getFeed,
       feedComponentsData: getFeedComponents,
       componentTypesData: getComponentTypes,
@@ -62,37 +82,23 @@ function useFeedUpdateBlockData({ component, params }: BlockStandardProps) {
 
 export default useFeedUpdateBlockData;
 
-type TFeedUpdateBlockVariant = keyof typeof variants;
+type VariantNames = keyof typeof variants;
 
-export type TFeedUpdateBlockData = TComponent & {
-  propertyValues: {
-    variant: TFeedUpdateBlockVariant;
-    isPrimaryContent: boolean;
-  };
+type PropertyValues = {
+  variant: VariantNames;
+  isPrimaryContent: boolean;
 };
 
-export type UseFeedListFailedDataReturnType = {
-  blockProps: never;
-  blockData: never;
-  error: string;
-  params: Record<string, string>;
-  path: string;
+type BlockSettings = (typeof variants)[VariantNames];
+type LocalBlockData = {
+  feedData: ReturnType<typeof useGetFeedById>;
+  feedComponentsData: ReturnType<typeof useGetFeedComponents>;
+  componentTypesData: ReturnType<typeof useGetComponentTypes>;
 };
 
-export type UseFeedListSuccessReturnType = {
-  blockProps: Omit<BlockProps, "id"> & {
-    settings: BlockProps["settings"];
-  };
-  blockData: {
-    feedData: ReturnType<typeof useGetFeedById>;
-    feedComponentsData: ReturnType<typeof useGetFeedComponents>;
-    componentTypesData: ReturnType<typeof useGetComponentTypes>;
-  };
-  error: never;
-  params: never;
-  path: never;
-};
-
-export type UseFeedListBlockDataReturnType =
-  | UseFeedListFailedDataReturnType
-  | UseFeedListSuccessReturnType;
+export type UseFeedUpdateBlockProps = BlockProps<BlockSettings>;
+export type UseFeedUpdateBlockData = BlockData<LocalBlockData>;
+export type UseFeedUpdateBlockDataReturnType = BlockComponentDataReturnType<
+  BlockSettings,
+  LocalBlockData
+>;

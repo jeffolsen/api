@@ -1,6 +1,10 @@
 import { isAuthenticated } from "../../../network/api";
-import { TComponent } from "../../../network/component";
-import { BlockProps, BlockStandardProps } from "../Block";
+import {
+  BlockProps,
+  BlockComponentStandardProps,
+  BlockComponentDataReturnType,
+  BlockData,
+} from "../Block";
 
 const variants = {
   default: {
@@ -12,11 +16,10 @@ function useItemCreateBlockData({
   component,
   params,
   path,
-}: BlockStandardProps): UseItemCreateBlockDataReturnType {
+}: BlockComponentStandardProps): UseItemCreateBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, isPrimaryContent } =
-    propertyValues as TItemCreateBlockData["propertyValues"];
+  const { variant, isPrimaryContent } = propertyValues as PropertyValues;
 
   const blockSettings = variants[variant] || variants["default"];
 
@@ -24,52 +27,41 @@ function useItemCreateBlockData({
 
   if (!isLoggedIn) {
     return {
+      type: "error" as const,
       error: "User is not authenticated",
       params,
       path,
-    } as UseItemCreateFailedReturnType;
+    };
   }
 
   return {
+    type: "success" as const,
     blockProps: {
       settings: {
         ...blockSettings,
         isPrimaryContent,
       },
-      id,
-      title: name,
+      name,
     },
-    blockData: {},
-  } as UseItemCreateSuccessReturnType;
+    blockData: { id },
+  };
 }
 
 export default useItemCreateBlockData;
 
-type TItemCreateBlockVariant = keyof typeof variants;
+type VariantNames = keyof typeof variants;
 
-export type TItemCreateBlockData = TComponent & {
-  propertyValues: {
-    variant: TItemCreateBlockVariant;
-    isPrimaryContent: boolean;
-  };
+type PropertyValues = {
+  variant: VariantNames;
+  isPrimaryContent: boolean;
 };
 
-export type UseItemCreateFailedReturnType = {
-  blockProps: never;
-  blockData: never;
-  error: string;
-  params: Record<string, string>;
-  path: string;
-};
+type BlockSettings = (typeof variants)[VariantNames];
+type LocalBlockData = object;
 
-export type UseItemCreateSuccessReturnType = {
-  blockProps: BlockProps;
-  blockData: object;
-  error: never;
-  params: never;
-  path: never;
-};
-
-export type UseItemCreateBlockDataReturnType =
-  | UseItemCreateFailedReturnType
-  | UseItemCreateSuccessReturnType;
+export type UseItemCreateBlockProps = BlockProps<BlockSettings>;
+export type UseItemCreateBlockData = BlockData<LocalBlockData>;
+export type UseItemCreateBlockDataReturnType = BlockComponentDataReturnType<
+  BlockSettings,
+  LocalBlockData
+>;

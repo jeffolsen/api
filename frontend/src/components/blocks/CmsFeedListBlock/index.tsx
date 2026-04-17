@@ -1,4 +1,4 @@
-import Block, { BlockStandardProps } from "../Block";
+import Block, { BlockComponentStandardProps } from "../Block";
 import Heading, { HeadingLevelProvider } from "../../common/Heading";
 import Button from "../../common/Button";
 import Loading from "../../common/Loading";
@@ -25,22 +25,22 @@ import {
 } from "../../../hooks/useSearchParam";
 import DropDownMenu from "../../common/DropDownMenu";
 import { useMemo } from "react";
-import useFeedListBlockData, { UseFeedListSuccessReturnType } from "./data";
+import useFeedListBlockData, {
+  UseFeedUpdateBlockData,
+  UseFeedUpdateBlockProps,
+} from "./data";
 import { paths } from "../../../config/routes";
 import { GetItemsResponse, useGetItems } from "../../../network/item";
+import FetchTransition from "../../common/FetchTransition";
 
 export default function Component({
   component,
   params,
   path,
-}: BlockStandardProps) {
+}: BlockComponentStandardProps) {
   const result = useFeedListBlockData({ component, params, path });
-  const { blockProps, blockData, error } = result;
-
-  if (error && !blockProps && !blockData) {
-    return null;
-  }
-
+  if (result.type === "error") return null;
+  const { blockProps, blockData } = result;
   return <CmsFeedsListBlock blockProps={blockProps} blockData={blockData} />;
 }
 
@@ -48,8 +48,8 @@ function CmsFeedsListBlock({
   blockProps,
   blockData,
 }: {
-  blockProps: UseFeedListSuccessReturnType["blockProps"];
-  blockData: UseFeedListSuccessReturnType["blockData"];
+  blockProps: UseFeedUpdateBlockProps;
+  blockData: UseFeedUpdateBlockData;
 }) {
   const { pageSize, ...settings } = blockProps.settings;
   const { profileData, feedData } = blockData as {
@@ -90,12 +90,14 @@ function CmsFeedsListBlock({
             text="New Feed"
             newPath={paths.cmsFeedCreate}
           />
-          <Grid
-            items={feeds.map((feed: TFeed) => (
-              <FeedCard feed={feed} />
-            ))}
-            onEmpty={() => <BasicCard title={"No feeds found"} />}
-          />
+          <FetchTransition isFetching={feedData.isFetching}>
+            <Grid
+              items={feeds.map((feed: TFeed) => {
+                return { content: <FeedCard feed={feed} />, id: feed.id };
+              })}
+              onEmpty={() => <BasicCard title={"No feeds found"} />}
+            />
+          </FetchTransition>
           <ListNavigation
             pageSize={pageSize as number}
             totalCount={totalCount}

@@ -1,10 +1,11 @@
-import Block, { BlockStandardProps } from "../Block";
+import Block, { BlockComponentStandardProps } from "../Block";
 import { ItemCreateForm } from "../../forms/ItemCreateForm";
 import EmptyCard from "../../cards/EmptyCard";
 import { useNavigate } from "react-router";
 import { TItem } from "../../../network/item";
 import useItemCreateBlockData, {
-  UseItemCreateBlockDataReturnType,
+  UseItemCreateBlockData,
+  UseItemCreateBlockProps,
 } from "./data";
 import { paths } from "../../../config/routes";
 
@@ -12,22 +13,21 @@ export default function Component({
   component,
   params,
   path,
-}: BlockStandardProps) {
+}: BlockComponentStandardProps) {
   const result = useItemCreateBlockData({ component, params, path });
-  const { blockProps, blockData, error } = result;
-
-  if (error && !blockProps && !blockData) {
+  if (result.type === "error") {
+    // Optionally, you could display an error message here
     return null;
   }
-
+  const { blockProps, blockData } = result;
   return <CmsItemCreateBlock blockProps={blockProps} blockData={blockData} />;
 }
 
 function CmsItemCreateBlock({
   blockProps,
 }: {
-  blockProps: UseItemCreateBlockDataReturnType["blockProps"];
-  blockData: UseItemCreateBlockDataReturnType["blockData"];
+  blockProps: UseItemCreateBlockProps;
+  blockData: UseItemCreateBlockData;
 }) {
   const navigate = useNavigate();
 

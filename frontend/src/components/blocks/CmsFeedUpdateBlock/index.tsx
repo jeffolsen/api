@@ -1,4 +1,4 @@
-import Block, { BlockStandardProps } from "../Block";
+import Block, { BlockComponentStandardProps } from "../Block";
 import { FeedDeleteButton, FeedUpdateForm } from "../../forms/FeedCreateForm";
 import EmptyCard from "../../cards/EmptyCard";
 import { useNavigate } from "react-router";
@@ -37,7 +37,10 @@ import {
   ComponentModifyOrderControls,
   ComponentUpdateForm,
 } from "../../forms/ComponentCreateForm";
-import useFeedUpdateBlockData, { UseFeedListSuccessReturnType } from "./data";
+import useFeedUpdateBlockData, {
+  UseFeedUpdateBlockData,
+  UseFeedUpdateBlockProps,
+} from "./data";
 import { paths } from "../../../config/routes";
 
 type ComponentWithType = TComponent & { type?: TComponentType };
@@ -46,8 +49,9 @@ export default function Component({
   component,
   params,
   path,
-}: BlockStandardProps) {
+}: BlockComponentStandardProps) {
   const result = useFeedUpdateBlockData({ component, params, path });
+  if (result.type === "error") return null;
   const { blockProps, blockData } = result;
   return <CmsFeedUpdateBlock blockProps={blockProps} blockData={blockData} />;
 }
@@ -56,8 +60,8 @@ function CmsFeedUpdateBlock({
   blockProps,
   blockData,
 }: {
-  blockProps: UseFeedListSuccessReturnType["blockProps"];
-  blockData: UseFeedListSuccessReturnType["blockData"];
+  blockProps: UseFeedUpdateBlockProps;
+  blockData: UseFeedUpdateBlockData;
 }) {
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
@@ -143,8 +147,18 @@ function CmsFeedUpdateBlock({
         items={[
           ...componentsWithTypes
             .sort((a, b) => a.order - b.order)
-            .map((c) => <ComponentCard key={c.id} component={c} />),
-          <NewComponentCard key="new" onClick={() => setOpenModal(true)} />,
+            .map((c) => {
+              return {
+                id: c.id,
+                content: <ComponentCard key={c.id} component={c} />,
+              };
+            }),
+          {
+            id: "new",
+            content: (
+              <NewComponentCard key="new" onClick={() => setOpenModal(true)} />
+            ),
+          },
         ]}
       />
       <Modal

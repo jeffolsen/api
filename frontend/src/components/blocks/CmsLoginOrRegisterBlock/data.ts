@@ -1,5 +1,11 @@
 import { isAuthenticated } from "../../../network/api";
-import { BlockProps, BlockStandardProps } from "../Block";
+import {
+  BlockProps,
+  BlockData,
+  BlockComponentDataReturnType,
+  BlockComponentStandardProps,
+  BlockStandardFailedDataReturnType,
+} from "../Block";
 
 const variants = {
   default: {
@@ -11,13 +17,10 @@ function useLoginOrRegisterBlockData({
   component,
   params,
   path,
-}: BlockStandardProps): UseLoginOrRegisterBlockDataReturnType {
+}: BlockComponentStandardProps): UseLoginOrRegisterBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, isPrimaryContent } = propertyValues as {
-    variant: TLoginOrRegisterBlockVariant;
-    isPrimaryContent: boolean;
-  };
+  const { variant, isPrimaryContent } = propertyValues as PropertyValues;
 
   const blockSettings = variants[variant] || variants["default"];
 
@@ -28,42 +31,36 @@ function useLoginOrRegisterBlockData({
       error: "User is already authenticated",
       params,
       path,
-    } as UseLoginOrRegisterFailedReturnType;
+    } as BlockStandardFailedDataReturnType;
   }
 
   return {
+    type: "success" as const,
     blockProps: {
       settings: {
         ...blockSettings,
         isPrimaryContent,
+        id,
       },
-      id,
-      title: name,
+      name,
     },
-    blockData: {},
-  } as UseLoginOrRegisterSuccessReturnType;
+    blockData: { id },
+  };
 }
 
 export default useLoginOrRegisterBlockData;
 
-type TLoginOrRegisterBlockVariant = keyof typeof variants;
+type VariantNames = keyof typeof variants;
 
-export type UseLoginOrRegisterFailedReturnType = {
-  error: string;
-  params: Record<string, string>;
-  path: string;
-  blockProps: never;
-  blockData: never;
+type PropertyValues = {
+  variant: VariantNames;
+  isPrimaryContent: boolean;
 };
 
-export type UseLoginOrRegisterSuccessReturnType = {
-  blockProps: BlockProps;
-  blockData: Record<string, unknown>;
-  error: never;
-  params: never;
-  path: never;
-};
+type BlockSettings = (typeof variants)[VariantNames] & { id: number };
+type LocalBlockData = object;
 
+export type UseLoginOrRegisterBlockProps = BlockProps<BlockSettings>;
+export type UseLoginOrRegisterBlockData = BlockData<LocalBlockData>;
 export type UseLoginOrRegisterBlockDataReturnType =
-  | UseLoginOrRegisterFailedReturnType
-  | UseLoginOrRegisterSuccessReturnType;
+  BlockComponentDataReturnType<BlockSettings, LocalBlockData>;

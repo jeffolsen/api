@@ -1,4 +1,7 @@
-import { BlockProps, BlockStandardProps } from "../Block";
+import {
+  BlockComponentDataReturnType,
+  BlockComponentStandardProps,
+} from "../Block";
 
 const variants = {
   default: {
@@ -6,36 +9,41 @@ const variants = {
   },
 } as const;
 
-function useStyleGuideeBlockData({
+function useStyleGuideBlockData({
   component,
-}: BlockStandardProps): UseStyleGuideeBlockDataReturnType {
+}: BlockComponentStandardProps): UseStyleGuideBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, isPrimaryContent } = propertyValues as {
-    variant: TStyleGuideeBlockVariant;
-    isPrimaryContent: boolean;
-  };
+  const { variant, isPrimaryContent } = propertyValues as PropertyValues;
 
   const blockSettings = variants[variant] || variants["default"];
 
   return {
+    type: "success" as const,
     blockProps: {
+      name,
       settings: {
         ...blockSettings,
         isPrimaryContent,
       },
-      id,
-      title: name,
     },
-    blockData: {},
+    blockData: { id },
   };
 }
 
-export default useStyleGuideeBlockData;
+export default useStyleGuideBlockData;
 
-type TStyleGuideeBlockVariant = keyof typeof variants;
+type VariantNames = keyof typeof variants;
 
-export type UseStyleGuideeBlockDataReturnType = {
-  blockProps: BlockProps;
-  blockData: object;
+type PropertyValues = {
+  variant: VariantNames;
+  isPrimaryContent: boolean;
 };
+
+type BlockSettings = (typeof variants)[VariantNames];
+type LocalBlockData = object;
+
+export type UseStyleGuideBlockDataReturnType = BlockComponentDataReturnType<
+  BlockSettings,
+  LocalBlockData
+>;

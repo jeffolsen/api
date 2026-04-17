@@ -15,7 +15,7 @@ import {
   LogoutAllSessionsWithOTPForm,
 } from "../../forms/LogoutAllSessionsForm";
 import RegisterForm from "../../forms/RegisterForm";
-import Block, { BlockStandardProps } from "../Block";
+import Block, { BlockComponentStandardProps } from "../Block";
 import Text from "../../common/Text";
 import Tabs, { TabsProps, TabPanelProps } from "../../common/Tabs";
 import { useSearchParam } from "../../../hooks/useSearchParam";
@@ -23,7 +23,8 @@ import { toast } from "react-hot-toast";
 import { useState } from "react";
 import Modal from "../../layout/Modal";
 import useCmsLoginOrRegisterBlockData, {
-  UseLoginOrRegisterBlockDataReturnType,
+  UseLoginOrRegisterBlockData,
+  UseLoginOrRegisterBlockProps,
 } from "./data";
 
 const tabs: TabsProps["tabs"] = [
@@ -48,13 +49,13 @@ export default function Component({
   component,
   params,
   path,
-}: BlockStandardProps) {
+}: BlockComponentStandardProps) {
   const result = useCmsLoginOrRegisterBlockData({ component, params, path });
-  const { blockProps, blockData, error } = result;
-
-  if (error && !blockProps && !blockData) {
+  if (result.type === "error") {
+    // Optionally, you could display an error message here
     return null;
   }
+  const { blockProps, blockData } = result;
 
   return (
     <CmsLoginOrRegisterBlock blockProps={blockProps} blockData={blockData} />
@@ -63,16 +64,15 @@ export default function Component({
 
 function CmsLoginOrRegisterBlock({
   blockProps,
+  blockData,
 }: {
-  blockProps: UseLoginOrRegisterBlockDataReturnType["blockProps"];
-  blockData: UseLoginOrRegisterBlockDataReturnType["blockData"];
+  blockProps: UseLoginOrRegisterBlockProps;
+  blockData: UseLoginOrRegisterBlockData;
 }) {
-  const { id, ...rest } = blockProps;
-
   return (
-    <Block {...rest}>
+    <Block {...blockProps}>
       <Tabs
-        urlIdentifier={`${id}`}
+        urlIdentifier={`${blockData.id}`}
         tabs={tabs}
         tabListClassName="flex flex-wrap justify-end gap-2"
       />

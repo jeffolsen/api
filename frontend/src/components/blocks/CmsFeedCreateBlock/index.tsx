@@ -1,10 +1,11 @@
-import Block, { BlockStandardProps } from "../Block";
+import Block, { BlockComponentStandardProps } from "../Block";
 import { FeedCreateForm } from "../../forms/FeedCreateForm";
 import EmptyCard from "../../cards/EmptyCard";
 import { useNavigate } from "react-router";
 import { TFeed } from "../../../network/feed";
 import useFeedCreateBlockData, {
-  UseFeedCreateBlockDataReturnType,
+  UseFeedCreateBlockData,
+  UseFeedCreateBlockProps,
 } from "./data";
 import { paths } from "../../../config/routes";
 
@@ -12,22 +13,18 @@ export default function Component({
   component,
   params,
   path,
-}: BlockStandardProps) {
+}: BlockComponentStandardProps) {
   const result = useFeedCreateBlockData({ component, params, path });
-  const { blockProps, blockData, error } = result;
-
-  if (error && !blockProps && !blockData) {
-    return null;
-  }
-
+  if (result.type === "error") return null;
+  const { blockProps, blockData } = result;
   return <CmsFeedCreateBlock blockProps={blockProps} blockData={blockData} />;
 }
 
 function CmsFeedCreateBlock({
   blockProps,
 }: {
-  blockProps: UseFeedCreateBlockDataReturnType["blockProps"];
-  blockData: UseFeedCreateBlockDataReturnType["blockData"];
+  blockProps: UseFeedCreateBlockProps;
+  blockData: UseFeedCreateBlockData;
 }) {
   const navigate = useNavigate();
 

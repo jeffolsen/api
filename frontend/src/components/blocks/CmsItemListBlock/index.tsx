@@ -1,4 +1,4 @@
-import Block, { BlockStandardProps } from "../Block";
+import Block, { BlockComponentStandardProps } from "../Block";
 import Grid from "../../common/Grid";
 import {
   TItem,
@@ -29,21 +29,21 @@ import { TTag, useGetTags } from "../../../network/tag";
 import { useMemo } from "react";
 import { ListNavigation, ListSortControl } from "../../partials/ListNavigation";
 import BasicCard from "../../cards/BasicCard";
-import useItemListBlockData, { UseItemListSuccessReturnType } from "./data";
+import useItemListBlockData, {
+  UseItemListBlockData,
+  UseItemListBlockProps,
+} from "./data";
 import { paths } from "../../../config/routes";
+import FetchTransition from "../../common/FetchTransition";
 
 export default function Component({
   component,
   params,
   path,
-}: BlockStandardProps) {
+}: BlockComponentStandardProps) {
   const result = useItemListBlockData({ component, params, path });
-  const { blockProps, blockData, error } = result;
-
-  if (error && !blockProps && !blockData) {
-    return null;
-  }
-
+  if (result.type === "error") return null;
+  const { blockProps, blockData } = result;
   return <CmsItemsListBlock blockProps={blockProps} blockData={blockData} />;
 }
 
@@ -51,13 +51,14 @@ function CmsItemsListBlock({
   blockProps,
   blockData,
 }: {
-  blockProps: UseItemListSuccessReturnType["blockProps"];
-  blockData: UseItemListSuccessReturnType["blockData"];
+  blockProps: UseItemListBlockProps;
+  blockData: UseItemListBlockData;
 }) {
-  const { pageSize, queryTags, ...settings } = blockProps.settings;
+  const { pageSize, ...settings } = blockProps.settings;
   const { profileData, itemsData } = blockData;
+  const [tags] = useSearchParam("tags");
 
-  if (itemsData.isLoading || profileData.isLoading) {
+  if (profileData.isLoading || itemsData.isLoading) {
     return (
       <Block {...blockProps} settings={settings}>
         <Loading />
@@ -83,20 +84,19 @@ function CmsItemsListBlock({
             pageSize={pageSize as number}
             totalCount={totalCount}
           />
-          <Grid
-            items={items.map((item: TItem) => (
-              <ItemCard item={item} />
-            ))}
-            onEmpty={() => (
-              <BasicCard
-                title={
-                  "No items found" +
-                  (queryTags ? " with tag: " + queryTags : "")
-                }
-                description="Try adjusting your filters."
-              />
-            )}
-          />
+          <FetchTransition isFetching={itemsData.isFetching}>
+            <Grid
+              items={items.map((item: TItem) => {
+                return { content: <ItemCard item={item} />, id: item.id };
+              })}
+              onEmpty={() => (
+                <BasicCard
+                  title={"No items found" + (tags ? " with tag: " + tags : "")}
+                  description="Try adjusting your filters."
+                />
+              )}
+            />
+          </FetchTransition>
           <ListNavigation
             pageSize={pageSize as number}
             totalCount={totalCount}

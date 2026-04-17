@@ -1,5 +1,10 @@
 import { isAuthenticated } from "../../../network/api";
-import { BlockProps, BlockStandardProps } from "../Block";
+import {
+  BlockProps,
+  BlockComponentStandardProps,
+  BlockComponentDataReturnType,
+  BlockData,
+} from "../Block";
 
 const variants = {
   default: {
@@ -11,13 +16,10 @@ function useFeedCreateBlockData({
   component,
   params,
   path,
-}: BlockStandardProps): UseFeedCreateBlockDataReturnType {
+}: BlockComponentStandardProps): UseFeedCreateBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, isPrimaryContent } = propertyValues as {
-    variant: TFeedCreateBlockVariant;
-    isPrimaryContent: boolean;
-  };
+  const { variant, isPrimaryContent } = propertyValues as PropertyValues;
 
   const blockSettings = variants[variant] || variants["default"];
 
@@ -25,45 +27,41 @@ function useFeedCreateBlockData({
 
   if (!isLoggedIn) {
     return {
+      type: "error" as const,
       error: "User is not authenticated",
       params,
       path,
-    } as UseFeedCreateFailedDataReturnType;
+    };
   }
 
   return {
+    type: "success" as const,
     blockProps: {
       settings: {
         ...blockSettings,
         isPrimaryContent,
       },
-      id,
-      title: name,
+      name,
     },
-    blockData: {},
-  } as UseFeedCreateSuccessReturnType;
+    blockData: { id },
+  };
 }
 
 export default useFeedCreateBlockData;
 
-type TFeedCreateBlockVariant = keyof typeof variants;
+type VariantNames = keyof typeof variants;
 
-export type UseFeedCreateFailedDataReturnType = {
-  blockProps: never;
-  blockData: never;
-  error: string;
-  params: Record<string, string>;
-  path: string;
+type PropertyValues = {
+  variant: VariantNames;
+  isPrimaryContent: boolean;
 };
 
-export type UseFeedCreateSuccessReturnType = {
-  blockProps: BlockProps;
-  blockData: object;
-  error: never;
-  params: never;
-  path: never;
-};
+type BlockSettings = (typeof variants)[VariantNames];
+type LocalBlockData = object;
 
-export type UseFeedCreateBlockDataReturnType =
-  | UseFeedCreateFailedDataReturnType
-  | UseFeedCreateSuccessReturnType;
+export type UseFeedCreateBlockProps = BlockProps<BlockSettings>;
+export type UseFeedCreateBlockData = BlockData<LocalBlockData>;
+export type UseFeedCreateBlockDataReturnType = BlockComponentDataReturnType<
+  BlockSettings,
+  LocalBlockData
+>;

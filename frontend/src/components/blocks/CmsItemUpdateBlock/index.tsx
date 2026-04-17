@@ -1,4 +1,4 @@
-import Block, { BlockStandardProps } from "../Block";
+import Block, { BlockComponentStandardProps } from "../Block";
 import EmptyCard from "../../cards/EmptyCard";
 import Loading from "../../common/Loading";
 import {
@@ -13,15 +13,19 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import Heading from "../../common/Heading";
 import { ScheduleStatus } from "../../inputs/FormPublishSubmit";
-import useItemUpdateBlockData, { UseItemUpdateSuccessReturnType } from "./data";
+import useItemUpdateBlockData, {
+  UseItemUpdateBlockData,
+  UseItemUpdateBlockProps,
+} from "./data";
 import { paths } from "../../../config/routes";
 
 export default function Component({
   component,
   params,
   path,
-}: BlockStandardProps) {
+}: BlockComponentStandardProps) {
   const result = useItemUpdateBlockData({ component, params, path });
+  if (result.type === "error") return null;
   const { blockProps, blockData } = result;
   return <CmsItemUpdateBlock blockProps={blockProps} blockData={blockData} />;
 }
@@ -30,8 +34,8 @@ function CmsItemUpdateBlock({
   blockProps,
   blockData,
 }: {
-  blockProps: UseItemUpdateSuccessReturnType["blockProps"];
-  blockData: UseItemUpdateSuccessReturnType["blockData"];
+  blockProps: UseItemUpdateBlockProps;
+  blockData: UseItemUpdateBlockData;
 }) {
   const navigate = useNavigate();
 

@@ -1,5 +1,11 @@
 import { useGetAuthenticatedProfile } from "../../../network/profile";
-import { BlockProps, BlockStandardProps } from "../Block";
+import {
+  BlockComponentStandardProps,
+  BlockStandardFailedDataReturnType,
+  BlockComponentDataReturnType,
+  BlockProps,
+  BlockData,
+} from "../Block";
 
 const variants = {
   default: {
@@ -11,13 +17,10 @@ function useProfileDashboardBlockData({
   component,
   params,
   path,
-}: BlockStandardProps): UseProfileDashboardBlockDataReturnType {
+}: BlockComponentStandardProps): UseProfileDashboardBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, isPrimaryContent } = propertyValues as {
-    variant: TProfileDashboardBlockVariant;
-    isPrimaryContent: boolean;
-  };
+  const { variant, isPrimaryContent } = propertyValues as PropertyValues;
 
   const blockSettings = variants[variant] || variants["default"];
 
@@ -28,44 +31,37 @@ function useProfileDashboardBlockData({
       error: "Failed to fetch profile data",
       params,
       path,
-    } as UseProfileDashboardFailedReturnType;
+    } as BlockStandardFailedDataReturnType;
   }
 
   return {
+    type: "success" as const,
     blockProps: {
       settings: {
         ...blockSettings,
         isPrimaryContent,
       },
-      id,
-      title: name,
+      name,
     },
-    blockData: { profileData: profile },
-  } as UseProfileDashboardSuccessReturnType;
+    blockData: { id, profileData: profile },
+  };
 }
 
 export default useProfileDashboardBlockData;
 
-type TProfileDashboardBlockVariant = keyof typeof variants;
+type VariantNames = keyof typeof variants;
 
-export type UseProfileDashboardFailedReturnType = {
-  error: string;
-  params: Record<string, string>;
-  path: string;
-  blockProps: never;
-  blockData: never;
+type PropertyValues = {
+  variant: VariantNames;
+  isPrimaryContent: boolean;
 };
 
-export type UseProfileDashboardSuccessReturnType = {
-  blockProps: BlockProps;
-  blockData: {
-    profileData: ReturnType<typeof useGetAuthenticatedProfile>;
-  };
-  error: never;
-  params: never;
-  path: never;
+type BlockSettings = (typeof variants)[VariantNames];
+type LocalBlockData = {
+  profileData: ReturnType<typeof useGetAuthenticatedProfile>;
 };
 
+export type UseProfileDashboardBlockProps = BlockProps<BlockSettings>;
+export type UseProfileDashboardBlockData = BlockData<LocalBlockData>;
 export type UseProfileDashboardBlockDataReturnType =
-  | UseProfileDashboardFailedReturnType
-  | UseProfileDashboardSuccessReturnType;
+  BlockComponentDataReturnType<BlockSettings, LocalBlockData>;

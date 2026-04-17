@@ -1,4 +1,7 @@
-import { BlockProps, BlockStandardProps } from "../Block";
+import {
+  BlockComponentStandardProps,
+  BlockComponentDataReturnType,
+} from "../Block";
 
 const variants = {
   default: {
@@ -8,34 +11,39 @@ const variants = {
 
 function useFourOhFourBlockData({
   component,
-}: BlockStandardProps): UseFourOhFourBlockDataReturnType {
+}: BlockComponentStandardProps): UseFourOhFourBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, isPrimaryContent } = propertyValues as {
-    variant: TFourOhFourBlockVariant;
-    isPrimaryContent: boolean;
-  };
+  const { variant, isPrimaryContent } = propertyValues as PropertyValues;
 
   const blockSettings = variants[variant] || variants["default"];
 
   return {
+    type: "success" as const,
     blockProps: {
       settings: {
         ...blockSettings,
         isPrimaryContent,
       },
-      id,
-      title: name,
+      name,
     },
-    blockData: {},
+    blockData: { id },
   };
 }
 
 export default useFourOhFourBlockData;
 
-type TFourOhFourBlockVariant = keyof typeof variants;
+type VariantNames = keyof typeof variants;
 
-export type UseFourOhFourBlockDataReturnType = {
-  blockProps: BlockProps;
-  blockData: object;
+type PropertyValues = {
+  variant: VariantNames;
+  isPrimaryContent: boolean;
 };
+
+type BlockSettings = (typeof variants)[VariantNames];
+type LocalBlockData = object;
+
+export type UseFourOhFourBlockDataReturnType = BlockComponentDataReturnType<
+  BlockSettings,
+  LocalBlockData
+>;

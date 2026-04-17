@@ -13,7 +13,7 @@ import {
   subheading,
 } from "../../config/inputs";
 import { withFormHandling } from "../../network/api";
-import { TDateRangeInput } from "../../network/dateRange";
+import { TDateRangeInput } from "../../network/dataRange/types";
 import { TTagInput } from "../../network/tag";
 import { TImage } from "../../network/image";
 import {

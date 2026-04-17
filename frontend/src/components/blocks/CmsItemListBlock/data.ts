@@ -1,15 +1,19 @@
-import { TComponent } from "../../../network/component";
+import { keepPreviousData } from "@tanstack/react-query";
 import { useGetAuthenticatedProfile } from "../../../network/profile";
 import { useGetItems, TItemSort } from "../../../network/item";
 import { TTagName } from "../../../network/tag";
-import { BlockProps, BlockStandardProps } from "../Block";
+import {
+  BlockProps,
+  BlockComponentStandardProps,
+  BlockComponentDataReturnType,
+  BlockData,
+} from "../Block";
 import { useSearchParam } from "../../../hooks/useSearchParam";
 
 const variants = {
   default: {
     width: "lg",
     pageSize: 10,
-    privateOnly: true,
   },
 } as const;
 
@@ -17,13 +21,12 @@ function useItemListBlockData({
   component,
   params,
   path,
-}: BlockStandardProps): UseItemListBlockDataReturnType {
+}: BlockComponentStandardProps): UseItemListBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, isPrimaryContent } =
-    propertyValues as TItemListBlockData["propertyValues"];
+  const { variant, isPrimaryContent } = propertyValues as PropertyValues;
 
-  const { pageSize, privateOnly, ...blockSettings } =
+  const { pageSize, ...blockSettings } =
     variants[variant] || variants["default"];
 
   const profile = useGetAuthenticatedProfile();
@@ -31,80 +34,67 @@ function useItemListBlockData({
   const [page] = useSearchParam("page");
   const [tags] = useSearchParam("tags");
   const [sort] = useSearchParam("sort");
-  const items = useGetItems({
-    pageSize,
-    privateOnly,
-    page: page ? parseInt(page) : 1,
-    tags: tags?.split(",") as TTagName[],
-    sort: sort?.split(",") as TItemSort[],
-  });
+  const items = useGetItems(
+    {
+      pageSize,
+      privateOnly: true,
+      page: page ? parseInt(page) : 1,
+      tags: tags?.split(",") as TTagName[],
+      sort: sort?.split(",") as TItemSort[],
+    },
+    { placeholderData: keepPreviousData },
+  );
 
   if (profile.error) {
     return {
-      error: profile.error,
+      type: "error" as const,
+      error: profile.error.message || "Failed to load profile",
       params,
       path,
-    } as UseItemListFailedReturnType;
+    };
   }
 
   if (items.error) {
     return {
-      error: items.error,
+      type: "error" as const,
+      error: items.error.message || "Failed to load items",
       params,
       path,
-    } as UseItemListFailedReturnType;
+    };
   }
 
   return {
+    type: "success" as const,
     blockProps: {
       settings: {
         ...blockSettings,
         isPrimaryContent,
         pageSize,
-        queryTags: tags,
       },
-      id,
-      title: name,
+      name,
     },
-    blockData: { profileData: profile, itemsData: items },
-  } as UseItemListSuccessReturnType;
+    blockData: { id, profileData: profile, itemsData: items },
+  };
 }
 
 export default useItemListBlockData;
 
-type TItemListBlockVariant = keyof typeof variants;
+type VariantNames = keyof typeof variants;
 
-export type TItemListBlockData = TComponent & {
-  propertyValues: {
-    variant: TItemListBlockVariant;
-    isPrimaryContent: boolean;
-  };
+type PropertyValues = {
+  variant: VariantNames;
+  isPrimaryContent: boolean;
 };
 
-export type UseItemListFailedReturnType = {
-  blockProps: never;
-  blockData: never;
-  error: unknown;
-  params: Record<string, string>;
-  path: string;
+type BlockSettings = (typeof variants)[VariantNames];
+type LocalBlockData = {
+  profileData: ReturnType<typeof useGetAuthenticatedProfile>;
+  itemsData: ReturnType<typeof useGetItems>;
 };
 
-export type UseItemListSuccessReturnType = {
-  blockProps: BlockProps & {
-    settings: BlockProps["settings"] & {
-      pageSize: number;
-      queryTags: string | undefined;
-    };
-  };
-  blockData: {
-    profileData: ReturnType<typeof useGetAuthenticatedProfile>;
-    itemsData: ReturnType<typeof useGetItems>;
-  };
-  error: never;
-  params: never;
-  path: never;
-};
-
-export type UseItemListBlockDataReturnType =
-  | UseItemListFailedReturnType
-  | UseItemListSuccessReturnType;
+export type UseItemListBlockProps = BlockProps<BlockSettings>;
+export type UseItemListBlockData = BlockData<LocalBlockData>;
+export type UseItemListBlockDataReturnType = BlockComponentDataReturnType<
+  BlockSettings,
+  LocalBlockData
+>;

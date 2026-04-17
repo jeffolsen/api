@@ -1,4 +1,7 @@
-import { BlockProps, BlockStandardProps } from "../Block";
+import {
+  BlockComponentStandardProps,
+  BlockComponentDataReturnType,
+} from "../Block";
 
 const variants = {
   default: {
@@ -8,34 +11,39 @@ const variants = {
 
 function useGenericBlockData({
   component,
-}: BlockStandardProps): UseGenericBlockDataReturnType {
+}: BlockComponentStandardProps): UseGenericBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, isPrimaryContent } = propertyValues as {
-    variant: TGenericBlockVariant;
-    isPrimaryContent: boolean;
-  };
+  const { variant, isPrimaryContent } = propertyValues as PropertyValues;
 
   const blockSettings = variants[variant] || variants["default"];
 
   return {
+    type: "success" as const,
     blockProps: {
       settings: {
         ...blockSettings,
         isPrimaryContent,
       },
-      id,
-      title: name,
+      name,
     },
-    blockData: {},
+    blockData: { id },
   };
 }
 
 export default useGenericBlockData;
 
-type TGenericBlockVariant = keyof typeof variants;
+type VariantNames = keyof typeof variants;
 
-export type UseGenericBlockDataReturnType = {
-  blockProps: BlockProps;
-  blockData: object;
+type PropertyValues = {
+  variant: VariantNames;
+  isPrimaryContent: boolean;
 };
+
+type BlockSettings = (typeof variants)[VariantNames];
+type LocalBlockData = object;
+
+export type UseGenericBlockDataReturnType = BlockComponentDataReturnType<
+  BlockSettings,
+  LocalBlockData
+>;
