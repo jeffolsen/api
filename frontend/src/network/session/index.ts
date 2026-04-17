@@ -6,9 +6,9 @@ import {
   SESSIONS_RESET_WITH_OTP_ENDPOINT,
   withErrorHandling,
   useEmail,
-} from "./api";
-import { useAuthState } from "../contexts/AuthContext";
-import { OTP_STATUS_KEY, OTP_STATUS_NONE } from "./verificationCode";
+} from "../api";
+import { useAuthState } from "../../contexts/AuthContext";
+import { OTP_STATUS_KEY, OTP_STATUS_NONE } from "../verificationCode";
 
 const SESSION_KEY = "sessions" as const;
 

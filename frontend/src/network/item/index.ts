@@ -2,7 +2,7 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
-  QueryOptions,
+  UseQueryOptions,
 } from "@tanstack/react-query";
 import {
   ITEMS_ENDPOINT,
@@ -11,11 +11,11 @@ import {
   IMAGES_ENDPOINT,
   DATE_RANGES_ENDPOINT,
   PaginationParams,
-} from "./api";
-import { TAGS_KEY, TTagInput, TTagName } from "./tag";
-import { IMAGES_KEY, TImage } from "./image";
-import { useAuthState } from "../contexts/AuthContext";
-import { DATE_RANGES_KEY, TDateRangeInput } from "./dateRange";
+} from "../api";
+import { TAGS_KEY, TTagInput, TTagName } from "../tag";
+import { IMAGES_KEY, TImage } from "../image";
+import { useAuthState } from "../../contexts/AuthContext";
+import { DATE_RANGES_KEY, TDateRangeInput } from "../dataRange/types";
 
 export const ITEMS_KEY = "items" as const;
 
@@ -68,7 +68,7 @@ export type GetItemsResponse = {
 
 export const useGetItems = (
   queryParams?: TItemQueryParams,
-  options?: QueryOptions,
+  options?: Omit<UseQueryOptions<GetItemsResponse>, "queryKey" | "queryFn">,
 ) => {
   const { api } = useAuthState();
 

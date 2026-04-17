@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { OTP_STATUS_KEY, OTP_STATUS_NONE, OtpInput } from "./verificationCode";
+import { OTP_STATUS_KEY, OTP_STATUS_NONE, OtpInput } from "../verificationCode";
 import {
   PROFILE_ENDPOINT,
   PASSWORD_RESET_WITH_OTP_ENDPOINT,
   PASSWORD_CHANGE_ENDPOINT,
   withErrorHandling,
   useEmail,
-} from "./api";
-import { useAuthState } from "../contexts/AuthContext";
+} from "../api";
+import { useAuthState } from "../../contexts/AuthContext";
 
 const PROFILE_KEY = "profile" as const;
 

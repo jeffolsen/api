@@ -1,8 +1,8 @@
 import { QueryOptions, useQuery } from "@tanstack/react-query";
-import { COMPONENT_TYPES_ENDPOINT } from "./api";
-import { useAuthState } from "../contexts/AuthContext";
-import { TSubjectType } from "./feed";
-import { JSONSchemaForArrayOrEnum } from "../utils/jsonSchemaTransformer";
+import { COMPONENT_TYPES_ENDPOINT } from "../api";
+import { useAuthState } from "../../contexts/AuthContext";
+import { TSubjectType } from "../feed";
+import { JSONSchemaForArrayOrEnum } from "../../utils/jsonSchemaTransformer";
 
 export const COMPONENT_TYPES_KEY = "componentsTypes" as const;
 

@@ -1,11 +1,11 @@
-import { OTP_STATUS_KEY, OTP_STATUS_NONE, OtpInput } from "./verificationCode";
+import { OTP_STATUS_KEY, OTP_STATUS_NONE, OtpInput } from "../verificationCode";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   REGISTER_ENDPOINT,
   LOGIN_WITH_OTP_ENDPOINT,
   withErrorHandling,
-} from "./api";
-import { useAuthState } from "../contexts/AuthContext";
+} from "../api";
+import { useAuthState } from "../../contexts/AuthContext";
 
 export type RegisterFormInput = {
   email: string;

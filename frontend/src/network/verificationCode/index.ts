@@ -7,8 +7,8 @@ import {
   REQUEST_DELETE_PROFILE_ENDPOINT,
   REQUEST_MANAGE_API_KEY_ENDPOINT,
   withErrorHandling,
-} from "./api";
-import { useAuthState } from "../contexts/AuthContext";
+} from "../api";
+import { useAuthState } from "../../contexts/AuthContext";
 
 const VERIFICATION_CODES_KEY = "verificationCodes" as const;
 export const OTP_STATUS_KEY = "pendingOtp" as const;

@@ -2,16 +2,16 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
-  QueryOptions,
+  UseQueryOptions,
 } from "@tanstack/react-query";
 import {
   FEEDS_ENDPOINT,
   COMPONENTS_ENDPOINT,
   withErrorHandling,
   PaginationParams,
-} from "./api";
-import { TComponent, COMPONENTS_KEY, TComponentWithType } from "./component";
-import { useAuthState } from "../contexts/AuthContext";
+} from "../api";
+import { TComponent, COMPONENTS_KEY, TComponentWithType } from "../component";
+import { useAuthState } from "../../contexts/AuthContext";
 
 export const FEEDS_KEY = "feeds" as const;
 
@@ -22,7 +22,7 @@ export type GetFeedsResponse = {
 
 export const useGetFeeds = (
   queryParams?: TFeedsParams,
-  options?: QueryOptions<GetFeedsResponse>,
+  options?: Omit<UseQueryOptions<GetFeedsResponse>, "queryKey" | "queryFn">,
 ) => {
   const { api } = useAuthState();
 

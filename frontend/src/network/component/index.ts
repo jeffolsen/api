@@ -1,9 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { TComponentType } from "./componentType";
-import { TFeed } from "./feed";
-import { useAuthState } from "../contexts/AuthContext";
-import { COMPONENTS_ENDPOINT, withErrorHandling } from "./api";
-import { FEEDS_KEY } from "./feed";
+import { TComponentType } from "../componentType";
+import { TFeed, FEEDS_KEY } from "../feed";
+import { useAuthState } from "../../contexts/AuthContext";
+import { COMPONENTS_ENDPOINT, withErrorHandling } from "../api";
 
 export const COMPONENTS_KEY = "components" as const;
 

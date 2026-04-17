@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { OTP_STATUS_KEY, OTP_STATUS_NONE } from "./verificationCode";
+import { OTP_STATUS_KEY, OTP_STATUS_NONE } from "../verificationCode";
 import {
   GENERATE_API_KEY_ENDPOINT,
   GET_PROFILES_API_KEYS_ENDPOINT,
   DESTROY_API_KEY_ENDPOINT,
   withErrorHandling,
-} from "./api";
-import { useAuthState } from "../contexts/AuthContext";
+} from "../api";
+import { useAuthState } from "../../contexts/AuthContext";
 
 const API_KEYS_KEY = "apiKeys" as const;
 

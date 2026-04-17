@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { IMAGES_ENDPOINT } from "./api";
-import { useAuthState } from "../contexts/AuthContext";
+import { IMAGES_ENDPOINT } from "../api";
+import { useAuthState } from "../../contexts/AuthContext";
 
 export const IMAGES_KEY = "images" as const;
 
