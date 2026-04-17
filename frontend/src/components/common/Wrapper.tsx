@@ -3,6 +3,7 @@ import clsx from "clsx";
 
 export type WrapperProps = {
   width?: keyof typeof widths;
+  padded?: boolean | "tablet" | "desktop";
 };
 
 const widths = {
@@ -10,14 +11,27 @@ const widths = {
   sm: "max-w-2xl",
   md: "max-w-4xl",
   lg: "max-w-6xl",
+  xl: "max-w-screen-2xl",
 } as const;
 
 const Wrapper = ({
   width = "md",
+  padded = true,
   children,
 }: PropsWithChildren<WrapperProps>) => {
   return (
-    <div className="flex items-start justify-center px-4 w-full">
+    <div
+      className={clsx([
+        "flex items-start justify-center w-full",
+        padded === "desktop"
+          ? "lg:px-4"
+          : padded === "tablet"
+            ? "md:px-4"
+            : padded
+              ? "px-4"
+              : "",
+      ])}
+    >
       <div
         className={clsx([
           "w-full h-full flex flex-col items-stretch gap-4",

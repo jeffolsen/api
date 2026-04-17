@@ -1,25 +1,44 @@
 import { PropsWithChildren } from "react";
 import { HeadingLevelProvider } from "../../contexts/HeadingLevelProvider";
 import Wrapper, { WrapperProps } from "../common/Wrapper";
-import Heading from "../common/Heading";
+import Heading, { HeadingProps } from "../common/Heading";
 import { LocalFeedComponent } from "../../config/routes";
 import { TComponent } from "../../network/component";
 
+export type BlockWrapperProps<T> = {
+  name?: string;
+  headingProps?: HeadingProps;
+  settings: {
+    width?: WrapperProps["width"];
+    padded?: WrapperProps["padded"];
+    isPrimaryContent: boolean;
+  } & T;
+};
+
 function BlockWrapper<T extends Record<string, unknown>>({
   name,
+  headingProps,
   settings,
   children,
-}: PropsWithChildren<BlockProps<T>>) {
+}: PropsWithChildren<BlockWrapperProps<T>>) {
   if (settings.isPrimaryContent) {
     return (
-      <InnerBlockWrapper name={name} settings={settings}>
+      <InnerBlockWrapper
+        name={name}
+        headingProps={headingProps}
+        settings={settings}
+      >
         {children}
       </InnerBlockWrapper>
     );
   }
   return (
     <HeadingLevelProvider>
-      <InnerBlockWrapper name={name} settings={settings}>
+      <InnerBlockWrapper
+        name={name}
+        headingProps={headingProps}
+        settings={settings}
+      >
         {children}
       </InnerBlockWrapper>
     </HeadingLevelProvider>
@@ -28,18 +47,22 @@ function BlockWrapper<T extends Record<string, unknown>>({
 
 function InnerBlockWrapper<T extends Record<string, unknown>>({
   name,
+  headingProps,
   settings,
   children,
-}: PropsWithChildren<BlockProps<T>>) {
+}: PropsWithChildren<BlockWrapperProps<T>>) {
   return (
-    <Wrapper width={settings.width || "md"}>
-      <Heading
-        headingSize="lg"
-        headingStyles={"uppercase font-bold text-primary-content text-center"}
-        headingDecorator={settings.isPrimaryContent ? "strike" : "none"}
-      >
-        {name}
-      </Heading>
+    <Wrapper width={settings.width || "md"} padded={settings.padded}>
+      {name && (
+        <Heading
+          headingSize="lg"
+          headingStyles={"uppercase font-bold text-neutral-content text-center"}
+          headingDecorator={settings.isPrimaryContent ? "strike" : "none"}
+          {...headingProps}
+        >
+          {name}
+        </Heading>
+      )}
       {children}
     </Wrapper>
   );

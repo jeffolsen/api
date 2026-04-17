@@ -30,4 +30,17 @@ export const CustomLink = forwardRef<HTMLAnchorElement, CustomLinkProps>(
 
 CustomLink.displayName = "CustomLink";
 
+type InsetLinkProps =
+  | Omit<LinkAsRouterLink, "children" | "className">
+  | Omit<LinkAsAnchor, "children" | "className">;
+
+export const InsetLink = forwardRef<HTMLAnchorElement, InsetLinkProps>(
+  (props, ref) => {
+    const classes = clsx(
+      "before:content-[''] before:absolute before:inset-0 before:w-full before:h-full before:bg-transparent",
+    );
+    return <CustomLink ref={ref} className={classes} {...props}></CustomLink>;
+  },
+);
+
 export default CustomLink;
