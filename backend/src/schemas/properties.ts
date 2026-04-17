@@ -24,9 +24,12 @@ export const subjectTypeSchema = z.enum(SubjectType, "Invalid subject type");
 export const imageTypeSchema = z.enum(ImageType, "Invalid image type");
 
 export const idStringSchema = z.preprocess((val) => {
-  const parsed = parseInt(val as string);
+  if (typeof val !== "string") {
+    throw new Error("ID should be a numeric string");
+  }
+  const parsed = parseInt(val);
   if (isNaN(parsed)) {
-    throw new Error("ID should be a number");
+    throw new Error("ID should be a numeric string");
   }
   return parsed;
 }, z.number());

@@ -13,28 +13,31 @@ type ImageQuery = {
   page?: number;
   pageSize?: number;
 };
-export const getAllImages: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { type, sort, page, pageSize } = GetAllImagesQuerySchema.parse(
-      req.query as ImageQuery,
-    );
+export const getAllImages: RequestHandler<
+  unknown,
+  unknown,
+  unknown,
+  ImageQuery
+> = catchErrors(async (req: Request, res: Response) => {
+  const { type, sort, page, pageSize } = GetAllImagesQuerySchema.parse(
+    req.query,
+  );
 
-    const images = await prismaClient.image.findMany({
-      where: type
-        ? {
-            type: type as ImageType,
-          }
-        : undefined,
-      ...getSortOrders(sort),
-      ...getPagination(page, pageSize),
-    });
+  const images = await prismaClient.image.findMany({
+    where: type
+      ? {
+          type: type,
+        }
+      : undefined,
+    ...getSortOrders(sort),
+    ...getPagination(page, pageSize),
+  });
 
-    res.status(OK).json({ images });
-  },
-);
+  res.status(OK).json({ images });
+});
 
 export const getImageById: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { id } = req.params || {};
     const image = await prismaClient.image.findUnique({
       where: { id: Number(id) },

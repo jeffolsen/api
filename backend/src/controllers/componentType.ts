@@ -9,10 +9,8 @@ type GetComponentTypesQuery = {
 };
 
 export const getAllComponentTypes: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { subjectType } = GetAllComponentTypesQuerySchema.parse(
-      req.query as GetComponentTypesQuery,
-    );
+  async (req: Request, res: Response) => {
+    const { subjectType } = GetAllComponentTypesQuerySchema.parse(req.query);
     const componentTypes = await prismaClient.componentType.findMany({
       ...(subjectType && {
         where: {
@@ -25,7 +23,7 @@ export const getAllComponentTypes: RequestHandler = catchErrors(
 );
 
 export const getComponentTypeById: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { id } = req.params || {};
     const componentType = await prismaClient.componentType.findUnique({
       where: { id: Number(id) },
@@ -35,7 +33,7 @@ export const getComponentTypeById: RequestHandler = catchErrors(
 );
 
 export const getComponentTypeByName: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { name } = req.params || {};
     const componentType = await prismaClient.componentType.findUnique({
       where: { name },

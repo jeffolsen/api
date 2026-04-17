@@ -13,7 +13,7 @@ import {
 } from "../config/errorMessages";
 
 export const getItemTags: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { profileId } = req;
     const { itemId } = GetItemsResourcesSchema.parse(req.params);
 
@@ -27,7 +27,7 @@ export const getItemTags: RequestHandler = catchErrors(
 );
 
 export const getItemTagById: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { profileId } = req;
     const { itemId, id } = GetItemResourceByIdSchema.parse(req.params);
 
@@ -41,7 +41,7 @@ export const getItemTagById: RequestHandler = catchErrors(
 );
 
 export const deleteItemTag: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { profileId } = req;
     const { itemId, id } = GetItemResourceByIdSchema.parse(req.params);
 

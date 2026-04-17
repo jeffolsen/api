@@ -23,9 +23,10 @@ import prismaClient, { CodeType } from "../db/client";
 import { sendVerificationCode } from "../services/auth";
 import throwError from "../util/throwError";
 import { requestVerificationCodeSchema } from "../schemas/verificationCode";
+import { Request, Response } from "express";
 
 export const getProfileVerificationCodes: RequestHandler = catchErrors(
-  async (req, res, next) => {
+  async (req: Request, res: Response) => {
     const { profileId } = req;
 
     const codes = await prismaClient.verificationCode.findMany({
@@ -46,7 +47,7 @@ export const requestVerificationCode: RequestHandler<
   unknown,
   RequestCodeForProfileBody,
   unknown
-> = catchErrors(async (req, res, next) => {
+> = catchErrors(async (req: Request, res: Response) => {
   const { profileId } = req;
   const { email, password, userAgent } = requestVerificationCodeSchema.parse({
     ...req.body,

@@ -176,8 +176,8 @@ export const processVerificationCode = async ({
 type AuthenticateWithApiKeyResult = ApiKey | null;
 
 type AuthenticateWithApiKeyInput = {
-  apiKey: string;
-  apiSlug: string;
+  apiKey?: string;
+  apiSlug?: string;
   origin: string;
 };
 

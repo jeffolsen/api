@@ -22,56 +22,59 @@ type GetItemsQuery = {
   pageSize?: number;
 };
 
-export const getAllItems: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { profileId } = req;
-    const { ids, tags, sort, page, pageSize, searchName, privateOnly } =
-      GetAllItemsQuerySchema.parse(req.query as GetItemsQuery);
+export const getAllItems: RequestHandler<
+  unknown,
+  unknown,
+  unknown,
+  GetItemsQuery
+> = catchErrors(async (req: Request, res: Response) => {
+  const { profileId } = req;
+  const { ids, tags, sort, page, pageSize, searchName, privateOnly } =
+    GetAllItemsQuerySchema.parse(req.query);
 
-    const where = {
-      ...(privateOnly
-        ? {
-            authorId: profileId,
-          }
-        : { OR: [{ isPrivate: false }, { authorId: profileId }] }),
-      ...(ids.length && {
-        id: { in: ids },
-      }),
-      ...(searchName && {
-        name: {
-          contains: searchName,
-          mode: "insensitive",
-        },
-      }),
-      ...(tags.length && {
-        tags: {
-          some: {
-            tag: {
-              name: { in: tags },
-            },
+  const where = {
+    ...(privateOnly
+      ? {
+          authorId: profileId,
+        }
+      : { OR: [{ isPrivate: false }, { authorId: profileId }] }),
+    ...(ids.length && {
+      id: { in: ids },
+    }),
+    ...(searchName && {
+      name: {
+        contains: searchName,
+        mode: "insensitive",
+      },
+    }),
+    ...(tags.length && {
+      tags: {
+        some: {
+          tag: {
+            name: { in: tags },
           },
         },
-      }),
-    } as Prisma.ItemWhereInput;
+      },
+    }),
+  } as Prisma.ItemWhereInput;
 
-    const [items, totalCount] = await prismaClient.$transaction([
-      prismaClient.item.findMany({
-        where,
-        ...getSortOrders(sort),
-        ...getPagination(page, pageSize),
-      }),
-      prismaClient.item.count({ where }),
-    ]);
+  const [items, totalCount] = await prismaClient.$transaction([
+    prismaClient.item.findMany({
+      where,
+      ...getSortOrders(sort),
+      ...getPagination(page, pageSize),
+    }),
+    prismaClient.item.count({ where }),
+  ]);
 
-    res.status(OK).json({ items, totalCount });
-  },
-);
+  res.status(OK).json({ items, totalCount });
+});
 
 export const getItemById: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { profileId } = req;
     const { include, id } = GetItemByIdSchema.parse({
-      ...(req.query as Record<string, unknown>),
+      ...req.query,
       ...req.params,
     });
 
@@ -99,107 +102,113 @@ interface CreateItemBody {
   }[];
 }
 
-export const createItem: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { profileId } = req;
-    const {
+export const createItem: RequestHandler<
+  unknown,
+  unknown,
+  CreateItemBody,
+  unknown
+> = catchErrors(async (req: Request, res: Response) => {
+  const { profileId } = req;
+  const {
+    name,
+    description,
+    sortName,
+    tagNames,
+    imageIds,
+    dateRanges,
+    publishedAt,
+    expiredAt,
+  } = CreateItemSchema.parse({
+    ...req.body,
+  });
+
+  const tags =
+    tagNames &&
+    (await prismaClient.tag.findMany({
+      where: { name: { in: tagNames } },
+    }));
+
+  const item = await prismaClient.item.create({
+    data: {
       name,
       description,
       sortName,
-      tagNames,
-      imageIds,
-      dateRanges,
       publishedAt,
       expiredAt,
-    } = CreateItemSchema.parse({
-      ...(req.body as CreateItemBody),
-    });
-
-    const tags =
-      tagNames &&
-      (await prismaClient.tag.findMany({
-        where: { name: { in: tagNames } },
-      }));
-
-    const item = await prismaClient.item.create({
-      data: {
-        name,
-        description,
-        sortName,
-        publishedAt,
-        expiredAt,
-        tags: {
-          create: tags.map(({ id }) => ({ tagId: id })),
-        },
-        images: {
-          create: imageIds.map((imageId) => ({ imageId })),
-        },
-        dateRanges: {
-          create: dateRanges,
-        },
-        authorId: profileId,
-        isPrivate: true,
+      tags: {
+        create: tags.map(({ id }) => ({ tagId: id })),
       },
-    });
+      images: {
+        create: imageIds.map((imageId) => ({ imageId })),
+      },
+      dateRanges: {
+        create: dateRanges,
+      },
+      authorId: profileId,
+      isPrivate: true,
+    },
+  });
 
-    res.status(OK).send({ item });
-  },
-);
+  res.status(OK).send({ item });
+});
 
-export const updateItem: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { profileId } = req;
-    const { id } = req.params || {};
-    const {
+export const updateItem: RequestHandler<
+  unknown,
+  unknown,
+  CreateItemBody,
+  unknown
+> = catchErrors(async (req: Request, res: Response) => {
+  const { profileId } = req;
+  const { id } = req.params || {};
+  const {
+    name,
+    description,
+    sortName,
+    tagNames,
+    imageIds,
+    dateRanges,
+    publishedAt,
+    expiredAt,
+  } = CreateItemSchema.parse(req.body);
+
+  const item = await prismaClient.item.findFirst({
+    where: { id: Number(id), authorId: profileId },
+  });
+  throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
+
+  const tags =
+    tagNames &&
+    (await prismaClient.tag.findMany({
+      where: { name: { in: tagNames } },
+    }));
+
+  const updatedItem = await prismaClient.item.update({
+    where: { id: Number(id), authorId: profileId },
+    data: {
       name,
       description,
       sortName,
-      tagNames,
-      imageIds,
-      dateRanges,
       publishedAt,
       expiredAt,
-    } = CreateItemSchema.parse(req.body as CreateItemBody);
-
-    const item = await prismaClient.item.findFirst({
-      where: { id: Number(id), authorId: profileId },
-    });
-    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
-
-    const tags =
-      tagNames &&
-      (await prismaClient.tag.findMany({
-        where: { name: { in: tagNames } },
-      }));
-
-    const updatedItem = await prismaClient.item.update({
-      where: { id: Number(id), authorId: profileId },
-      data: {
-        name,
-        description,
-        sortName,
-        publishedAt,
-        expiredAt,
-        tags: {
-          deleteMany: {},
-          create: tags.map(({ id }) => ({ tagId: id })),
-        },
-        images: {
-          deleteMany: {},
-          create: imageIds.map((imageId) => ({ imageId })),
-        },
-        dateRanges: {
-          deleteMany: {},
-          create: dateRanges,
-        },
-        authorId: profileId,
-        isPrivate: true,
+      tags: {
+        deleteMany: {},
+        create: tags.map(({ id }) => ({ tagId: id })),
       },
-    });
+      images: {
+        deleteMany: {},
+        create: imageIds.map((imageId) => ({ imageId })),
+      },
+      dateRanges: {
+        deleteMany: {},
+        create: dateRanges,
+      },
+      authorId: profileId,
+      isPrivate: true,
+    },
+  });
 
-    res.status(OK).send({ item: updatedItem });
-  },
-);
+  res.status(OK).send({ item: updatedItem });
+});
 
 interface ModifyItemBody {
   name?: string;
@@ -208,32 +217,35 @@ interface ModifyItemBody {
   expiredAt?: string;
 }
 
-export const modifyItem: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { profileId } = req;
-    const { id } = req.params || {};
-    const data = ModifyItemSchema.parse(req.body as Partial<ModifyItemBody>);
+export const modifyItem: RequestHandler<
+  unknown,
+  unknown,
+  ModifyItemBody,
+  unknown
+> = catchErrors(async (req: Request, res: Response) => {
+  const { profileId } = req;
+  const { id } = req.params || {};
+  const data = ModifyItemSchema.parse(req.body);
 
-    const item = await prismaClient.item.findFirst({
-      where: { id: Number(id), authorId: profileId },
-    });
-    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
+  const item = await prismaClient.item.findFirst({
+    where: { id: Number(id), authorId: profileId },
+  });
+  throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
 
-    const updatedItem = await prismaClient.item.update({
-      where: { id: Number(id), authorId: profileId },
-      data: {
-        ...data,
-        authorId: profileId,
-        isPrivate: true,
-      },
-    });
+  const updatedItem = await prismaClient.item.update({
+    where: { id: Number(id), authorId: profileId },
+    data: {
+      ...data,
+      authorId: profileId,
+      isPrivate: true,
+    },
+  });
 
-    res.status(OK).send({ item: updatedItem });
-  },
-);
+  res.status(OK).send({ item: updatedItem });
+});
 
 export const deleteItem: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { profileId } = req;
     const { id } = req.params || {};
 

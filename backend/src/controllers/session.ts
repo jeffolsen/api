@@ -11,9 +11,10 @@ import { processVerificationCode } from "../services/auth";
 import { clearAuthCookies } from "../util/cookie";
 import { SessionLogoutAllSchema } from "../schemas/session";
 import { passwordSchema } from "../schemas/properties";
+import { Request, Response } from "express";
 
 export const getProfilesSessions: RequestHandler = catchErrors(
-  async (req, res, next) => {
+  async (req: Request, res: Response) => {
     const { profileId } = req;
 
     const sessions = await prismaClient.session.findMany({
@@ -30,13 +31,15 @@ export const getProfilesSessions: RequestHandler = catchErrors(
   },
 );
 
-export const logout: RequestHandler = catchErrors(async (req, res, next) => {
-  const { sessionId } = req;
+export const logout: RequestHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const { sessionId } = req;
 
-  await prismaClient.session.logOut(sessionId);
+    await prismaClient.session.logOut(sessionId);
 
-  clearAuthCookies(res).sendStatus(OK);
-});
+    clearAuthCookies(res).sendStatus(OK);
+  },
+);
 
 interface LogoutAllWithSessionBody {
   password: string;
@@ -47,7 +50,7 @@ export const logoutAllWithSession: RequestHandler<
   unknown,
   LogoutAllWithSessionBody,
   unknown
-> = catchErrors(async (req, res, next) => {
+> = catchErrors(async (req: Request, res: Response) => {
   const { profileId } = req;
   const password = passwordSchema.parse(req.body?.password);
   const profile = await prismaClient.profile.findUnique({
@@ -73,10 +76,10 @@ export const logoutAllWithCode: RequestHandler<
   unknown,
   LogoutAllBody,
   unknown
-> = catchErrors(async (req, res, next) => {
-  const code = req.get("X-Verification-Code") as string;
+> = catchErrors(async (req: Request, res: Response) => {
+  const code = req.get("X-Verification-Code");
   const { email, verificationCode, userAgent } = SessionLogoutAllSchema.parse({
-    ...(req.body as LogoutAllBody),
+    ...req.body,
     verificationCode: code || "",
     userAgent: req.headers["user-agent"],
   });

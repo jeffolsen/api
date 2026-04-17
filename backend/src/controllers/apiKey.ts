@@ -22,9 +22,10 @@ import {
   ApiKeyDestroySchema,
   ApiKeyGenerateSchema,
 } from "../schemas/apikey";
+import { Request, Response } from "express";
 
 export const getProfilesApiKeys: RequestHandler = catchErrors(
-  async (req, res, next) => {
+  async (req: Request, res: Response) => {
     const { profileId } = req;
 
     const apiKeys = await prismaClient.apiKey.findMany({
@@ -48,16 +49,16 @@ export const generate: RequestHandler<
   unknown,
   GenerateApiKeyBody,
   unknown
-> = catchErrors(async (req, res, next) => {
-  const code = req.get("X-Verification-Code") as string;
+> = catchErrors(async (req: Request, res: Response) => {
+  const code = req.get("X-Verification-Code");
   const { profileId } = req;
   const {
     apiSlug: slug,
-    verificationCode,
     origin,
+    verificationCode,
     userAgent,
   } = ApiKeyGenerateSchema.parse({
-    ...(req.body as GenerateApiKeyBody),
+    ...req.body,
     verificationCode: code || "",
     userAgent: req.headers["user-agent"],
   });
@@ -105,16 +106,16 @@ export const destroy: RequestHandler<
   unknown,
   DestroyApiKeyBody,
   unknown
-> = catchErrors(async (req, res, next) => {
+> = catchErrors(async (req: Request, res: Response) => {
   const { profileId } = req;
-  const code = req.get("X-Verification-Code") as string;
+  const code = req.get("X-Verification-Code");
 
   const {
     apiSlug: slug,
     verificationCode,
     userAgent,
   } = ApiKeyDestroySchema.parse({
-    ...(req.body as DestroyApiKeyBody),
+    ...req.body,
     userAgent: req.headers["user-agent"],
     verificationCode: code || "",
   });

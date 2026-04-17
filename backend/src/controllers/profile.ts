@@ -19,7 +19,7 @@ import {
 import { clearAuthCookies } from "../util/cookie";
 
 export const getAuthenticatedProfile: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { profileId } = req;
 
     const profile = await prismaClient.profile.findUnique({
@@ -32,8 +32,8 @@ export const getAuthenticatedProfile: RequestHandler = catchErrors(
 );
 
 export const deleteProfile: RequestHandler = catchErrors(
-  async (req, res, next) => {
-    const code = req.get("X-Verification-Code") as string;
+  async (req: Request, res: Response) => {
+    const code = req.get("X-Verification-Code");
     const { profileId } = req;
     const { verificationCode, userAgent } = DeleteProfileSchema.parse({
       verificationCode: code || "",
@@ -72,8 +72,8 @@ export const resetPasswordWithCode: RequestHandler<
   unknown,
   ResetPasswordBody,
   unknown
-> = catchErrors(async (req, res, next) => {
-  const code = req.get("X-Verification-Code") as string;
+> = catchErrors(async (req: Request, res: Response) => {
+  const code = req.get("X-Verification-Code");
   const { verificationCode, email, password, userAgent } =
     ResetPasswordWithCodeSchema.parse({
       ...req.body,
@@ -121,7 +121,7 @@ export const changePasswordWithSession: RequestHandler<
   unknown,
   ChangePasswordWithSessionBody,
   unknown
-> = catchErrors(async (req, res, next) => {
+> = catchErrors(async (req: Request, res: Response) => {
   const { profileId, sessionId } = req;
   const { password, newPassword } = ChangePasswordWithSessionSchema.parse(
     req.body,

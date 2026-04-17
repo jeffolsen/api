@@ -34,12 +34,12 @@ async function main() {
       where: { url: image.url },
       update: {
         alt: image.alt,
-        type: image.type as ImageType,
+        type: image.type,
       },
       create: {
         url: image.url,
         alt: image.alt,
-        type: image.type as ImageType,
+        type: image.type,
       },
     });
   }
@@ -47,12 +47,12 @@ async function main() {
     await prismaClient.componentType.upsert({
       where: { name: componentType.name },
       update: {
-        subjectType: componentType.subjectType as SubjectType,
+        subjectType: componentType.subjectType,
         propertySchema: componentType.propertySchema as Prisma.InputJsonValue,
       },
       create: {
         name: componentType.name,
-        subjectType: componentType.subjectType as SubjectType,
+        subjectType: componentType.subjectType,
         propertySchema: componentType.propertySchema as Prisma.InputJsonValue,
       },
     });

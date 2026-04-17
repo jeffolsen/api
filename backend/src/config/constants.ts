@@ -12,13 +12,13 @@ export const SESSION_TOKEN_LIFESPAN = 4 * 24 * 60 * 60 * 1000;
 // export const SESSION_TOKEN_LIFESPAN = 4 * 60 * 1000;
 export const SESSION_TOKEN_OPTIONS = {
   expiresIn: SESSION_TOKEN_LIFESPAN,
-} as SignOptions;
+};
 // 15 minutes in ms
 // export const ACCESS_TOKEN_LIFESPAN = 15 * 60 * 1000;
 export const ACCESS_TOKEN_LIFESPAN = 1 * 60 * 1000;
 export const ACCESS_TOKEN_OPTIONS = {
   expiresIn: ACCESS_TOKEN_LIFESPAN,
-} as SignOptions;
+};
 // 8 hours in ms
 export const VERIFICATION_CODE_LIFESPAN = 8 * 60 * 60 * 1000;
 

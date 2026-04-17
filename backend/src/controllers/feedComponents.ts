@@ -20,7 +20,7 @@ type GetComponentsQuery = {
 };
 
 export const getFeedComponents: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { profileId } = req;
     const { feedId: id } = GetFeedsResourcesSchema.parse(req.params);
     const { published, page, pageSize } = GetFeedComponentsQuery.parse(
@@ -56,7 +56,7 @@ export const getFeedComponents: RequestHandler = catchErrors(
 );
 
 export const getFeedComponentsById: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { profileId } = req;
     const { feedId, id } = GetFeedsResourceByIdSchema.parse(req.params);
 
@@ -74,7 +74,7 @@ export const getFeedComponentsById: RequestHandler = catchErrors(
 );
 
 export const deleteFeedComponent: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { profileId } = req;
     const { feedId, id } = GetFeedsResourceByIdSchema.parse(req.params);
 

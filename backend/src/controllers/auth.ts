@@ -11,6 +11,7 @@ import throwError from "../util/throwError";
 import prismaClient from "../db/client";
 import { loginSchema, RegisterSchema } from "../schemas/auth";
 import { ProfileCreateTransform } from "../schemas/profile";
+import { Request, Response } from "express";
 
 interface RegisterBody {
   email: string;
@@ -19,9 +20,9 @@ interface RegisterBody {
 }
 
 export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
-  catchErrors(async (req, res, next) => {
+  catchErrors(async (req: Request, res: Response) => {
     const { email, password } = RegisterSchema.parse({
-      ...(req.body as RegisterBody),
+      ...req.body,
     });
 
     const emailFound = await prismaClient.profile.findUnique({
@@ -45,14 +46,14 @@ export const login: RequestHandler<
   unknown,
   LoginWithVerificationCodeBody,
   unknown
-> = catchErrors(async (req, res, next) => {
-  const code = req.get("X-Verification-Code") as string;
+> = catchErrors(async (req: Request, res: Response) => {
+  const code = req.get("X-Verification-Code");
   const { profileId } = req;
   const loggedIn = !!profileId;
   throwError(!loggedIn, CONFLICT, "Already logged in");
 
   const { email, verificationCode, userAgent } = loginSchema.parse({
-    ...(req.body as LoginWithVerificationCodeBody),
+    ...req.body,
     userAgent: req.headers["user-agent"],
     verificationCode: code || "",
   });
@@ -73,22 +74,24 @@ export const login: RequestHandler<
   }).sendStatus(OK);
 });
 
-export const refresh: RequestHandler = catchErrors(async (req, res, next) => {
-  const { refreshToken } = req.cookies;
-  const userAgent = req.headers["user-agent"];
-  throwError(refreshToken, NOT_FOUND, MESSAGE_CREDENTIALS);
+export const refresh: RequestHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const { refreshToken } = req.cookies;
+    const userAgent = req.headers["user-agent"];
+    throwError(refreshToken, NOT_FOUND, MESSAGE_CREDENTIALS);
 
-  const { session, ...tokens } = await refreshAccessToken({
-    refreshToken,
-    userAgent,
-  });
+    const { session, ...tokens } = await refreshAccessToken({
+      refreshToken,
+      userAgent,
+    });
 
-  setAuthCookies({
-    res,
-    sessionexpiredAt: session.expiredAt,
-    ...tokens,
-  }).sendStatus(OK);
-});
+    setAuthCookies({
+      res,
+      sessionexpiredAt: session.expiredAt,
+      ...tokens,
+    }).sendStatus(OK);
+  },
+);
 
 const authApi = {
   register,

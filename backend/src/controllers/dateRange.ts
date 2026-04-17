@@ -3,7 +3,7 @@ import catchErrors from "../util/catchErrors";
 import { OK } from "../config/errorCodes";
 
 export const getDateRangeById: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { profileId } = req;
     const { id } = req.params || {};
     res.sendStatus(OK);
@@ -11,7 +11,7 @@ export const getDateRangeById: RequestHandler = catchErrors(
 );
 
 export const updateDateRange: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { profileId } = req;
     const { id } = req.params || {};
     res.sendStatus(OK);
@@ -19,7 +19,7 @@ export const updateDateRange: RequestHandler = catchErrors(
 );
 
 export const deleteDateRange: RequestHandler = catchErrors(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { profileId } = req;
     const { id } = req.params || {};
     res.sendStatus(OK);
