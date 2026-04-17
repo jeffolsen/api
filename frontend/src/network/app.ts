@@ -1,21 +1,20 @@
 import axios from "axios";
-import { useQuery, QueryOptions } from "@tanstack/react-query";
+import { useQuery, QueryOptions, UseQueryOptions } from "@tanstack/react-query";
 import {
   BASE_URL,
   COMPONENTS_ENDPOINT,
   DATE_RANGES_ENDPOINT,
-  FEED_PATH_ENDPOINT,
   FEEDS_ENDPOINT,
   IMAGES_ENDPOINT,
   ITEMS_ENDPOINT,
   PaginationParams,
   TAGS_ENDPOINT,
 } from "./api";
-import { ITEMS_KEY } from "./item";
+import { GetItemsResponse, ITEMS_KEY, TItemQueryParams } from "./item";
 import { FEEDS_KEY } from "./feed";
 import { TAGS_KEY } from "./tag";
 import { IMAGES_KEY, TImageType, GetImagesResponse } from "./image";
-import { DATE_RANGES_KEY } from "./dateRange";
+import { DATE_RANGES_KEY } from "./dataRange/types";
 import { COMPONENTS_KEY } from "./component";
 
 const APP_KEY = "app" as const;
@@ -92,15 +91,25 @@ export const useGetAppImages = (
   });
 };
 
-export const useGetAppItems = () => {
+export const useGetAppItems = (
+  queryParams?: TItemQueryParams,
+  options?: Omit<UseQueryOptions<GetItemsResponse>, "queryKey" | "queryFn">,
+) => {
   return useQuery({
-    queryKey: [APP_KEY, ITEMS_KEY],
-    queryFn: async () => {
+    queryKey: [APP_KEY, ITEMS_KEY, queryParams],
+    queryFn: async (): Promise<GetItemsResponse> => {
       const response = await app.get(ITEMS_ENDPOINT, {
         headers,
+        params: {
+          ...queryParams,
+          ids: queryParams?.ids?.join(","),
+          tags: queryParams?.tags?.join(","),
+          sort: queryParams?.sort?.join(","),
+        },
       });
       return response.data;
     },
+    ...options,
   });
 };
 
@@ -177,11 +186,12 @@ export const useGetAppFeeds = () => {
   });
 };
 
-export const useGetAppFeedByPath = (path: string) => {
+export const useGetAppFeedById = (id?: number) => {
   return useQuery({
-    queryKey: [APP_KEY, FEEDS_KEY, path],
+    queryKey: [APP_KEY, FEEDS_KEY, id],
     queryFn: async () => {
-      const response = await app.get(`${FEED_PATH_ENDPOINT}/${path}`, {
+      if (!id) return null;
+      const response = await app.get(`${FEEDS_ENDPOINT}/${id}`, {
         headers,
       });
       return response.data;

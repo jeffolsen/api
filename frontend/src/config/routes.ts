@@ -143,6 +143,7 @@ const routes: LocalFeedWithComponents[] = [
         propertyValues: {
           variant: "default",
           isPrimaryContent: true,
+          hideFor: "authenticated",
         },
         publishedAt: "2024-01-01T00:00:00Z",
         expiredAt: null,
@@ -159,6 +160,7 @@ const routes: LocalFeedWithComponents[] = [
         propertyValues: {
           variant: "default",
           isPrimaryContent: true,
+          hideFor: "unauthenticated",
         },
         publishedAt: "2024-01-01T00:00:00Z",
         expiredAt: null,

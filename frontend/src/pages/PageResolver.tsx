@@ -3,6 +3,7 @@ import Loading from "../components/common/Loading";
 import { LocalFeedWithComponents } from "../config/routes";
 import Blocks from "../components/blocks/Blocks";
 import { NotFoundError } from "../utils/errors";
+import { isAuthenticated } from "../network/api";
 
 export default function PageResolver({
   pageData,
@@ -13,23 +14,22 @@ export default function PageResolver({
   params: Record<string, string>;
   path: string;
 }) {
-  console.log(
-    "PageResolver received pageData:",
-    pageData,
-    "with params:",
-    params,
-    "and path:",
-    path,
+  // Filter components based on authentication status
+  const authenticated = isAuthenticated();
+  const filteredComponents = filterByAuthentication(
+    pageData.components,
+    authenticated,
   );
 
-  // pageData contains a feed with components that can be rendered
-  // Each component should govern if it can be rendered based on the user's auth state and other factors
-  // If no components can be rendered, we should render a default 404 component
-  // if (pageData.components.length === 0) {
-  //   throw new NotFoundError(`No components found for path: ${path}`);
-  // }
+  // If no component we should
+  if (filteredComponents.length === 0) {
+    throw new NotFoundError();
+  }
 
-  const renderedComponents = pageData.components
+  // Ensure only the first component with isPrimaryContent=true retains that property to respect H1 usage for SEO and accessibility
+  const h1RespectingComponents = ensureSinglePrimaryContent(filteredComponents);
+
+  const renderedComponents = h1RespectingComponents
     .map((component, index) => {
       const Block = Blocks[component.typeName as keyof typeof Blocks];
       if (Block) {
@@ -52,3 +52,54 @@ export default function PageResolver({
 
   return <Suspense fallback={<Loading />}>{renderedComponents}</Suspense>;
 }
+
+const filterByAuthentication = (
+  components: LocalFeedWithComponents["components"],
+  isAuthenticated: boolean,
+) => {
+  return components.filter((component) => {
+    const hideFor = component.propertyValues.hideFor;
+    if (hideFor === "authenticated" && isAuthenticated) {
+      return false;
+    }
+    if (hideFor === "unauthenticated" && !isAuthenticated) {
+      return false;
+    }
+    return true;
+  });
+};
+
+const ensureSinglePrimaryContent = (
+  components: LocalFeedWithComponents["components"],
+) => {
+  const firstPrimaryContentIndex = components.findIndex(
+    (component) => component.propertyValues.isPrimaryContent,
+  );
+
+  if (firstPrimaryContentIndex === -1) {
+    // no primaryConent found, add a default one to the first component
+    components[0] = {
+      ...components[0],
+      propertyValues: {
+        ...components[0].propertyValues,
+        isPrimaryContent: true,
+      },
+    };
+    return components;
+  }
+  return components.map((component, index) => {
+    if (
+      index > firstPrimaryContentIndex &&
+      component.propertyValues.isPrimaryContent
+    ) {
+      return {
+        ...component,
+        propertyValues: {
+          ...component.propertyValues,
+          isPrimaryContent: false,
+        },
+      };
+    }
+    return component;
+  });
+};
