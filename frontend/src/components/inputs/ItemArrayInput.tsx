@@ -62,20 +62,25 @@ function ItemArrayInput(
         rules={rules as FieldArrayMinMaxRule}
       >
         <Grid
-          items={(fields as ItemIdArrayFields).map((field, index) => (
-            <ComponentSchemaArrayOrderable
-              key={field.id}
-              label={
-                field.name ||
-                (existingItems?.find((item) => item.id === field.itemId)
-                  ?.name as string)
-              }
-              fields={fields}
-              index={index}
-              remove={remove}
-              swap={swap}
-            />
-          ))}
+          items={(fields as ItemIdArrayFields).map((field, index) => {
+            return {
+              content: (
+                <ComponentSchemaArrayOrderable
+                  key={field.id}
+                  label={
+                    field.name ||
+                    (existingItems?.find((item) => item.id === field.itemId)
+                      ?.name as string)
+                  }
+                  fields={fields}
+                  index={index}
+                  remove={remove}
+                  swap={swap}
+                />
+              ),
+              id: field.id,
+            };
+          })}
         />
         <Combobox
           onChange={(e: ItemIdField | null) => {

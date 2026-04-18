@@ -90,7 +90,7 @@ function FormScheduleSubmit({ control, triggerSubmit }: FormSubmitProps) {
           </label>
         </div>
       ) : (
-        <div className="border rounded p-4 pl-6 border-base-content/20">
+        <div className="border rounded p-4 pl-6 border-base-content/20 shasdow-xl">
           <Text textSize="sm" className="text-neutral-content/80">
             <SchedulingMessage
               publishedAt={publishedAtField.value}

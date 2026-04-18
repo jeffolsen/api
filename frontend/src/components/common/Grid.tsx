@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import clsx, { ClassValue } from "clsx";
 import { motion } from "motion/react";
 
 type ColumnProps = {
@@ -26,10 +26,16 @@ function isGridItem(item: GridItem | React.ReactNode): item is GridItem {
 type GridProps = {
   items: (GridItem | React.ReactNode)[];
   columns?: ColumnProps;
+  className?: ClassValue;
   onEmpty?: () => React.ReactNode;
 };
 
-function Grid({ items, columns = {}, onEmpty = () => null }: GridProps) {
+function Grid({
+  items,
+  columns = {},
+  className,
+  onEmpty = () => null,
+}: GridProps) {
   const mergedColumns = { base: "1" as const, ...columns };
 
   if (items.length === 0) {
@@ -41,6 +47,7 @@ function Grid({ items, columns = {}, onEmpty = () => null }: GridProps) {
       className={clsx([
         "w-full grid grid-flow-row auto-rows-fr gap-4",
         ...columnClasses(mergedColumns),
+        className,
       ])}
     >
       {items.map((item, index) =>

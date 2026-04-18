@@ -371,7 +371,7 @@ function ComponentTypeButton({
     <button
       onClick={() => onSelect(componentType)}
       className={clsx([
-        "btn btn-ghost border-base-content/20 text-primary-content/70",
+        "btn btn-ghost border-base-content/20 text-neutral-content/70 shadow-xl",
         "flex flex-col gap-2 items-center justify-center",
         "w-[150px] h-[150px]",
       ])}

@@ -48,7 +48,7 @@ function SelectedImage({
 }: SelectImageProps) {
   return (
     <span
-      className="relative inline-flex border max-w-[75px] max-h-[75px] sm:max-w-[100px] sm:max-h-[100px] rounded border-base-content/20 cursor-pointer"
+      className="relative inline-flex border max-w-[75px] max-h-[75px] sm:max-w-[100px] sm:max-h-[100px] rounded border-base-content/20 cursor-pointer shadow-xl"
       onClick={onClick}
     >
       <Image

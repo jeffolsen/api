@@ -17,7 +17,7 @@ export default function ComponentSchemaArrayOrderable<
   swap: (from: number, to: number) => void;
 }) {
   return (
-    <div className="card compact border border-base-content/20 rounded">
+    <div className="card compact border border-base-content/20 rounded shadow-xl">
       <div className="card-body flex-row items-center gap-4">
         <div className="flex flex-col gap-2">
           <IconButton

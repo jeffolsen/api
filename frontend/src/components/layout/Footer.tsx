@@ -4,7 +4,7 @@ import Link from "../common/Link";
 function Footer() {
   return (
     <HeadingLevelProvider>
-      <footer className="flex justify-center bg-base-300 min-h-36 p-8">
+      <footer className="flex justify-center bg-base-300 min-h-36 p-8 text-base-content">
         <div className="footer w-full max-w-screen-xl">
           <ul className="menu menu-vertical md:menu-horizontal w-full">
             <Link as="a" href="">
