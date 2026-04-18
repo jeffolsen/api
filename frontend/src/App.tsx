@@ -1,32 +1,32 @@
 import { useLoaderData } from "react-router";
 import Layout from "./components/layout/Layout.tsx";
 import PageResolver from "./pages/PageResolver.tsx";
-import { TComponent } from "./network/component.ts";
+import { TComponent } from "./network/component/index.ts";
 
 function App() {
   const data = useLoaderData();
-  const headerHeroIndex = data.pageLayout.components.findIndex(
+  const headerHero = data.pageLayout.components.find(
     (c: TComponent) =>
       c.typeName === "HeroCarousel" && c.propertyValues.location === "header",
   );
-  const headerHero =
-    headerHeroIndex !== -1
-      ? data.pageLayout.components.splice(headerHeroIndex, 1)[0]
-      : null;
+  const components = data.pageLayout.components.filter(
+    (c: TComponent) => c.id !== headerHero?.id,
+  );
+
   return (
-    <Layout headerHero={headerHero}>
-      {/* <details>
+    <Layout>
+      <PageResolver
+        pageData={{ ...data.pageLayout, components }}
+        params={data.params}
+        path={data.path}
+      />
+
+      <details>
         <summary>Loader Data</summary>
         <pre>
           <code>{JSON.stringify(data, null, 2)}</code>
         </pre>
-      </details> */}
-
-      <PageResolver
-        pageData={data.pageLayout}
-        params={data.params}
-        path={data.path}
-      />
+      </details>
     </Layout>
   );
 }

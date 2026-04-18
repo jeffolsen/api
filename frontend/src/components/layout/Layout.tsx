@@ -3,16 +3,26 @@ import Header from "./Header";
 import Footer from "./Footer";
 import { HeadingLevelProvider } from "../common/Heading";
 import { TComponent } from "../../network/component";
+import clsx from "clsx";
+import {
+  mainSpacing,
+  mainVerticalPadding,
+} from "../common/helpers/layoutStyles";
 
 function Layout({
-  headerHero,
   children,
 }: PropsWithChildren & { headerHero?: TComponent | null }) {
   return (
     <HeadingLevelProvider>
       <div className="min-h-screen flex flex-col justify-between bg-base-100">
-        <Header hero={headerHero} />
-        <main className="flex-grow flex flex-col gap-6 items-center justify-start py-6">
+        <Header />
+        <main
+          className={clsx([
+            "flex-grow flex flex-col items-center justify-start",
+            mainVerticalPadding,
+            mainSpacing,
+          ])}
+        >
           {children}
         </main>
         <Footer />
