@@ -9,6 +9,12 @@ import ThemeToggle from "../partials/ThemeToggle";
 import clsx from "clsx";
 import Logo from "../partials/Logo";
 import HeaderImageSpread from "../partials/HeaderImageSpread";
+import {
+  Popover,
+  PopoverBackdrop,
+  PopoverButton,
+  PopoverPanel,
+} from "@headlessui/react";
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -30,7 +36,7 @@ function Header() {
         className={clsx([
           "flex justify-center",
           "top-0 sticky z-10",
-          "bg-base-200/90 backdrop-blur-sm",
+          "md:bg-base-200/90 backdrop-blur-sm",
         ])}
       >
         <div
@@ -42,7 +48,7 @@ function Header() {
           <Logo />
           <div className="flex-grow flex items-center justify-end md:justify-between md:flex-row-reverse">
             <ThemeToggle />
-            <div className="divider bg-base-content md:hidden w-0.5" />
+            <div className="divider bg-base-content md:hidden w-px my-0 h-auto" />
             <DesktopNav />
             <MobileNav />
           </div>
@@ -75,8 +81,8 @@ function DesktopNav() {
 
 function MobileNav() {
   return (
-    <div className="dropdown md:hidden">
-      <label tabIndex={0} className="btn btn-ghost lg:hidden">
+    <Popover className="relative">
+      <PopoverButton className="btn btn-ghost btn-lg md:hidden">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5"
@@ -91,20 +97,23 @@ function MobileNav() {
             d="M4 6h16M4 12h8m-8 6h16"
           />
         </svg>
-      </label>
-      <ul
-        tabIndex={0}
-        className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
-      >
+      </PopoverButton>
+      <PopoverBackdrop className="fixed inset-0 bg-black/15" />
+      <PopoverPanel className="absolute w-[75vw] right-0 mt-2 bg-base-100 rounded-md shadow-lg p-4">
         {navItems.map((item) => (
-          <li key={item.to}>
-            <Button to={item.to} as="Link" color="ghost" size="lg">
-              {item.label}
-            </Button>
-          </li>
+          <Button
+            key={item.to}
+            to={item.to}
+            as="Link"
+            color="ghost"
+            size="lg"
+            className="w-full text-left"
+          >
+            {item.label}
+          </Button>
         ))}
-      </ul>
-    </div>
+      </PopoverPanel>
+    </Popover>
   );
 }
 

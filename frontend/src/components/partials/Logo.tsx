@@ -6,7 +6,7 @@ function Logo() {
     <div
       className={clsx([
         "flex items-center relative",
-        "text-2xl md:text-3xl p-6 tracking-tight font-black whitespace-nowrap uppercase",
+        "text-xl sm:text-2xl italic md:text-3xl p-4 sm:p-6 tracking-tight font-black whitespace-nowrap uppercase",
       ])}
     >
       <span>{"<"}</span>

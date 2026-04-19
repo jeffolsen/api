@@ -55,7 +55,7 @@ export default function ThemeToggle() {
   }, [theme]);
 
   return (
-    <div className="flex items-center gap-2 px-6">
+    <div className="flex items-center gap-2 px-4 sm:px-6">
       <SunIcon className="inline-block w-4 h-4" />
       <input
         type="checkbox"
