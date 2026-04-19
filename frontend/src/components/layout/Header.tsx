@@ -11,6 +11,9 @@ import { useLoaderData } from "react-router";
 import { Suspense } from "react";
 import Blocks from "../blocks/Blocks";
 import ThemeToggle from "../partials/ThemeToggle";
+import { InsetLink } from "../common/Link";
+import clsx from "clsx";
+import Logo from "../partials/Logo";
 
 function Header() {
   const getImages = useGetAppImages({ type: "LANDSCAPE" });
@@ -25,8 +28,20 @@ function Header() {
 
   return (
     <HeadingLevelProvider>
-      <header className="flex justify-center top-0 sticky bg-base-200 z-10">
-        <div className="flex items-center justify-between w-full max-w-screen-2xl">
+      <header
+        className={clsx([
+          "flex justify-center",
+          "top-0 sticky  z-10",
+          "bg-base-200/90 backdrop-blur-sm",
+        ])}
+      >
+        <div
+          className={clsx([
+            "flex items-center justify-between",
+            "w-full max-w-screen-2xl px-6 sm:px-10",
+          ])}
+        >
+          <Logo />
           <ul className="navbar">
             <li>
               <Button to="/" as="Link" color="ghost" size="lg">

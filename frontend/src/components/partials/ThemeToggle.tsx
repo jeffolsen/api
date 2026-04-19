@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { MoonIcon, SunIcon } from "lucide-react";
 
 type ThemePreference = "system" | "light" | "dark";
 
@@ -29,7 +30,11 @@ export default function ThemeToggle() {
     const root = window.document.documentElement;
     root.setAttribute("data-theme", resolvedDaisyTheme(theme));
 
-    if (theme !== "system") {
+    const systemPreference = window.matchMedia("(prefers-color-scheme: dark)")
+      .matches
+      ? "dark"
+      : "light";
+    if (theme !== "system" && theme !== systemPreference) {
       localStorage.setItem("theme", theme);
     } else {
       localStorage.removeItem("theme");
@@ -38,26 +43,27 @@ export default function ThemeToggle() {
 
   useEffect(() => {
     if (theme !== "system") return;
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const systemPreference = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = () => {
       document.documentElement.setAttribute(
         "data-theme",
         resolvedDaisyTheme("system"),
       );
     };
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
+    systemPreference.addEventListener("change", handler);
+    return () => systemPreference.removeEventListener("change", handler);
   }, [theme]);
 
   return (
-    <select
-      className="select select-bordered w-full max-w-xs"
-      value={theme}
-      onChange={(e) => setTheme(e.target.value as ThemePreference)}
-    >
-      <option value="system">System Default</option>
-      <option value="light">Light Mode</option>
-      <option value="dark">Dark Mode</option>
-    </select>
+    <div className="flex items-center gap-2">
+      <SunIcon className="inline-block w-4 h-4" />
+      <input
+        type="checkbox"
+        className="toggle toggle-sm"
+        checked={resolvedDaisyTheme(theme) === DAISY_THEME.dark}
+        onChange={(e) => setTheme(e.target.checked ? "dark" : "light")}
+      />
+      <MoonIcon className="inline-block w-4 h-4" />
+    </div>
   );
 }
