@@ -6,13 +6,13 @@ function Logo() {
     <div
       className={clsx([
         "flex items-center relative",
-        "text-xl sm:text-2xl md:text-3xl tracking-tight font-black whitespace-nowrap uppercase",
+        "text-2xl md:text-3xl p-6 tracking-tight font-black whitespace-nowrap uppercase",
       ])}
     >
       <span>{"<"}</span>
       <span className="mt-0.5">{`Jeff Olsen`}</span>
       <span>{" />"}</span>
-      <InsetLink to="/" />
+      <InsetLink to="/" aria-label="home" />
     </div>
   );
 }
