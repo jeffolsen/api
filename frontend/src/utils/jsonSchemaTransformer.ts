@@ -157,6 +157,9 @@ export default function convertJSONSchemaToFormInputs(
           componentName: "RadioInput",
           description: value?.["description"],
           input: {
+            registerOpts: {
+              required: `${value?.["title"] || key} is required`,
+            },
             valueOptions:
               "enum" in value && Array.isArray(value.enum)
                 ? value.enum.map((option: string, index: number) => ({

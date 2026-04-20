@@ -35,8 +35,8 @@ function Header() {
       <header
         className={clsx([
           "flex justify-center",
-          "top-0 sticky z-10",
-          "md:bg-base-200/90 backdrop-blur-sm",
+          "top-0 sticky z-20",
+          "bg-base-200 md:bg-base-200/90 backdrop-blur-sm",
         ])}
       >
         <div
@@ -54,12 +54,26 @@ function Header() {
           </div>
         </div>
       </header>
-      {hero && (
-        <Suspense fallback={null}>
-          <Blocks.HeroCarousel component={hero} params={{}} path="" />
-        </Suspense>
-      )}
-      <HeaderImageSpread />
+      <div
+        className={clsx([
+          "flex flex-col gap-2",
+          "max-h-lvh md:max-h-auto",
+          hero && "h-[calc(100lvh-62px)] md:h-[calc(100lvh-80px)]",
+        ])}
+      >
+        {hero && (
+          <div className="flex-grow">
+            <Suspense fallback={null}>
+              <Blocks.HeroCarousel
+                component={{ ...hero, name: "" }}
+                params={{}}
+                path=""
+              />
+            </Suspense>
+          </div>
+        )}
+        <HeaderImageSpread />
+      </div>
       <BreadCrumbs />
     </HeadingLevelProvider>
   );
