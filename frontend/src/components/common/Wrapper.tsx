@@ -4,6 +4,7 @@ import clsx from "clsx";
 export type WrapperProps = {
   width?: keyof typeof widths;
   padded?: boolean | "tablet" | "desktop";
+  className?: string;
 };
 
 const widths = {
@@ -17,12 +18,13 @@ const widths = {
 const Wrapper = ({
   width = "md",
   padded = true,
+  className,
   children,
 }: PropsWithChildren<WrapperProps>) => {
   return (
     <div
       className={clsx([
-        "flex items-start justify-center w-full",
+        "flex items-start justify-center w-full max-h-full",
         padded === "desktop"
           ? "lg:px-4"
           : padded === "tablet"
@@ -30,11 +32,12 @@ const Wrapper = ({
             : padded
               ? "px-4"
               : "",
+        className,
       ])}
     >
       <div
         className={clsx([
-          "w-full h-full flex flex-col items-stretch gap-4",
+          "relative w-full h-full flex flex-col items-stretch gap-4",
           widths[width],
         ])}
       >

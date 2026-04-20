@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { TImage } from "../../network/image";
 import Image from "../common/Image";
 import { useGetAppImages } from "../../network/app";
+import { clsx } from "clsx";
 
 export default function HeaderImageSpread() {
   const getImages = useGetAppImages({ type: "LANDSCAPE" });
@@ -10,7 +11,7 @@ export default function HeaderImageSpread() {
     return shuffleArray<TImage>(getImages.data?.images || []).slice(0, 3);
   }, [getImages.data?.images]);
   return (
-    <div className="flex justify-center">
+    <div className={clsx("flex justify-center")}>
       <div className="w-full max-w-screen-2xl h-32 sm:h-36 flex items-stretch relative gradient-to-b from-base-100 to-transparent">
         {getImages.isLoading || images.length === 0 ? (
           <>
@@ -25,9 +26,7 @@ export default function HeaderImageSpread() {
                 <Image
                   src={image.url}
                   alt={image.alt}
-                  width={600}
-                  height={180}
-                  className="min-h-[calc(100%+theme(spacing.8))] min-w-[calc(100%+theme(spacing.8))] -mt-2 -ml-2"
+                  className="h-[calc(100%+theme(spacing.16))] w-[calc(100%+theme(spacing.16))] -mt-2 -ml-2"
                 />
               </div>
             ))}

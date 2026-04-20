@@ -14,6 +14,7 @@ import Image from "../common/Image";
 import Button, { PlusButton, XButton } from "../common/Button";
 import Loading from "../common/Loading";
 import FieldSetWrapperWithMinMax from "./FieldSetWrapper";
+import { clsx } from "clsx";
 
 const typeFilters = ["ICON", "LANDSCAPE", "PORTRAIT", "OTHER", ""] as const;
 
@@ -35,26 +36,26 @@ type ImageIdArrayFields = Array<ImageIdField>;
 
 type SelectImageProps = {
   image: Image;
-  height?: number;
-  width?: number;
+
   onClick: () => void;
+  className?: string;
 };
 
-function SelectedImage({
-  image,
-  height = 100,
-  width = 100,
-  onClick,
-}: SelectImageProps) {
+function SelectedImage({ image, onClick, className }: SelectImageProps) {
   return (
     <span
-      className="relative inline-flex border max-w-[75px] max-h-[75px] sm:max-w-[100px] sm:max-h-[100px] rounded border-base-content/20 cursor-pointer shadow-xl"
+      className={clsx(
+        "relative inline-flex items-center justify-center border rounded border-base-content/20 cursor-pointer shadow-xl",
+        "w-[75px] h-[75px] sm:w-[100px] sm:h-[100px]",
+        className,
+      )}
       onClick={onClick}
     >
       <Image
         src={image.url}
         alt={image.alt}
-        {...{ width, height, fit: "contain" }}
+        {...{ fit: "contain" }}
+        className="max-h-full"
       />
     </span>
   );
@@ -210,8 +211,6 @@ const ImageSelector = ({
           >
             <SelectedImage
               image={image}
-              height={75}
-              width={75}
               onClick={() => onPreviewClick?.(index)}
             />
             <XButton
@@ -296,8 +295,6 @@ function ImageDrawer({
         <span key={image.id}>
           <SelectedImage
             image={image}
-            height={50}
-            width={50}
             onClick={() => onThumbnailClick(image.id)}
           />
         </span>

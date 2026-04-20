@@ -8,6 +8,7 @@ import { TComponent } from "../../network/component";
 export type BlockWrapperProps<T> = {
   name?: string;
   headingProps?: HeadingProps;
+  className?: string;
   settings: {
     width?: WrapperProps["width"];
     padded?: WrapperProps["padded"];
@@ -19,6 +20,7 @@ function BlockWrapper<T extends Record<string, unknown>>({
   name,
   headingProps,
   settings,
+  className,
   children,
 }: PropsWithChildren<BlockWrapperProps<T>>) {
   if (settings.isPrimaryContent) {
@@ -38,6 +40,7 @@ function BlockWrapper<T extends Record<string, unknown>>({
         name={name}
         headingProps={headingProps}
         settings={settings}
+        className={className}
       >
         {children}
       </InnerBlockWrapper>
@@ -49,10 +52,15 @@ function InnerBlockWrapper<T extends Record<string, unknown>>({
   name,
   headingProps,
   settings,
+  className,
   children,
 }: PropsWithChildren<BlockWrapperProps<T>>) {
   return (
-    <Wrapper width={settings.width || "md"} padded={settings.padded}>
+    <Wrapper
+      width={settings.width || "md"}
+      padded={settings.padded}
+      className={className}
+    >
       {name && (
         <Heading
           headingSize="lg"
