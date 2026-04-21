@@ -10,27 +10,27 @@ import { useGetAppItems, useGetAppFeedById } from "../../../network/app";
 const variants = {
   alpha: {
     variant: "alpha",
-    width: "xl",
+    width: "lg",
     pageSize: 5,
   },
   beta: {
     variant: "beta",
-    width: "xl",
+    width: "md",
     pageSize: 7,
   },
   gamma: {
     variant: "gamma",
-    width: "xl",
+    width: "md",
     pageSize: 10,
   },
 } as const;
 
-function useHeroCarouselBlockData({
+function useCuratedListBlockData({
   component,
   params,
   path,
   critical,
-}: BlockComponentStandardProps): UseHeroCarouselBlockDataReturnType {
+}: BlockComponentStandardProps): UseCuratedListBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
   const { variant, itemAllowList, referenceFeed, isPrimaryContent } =
@@ -78,7 +78,7 @@ function useHeroCarouselBlockData({
   };
 }
 
-export default useHeroCarouselBlockData;
+export default useCuratedListBlockData;
 
 type VariantNames = keyof typeof variants;
 
@@ -95,9 +95,9 @@ type LocalBlockData = {
   referenceFeedData?: ReturnType<typeof useGetAppFeedById>;
 };
 
-export type UseHeroCarouselBlockProps = BlockProps<BlockSettings>;
-export type UseHeroCarouselBlockData = BlockData<LocalBlockData>;
-export type UseHeroCarouselBlockDataReturnType = BlockComponentDataReturnType<
+export type UseCuratedListBlockProps = BlockProps<BlockSettings>;
+export type UseCuratedListBlockData = BlockData<LocalBlockData>;
+export type UseCuratedListBlockDataReturnType = BlockComponentDataReturnType<
   BlockSettings,
   LocalBlockData
 >;

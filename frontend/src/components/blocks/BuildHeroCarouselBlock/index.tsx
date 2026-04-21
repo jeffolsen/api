@@ -23,13 +23,10 @@ import { TImage } from "../../../network/image";
 import { InsetLink } from "../../common/Link";
 import { CircleArrowLeft, CircleArrowRight } from "lucide-react";
 import { clsx } from "clsx";
+import ScrollInFade from "../../common/ScrollInFade";
 
-export default function Component({
-  component,
-  params,
-  path,
-}: BlockComponentStandardProps) {
-  const result = useHeroCarouselBlockData({ component, params, path });
+export default function Component(config: BlockComponentStandardProps) {
+  const result = useHeroCarouselBlockData(config);
   if (result.type === "error") {
     // Optionally, you could display an error message here
     return null;
@@ -78,6 +75,7 @@ function VariantAlpha({
 }) {
   const { itemsData, referenceFeedData } = blockData;
   const feedPath = (referenceFeedData?.data as TFeed)?.path;
+  const critical = blockProps.settings;
 
   if (itemsData.isLoading) {
     return null;
@@ -89,54 +87,56 @@ function VariantAlpha({
       settings={{ ...blockProps.settings, padded: false }}
       className="h-full"
     >
-      <Swiper
-        modules={[Navigation, Autoplay, EffectFade]}
-        navigation={{
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        }}
-        spaceBetween={50}
-        slidesPerView={1}
-        className="max-h-full h-full w-full max-w-screen-2xl"
-        autoplay={{
-          delay: 4000, // Time in ms
-          disableOnInteraction: false, // Keep playing after interaction
-          pauseOnMouseEnter: true, // Pause on hover
-        }}
-        loop={true}
-      >
-        {(itemsData.data?.items ?? []).map((item: TItem) => {
-          return (
-            <SwiperSlide key={item.id} className="max-h-full h-full w-full">
-              <AlphaSlide item={item} feedPath={feedPath} />
-            </SwiperSlide>
-          );
-        })}
-        <div
-          className={clsx([
-            "swiper-button-prev xl:ml-6",
-            "md:!w-20 md:!h-20",
-            "!top-auto bottom-1 sm:!top-1/2",
-          ])}
+      <ScrollInFade className="h-full" critical={!!critical}>
+        <Swiper
+          modules={[Navigation, Autoplay, EffectFade]}
+          navigation={{
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+          }}
+          spaceBetween={50}
+          slidesPerView={1}
+          className="max-h-full h-full w-full max-w-screen-2xl shadow-xl"
+          autoplay={{
+            delay: 4000, // Time in ms
+            disableOnInteraction: false, // Keep playing after interaction
+            pauseOnMouseEnter: true, // Pause on hover
+          }}
+          loop={true}
         >
-          <CircleArrowLeft
-            size={120}
-            className="!fill-none !stroke-base-content"
-          />
-        </div>
-        <div
-          className={clsx([
-            "swiper-button-next xl:mr-6",
-            "md:!w-20 md:!h-20",
-            "!top-auto bottom-1 sm:!top-1/2",
-          ])}
-        >
-          <CircleArrowRight
-            size={120}
-            className="!fill-none !stroke-base-content"
-          />
-        </div>
-      </Swiper>
+          {(itemsData.data?.items ?? []).map((item: TItem) => {
+            return (
+              <SwiperSlide key={item.id} className="max-h-full h-full w-full">
+                <AlphaSlide item={item} feedPath={feedPath} />
+              </SwiperSlide>
+            );
+          })}
+          <div
+            className={clsx([
+              "swiper-button-prev xl:ml-6",
+              "md:!w-20 md:!h-20",
+              "!top-auto bottom-1 sm:!top-1/2",
+            ])}
+          >
+            <CircleArrowLeft
+              size={120}
+              className="!fill-none !stroke-base-content"
+            />
+          </div>
+          <div
+            className={clsx([
+              "swiper-button-next xl:mr-6",
+              "md:!w-20 md:!h-20",
+              "!top-auto bottom-1 sm:!top-1/2",
+            ])}
+          >
+            <CircleArrowRight
+              size={120}
+              className="!fill-none !stroke-base-content"
+            />
+          </div>
+        </Swiper>
+      </ScrollInFade>
     </Block>
   );
 }
@@ -194,6 +194,7 @@ function VariantBeta({
 }) {
   const { itemsData, referenceFeedData } = blockData;
   const feedPath = (referenceFeedData?.data as TFeed)?.path;
+  const critical = blockProps.settings.critical;
 
   if (itemsData.isLoading) {
     return null;
@@ -201,46 +202,48 @@ function VariantBeta({
 
   return (
     <Block {...blockProps} settings={{ ...blockProps.settings, padded: false }}>
-      <div
-        className={clsx(["swiper-button-prev xl:ml-6", "md:!w-20 md:!h-20"])}
-      >
-        <CircleArrowLeft
-          size={120}
-          className="!fill-none !stroke-base-content"
-        />
-      </div>
-      <Swiper
-        modules={[Navigation, Autoplay, EffectFade]}
-        navigation={{
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        }}
-        spaceBetween={50}
-        slidesPerView={1}
-        className="max-h-full h-[30rem] w-full max-w-screen-xl"
-        autoplay={{
-          delay: 4000, // Time in ms
-          disableOnInteraction: false, // Keep playing after interaction
-          pauseOnMouseEnter: true, // Pause on hover
-        }}
-        loop={true}
-      >
-        {(itemsData.data?.items ?? []).map((item: TItem) => {
-          return (
-            <SwiperSlide key={item.id} className="max-h-full h-full w-full">
-              <BetaSlide item={item} feedPath={feedPath} />
-            </SwiperSlide>
-          );
-        })}
-      </Swiper>
-      <div
-        className={clsx(["swiper-button-next xl:mr-6", "md:!w-20 md:!h-20"])}
-      >
-        <CircleArrowRight
-          size={120}
-          className="!fill-none !stroke-base-content"
-        />
-      </div>
+      <ScrollInFade className="h-full w-full" critical={!!critical}>
+        <div
+          className={clsx(["swiper-button-prev xl:ml-6", "md:!w-20 md:!h-20"])}
+        >
+          <CircleArrowLeft
+            size={120}
+            className="!fill-none !stroke-base-content"
+          />
+        </div>
+        <Swiper
+          modules={[Navigation, Autoplay, EffectFade]}
+          navigation={{
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+          }}
+          spaceBetween={50}
+          slidesPerView={1}
+          className="max-h-full h-[30rem] w-full max-w-screen-xl shadow-xl"
+          autoplay={{
+            delay: 4000, // Time in ms
+            disableOnInteraction: false, // Keep playing after interaction
+            pauseOnMouseEnter: true, // Pause on hover
+          }}
+          loop={true}
+        >
+          {(itemsData.data?.items ?? []).map((item: TItem) => {
+            return (
+              <SwiperSlide key={item.id} className="max-h-full h-full w-full">
+                <BetaSlide item={item} feedPath={feedPath} />
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+        <div
+          className={clsx(["swiper-button-next xl:mr-6", "md:!w-20 md:!h-20"])}
+        >
+          <CircleArrowRight
+            size={120}
+            className="!fill-none !stroke-base-content"
+          />
+        </div>
+      </ScrollInFade>
     </Block>
   );
 }
@@ -290,7 +293,7 @@ function VariantGamma({
 }) {
   const { itemsData, referenceFeedData } = blockData;
   const feedPath = (referenceFeedData?.data as TFeed)?.path;
-  console.log("feedPath", feedPath);
+  const critical = blockProps.settings.critical;
 
   if (itemsData.isLoading) {
     return null;
@@ -301,46 +304,58 @@ function VariantGamma({
       {...blockProps}
       settings={{ ...blockProps.settings, padded: "tablet" }}
     >
-      <Swiper
-        modules={[Navigation, Autoplay, EffectFade]}
-        navigation={{
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        }}
-        spaceBetween={16}
-        slidesPerView={3}
-        className="max-h-full h-96 w-full max-w-screen-2xl"
-        autoplay={{
-          delay: 4000, // Time in ms
-          disableOnInteraction: false, // Keep playing after interaction
-          pauseOnMouseEnter: true, // Pause on hover
-        }}
-        loop={true}
-      >
-        {(itemsData.data?.items ?? []).map((item: TItem) => {
-          return (
-            <SwiperSlide key={item.id} className="max-h-full h-full w-full">
-              <GammaSlide item={item} feedPath={feedPath} />
-            </SwiperSlide>
-          );
-        })}
-        <div
-          className={clsx(["swiper-button-prev xl:ml-6", "md:!w-20 md:!h-20"])}
+      {" "}
+      <ScrollInFade className="h-full w-full" critical={!!critical}>
+        <Swiper
+          modules={[Navigation, Autoplay, EffectFade]}
+          navigation={{
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+          }}
+          spaceBetween={16}
+          slidesPerView={3}
+          className="max-h-full h-96 w-full max-w-screen-2xl"
+          autoplay={{
+            delay: 4000, // Time in ms
+            disableOnInteraction: false, // Keep playing after interaction
+            pauseOnMouseEnter: true, // Pause on hover
+          }}
+          loop={true}
         >
-          <CircleArrowLeft
-            size={120}
-            className="!fill-none !stroke-base-content"
-          />
-        </div>
-        <div
-          className={clsx(["swiper-button-next xl:mr-6", "md:!w-20 md:!h-20"])}
-        >
-          <CircleArrowRight
-            size={120}
-            className="!fill-none !stroke-base-content"
-          />
-        </div>
-      </Swiper>
+          {(itemsData.data?.items ?? []).map((item: TItem) => {
+            return (
+              <SwiperSlide
+                key={item.id}
+                className="max-h-full h-full w-full shadow-xl"
+              >
+                <GammaSlide item={item} feedPath={feedPath} />
+              </SwiperSlide>
+            );
+          })}
+          <div
+            className={clsx([
+              "swiper-button-prev xl:ml-6",
+              "md:!w-20 md:!h-20",
+            ])}
+          >
+            <CircleArrowLeft
+              size={120}
+              className="!fill-none !stroke-base-content"
+            />
+          </div>
+          <div
+            className={clsx([
+              "swiper-button-next xl:mr-6",
+              "md:!w-20 md:!h-20",
+            ])}
+          >
+            <CircleArrowRight
+              size={120}
+              className="!fill-none !stroke-base-content"
+            />
+          </div>
+        </Swiper>
+      </ScrollInFade>
     </Block>
   );
 }
