@@ -12,7 +12,11 @@ export default function HeaderImageSpread() {
   }, [getImages.data?.images]);
   return (
     <div className={clsx("flex justify-center")}>
-      <div className="w-full max-w-screen-2xl h-32 sm:h-36 flex items-stretch relative gradient-to-b from-base-100 to-transparent">
+      <div
+        className={clsx([
+          "w-full max-w-screen-2xl h-32 sm:h-36 flex items-stretch relative",
+        ])}
+      >
         {getImages.isLoading || images.length === 0 ? (
           <>
             <div className="flex-1 bg-secondary/50" />
@@ -26,12 +30,13 @@ export default function HeaderImageSpread() {
                 <Image
                   src={image.url}
                   alt={image.alt}
-                  className="h-[calc(100%+theme(spacing.16))] w-[calc(100%+theme(spacing.16))] -mt-2 -ml-2"
+                  className="!h-[calc(100%+theme(spacing.16))] !w-[calc(100%+theme(spacing.16))] -mt-2 -ml-2"
                 />
               </div>
             ))}
           </>
         )}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60" />
       </div>
     </div>
   );

@@ -63,7 +63,9 @@ function Header() {
       >
         {hero && (
           <div className="flex-grow">
-            <Suspense fallback={null}>
+            <Suspense
+              fallback={<div className="skeleton w-full h-full bg-neutral" />}
+            >
               <Blocks.HeroCarousel
                 component={{ ...hero, name: "" }}
                 params={{}}

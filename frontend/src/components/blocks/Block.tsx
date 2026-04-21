@@ -4,6 +4,7 @@ import Wrapper, { WrapperProps } from "../common/Wrapper";
 import Heading, { HeadingProps } from "../common/Heading";
 import { LocalFeedComponent } from "../../config/routes";
 import { TComponent } from "../../network/component";
+import ScrollInFade from "../common/ScrollInFade";
 
 export type BlockWrapperProps<T> = {
   name?: string;
@@ -62,14 +63,18 @@ function InnerBlockWrapper<T extends Record<string, unknown>>({
       className={className}
     >
       {name && (
-        <Heading
-          headingSize="lg"
-          headingStyles={"uppercase font-bold text-neutral-content text-center"}
-          headingDecorator={settings.isPrimaryContent ? "strike" : "none"}
-          {...headingProps}
-        >
-          {name}
-        </Heading>
+        <ScrollInFade>
+          <Heading
+            headingSize="lg"
+            headingStyles={
+              "uppercase font-bold text-neutral-content text-center"
+            }
+            headingDecorator={settings.isPrimaryContent ? "strike" : "none"}
+            {...headingProps}
+          >
+            {name}
+          </Heading>
+        </ScrollInFade>
       )}
       {children}
     </Wrapper>
@@ -86,6 +91,7 @@ export type BlockComponentStandardProps = {
   component: LocalFeedComponent;
   params: Record<string, string>;
   path: string;
+  critical?: boolean;
 };
 
 // returned as the result of the data hook for a block component, passed into the block component for rendering.
@@ -95,6 +101,7 @@ export type BlockProps<T> = {
   settings: {
     width: WrapperProps["width"];
     isPrimaryContent: boolean;
+    critical?: boolean;
   } & T;
 };
 
