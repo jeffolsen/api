@@ -45,12 +45,8 @@ const tabs: TabsProps["tabs"] = [
   },
 ];
 
-export default function Component({
-  component,
-  params,
-  path,
-}: BlockComponentStandardProps) {
-  const result = useCmsLoginOrRegisterBlockData({ component, params, path });
+export default function Component(config: BlockComponentStandardProps) {
+  const result = useCmsLoginOrRegisterBlockData(config);
   if (result.type === "error") {
     // Optionally, you could display an error message here
     return null;

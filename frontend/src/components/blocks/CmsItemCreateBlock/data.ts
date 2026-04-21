@@ -16,6 +16,7 @@ function useItemCreateBlockData({
   component,
   params,
   path,
+  critical,
 }: BlockComponentStandardProps): UseItemCreateBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
@@ -39,6 +40,7 @@ function useItemCreateBlockData({
     blockProps: {
       settings: {
         ...blockSettings,
+        critical,
         isPrimaryContent,
       },
       name,

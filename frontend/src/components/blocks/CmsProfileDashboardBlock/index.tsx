@@ -12,12 +12,8 @@ import LoggedInCodesSection from "../../partials/LoggedInCodesSection";
 import LoggedInApiKeySection from "../../partials/LoggedInApiKeySection";
 import LoggedInProfileAdminSection from "../../partials/LoggedInProfileAdminSection";
 
-export default function Component({
-  component,
-  params,
-  path,
-}: BlockComponentStandardProps) {
-  const result = useProfileDashboardBlockData({ component, params, path });
+export default function Component(config: BlockComponentStandardProps) {
+  const result = useProfileDashboardBlockData(config);
 
   if (result.type === "error") return null;
 

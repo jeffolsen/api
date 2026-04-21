@@ -4,12 +4,8 @@ import { Button } from "../../common/Button";
 import { useNavigate } from "react-router";
 import useFourOhOneBlockData from "./data";
 
-function FourOhOneBlock({
-  component,
-  params,
-  path,
-}: BlockComponentStandardProps) {
-  const result = useFourOhOneBlockData({ component, params, path });
+function FourOhOneBlock(config: BlockComponentStandardProps) {
+  const result = useFourOhOneBlockData(config);
   const navigate = useNavigate();
 
   if (result.type === "error") return null;
@@ -22,7 +18,7 @@ function FourOhOneBlock({
         Sorry, you do not have permission to access the page
         <br />
         <Text as="span" textSize="lg" className="font-mono text-accent italic">
-          {path}
+          {config.path}
         </Text>
       </Text>
       <Button onClick={() => navigate(-1)} color="primary" className="mx-auto">

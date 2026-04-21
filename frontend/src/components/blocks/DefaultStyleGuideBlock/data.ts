@@ -11,6 +11,7 @@ const variants = {
 
 function useStyleGuideBlockData({
   component,
+  critical,
 }: BlockComponentStandardProps): UseStyleGuideBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
@@ -24,6 +25,7 @@ function useStyleGuideBlockData({
       name,
       settings: {
         ...blockSettings,
+        critical,
         isPrimaryContent,
       },
     },

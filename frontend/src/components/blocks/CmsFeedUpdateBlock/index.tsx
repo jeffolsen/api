@@ -45,12 +45,8 @@ import { paths } from "../../../config/routes";
 
 type ComponentWithType = TComponent & { type?: TComponentType };
 
-export default function Component({
-  component,
-  params,
-  path,
-}: BlockComponentStandardProps) {
-  const result = useFeedUpdateBlockData({ component, params, path });
+export default function Component(config: BlockComponentStandardProps) {
+  const result = useFeedUpdateBlockData(config);
   if (result.type === "error") return null;
   const { blockProps, blockData } = result;
   return <CmsFeedUpdateBlock blockProps={blockProps} blockData={blockData} />;

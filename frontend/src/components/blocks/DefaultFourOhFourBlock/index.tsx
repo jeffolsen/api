@@ -4,12 +4,8 @@ import Button from "../../common/Button";
 import { useNavigate } from "react-router";
 import useFourOhFourBlockData from "./data";
 
-function FourOhFourBlock({
-  component,
-  params,
-  path,
-}: BlockComponentStandardProps) {
-  const result = useFourOhFourBlockData({ component, params, path });
+function FourOhFourBlock(config: BlockComponentStandardProps) {
+  const result = useFourOhFourBlockData(config);
   const navigate = useNavigate();
 
   if (result.type === "error") return null;
@@ -21,7 +17,7 @@ function FourOhFourBlock({
         Sorry, the page
         <br />
         <Text as="span" textSize="lg" className="font-mono text-accent italic">
-          {path}
+          {config.path}
         </Text>
         <br />
         could not be found.

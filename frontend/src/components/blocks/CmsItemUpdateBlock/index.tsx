@@ -19,12 +19,8 @@ import useItemUpdateBlockData, {
 } from "./data";
 import { paths } from "../../../config/routes";
 
-export default function Component({
-  component,
-  params,
-  path,
-}: BlockComponentStandardProps) {
-  const result = useItemUpdateBlockData({ component, params, path });
+export default function Component(config: BlockComponentStandardProps) {
+  const result = useItemUpdateBlockData(config);
   if (result.type === "error") return null;
   const { blockProps, blockData } = result;
   return <CmsItemUpdateBlock blockProps={blockProps} blockData={blockData} />;

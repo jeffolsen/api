@@ -21,6 +21,7 @@ function useItemListBlockData({
   component,
   params,
   path,
+  critical,
 }: BlockComponentStandardProps): UseItemListBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
@@ -68,6 +69,7 @@ function useItemListBlockData({
     blockProps: {
       settings: {
         ...blockSettings,
+        critical,
         isPrimaryContent,
         pageSize,
       },

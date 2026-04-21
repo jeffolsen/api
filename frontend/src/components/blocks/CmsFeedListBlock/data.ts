@@ -20,6 +20,7 @@ function useFeedListBlockData({
   component,
   params,
   path,
+  critical,
 }: BlockComponentStandardProps): UseFeedUpdateBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
@@ -67,6 +68,7 @@ function useFeedListBlockData({
     blockProps: {
       settings: {
         ...blockSettings,
+        critical,
         pageSize,
         isPrimaryContent,
       },

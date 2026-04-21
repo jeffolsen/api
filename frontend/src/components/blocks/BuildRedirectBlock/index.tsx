@@ -4,12 +4,8 @@ import useRedirectBlockData from "./data";
 import { toast } from "react-hot-toast";
 import { useEffect } from "react";
 
-function RedirectBlock({
-  component,
-  params,
-  path,
-}: BlockComponentStandardProps) {
-  const result = useRedirectBlockData({ component, params, path });
+function RedirectBlock(config: BlockComponentStandardProps) {
+  const result = useRedirectBlockData(config);
   const navigate = useNavigate();
 
   const blockData = result.type === "success" ? result.blockData : undefined;

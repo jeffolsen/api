@@ -17,6 +17,7 @@ function useProfileDashboardBlockData({
   component,
   params,
   path,
+  critical,
 }: BlockComponentStandardProps): UseProfileDashboardBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
@@ -39,6 +40,7 @@ function useProfileDashboardBlockData({
     blockProps: {
       settings: {
         ...blockSettings,
+        critical,
         isPrimaryContent,
       },
       name,

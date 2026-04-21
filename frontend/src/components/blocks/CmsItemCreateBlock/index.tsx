@@ -9,12 +9,8 @@ import useItemCreateBlockData, {
 } from "./data";
 import { paths } from "../../../config/routes";
 
-export default function Component({
-  component,
-  params,
-  path,
-}: BlockComponentStandardProps) {
-  const result = useItemCreateBlockData({ component, params, path });
+export default function Component(config: BlockComponentStandardProps) {
+  const result = useItemCreateBlockData(config);
   if (result.type === "error") {
     // Optionally, you could display an error message here
     return null;

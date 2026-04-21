@@ -16,6 +16,7 @@ function useFeedCreateBlockData({
   component,
   params,
   path,
+  critical,
 }: BlockComponentStandardProps): UseFeedCreateBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
@@ -39,6 +40,7 @@ function useFeedCreateBlockData({
     blockProps: {
       settings: {
         ...blockSettings,
+        critical,
         isPrimaryContent,
       },
       name,

@@ -17,6 +17,7 @@ function useLoginOrRegisterBlockData({
   component,
   params,
   path,
+  critical,
 }: BlockComponentStandardProps): UseLoginOrRegisterBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
@@ -39,6 +40,7 @@ function useLoginOrRegisterBlockData({
     blockProps: {
       settings: {
         ...blockSettings,
+        critical,
         isPrimaryContent,
         id,
       },

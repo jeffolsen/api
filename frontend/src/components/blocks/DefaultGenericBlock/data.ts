@@ -11,6 +11,7 @@ const variants = {
 
 function useGenericBlockData({
   component,
+  critical,
 }: BlockComponentStandardProps): UseGenericBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
@@ -23,6 +24,7 @@ function useGenericBlockData({
     blockProps: {
       settings: {
         ...blockSettings,
+        critical,
         isPrimaryContent,
       },
       name,

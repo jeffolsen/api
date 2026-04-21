@@ -21,6 +21,7 @@ function useFeedUpdateBlockData({
   component,
   params,
   path,
+  critical,
 }: BlockComponentStandardProps) {
   const { id, name, propertyValues } = component;
 
@@ -67,6 +68,7 @@ function useFeedUpdateBlockData({
     blockProps: {
       settings: {
         ...blockSettings,
+        critical,
         isPrimaryContent,
       },
       name,

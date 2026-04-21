@@ -21,6 +21,7 @@ const variants = {
 function useItemUpdateBlockData({
   component,
   params,
+  critical,
 }: BlockComponentStandardProps): UseItemUpdateBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
@@ -52,6 +53,7 @@ function useItemUpdateBlockData({
     blockProps: {
       settings: {
         ...blockSettings,
+        critical,
         isPrimaryContent,
       },
       name,

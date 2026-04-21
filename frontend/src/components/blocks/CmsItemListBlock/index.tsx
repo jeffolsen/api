@@ -36,12 +36,8 @@ import useItemListBlockData, {
 import { paths } from "../../../config/routes";
 import FetchTransition from "../../common/FetchTransition";
 
-export default function Component({
-  component,
-  params,
-  path,
-}: BlockComponentStandardProps) {
-  const result = useItemListBlockData({ component, params, path });
+export default function Component(config: BlockComponentStandardProps) {
+  const result = useItemListBlockData(config);
   if (result.type === "error") return null;
   const { blockProps, blockData } = result;
   return <CmsItemsListBlock blockProps={blockProps} blockData={blockData} />;

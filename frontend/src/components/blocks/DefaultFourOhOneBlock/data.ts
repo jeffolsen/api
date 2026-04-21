@@ -11,6 +11,7 @@ const variants = {
 
 function useFourOhOneBlockData({
   component,
+  critical,
 }: BlockComponentStandardProps): UseFourOhOneBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
@@ -23,6 +24,7 @@ function useFourOhOneBlockData({
     blockProps: {
       settings: {
         ...blockSettings,
+        critical,
         isPrimaryContent,
       },
       name,

@@ -7,12 +7,8 @@ import Modal from "../../layout/Modal";
 import { useState } from "react";
 import useStyleGuideBlockData from "./data";
 
-function StyleGuideBlock({
-  component,
-  params,
-  path,
-}: BlockComponentStandardProps) {
-  const result = useStyleGuideBlockData({ component, params, path });
+function StyleGuideBlock(config: BlockComponentStandardProps) {
+  const result = useStyleGuideBlockData(config);
   const [openModal, setOpenModal] = useState(false);
 
   if (result.type === "error") return null;

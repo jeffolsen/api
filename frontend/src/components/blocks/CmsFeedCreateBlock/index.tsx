@@ -9,12 +9,8 @@ import useFeedCreateBlockData, {
 } from "./data";
 import { paths } from "../../../config/routes";
 
-export default function Component({
-  component,
-  params,
-  path,
-}: BlockComponentStandardProps) {
-  const result = useFeedCreateBlockData({ component, params, path });
+export default function Component(config: BlockComponentStandardProps) {
+  const result = useFeedCreateBlockData(config);
   if (result.type === "error") return null;
   const { blockProps, blockData } = result;
   return <CmsFeedCreateBlock blockProps={blockProps} blockData={blockData} />;
