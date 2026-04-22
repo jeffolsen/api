@@ -2,7 +2,7 @@
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     // File Layout
-    // "rootDir": "./src",
+    "rootDir": "./src",
     "outDir": "./dist",
 
     // Environment Settings
@@ -45,8 +45,10 @@
     // "noUncheckedSideEffectImports": true,
     // "moduleDetection": "force",
     "skipLibCheck": true,
-    "typeRoots": ["global.d.ts"]
+    "typeRoots": ["./node_modules/@types"]
   },
-  "include": ["src/**/*", "prisma/seed.ts", "global.d.ts"],
+  "include": [
+    "src/**/*"
+  ],
   "exclude": ["node_modules", "dist", "src/**/*.test.ts"]
 }

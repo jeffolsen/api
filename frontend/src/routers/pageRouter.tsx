@@ -76,12 +76,19 @@ const loader =
         );
       }
     } else {
-      dbRoutes = await queryClient.fetchQuery({
-        queryKey: appFeedsQueryKey(),
-        queryFn: async () => {
-          return fetchAppFeeds();
-        },
-      });
+      try {
+        dbRoutes = await queryClient.fetchQuery({
+          queryKey: appFeedsQueryKey(),
+          queryFn: async () => {
+            return fetchAppFeeds();
+          },
+        });
+      } catch (error) {
+        throw new Response(
+          error instanceof Error ? error.message : "Unknown error",
+          { status: 404 },
+        );
+      }
     }
 
     const allRoutes = [

@@ -9,6 +9,10 @@ import { Toaster } from "react-hot-toast";
 import ErrorPage from "./pages/ErrorPage";
 import createPageRouter from "./routers/pageRouter.tsx";
 import queryClient from "./utils/queryClient";
+import { createHead } from "@unhead/react/client";
+import { UnheadProvider } from "@unhead/react/client";
+
+const head = createHead();
 
 const router = createPageRouter({
   element: <App />,
@@ -19,8 +23,10 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <RouterProvider router={router} />
-        <Toaster />
+        <UnheadProvider head={head}>
+          <RouterProvider router={router} />
+          <Toaster />
+        </UnheadProvider>
       </AuthProvider>
     </QueryClientProvider>
   </StrictMode>,
