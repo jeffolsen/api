@@ -9,7 +9,9 @@ import {
   UpdateComponentSchema,
 } from "../schemas/component";
 import {
-  orderFeedsComponents,
+  reorderComponentsForCreation,
+  reorderComponentsForDeletion,
+  reorderComponentsForUpdate,
   validateComponentPropertyValues,
 } from "../services/components";
 import {
@@ -78,11 +80,10 @@ export const createComponent: RequestHandler<
 
   // order is 1 indexed, if order is not provided, it will be added to the end of the feed's components
   const newOrder = order || feed.components.length + 1;
-  const componentsToReorder = orderFeedsComponents({
-    components: feed.components,
-    component: null,
+  const componentsToReorder = reorderComponentsForCreation(
+    feed.components,
     newOrder,
-  });
+  );
 
   const component = await prismaClient.$transaction(async (tx) => {
     for (const comp of componentsToReorder) {
@@ -143,11 +144,11 @@ export const updateComponent: RequestHandler<
   await validateComponentPropertyValues(componentType, propertyValues || {});
 
   const newOrder = order || component.order;
-  const componentsToReorder = orderFeedsComponents({
-    components: component.feed.components,
+  const componentsToReorder = reorderComponentsForUpdate(
+    component.feed.components,
     component,
     newOrder,
-  });
+  );
 
   const updatedComponent = await prismaClient.$transaction(async (tx) => {
     if (componentsToReorder.length !== 0) {
@@ -218,11 +219,11 @@ export const modifyComponent: RequestHandler<
   }
 
   const newOrder = order || component.order;
-  const componentsToReorder = orderFeedsComponents({
-    components: component.feed.components,
+  const componentsToReorder = reorderComponentsForUpdate(
+    component.feed.components,
     component,
     newOrder,
-  });
+  );
 
   const updatedComponent = await prismaClient.$transaction(async (tx) => {
     if (componentsToReorder.length !== 0) {
@@ -282,10 +283,10 @@ export const deleteComponent: RequestHandler = catchErrors(
 
     throwError(feed, NOT_FOUND, MESSAGE_FEED_NOT_FOUND);
 
-    const componentsToReorder = orderFeedsComponents({
-      components: feed.components,
+    const componentsToReorder = reorderComponentsForDeletion(
+      feed.components,
       component,
-    });
+    );
 
     await prismaClient.$transaction([
       prismaClient.component.delete({ where: { id: component.id } }),

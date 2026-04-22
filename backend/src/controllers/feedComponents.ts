@@ -73,26 +73,6 @@ export const getFeedComponentsById: RequestHandler = catchErrors(
   },
 );
 
-export const deleteFeedComponent: RequestHandler = catchErrors(
-  async (req: Request, res: Response) => {
-    const { profileId } = req;
-    const { feedId, id } = GetFeedsResourceByIdSchema.parse(req.params);
-
-    const feed = await prismaClient.feed.findFirst({
-      where: { id: feedId, profileId },
-      include: { components: true },
-    });
-    throwError(feed, NOT_FOUND, MESSAGE_FEED_NOT_FOUND);
-
-    const component = feed.components.find((component) => component.id === id);
-    throwError(component, NOT_FOUND, MESSAGE_COMPONENTS_NOT_FOUND);
-
-    await prismaClient.component.delete({ where: { id } });
-
-    res.status(OK).send({ message: "Component deleted successfully" });
-  },
-);
-
 const feedComponentsApi = {
   getFeedComponents,
   getFeedComponentsById,
