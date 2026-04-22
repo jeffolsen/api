@@ -103,27 +103,31 @@ export const genericComponent = {
   updatedAt: "2024-01-01T00:00:00Z",
 } as LocalFeedComponent;
 
+export const fourOhFourFeed = {
+  id: 8000,
+  path: paths.notFound.slice(1), // remove leading slash for matching
+  subjectType: "COLLECTION",
+  publishedAt: "2024-01-01T00:00:00Z",
+  expiredAt: null,
+  createdAt: "2024-01-01T00:00:00Z",
+  updatedAt: "2024-01-01T00:00:00Z",
+  components: [fourOhFourComponent],
+} as LocalFeedWithComponents;
+
+export const fourOhOneFeed = {
+  id: 9000,
+  path: paths.unauthorized.slice(1), // remove leading slash for matching
+  subjectType: "COLLECTION",
+  publishedAt: "2024-01-01T00:00:00Z",
+  expiredAt: null,
+  createdAt: "2024-01-01T00:00:00Z",
+  updatedAt: "2024-01-01T00:00:00Z",
+  components: [fourOhOneComponent],
+} as LocalFeedWithComponents;
+
 const routes: LocalFeedWithComponents[] = [
-  {
-    id: 8000,
-    path: paths.notFound.slice(1), // remove leading slash for matching
-    subjectType: "COLLECTION",
-    publishedAt: "2024-01-01T00:00:00Z",
-    expiredAt: null,
-    createdAt: "2024-01-01T00:00:00Z",
-    updatedAt: "2024-01-01T00:00:00Z",
-    components: [fourOhFourComponent],
-  },
-  {
-    id: 9000,
-    path: paths.unauthorized.slice(1), // remove leading slash for matching
-    subjectType: "COLLECTION",
-    publishedAt: "2024-01-01T00:00:00Z",
-    expiredAt: null,
-    createdAt: "2024-01-01T00:00:00Z",
-    updatedAt: "2024-01-01T00:00:00Z",
-    components: [fourOhOneComponent],
-  },
+  fourOhFourFeed,
+  fourOhOneFeed,
   {
     id: 1000,
     path: paths.cmsHome.slice(1), // remove leading slash for matching
