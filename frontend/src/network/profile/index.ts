@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { OTP_STATUS_KEY, OTP_STATUS_NONE, OtpInput } from "../verificationCode";
+import { OTP_STATUS_KEY } from "../verificationCode";
 import {
   PROFILE_ENDPOINT,
   PASSWORD_RESET_WITH_OTP_ENDPOINT,
@@ -8,6 +8,12 @@ import {
   useEmail,
 } from "../api";
 import { useAuthState } from "../../contexts/AuthContext";
+import {
+  DeleteProfileWithOTPFormInput,
+  PasswordResetWithOTPFormInput,
+  PasswordResetWithSessionFormInput,
+} from "./types";
+import { OTP_STATUS_NONE } from "../verificationCode/types";
 
 const PROFILE_KEY = "profile" as const;
 
@@ -23,11 +29,6 @@ export const useGetAuthenticatedProfile = () => {
   });
 
   return query;
-};
-
-export type PasswordResetWithOTPFormInput = OtpInput & {
-  password: string;
-  confirmPassword: string;
 };
 
 export const usePasswordResetWithOTP = () => {
@@ -56,8 +57,16 @@ export const usePasswordResetWithOTP = () => {
   });
 };
 
-export type DeleteProfileWithOTPFormInput = {
-  verificationCode: string;
+export const usePasswordResetWithSession = () => {
+  const { api } = useAuthState();
+
+  return useMutation({
+    mutationFn: async (data: PasswordResetWithSessionFormInput) =>
+      withErrorHandling(async () => {
+        const response = await api.post(PASSWORD_CHANGE_ENDPOINT, data);
+        return response.data;
+      }),
+  });
 };
 
 export const useDeleteProfileWithOTP = () => {
@@ -84,27 +93,4 @@ export const useDeleteProfileWithOTP = () => {
   });
 };
 
-export type PasswordResetWithSessionFormInput = {
-  password: string;
-  newPassword: string;
-  confirmNewPassword: string;
-};
-
-export const usePasswordResetWithSession = () => {
-  const { api } = useAuthState();
-
-  return useMutation({
-    mutationFn: async (data: PasswordResetWithSessionFormInput) =>
-      withErrorHandling(async () => {
-        const response = await api.post(PASSWORD_CHANGE_ENDPOINT, data);
-        return response.data;
-      }),
-  });
-};
-
-export type TProfile = {
-  id: number;
-  email: string;
-  createdAt: string;
-  updatedAt: string;
-};
+export * from "./types";

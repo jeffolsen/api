@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { TComponentType } from "../componentType";
-import { TFeed, FEEDS_KEY } from "../feed";
+import { FEEDS_KEY } from "../feed";
 import { useAuthState } from "../../contexts/AuthContext";
 import { COMPONENTS_ENDPOINT, withErrorHandling } from "../api";
+import { TComponent, TComponentInput } from "./types";
+import { TFeed } from "../feed/types";
 
 export const COMPONENTS_KEY = "components" as const;
 
@@ -44,10 +45,6 @@ export const useUpdateComponent = () => {
       });
     },
   });
-};
-
-export type ModifyComponentRequest = Partial<TComponentInput> & {
-  feedId: TFeed["id"];
 };
 
 export const useModifyComponent = () => {
@@ -102,23 +99,4 @@ export const useDeleteComponent = () => {
   });
 };
 
-export type TComponent = {
-  id: number;
-  typeId: TComponentType["id"];
-  typeName: TComponentType["name"];
-  feedId: TFeed["id"];
-  order: number;
-  name: string;
-  propertyValues: Record<string, unknown>;
-  publishedAt?: string | null;
-  expiredAt?: string | null;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type TComponentInput = Omit<
-  TComponent,
-  "id" | "createdAt" | "updatedAt" | "typeName"
->;
-
-export type TComponentWithType = TComponent & TComponentType;
+export * from "./types";

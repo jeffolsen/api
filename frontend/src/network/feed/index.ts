@@ -4,21 +4,13 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from "@tanstack/react-query";
-import {
-  FEEDS_ENDPOINT,
-  COMPONENTS_ENDPOINT,
-  withErrorHandling,
-  PaginationParams,
-} from "../api";
-import { TComponent, COMPONENTS_KEY, TComponentWithType } from "../component";
+import { FEEDS_ENDPOINT, COMPONENTS_ENDPOINT, withErrorHandling } from "../api";
+import { COMPONENTS_KEY } from "../component";
 import { useAuthState } from "../../contexts/AuthContext";
+import { GetFeedsResponse, TFeedInput, TFeedsParams } from "./types";
+import { TComponent } from "../component/types";
 
 export const FEEDS_KEY = "feeds" as const;
-
-export type GetFeedsResponse = {
-  feeds: TFeed[];
-  totalCount: number;
-};
 
 export const useGetFeeds = (
   queryParams?: TFeedsParams,
@@ -140,40 +132,4 @@ export const useDeleteFeed = () => {
   });
 };
 
-export type TSubjectType = "COLLECTION" | "SINGLE";
-
-export type TFeedSort =
-  | "createdAt"
-  | "-createdAt"
-  | "updatedAt"
-  | "-updatedAt"
-  | "publishedAt"
-  | "-publishedAt"
-  | "expiredAt"
-  | "-expiredAt";
-
-export type TFeedsParams = {
-  sort?: TFeedSort[];
-  subjectTypes?: TSubjectType[];
-  ids?: number[];
-} & PaginationParams;
-
-export type TFeed = {
-  id: number;
-  path: string;
-  subjectType: TSubjectType;
-  publishedAt: string | null;
-  expiredAt: string | null;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type TFeedInput = Omit<TFeed, "id" | "createdAt" | "updatedAt">;
-
-export type TFeedWithComponents = TFeed & {
-  components: TComponent[];
-};
-
-export type TFeedWithComponentsWithTypes = TFeed & {
-  components: TComponentWithType[];
-};
+export * from "./types";

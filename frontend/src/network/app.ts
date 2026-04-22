@@ -10,12 +10,14 @@ import {
   PaginationParams,
   TAGS_ENDPOINT,
 } from "./api";
-import { GetItemsResponse, ITEMS_KEY, TItemQueryParams } from "./item";
+import { ITEMS_KEY } from "./item";
 import { FEEDS_KEY } from "./feed";
 import { TAGS_KEY } from "./tag";
-import { IMAGES_KEY, TImageType, GetImagesResponse } from "./image";
+import { IMAGES_KEY } from "./image";
 import { DATE_RANGES_KEY } from "./dataRange/types";
 import { COMPONENTS_KEY } from "./component";
+import { GetImagesResponse, TImageType } from "./image/types";
+import { GetItemsResponse, TItemQueryParams } from "./item/types";
 
 const APP_KEY = "app" as const;
 const API_KEY_HEADER = "X-Api-Key" as const;

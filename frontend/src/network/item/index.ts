@@ -10,61 +10,19 @@ import {
   TAGS_ENDPOINT,
   IMAGES_ENDPOINT,
   DATE_RANGES_ENDPOINT,
-  PaginationParams,
 } from "../api";
-import { TAGS_KEY, TTagInput, TTagName } from "../tag";
-import { IMAGES_KEY, TImage } from "../image";
+import { TAGS_KEY } from "../tag";
+import { IMAGES_KEY } from "../image";
 import { useAuthState } from "../../contexts/AuthContext";
-import { DATE_RANGES_KEY, TDateRangeInput } from "../dataRange/types";
+import { DATE_RANGES_KEY } from "../dataRange/types";
+import {
+  GetItemsResponse,
+  TItemInput,
+  TItemQueryParams,
+  TItemRelations,
+} from "./types";
 
 export const ITEMS_KEY = "items" as const;
-
-export type TItem = {
-  id: number;
-  name: string;
-  description?: string;
-  sortName: string;
-  publishedAt?: string | null;
-  expiredAt?: string | null;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type TItemRelations = {
-  imageIds?: TImage["id"][];
-  tagNames?: TTagInput["name"][];
-  dateRanges?: TDateRangeInput[];
-};
-
-export type TItemInput = Omit<
-  TItem,
-  "id" | "createdAt" | "updatedAt" | "sortName"
->;
-
-export type TItemSort =
-  | "createdAt"
-  | "-createdAt"
-  | "updatedAt"
-  | "-updatedAt"
-  | "publishedAt"
-  | "-publishedAt"
-  | "expiredAt"
-  | "-expiredAt"
-  | "sortName"
-  | "-sortName";
-
-export type TItemQueryParams = {
-  privateOnly?: boolean;
-  searchName?: string;
-  sort?: TItemSort[];
-  tags?: TTagName[];
-  ids?: TItem["id"][];
-} & PaginationParams;
-
-export type GetItemsResponse = {
-  items: TItem[];
-  totalCount: number;
-};
 
 export const useGetItems = (
   queryParams?: TItemQueryParams,
@@ -223,3 +181,5 @@ export const useDeleteItem = () => {
     },
   });
 };
+
+export * from "./types";

@@ -1,4 +1,4 @@
-import { OTP_STATUS_KEY, OTP_STATUS_NONE, OtpInput } from "../verificationCode";
+import { OTP_STATUS_KEY } from "../verificationCode";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   REGISTER_ENDPOINT,
@@ -6,12 +6,8 @@ import {
   withErrorHandling,
 } from "../api";
 import { useAuthState } from "../../contexts/AuthContext";
-
-export type RegisterFormInput = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
+import { LoginWithOTPFormInput, RegisterFormInput } from "./types";
+import { OTP_STATUS_NONE } from "../verificationCode/types";
 
 export const useRegister = () => {
   const { api } = useAuthState();
@@ -24,8 +20,6 @@ export const useRegister = () => {
       }),
   });
 };
-
-export type LoginWithOTPFormInput = OtpInput;
 
 export const useLoginWithOTP = () => {
   const queryClient = useQueryClient();
@@ -52,3 +46,5 @@ export const useLoginWithOTP = () => {
     },
   });
 };
+
+export * from "./types";

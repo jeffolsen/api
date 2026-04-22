@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { OTP_STATUS_KEY, OTP_STATUS_NONE } from "../verificationCode";
+import { OTP_STATUS_KEY } from "../verificationCode";
 import {
   GENERATE_API_KEY_ENDPOINT,
   GET_PROFILES_API_KEYS_ENDPOINT,
@@ -7,6 +7,8 @@ import {
   withErrorHandling,
 } from "../api";
 import { useAuthState } from "../../contexts/AuthContext";
+import { DestroyApiKeyInput, GenerateApiKeyInput } from "./types";
+import { OTP_STATUS_NONE } from "../verificationCode/types";
 
 const API_KEYS_KEY = "apiKeys" as const;
 
@@ -20,12 +22,6 @@ export const useGetProfilesApiKeys = () => {
       return response.data;
     },
   });
-};
-
-export type GenerateApiKeyInput = {
-  apiSlug: string;
-  origin: string;
-  verificationCode: string;
 };
 
 export const useGenerateApiKey = () => {
@@ -51,11 +47,6 @@ export const useGenerateApiKey = () => {
   });
 };
 
-export type DestroyApiKeyInput = {
-  apiSlug: string;
-  verificationCode: string;
-};
-
 export const useDestroyApiKey = () => {
   const { api } = useAuthState();
   const queryClient = useQueryClient();
@@ -79,12 +70,4 @@ export const useDestroyApiKey = () => {
   });
 };
 
-export type TApiKey = {
-  id: number;
-  apiSlug: string;
-  origin: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type TApiKeyInput = Omit<TApiKey, "id" | "createdAt" | "updatedAt">;
+export * from "./types";

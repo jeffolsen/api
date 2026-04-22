@@ -9,31 +9,25 @@ import {
   withErrorHandling,
 } from "../api";
 import { useAuthState } from "../../contexts/AuthContext";
+import {
+  OTP_STATUS_CREATE_API_KEY,
+  OTP_STATUS_DELETE_PROFILE,
+  OTP_STATUS_DESTROY_API_KEY,
+  OTP_STATUS_LOGIN,
+  OTP_STATUS_LOGOUT_ALL,
+  OTP_STATUS_PASSWORD_RESET,
+  OtpStatus,
+  RequestDeleteProfileInput,
+  RequestDestroyApiKeyInput,
+  RequestGenerateApiKeyInput,
+  RequestLoginFormInput,
+  RequestLogoutAllSessionsInput,
+  RequestPasswordResetInput,
+  RequestVerificationCodeInput,
+} from "./types";
 
 const VERIFICATION_CODES_KEY = "verificationCodes" as const;
 export const OTP_STATUS_KEY = "pendingOtp" as const;
-
-export const OTP_STATUS_NONE = "NONE";
-export const OTP_STATUS_LOGIN = "LOGIN";
-export const OTP_STATUS_LOGOUT_ALL = "LOGOUT_ALL";
-export const OTP_STATUS_PASSWORD_RESET = "PASSWORD_RESET";
-export const OTP_STATUS_DELETE_PROFILE = "DELETE_PROFILE";
-export const OTP_STATUS_CREATE_API_KEY = "CREATE_API_KEY";
-export const OTP_STATUS_DESTROY_API_KEY = "DESTROY_API_KEY";
-
-export type OtpStatus =
-  | typeof OTP_STATUS_NONE
-  | typeof OTP_STATUS_LOGIN
-  | typeof OTP_STATUS_LOGOUT_ALL
-  | typeof OTP_STATUS_PASSWORD_RESET
-  | typeof OTP_STATUS_DELETE_PROFILE
-  | typeof OTP_STATUS_CREATE_API_KEY
-  | typeof OTP_STATUS_DESTROY_API_KEY;
-
-export type OtpInput = {
-  email: string;
-  verificationCode: string;
-};
 
 export const useOtpStatus = (): OtpStatus => {
   const query = useQuery({
@@ -59,11 +53,6 @@ export const useGetProfileVerificationCodes = () => {
   return query;
 };
 
-type RequestVerificationCodeInput<TData, TResponse> = {
-  mutationFn: (data: TData) => Promise<TResponse>;
-  status: OtpStatus;
-};
-
 const useRequestVerificationCode = <TData, TResponse = unknown>({
   mutationFn,
   status,
@@ -79,11 +68,6 @@ const useRequestVerificationCode = <TData, TResponse = unknown>({
   });
 };
 
-export type RequestLoginFormInput = {
-  email: string;
-  password: string;
-};
-
 export const useRequestLogin = () => {
   const { api } = useAuthState();
   return useRequestVerificationCode({
@@ -93,11 +77,6 @@ export const useRequestLogin = () => {
     },
     status: OTP_STATUS_LOGIN,
   });
-};
-
-export type RequestLogoutAllSessionsInput = {
-  email: string;
-  password: string;
 };
 
 export const useRequestLogoutAllSessions = () => {
@@ -111,10 +90,6 @@ export const useRequestLogoutAllSessions = () => {
   });
 };
 
-export type RequestPasswordResetInput = {
-  email: string;
-};
-
 export const useRequestPasswordReset = () => {
   const { api } = useAuthState();
   return useRequestVerificationCode({
@@ -124,11 +99,6 @@ export const useRequestPasswordReset = () => {
     },
     status: OTP_STATUS_PASSWORD_RESET,
   });
-};
-
-export type RequestDeleteProfileInput = {
-  email: string;
-  password: string;
 };
 
 export const useRequestDeleteProfile = () => {
@@ -142,11 +112,6 @@ export const useRequestDeleteProfile = () => {
   });
 };
 
-export type RequestGenerateApiKeyInput = {
-  email: string;
-  password: string;
-};
-
 export const useRequestGenerateApiKey = () => {
   const { api } = useAuthState();
   return useRequestVerificationCode({
@@ -156,11 +121,6 @@ export const useRequestGenerateApiKey = () => {
     },
     status: OTP_STATUS_CREATE_API_KEY,
   });
-};
-
-export type RequestDestroyApiKeyInput = {
-  email: string;
-  password: string;
 };
 
 export const useRequestDestroyApiKey = () => {
@@ -173,3 +133,5 @@ export const useRequestDestroyApiKey = () => {
     status: OTP_STATUS_DESTROY_API_KEY,
   });
 };
+
+export * from "./types";

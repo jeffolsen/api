@@ -1,18 +1,13 @@
 import { QueryOptions, useQuery } from "@tanstack/react-query";
 import { COMPONENT_TYPES_ENDPOINT } from "../api";
 import { useAuthState } from "../../contexts/AuthContext";
-import { TSubjectType } from "../feed";
-import { JSONSchemaForArrayOrEnum } from "../../utils/jsonSchemaTransformer";
+import {
+  GetComponentTypesResponse,
+  TComponentTypesQueryParams,
+  TGetComponentTypeByIdResponse,
+} from "./types";
 
 export const COMPONENT_TYPES_KEY = "componentsTypes" as const;
-
-export type TComponentTypesQueryParams = {
-  subjectType?: TSubjectType;
-};
-
-export type GetComponentTypesResponse = {
-  componentTypes: TComponentType[];
-};
 
 export const useGetComponentTypes = (
   queryParams?: TComponentTypesQueryParams,
@@ -32,10 +27,6 @@ export const useGetComponentTypes = (
   });
 };
 
-export type TGetComponentTypeByIdResponse = {
-  componentType: TComponentType;
-};
-
 export const useGetComponentTypeById = (id: number) => {
   const { api } = useAuthState();
 
@@ -48,15 +39,4 @@ export const useGetComponentTypeById = (id: number) => {
   });
 };
 
-export type TComponentNames =
-  | "TeaserGrid"
-  | "HeroCarousel"
-  | "Detail"
-  | "RelatedContent";
-
-export type TComponentType = {
-  id: number;
-  name: TComponentNames;
-  subjectType: TSubjectType;
-  propertySchema: JSONSchemaForArrayOrEnum;
-};
+export * from "./types";
