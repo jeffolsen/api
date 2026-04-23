@@ -13,7 +13,7 @@ import {
   subheading,
 } from "../../config/inputs";
 import { withFormHandling } from "../../network/api";
-import { TDateRangeInput } from "../../network/dataRange/types";
+import { TDateRangeInput } from "../../network/dataRange";
 import { TTagInput } from "../../network/tag";
 import { TImage } from "../../network/image";
 import {
@@ -25,7 +25,7 @@ import {
   TItemInput,
   TItem,
 } from "../../network/item";
-import FormScheduleSubmit from "../inputs/FormScheduleSubmit";
+import FormScheduleSubmit from "../inputs/FormSubmitAndSchedule";
 import Form, {
   FormWithHeading,
   FormReponseHandlerProps,
@@ -35,7 +35,7 @@ import {
   convertLocalDateTimeToZulu,
   convertZuluToLocalDateTime,
 } from "../../utils/time";
-import FormPublishSubmit from "../inputs/FormPublishSubmit";
+import FormPublishSubmit from "../inputs/FormSubmitAndPublish";
 import { Button } from "../common/Button";
 import { Trash } from "lucide-react";
 

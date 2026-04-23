@@ -13,7 +13,7 @@ import Modal from "../layout/Modal";
 import Image from "../common/Image";
 import Button, { PlusButton, XButton } from "../common/Button";
 import Loading from "../common/Loading";
-import FieldSetWrapperWithMinMax from "./FieldSetWrapper";
+import FieldSetWrapperWithMinMax from "../partials/FieldSetWrapper";
 import { clsx } from "clsx";
 
 const typeFilters = ["ICON", "LANDSCAPE", "PORTRAIT", "OTHER", ""] as const;

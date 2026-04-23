@@ -22,7 +22,7 @@ import {
   convertLocalDateTimeToZulu,
   convertZuluToLocalDateTime,
 } from "../../utils/time";
-import FormScheduleSubmit from "../inputs/FormScheduleSubmit";
+import FormScheduleSubmit from "../inputs/FormSubmitAndSchedule";
 import Loading from "../common/Loading";
 import { useMemo } from "react";
 import convertJSONSchemaToFormInputs, {
@@ -31,7 +31,7 @@ import convertJSONSchemaToFormInputs, {
 } from "../../utils/jsonSchemaTransformer";
 import Button, { IconButton } from "../common/Button";
 import { ChevronUp, ChevronDown, Trash } from "lucide-react";
-import FormPublishSubmit from "../inputs/FormPublishSubmit";
+import FormPublishSubmit from "../inputs/FormSubmitAndPublish";
 
 type FormValues = {
   typeId: TComponentType["id"];

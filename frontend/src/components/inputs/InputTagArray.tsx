@@ -11,7 +11,7 @@ import {
 import clsx from "clsx";
 import Loading from "../common/Loading";
 import { TTagInput } from "../../network/tag";
-import FieldSetWrapperWithMinMax from "./FieldSetWrapper";
+import FieldSetWrapperWithMinMax from "../partials/FieldSetWrapper";
 
 type TagnameArrayFields = Array<TTagInput & { id: string }>;
 

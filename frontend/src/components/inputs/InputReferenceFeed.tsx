@@ -16,8 +16,8 @@ import { useFieldArray } from "react-hook-form";
 import Grid from "../common/Grid";
 import useDebounce from "../../hooks/useDebounce";
 import { Plus } from "lucide-react";
-import ComponentSchemaArrayOrderable from "./ComponentSchemaArrayOrderable";
-import FieldSetWrapperWithMinMax from "./FieldSetWrapper";
+import ComponentSchemaArrayOrderable from "../partials/ComponentSchemaArrayOrderable";
+import FieldSetWrapperWithMinMax from "../partials/FieldSetWrapper";
 
 type FeedIdField = { id: string; feedId: TFeed["id"]; path: TFeed["path"] };
 type FeedIdArrayFields = Array<FeedIdField>;

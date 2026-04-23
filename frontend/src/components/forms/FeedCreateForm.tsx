@@ -10,7 +10,7 @@ import {
   convertLocalDateTimeToZulu,
   convertZuluToLocalDateTime,
 } from "../../utils/time";
-import FormScheduleSubmit from "../inputs/FormScheduleSubmit";
+import FormScheduleSubmit from "../inputs/FormSubmitAndSchedule";
 import { withFormHandling } from "../../network/api";
 import Form, {
   FormWithHeading,
@@ -23,7 +23,7 @@ import {
   PATH_DEFAULT,
   PATH_INPUT,
 } from "../../config/inputs";
-import FormPublishSubmit from "../inputs/FormPublishSubmit";
+import FormPublishSubmit from "../inputs/FormSubmitAndPublish";
 import { Button } from "../common/Button";
 import { Trash } from "lucide-react";
 

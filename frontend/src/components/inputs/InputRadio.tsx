@@ -4,7 +4,7 @@ import {
   FormError,
   SelectableOption,
 } from "./Input";
-import FieldSetWrapperWithMinMax from "./FieldSetWrapper";
+import FieldSetWrapperWithMinMax from "../partials/FieldSetWrapper";
 
 export type RadioInputProps = Omit<
   AtomicFormComponentProps & ChildFromFormProps,

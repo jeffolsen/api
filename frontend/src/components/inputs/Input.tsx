@@ -10,15 +10,8 @@ import {
 } from "react-hook-form";
 import clsx from "clsx";
 import Text from "../common/Text";
-import TextInput from "./TextInput";
-import TextAreaInput from "./TextAreaInput";
-import TagArrayInput from "./TagArrayInput";
-import ImageSelectArrayInput from "./ImageSelectArrayInput";
-import DateRangeArrayInput from "./DateRangeArrayInput";
-import ToggleInput from "./ToggleInput";
-import RadioInput from "./RadioInput";
-import ItemArrayInput from "./ItemArrayInput";
-import ReferenceFeedInput from "./ReferenceFeedInput";
+import Inputs from "./LazyInputs";
+import { Suspense } from "react";
 
 export type FromFormProps = {
   control: Control;
@@ -104,45 +97,74 @@ const FormSubheading = ({ displayName }: { displayName: string }) => {
   );
 };
 
+export const FallBackInput = () => <div className="skeleton h-24 w-full" />;
+
 export const FormInput = (props: FormComponentProps & FromFormProps) => {
   return props.componentName === "Subheading" ? (
     <FormSubheading displayName={props.displayName} />
   ) : props.componentName === "TextInput" ? (
-    <TextInput {...props} errors={get(props.errors || {}, props.dataName)} />
+    <Suspense fallback={<FallBackInput />}>
+      <Inputs.Text
+        {...props}
+        errors={get(props.errors || {}, props.dataName)}
+      />
+    </Suspense>
   ) : props.componentName === "TextAreaInput" ? (
-    <TextAreaInput
-      {...props}
-      errors={get(props.errors || {}, props.dataName)}
-    />
+    <Suspense fallback={<FallBackInput />}>
+      <Inputs.TextArea
+        {...props}
+        errors={get(props.errors || {}, props.dataName)}
+      />
+    </Suspense>
   ) : props.componentName === "ToggleInput" ? (
-    <ToggleInput {...props} errors={get(props.errors || {}, props.dataName)} />
+    <Suspense fallback={<FallBackInput />}>
+      <Inputs.Toggle
+        {...props}
+        errors={get(props.errors || {}, props.dataName)}
+      />
+    </Suspense>
   ) : props.componentName === "RadioInput" ? (
-    <RadioInput {...props} errors={get(props.errors || {}, props.dataName)} />
+    <Suspense fallback={<FallBackInput />}>
+      <Inputs.Radio
+        {...props}
+        errors={get(props.errors || {}, props.dataName)}
+      />
+    </Suspense>
   ) : props.componentName === "ImageSelectArrayInput" ? (
-    <ImageSelectArrayInput
-      {...props}
-      errors={get(props.errors || {}, props.dataName)}
-    />
+    <Suspense fallback={<FallBackInput />}>
+      <Inputs.ImageSelectArray
+        {...props}
+        errors={get(props.errors || {}, props.dataName)}
+      />
+    </Suspense>
   ) : props.componentName === "TagArrayInput" ? (
-    <TagArrayInput
-      {...props}
-      errors={get(props.errors || {}, props.dataName)}
-    />
+    <Suspense fallback={<FallBackInput />}>
+      <Inputs.TagArray
+        {...props}
+        errors={get(props.errors || {}, props.dataName)}
+      />
+    </Suspense>
   ) : props.componentName === "DateRangeArrayInput" ? (
-    <DateRangeArrayInput
-      {...props}
-      errors={get(props.errors || {}, props.dataName)}
-    />
+    <Suspense fallback={<FallBackInput />}>
+      <Inputs.DateRangeArray
+        {...props}
+        errors={get(props.errors || {}, props.dataName)}
+      />
+    </Suspense>
   ) : props.componentName === "ItemArrayInput" ? (
-    <ItemArrayInput
-      {...props}
-      errors={get(props.errors || {}, props.dataName)}
-    />
+    <Suspense fallback={<FallBackInput />}>
+      <Inputs.ItemArray
+        {...props}
+        errors={get(props.errors || {}, props.dataName)}
+      />
+    </Suspense>
   ) : props.componentName === "ReferenceFeedInput" ? (
-    <ReferenceFeedInput
-      {...props}
-      errors={get(props.errors || {}, props.dataName)}
-    />
+    <Suspense fallback={<FallBackInput />}>
+      <Inputs.ReferenceFeed
+        {...props}
+        errors={get(props.errors || {}, props.dataName)}
+      />
+    </Suspense>
   ) : (
     <p>Unsupported input type</p>
   );
