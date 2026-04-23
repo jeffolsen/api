@@ -22,12 +22,14 @@ function BreadCrumbs() {
     crumbs.push(accumulatedPath);
   });
 
+  if (crumbs.length <= 1) return null;
+
   return (
-    <Wrapper width="lg">
+    <Wrapper width="md">
       <div className="breadcrumbs text-sm w-full">
-        <ul>
+        <ul className="flex md:gap-8 justify-center">
           {crumbs.map((crumb, index) => (
-            <li key={index} className="capitalize">
+            <li key={index} className="capitalize flex md:gap-8">
               <Link to={`/${crumb === "home" ? "" : crumb}`}>
                 {crumb.replaceAll("/", ` ${String.fromCharCode(8226)} `)}
               </Link>

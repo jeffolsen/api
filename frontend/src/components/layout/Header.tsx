@@ -58,7 +58,8 @@ function Header() {
         className={clsx([
           "flex flex-col gap-2",
           "max-h-lvh md:max-h-auto",
-          hero && "h-[calc(100lvh-62px)] md:h-[calc(100lvh-80px)]",
+          hero &&
+            "h-[calc(100lvh-64px)] sm:h-[calc(100lvh-82px)] md:h-[calc(100lvh-86px)]",
         ])}
       >
         {hero && (
@@ -76,7 +77,9 @@ function Header() {
         )}
         <HeaderImageSpread />
       </div>
-      <BreadCrumbs />
+      <div className="bg-neutral text-neutral-content top-[64px] sm:top-[82px] mdtop-[86px] sticky z-20">
+        <BreadCrumbs />
+      </div>
     </HeadingLevelProvider>
   );
 }
