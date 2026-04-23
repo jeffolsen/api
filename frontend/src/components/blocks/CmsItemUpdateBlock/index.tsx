@@ -12,7 +12,7 @@ import dayjs, { techDatetime } from "../../../utils/dayjs";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import Heading from "../../common/Heading";
-import { ScheduleStatus } from "../../inputs/FormPublishSubmit";
+import { ScheduleStatus } from "../../inputs/FormSubmitAndPublish";
 import useItemUpdateBlockData, {
   UseItemUpdateBlockData,
   UseItemUpdateBlockProps,

@@ -19,7 +19,7 @@ import Button from "../../common/Button";
 import Loading from "../../common/Loading";
 import DashBoardLayout from "../../layout/DashBoardLayout";
 import SectionHeading from "../../partials/SectionHeading";
-import { ScheduleStatus } from "../../inputs/FormPublishSubmit";
+import { ScheduleStatus } from "../../inputs/FormSubmitAndPublish";
 import DropDownMenu from "../../common/DropDownMenu";
 import {
   useSearchParamWithDefault,

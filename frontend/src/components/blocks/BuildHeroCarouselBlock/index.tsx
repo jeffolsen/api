@@ -1,14 +1,12 @@
-// import "swiper/css";
-// import "swiper/css/navigation";
-
+import { TItem } from "../../../network/item";
+import { TFeed } from "../../../network/feed";
+import { TImage } from "../../../network/image";
 import Text from "../../common/Text";
 import Block, { BlockComponentStandardProps } from "../Block";
 import useHeroCarouselBlockData, {
   UseHeroCarouselBlockData,
   UseHeroCarouselBlockProps,
 } from "./data";
-import { TItem } from "../../../network/item";
-import { TFeed } from "../../../network/feed";
 import Heading from "../../common/Heading";
 import getItemLink from "../../../utils/getItemLink";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -19,7 +17,6 @@ import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import { useGetAppItemImages } from "../../../network/app";
 import Image from "../../common/Image";
-import { TImage } from "../../../network/image";
 import { InsetLink } from "../../common/Link";
 import { CircleArrowLeft, CircleArrowRight } from "lucide-react";
 import { clsx } from "clsx";

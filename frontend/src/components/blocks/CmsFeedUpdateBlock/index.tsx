@@ -10,7 +10,7 @@ import Text from "../../common/Text";
 import dayjs, { techDatetime } from "../../../utils/dayjs";
 import SectionHeading from "../../partials/SectionHeading";
 import Grid from "../../common/Grid";
-import { ScheduleStatus } from "../../inputs/FormPublishSubmit";
+import { ScheduleStatus } from "../../inputs/FormSubmitAndPublish";
 import { TComponent } from "../../../network/component";
 import {
   TComponentType,
