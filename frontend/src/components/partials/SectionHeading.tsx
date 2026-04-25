@@ -14,7 +14,7 @@ function SectionHeading({
           <Heading
             headingSize="md"
             headingDecorator="right-strike"
-            headingStyles="text-center capitalize bold text-neutral-content"
+            headingStyles="text-center capitalize bold text-base"
           >
             {text}
           </Heading>
@@ -23,7 +23,7 @@ function SectionHeading({
         {description && (
           <Text
             textSize="sm"
-            className="text-neutral-content/70 w-full md:order-last md:ml-8 md:mb-2"
+            className="text-base/70 w-full md:order-last md:ml-8 md:mb-2"
           >
             {description}
           </Text>

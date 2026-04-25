@@ -88,7 +88,7 @@ const FormSubheading = ({ displayName }: { displayName: string }) => {
     <div className="flex gap-2 items-center pl-4">
       <Text
         textSize="md"
-        className="sm:flex-none uppercase text-left text-neutral-content/80"
+        className="sm:flex-none uppercase text-left text-base/80"
       >
         {displayName}
       </Text>
@@ -177,7 +177,9 @@ export type FormErrorProps = {
 export const FormError = ({ error }: FormErrorProps) => {
   if (error?.root) {
     return (
-      <div className={clsx(["px-4 py-2 mt-1", "bg-error text-error-content"])}>
+      <div
+        className={clsx(["px-4 py-2 mt-1", "bg-accent text-accent-content"])}
+      >
         {error.root.message}
       </div>
     );
@@ -186,7 +188,7 @@ export const FormError = ({ error }: FormErrorProps) => {
     <>
       {error && (
         <div
-          className={clsx(["px-4 py-2 mt-1", "bg-error text-error-content"])}
+          className={clsx(["px-4 py-2 mt-1", "bg-accent text-accent-content"])}
         >
           {error.message}
         </div>
@@ -211,7 +213,7 @@ export const RequiredLabel = ({
       {required && !watchedValue && (
         <span
           className={clsx(
-            "text-error text-lg",
+            "text-accent text-lg",
             position === "absolute" && "absolute top-3.5 left-2.5",
           )}
         >

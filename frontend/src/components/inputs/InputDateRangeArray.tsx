@@ -163,7 +163,7 @@ function DateRangeEntry({
 
   return (
     <div className="flex gap-4 w-full" {...props}>
-      <div className="flex flex-col gap-4 w-full text-neutral-content/80 text-sm">
+      <div className="flex flex-col gap-4 w-full text-base/80 text-sm">
         <div className="flex flex-wrap gap-4 w-full">
           <div className="flex-1">
             <TextInput

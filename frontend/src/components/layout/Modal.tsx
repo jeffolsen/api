@@ -37,14 +37,14 @@ export default function Modal({
       <Dialog open={isOpen} onClose={close}>
         <div
           className={clsx(
-            "fixed inset-0 flex w-screen z-10 items-center justify-center bg-black/30 backdrop-blur-sm",
+            "fixed inset-0 flex w-screen z-40 items-center justify-center bg-black/30 backdrop-blur-sm",
             backgroundStyles,
           )}
           onClick={close}
         >
           <DialogPanel
             className={clsx(
-              "modal-box flex flex-col gap-6 w-full max-w-2xl bg-neutral max-h-screen",
+              "modal-box flex flex-col gap-6 w-full max-w-2xl bg-neutral text-neutral-content max-h-screen",
               modalStyles,
             )}
           >

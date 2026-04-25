@@ -35,8 +35,8 @@ function Header() {
       <header
         className={clsx([
           "flex justify-center",
-          "top-0 sticky z-20",
-          "bg-base-200 md:bg-base-200/90 backdrop-blur-sm",
+          "top-0 sticky z-30",
+          "bg-neutral text-neutral-content backdrop-blur-sm shadow-lg",
         ])}
       >
         <div
@@ -48,7 +48,7 @@ function Header() {
           <Logo />
           <div className="flex-grow flex items-center justify-end md:justify-between md:flex-row-reverse">
             <ThemeToggle />
-            <div className="divider bg-base-content md:hidden w-px my-0 h-auto" />
+            <div className="divider bg-neutral-content md:hidden w-px my-0 h-auto" />
             <DesktopNav />
             <MobileNav />
           </div>
@@ -56,16 +56,16 @@ function Header() {
       </header>
       <div
         className={clsx([
-          "flex flex-col gap-2",
+          "flex flex-col gap-2 bg-neutral",
           "max-h-lvh md:max-h-auto",
           hero &&
-            "h-[calc(100lvh-64px)] sm:h-[calc(100lvh-82px)] md:h-[calc(100lvh-86px)]",
+            "h-[calc(100lvh-64px)] sm:h-[calc(100lvh-82px)] md:h-[calc(100lvh-86px)]  z-20 relative",
         ])}
       >
         {hero && (
           <div className="flex-grow">
             <Suspense
-              fallback={<div className="skeleton w-full h-full bg-neutral" />}
+              fallback={<div className="skeleton w-full h-full bg-base-100" />}
             >
               <Blocks.HeroCarousel
                 component={{ ...hero, name: "" }}
@@ -77,7 +77,7 @@ function Header() {
         )}
         <HeaderImageSpread />
       </div>
-      <div className="bg-neutral text-neutral-content top-[64px] sm:top-[82px] mdtop-[86px] sticky z-20">
+      <div className="bg-secondary text-secondary-content top-[64px] sm:top-[82px] mdtop-[86px] sticky z-20 shadow-lg">
         <BreadCrumbs />
       </div>
     </HeadingLevelProvider>
@@ -117,8 +117,8 @@ function MobileNav() {
           />
         </svg>
       </PopoverButton>
-      <PopoverBackdrop className="fixed inset-0 bg-black/15" />
-      <PopoverPanel className="absolute w-[75vw] right-0 mt-2 bg-base-100 rounded-md shadow-lg p-4">
+      <PopoverBackdrop className="fixed inset-0 bg-base-300" />
+      <PopoverPanel className="absolute w-[75vw] right-0 mt-2 bg-base-300 rounded-md shadow-lg p-4">
         {navItems.map((item) => (
           <Button
             key={item.to}

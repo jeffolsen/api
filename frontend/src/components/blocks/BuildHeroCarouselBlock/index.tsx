@@ -117,7 +117,7 @@ function VariantAlpha({
           >
             <CircleArrowLeft
               size={120}
-              className="!fill-none !stroke-base-content"
+              className="!fill-none !stroke-neutral-content"
             />
           </div>
           <div
@@ -129,7 +129,7 @@ function VariantAlpha({
           >
             <CircleArrowRight
               size={120}
-              className="!fill-none !stroke-base-content"
+              className="!fill-none !stroke-neutral-content"
             />
           </div>
         </Swiper>
@@ -156,7 +156,7 @@ function AlphaSlide({
   }
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full text-neutral-content">
       <Image
         src={image?.url || ""}
         alt={item.name}
@@ -205,7 +205,7 @@ function VariantBeta({
         >
           <CircleArrowLeft
             size={120}
-            className="!fill-none !stroke-base-content"
+            className="!fill-none !stroke-neutral-content"
           />
         </div>
         <Swiper
@@ -237,7 +237,7 @@ function VariantBeta({
         >
           <CircleArrowRight
             size={120}
-            className="!fill-none !stroke-base-content"
+            className="!fill-none !stroke-neutral-content"
           />
         </div>
       </ScrollInFade>
@@ -263,7 +263,7 @@ function BetaSlide({
   }
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full text-neutral-content">
       <Image
         src={image?.url || ""}
         alt={item.name}
@@ -272,7 +272,7 @@ function BetaSlide({
       <div className="absolute inset-0 bg-black/30" />
       <Heading
         headingSize="xl"
-        headingStyles="text-white absolute bottom-6 left-6"
+        headingStyles="text-neutral-content absolute bottom-6 left-6"
       >
         {item.name}
       </Heading>
@@ -301,7 +301,6 @@ function VariantGamma({
       {...blockProps}
       settings={{ ...blockProps.settings, padded: "tablet" }}
     >
-      {" "}
       <ScrollInFade className="h-full w-full" critical={!!critical}>
         <Swiper
           modules={[Navigation, Autoplay, EffectFade]}
@@ -337,7 +336,7 @@ function VariantGamma({
           >
             <CircleArrowLeft
               size={120}
-              className="!fill-none !stroke-base-content"
+              className="!fill-none !stroke-neutral-content"
             />
           </div>
           <div
@@ -348,7 +347,7 @@ function VariantGamma({
           >
             <CircleArrowRight
               size={120}
-              className="!fill-none !stroke-base-content"
+              className="!fill-none !stroke-neutral-content"
             />
           </div>
         </Swiper>
@@ -375,7 +374,7 @@ function GammaSlide({
   }
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full text-neutral-content">
       <Image
         src={image?.url || ""}
         alt={item.name}
@@ -384,7 +383,7 @@ function GammaSlide({
       <div className="absolute inset-0 bg-black/30" />
       <Heading
         headingSize="lg"
-        headingStyles="text-white absolute bottom-4 left-4"
+        headingStyles="text-neutral-content absolute bottom-4 left-4"
       >
         {item.name}
       </Heading>

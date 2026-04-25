@@ -4,7 +4,7 @@ import { MoonIcon, SunIcon } from "lucide-react";
 type ThemePreference = "system" | "light" | "dark";
 
 const DAISY_THEME: Record<"light" | "dark", string> = {
-  light: "lightBusiness",
+  light: "nord",
   dark: "business",
 };
 

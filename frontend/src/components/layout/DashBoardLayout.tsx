@@ -21,10 +21,10 @@ function DashBoardLayout({ profile, children }: DashBoardLayoutProps) {
         {profile?.email}
       </Heading>
       <div className="flex flex-col items-center gap-2">
-        <Text textSize="lg" className="text-center text-neutral-content/90">
+        <Text textSize="lg" className="text-center text-base/90">
           Member since {dayjs(profile?.createdAt).format(longDatetime)}
         </Text>
-        <Text textSize="sm" className="text-center text-neutral-content/70">
+        <Text textSize="sm" className="text-center text-base/70">
           Last updated: {dayjs(profile?.updatedAt).format(techDatetime)}
         </Text>
       </div>

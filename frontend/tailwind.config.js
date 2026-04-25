@@ -10,20 +10,15 @@ export default {
   daisyui: {
     themes: [
       {
-        lightBusiness: {
+        nord: {
           // 1. Inherit existing theme
-          ...require("daisyui/src/theming/themes")["business"],
+          ...require("daisyui/src/theming/themes")["nord"],
           // 2. Override specific colors
-          neutral: "#D5DBE2",
-          "neutral-content": "#36424E",
-          "base-100": "#f3f4f6",
-          "base-200": "#696969",
-          "base-300": "#242424",
-          "base-content": "#36424E",
-          // primary: "#000000",
-          // secondary: "#ffffff",
-          // // 3. Override base colors
-          // "base-100": "#f3f4f6",
+          "primary-content": "#fff",
+          // secondary: "#7c909a",
+          // accent: "#AD364E",
+          accent: "#BD2320",
+          "accent-content": "#fff",
         },
       },
       "business",

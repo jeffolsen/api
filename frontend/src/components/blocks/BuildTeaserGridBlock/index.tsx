@@ -120,7 +120,7 @@ function AlphaCard({
       <div className="absolute inset-0 bg-black/30" />
       <Heading
         headingSize="xs"
-        headingStyles="text-white absolute bottom-6 left-6"
+        headingStyles="text-neutral absolute bottom-6 left-6"
       >
         {item.name}
       </Heading>
@@ -188,7 +188,7 @@ function BetaCard({
       <div className="absolute inset-0 bg-black/30" />
       <Heading
         headingSize="xs"
-        headingStyles="text-white absolute bottom-6 left-6"
+        headingStyles="text-neutral absolute bottom-6 left-6"
       >
         {item.name}
       </Heading>
@@ -256,7 +256,7 @@ function GammaCard({
       <div className="absolute inset-0 bg-black/30" />
       <Heading
         headingSize="xs"
-        headingStyles="text-white absolute line-clamp-1 inset-0"
+        headingStyles="text-neutral absolute line-clamp-1 inset-0"
       >
         {item.name}
       </Heading>

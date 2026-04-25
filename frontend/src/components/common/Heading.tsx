@@ -17,7 +17,7 @@ export type HeadingProps = {
 const levels = ["h1", "h2", "h3", "h4", "h5", "h6", "p"] as const;
 
 const sizes = {
-  xs: "text-base tracking-widest font-extrabold",
+  xs: "text-base/80 tracking-widest font-extrabold",
   sm: "text-lg tracking-widest font-extrabold",
   md: "text-2xl tracking-widest font-extrabold",
   lg: "text-3xl md:text-4xl tracking-wider font-black",

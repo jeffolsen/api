@@ -107,7 +107,7 @@ export const XButton = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ ...props }, ref) => {
     const { className, ...restProps } = props;
     const classes = clsx(
-      "btn btn-circle btn-ghost border-neutral-content/20 text-neutral-content/80",
+      "btn btn-circle btn-ghost border-neutral-content/20 text-base/80",
       className || "absolute right-2 top-2 btn-xs",
     );
     return (
@@ -123,7 +123,7 @@ export const PlusButton = forwardRef<HTMLButtonElement, ButtonProps>(
     const { className, ...restProps } = props;
     const classes = clsx([
       "flex items-center justify-center",
-      "btn btn-ghost border-base-content/20 text-neutral-content/70",
+      "btn btn-ghost border-base-content/20 text-base/70",
       className,
     ]);
     return (
@@ -138,7 +138,7 @@ export const IconButton = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ children, ...props }, ref) => {
     const { className, ...restProps } = props;
     const classes = clsx(
-      "btn btn-ghost border-base-content/20 text-neutral-content/70",
+      "btn btn-ghost border-base-content/20 text-base/70",
       "flex items-center justify-center",
       className,
     );

@@ -14,7 +14,7 @@ function Layout({
 }: PropsWithChildren & { headerHero?: TComponent | null }) {
   return (
     <HeadingLevelProvider>
-      <div className="min-h-screen flex flex-col justify-between bg-base-100">
+      <div className="min-h-screen flex flex-col justify-between bg-base-200">
         <Header />
         <main
           className={clsx([

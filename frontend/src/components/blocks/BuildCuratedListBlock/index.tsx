@@ -125,7 +125,7 @@ const AlphaCard = ({
       <div
         className={clsx([
           "card md:card-side h-[30rem] w-full max-w-4xl flex-none justify-center",
-          "bg-neutral shadow-xl",
+          "bg-base-100 shadow-xl",
           index % 2 === 0 ? "md:flex-row-reverse text-right" : "text-left",
         ])}
       >
@@ -225,7 +225,7 @@ const BetaCard = ({
       className={clsx([
         "card mx-auto",
         "w-[32rem] max-w-full md:card-side md:w-full",
-        "bg-neutral shadow-xl",
+        "bg-base-100 shadow-xl",
       ])}
     >
       <figure className="md:w-72 h-72 md:flex-none">
@@ -295,7 +295,7 @@ const GammaCard = ({
     <ScrollInFade
       className={clsx([
         "card w-full flex-none justify-center h-full",
-        "bg-neutral shadow-xl",
+        "bg-base-100 shadow-xl",
       ])}
     >
       <div className="card-body">

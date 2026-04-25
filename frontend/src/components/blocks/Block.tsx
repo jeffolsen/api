@@ -66,9 +66,7 @@ function InnerBlockWrapper<T extends Record<string, unknown>>({
         <ScrollInFade>
           <Heading
             headingSize="lg"
-            headingStyles={
-              "uppercase font-bold text-neutral-content text-center"
-            }
+            headingStyles={"uppercase font-bold text-base/80 text-center"}
             headingDecorator={settings.isPrimaryContent ? "strike" : "none"}
             {...headingProps}
           >

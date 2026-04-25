@@ -25,7 +25,7 @@ export const ToggleInput = (props: ToggleInputProps) => {
       <label
         className={clsx([
           "form-control relative flex flex-row items-center gap-4 w-full justify-between",
-          "border rounded p-4 pl-6 border-base-content/20 text-neutral-content/80 text-sm shadow-xl",
+          "border rounded p-4 pl-6 border-base-content/20 text-base/80 text-sm shadow-xl",
         ])}
       >
         <span className="flex gap-3 items-center">

@@ -23,8 +23,8 @@ function FieldSetWrapperWithMinMax({
   children,
 }: PropsWithChildren<FieldSetWrapperWithMinMaxProps>) {
   return (
-    <fieldset className="w-full form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20 text-neutral-content/80 shadow-xl">
-      <legend className="label-text text-sm font-semibold text-neutral-content/80 w-full float-start flex items-center gap-3">
+    <fieldset className="w-full form-control flex flex-row flex-wrap gap-4 border rounded p-4 pl-6 border-base-content/20 text-base/80 shadow-xl">
+      <legend className="label-text text-sm font-semibold text-base/80 w-full float-start flex items-center gap-3">
         {required && watchedValue! === undefined && (
           <RequiredLabel
             watchedValue={watchedValue}

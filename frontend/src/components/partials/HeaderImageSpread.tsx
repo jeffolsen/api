@@ -26,17 +26,17 @@ export default function HeaderImageSpread() {
         ) : (
           <>
             {images.map((image) => (
-              <div key={image.id} className="flex-1 overflow-hidden">
+              <div key={image.id} className="flex-1 overflow-hidden relative">
                 <Image
                   src={image.url}
                   alt={image.alt}
                   className="!h-[calc(100%+theme(spacing.16))] !w-[calc(100%+theme(spacing.16))] -mt-2 -ml-2"
                 />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 right-2" />
               </div>
             ))}
           </>
         )}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60" />
       </div>
     </div>
   );

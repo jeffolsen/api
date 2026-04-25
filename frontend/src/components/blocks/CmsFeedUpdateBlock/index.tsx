@@ -110,7 +110,7 @@ function CmsFeedUpdateBlock({
     <Block {...blockProps} settings={settings}>
       <EmptyCard>
         <div className="card-body gap-3">
-          <div className="flex flex-col md:flex-row gap-4 justify-between w-full text-neutral-content/80">
+          <div className="flex flex-col md:flex-row gap-4 justify-between w-full text-base/80">
             <div className="flex flex-col flex-grow justify-between gap-3">
               <Heading
                 headingSize="xs"
@@ -367,7 +367,7 @@ function ComponentTypeButton({
     <button
       onClick={() => onSelect(componentType)}
       className={clsx([
-        "btn btn-ghost border-base-content/20 text-neutral-content/70 shadow-xl",
+        "btn btn-ghost border-base-content/20 text-base/70 shadow-xl",
         "flex flex-col gap-2 items-center justify-center",
         "w-[150px] h-[150px]",
       ])}

@@ -44,7 +44,7 @@ function Tabs({ tabs, tabListClassName, urlIdentifier, ...props }: TabsProps) {
                   "focus-visible:outline-none flex-1",
                   selected && "tab-active",
                   hover && "underline",
-                  !selected && "text-neutral-content/30",
+                  !selected && "text-base/30",
                   getTabClasses?.(selected, hover),
                 ])}
               >
