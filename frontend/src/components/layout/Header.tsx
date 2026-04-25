@@ -15,6 +15,7 @@ import {
   PopoverButton,
   PopoverPanel,
 } from "@headlessui/react";
+import LogoutButton from "../partials/LogoutButton";
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -59,7 +60,7 @@ function Header() {
           "flex flex-col gap-2 bg-neutral",
           "max-h-lvh md:max-h-auto",
           hero &&
-            "h-[calc(100lvh-64px)] sm:h-[calc(100lvh-82px)] md:h-[calc(100lvh-86px)]  z-20 relative",
+            "h-[calc(100lvh-64px)] sm:h-[calc(100lvh-82px)] md:h-[calc(100lvh-86px)] z-20 relative",
         ])}
       >
         {hero && (
@@ -100,7 +101,7 @@ function DesktopNav() {
 
 function MobileNav() {
   return (
-    <Popover className="relative">
+    <Popover>
       <PopoverButton className="btn btn-ghost btn-lg md:hidden">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -117,20 +118,24 @@ function MobileNav() {
           />
         </svg>
       </PopoverButton>
-      <PopoverBackdrop className="fixed inset-0 bg-base-300" />
-      <PopoverPanel className="absolute w-[75vw] right-0 mt-2 bg-base-300 rounded-md shadow-lg p-4">
-        {navItems.map((item) => (
-          <Button
-            key={item.to}
-            to={item.to}
-            as="Link"
-            color="ghost"
-            size="lg"
-            className="w-full text-left"
-          >
-            {item.label}
-          </Button>
-        ))}
+      <PopoverBackdrop className="fixed inset-0 bg-black/30 z-40 h-screen" />
+      <PopoverPanel className="absolute w-full sm:w-[75vw] right-0 mt-2 bg-neutral rounded-md shadow-lg p-4  z-50">
+        {({ close }) => (
+          <div className="flex flex-col" onClick={() => close()}>
+            {navItems.map((item) => (
+              <Button
+                key={item.to}
+                to={item.to}
+                as="Link"
+                color="ghost"
+                size="lg"
+              >
+                {item.label}
+              </Button>
+            ))}
+            <LogoutButton />
+          </div>
+        )}
       </PopoverPanel>
     </Popover>
   );

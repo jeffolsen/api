@@ -15,9 +15,9 @@ export default {
           ...require("daisyui/src/theming/themes")["nord"],
           // 2. Override specific colors
           "primary-content": "#fff",
-          // secondary: "#7c909a",
-          // accent: "#AD364E",
-          accent: "#BD2320",
+          secondary: "#7c909a",
+          "secondary-content": "#fff",
+          accent: "#ea6947",
           "accent-content": "#fff",
         },
       },

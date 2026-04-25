@@ -29,7 +29,7 @@ function BreadCrumbs() {
       <div className="breadcrumbs text-sm w-full">
         <ul className="flex md:gap-8 justify-center">
           {crumbs.map((crumb, index) => (
-            <li key={index} className="capitalize flex md:gap-8">
+            <li key={index} className="uppercase font-semibold flex md:gap-8">
               <Link to={`/${crumb === "home" ? "" : crumb}`}>
                 {crumb.replaceAll("/", ` ${String.fromCharCode(8226)} `)}
               </Link>

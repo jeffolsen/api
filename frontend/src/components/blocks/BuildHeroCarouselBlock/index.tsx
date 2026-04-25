@@ -113,11 +113,12 @@ function VariantAlpha({
               "swiper-button-prev xl:ml-6",
               "md:!w-20 md:!h-20",
               "!top-auto bottom-1 sm:!top-1/2",
+              "bg-base-content rounded-full bg-opacity-75 hover:bg-opacity-100",
             ])}
           >
             <CircleArrowLeft
               size={120}
-              className="!fill-none !stroke-neutral-content"
+              className="!fill-none !stroke-base-300"
             />
           </div>
           <div
@@ -125,11 +126,12 @@ function VariantAlpha({
               "swiper-button-next xl:mr-6",
               "md:!w-20 md:!h-20",
               "!top-auto bottom-1 sm:!top-1/2",
+              "bg-base-content rounded-full bg-opacity-75 hover:bg-opacity-100",
             ])}
           >
             <CircleArrowRight
               size={120}
-              className="!fill-none !stroke-neutral-content"
+              className="!fill-none !stroke-base-300"
             />
           </div>
         </Swiper>
@@ -201,12 +203,13 @@ function VariantBeta({
     <Block {...blockProps} settings={{ ...blockProps.settings, padded: false }}>
       <ScrollInFade className="h-full w-full" critical={!!critical}>
         <div
-          className={clsx(["swiper-button-prev xl:ml-6", "md:!w-20 md:!h-20"])}
+          className={clsx([
+            "swiper-button-prev xl:ml-6",
+            "md:!w-20 md:!h-20",
+            "bg-base-content rounded-full bg-opacity-75 hover:bg-opacity-100 hover:bg-opacity-100",
+          ])}
         >
-          <CircleArrowLeft
-            size={120}
-            className="!fill-none !stroke-neutral-content"
-          />
+          <CircleArrowLeft size={120} className="!fill-none !stroke-base-300" />
         </div>
         <Swiper
           modules={[Navigation, Autoplay, EffectFade]}
@@ -233,11 +236,15 @@ function VariantBeta({
           })}
         </Swiper>
         <div
-          className={clsx(["swiper-button-next xl:mr-6", "md:!w-20 md:!h-20"])}
+          className={clsx([
+            "swiper-button-next xl:mr-6",
+            "md:!w-20 md:!h-20",
+            "bg-base-content rounded-full bg-opacity-75 hover:bg-opacity-100",
+          ])}
         >
           <CircleArrowRight
             size={120}
-            className="!fill-none !stroke-neutral-content"
+            className="!fill-none !stroke-base-300"
           />
         </div>
       </ScrollInFade>

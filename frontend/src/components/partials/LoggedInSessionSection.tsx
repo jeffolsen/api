@@ -2,11 +2,12 @@ import Grid from "../common/Grid";
 import BasicCard from "../cards/BasicCard";
 import SectionHeading from "./SectionHeading";
 import Button from "../common/Button";
-import { useGetProfilesSessions, useLogout } from "../../network/session";
+import { useGetProfilesSessions } from "../../network/session";
 import { LogoutAllSessionsWithSessionForm } from "../forms/LogoutAllSessionsForm";
 import Text from "../common/Text";
 import Modal from "../layout/Modal";
 import { useState } from "react";
+import LogoutButton from "./LogoutButton";
 
 function LogoutAllModalContent() {
   return (
@@ -23,7 +24,6 @@ function LogoutAllModalContent() {
 
 function LoggedInSessionSection() {
   const getSessions = useGetProfilesSessions();
-  const logout = useLogout();
   const sessions = getSessions?.data?.sessions || [];
 
   const [openLogoutAllModal, setOpenLogoutAllModal] = useState(false);
@@ -35,18 +35,7 @@ function LoggedInSessionSection() {
       <div className="flex flex-col gap-4">
         <SectionHeading text="Current Sessions" description={description}>
           <div className="grid gap-1 md:gap-4 grid-cols-2 w-full">
-            <Button
-              color="error"
-              onClick={() => {
-                if (
-                  confirm("Are you sure you want to logout of this session?")
-                ) {
-                  logout.mutateAsync();
-                }
-              }}
-            >
-              Logout
-            </Button>
+            <LogoutButton />
             <Button
               color="error"
               onClick={() => {
