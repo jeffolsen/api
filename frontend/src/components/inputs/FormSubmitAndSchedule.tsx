@@ -68,7 +68,7 @@ function FormScheduleSubmit({ control, triggerSubmit }: FormSubmitProps) {
             <span className="label-text text-sm ">Publish At</span>
             <input
               type="datetime-local"
-              className="input input-bordered border-gray-400/50 text-sm bg-base-300"
+              className="input border-gray-400/50 text-sm bg-base-300"
               {...publishedAtField}
               value={publishedAtField.value ?? ""}
               min={minDateTimeValue}
@@ -78,7 +78,7 @@ function FormScheduleSubmit({ control, triggerSubmit }: FormSubmitProps) {
             <span className="label-text text-sm ">Expired At</span>
             <input
               type="datetime-local"
-              className="input input-bordered border-gray-400/50 text-sm bg-base-300"
+              className="input border-gray-400/50 text-sm bg-base-300"
               {...expiredAtField}
               value={expiredAtField.value ?? ""}
               min={minExpiredAtValue}

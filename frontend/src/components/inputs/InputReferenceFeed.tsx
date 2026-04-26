@@ -93,7 +93,7 @@ function ReferenceFeedInput(
         >
           {canAddMore && (
             <ComboboxInput
-              className="input input-bordered border-gray-400/50 w-full bg-base-300"
+              className="input border-gray-400/50 w-full bg-base-300"
               value={searchTerm}
               placeholder="Search feed paths"
               onChange={(e) => setSearchTerm(e.target.value)}

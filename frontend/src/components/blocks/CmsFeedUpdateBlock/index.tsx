@@ -425,8 +425,6 @@ function UpdateComponentModal({
     expiredAt: expiredAt ? convertZuluToLocalDateTime(expiredAt) : null,
   };
 
-  console.log("Default values for ComponentUpdateForm:", defaultValues);
-
   return (
     <ComponentUpdateForm
       defaultValues={defaultValues}

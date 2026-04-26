@@ -30,7 +30,7 @@ export const TextInput = (props: TextInputProps) => {
           position="absolute"
         />
         <input
-          className="input input-bordered border-gray-400/50 flex-grow pl-6 text-sm bg-base-300"
+          className="input border-gray-400/50 flex-grow pl-6 text-sm bg-base-300"
           {...register(dataName, registerProps)}
           {...elementProps}
         />
