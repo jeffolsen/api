@@ -4,12 +4,14 @@ import {
   NAME_INPUT,
   TAGNAMES_INPUT,
   DATE_RANGES_INPUT,
+  OVERRIDE_LINK_INPUT,
   NAME_DEFAULT,
   DESCRIPTION_DEFAULT,
   IMAGE_IDS_DEFAULT,
   TAGNAMES_DEFAULT,
   DATE_RANGES_DEFAULT,
   PUBLISH_DEFAULT,
+  OVERRIDE_LINK_DEFAULT,
   subheading,
 } from "../../config/inputs";
 import { withFormHandling } from "../../network/api";
@@ -42,6 +44,7 @@ import { Trash } from "lucide-react";
 export type FormValues = {
   name: string;
   description?: string;
+  overrideLink?: string;
   imageIds?: { imageId: TImage["id"] }[];
   tagNames?: TTagInput[];
   dateRanges?: TDateRangeInput[];
@@ -56,6 +59,7 @@ const mapFormValuesToCreateItemRequest = (
 ): TItemInput & TItemRelations => ({
   name: values.name,
   description: values.description,
+  overrideLink: values.overrideLink,
   publishedAt: values.publishedAt
     ? convertLocalDateTimeToZulu(values.publishedAt)
     : null,
@@ -83,6 +87,7 @@ const mapGetItemToFormValues = (
   id: item.id,
   name: item.name,
   description: item.description,
+  overrideLink: item.overrideLink,
   publishedAt: item.publishedAt
     ? convertZuluToLocalDateTime(item.publishedAt)
     : null,
@@ -113,6 +118,7 @@ function ItemCreateForm({
         DESCRIPTION_INPUT,
         IMAGE_IDS_INPUT,
         subheading("Item meta"),
+        OVERRIDE_LINK_INPUT,
         TAGNAMES_INPUT,
         DATE_RANGES_INPUT,
       ]}
@@ -120,6 +126,7 @@ function ItemCreateForm({
         ...NAME_DEFAULT,
         ...DESCRIPTION_DEFAULT,
         ...IMAGE_IDS_DEFAULT,
+        ...OVERRIDE_LINK_DEFAULT,
         ...TAGNAMES_DEFAULT,
         ...DATE_RANGES_DEFAULT,
         ...PUBLISH_DEFAULT,

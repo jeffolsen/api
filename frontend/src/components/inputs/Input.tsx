@@ -6,6 +6,8 @@ import {
   Control,
   FieldErrors,
   FieldError,
+  UseFormSetValue,
+  FieldValues,
   get,
 } from "react-hook-form";
 import clsx from "clsx";
@@ -16,6 +18,7 @@ import { Suspense } from "react";
 export type FromFormProps = {
   control: Control;
   register: UseFormRegister<Record<string, unknown>>;
+  setValue?: UseFormSetValue<FieldValues>;
   watch: (field: string) => unknown;
   errors: FieldErrors<{
     [x: string]: unknown;
@@ -36,6 +39,7 @@ export type AtomicFormComponentName =
   | "ToggleInput"
   | "RadioInput"
   | "ImageSelectArrayInput"
+  | "OverrideLinkInput"
   | "TagArrayInput"
   | "ItemArrayInput"
   | "ReferenceFeedInput";
@@ -86,13 +90,10 @@ export type FormComponentProps =
 const FormSubheading = ({ displayName }: { displayName: string }) => {
   return (
     <div className="flex gap-2 items-center pl-4">
-      <Text
-        textSize="md"
-        className="sm:flex-none uppercase text-left text-base/80"
-      >
+      <Text textSize="md" className="sm:flex-none uppercase text-left ">
         {displayName}
       </Text>
-      <hr className="border-neutral-content/20 flex-1 hidden sm:block" />
+      <hr className="border border-gray-400/50 flex-1 hidden sm:block" />
     </div>
   );
 };
@@ -154,6 +155,13 @@ export const FormInput = (props: FormComponentProps & FromFormProps) => {
   ) : props.componentName === "ItemArrayInput" ? (
     <Suspense fallback={<FallBackInput />}>
       <Inputs.ItemArray
+        {...props}
+        errors={get(props.errors || {}, props.dataName)}
+      />
+    </Suspense>
+  ) : props.componentName === "OverrideLinkInput" ? (
+    <Suspense fallback={<FallBackInput />}>
+      <Inputs.OverrideLink
         {...props}
         errors={get(props.errors || {}, props.dataName)}
       />

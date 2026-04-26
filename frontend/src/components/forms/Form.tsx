@@ -34,6 +34,7 @@ function Form({
   const {
     control,
     register,
+    setValue,
     handleSubmit,
     reset,
     watch,
@@ -72,6 +73,7 @@ function Form({
         >
           <FormInput
             register={register}
+            setValue={setValue}
             watch={watch}
             control={control}
             errors={errors}
@@ -83,6 +85,7 @@ function Form({
         isSubmitting={isSubmitting}
         triggerSubmit={triggerSubmit}
         register={register}
+        setValue={setValue}
         watch={watch}
         control={control}
         errors={errors}
