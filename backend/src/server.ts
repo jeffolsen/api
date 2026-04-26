@@ -20,7 +20,6 @@ if (env.NODE_ENV !== "production") {
 }
 app.use(cookieParser());
 // app.use(rateLimiter);
-
 app.use(BASE_API_URL, apiRouter);
 app.use(errorHandler);
 
@@ -32,3 +31,5 @@ if (env.NODE_ENV === "production") {
 }
 
 app.listen(PORT, () => console.log("server running yo"));
+
+export default app;

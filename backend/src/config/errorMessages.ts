@@ -43,3 +43,5 @@ export const MESSAGE_DATE_RANGES_NOT_FOUND = "Date range(s) not found";
 export const MESSAGE_IMAGES_NOT_FOUND = "Image(s) not found";
 export const MESSAGE_TAGS_NOT_FOUND = "Tag(s) not found";
 export const MESSAGE_COMPONENTS_NOT_FOUND = "Component(s) not found";
+
+export const MESSAGE_HEALTHY = "Service is healthy";

@@ -47,8 +47,6 @@
     "skipLibCheck": true,
     "typeRoots": ["./node_modules/@types"]
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": ["node_modules", "dist", "src/**/*.test.ts"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "src/**/*.test.ts", "src/**/*.mock.ts"]
 }
