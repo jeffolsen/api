@@ -22,7 +22,7 @@ const sizes = {
   md: "text-2xl tracking-widest font-extrabold",
   lg: "text-3xl md:text-4xl tracking-wider font-black",
   xl: "text-4xl md:text-5xl xl:text-6xl tracking-wider font-black",
-  xxl: "text-5xl md:text-7xl lg:text-8xl xl:text-9xl tracking-noraml font-black",
+  xxl: "text-5xl md:text-6xl lg:text-7xl xl:text-8xl tracking-noraml font-black",
 };
 
 function Heading({

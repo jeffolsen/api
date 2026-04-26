@@ -76,7 +76,7 @@ function DateRangeSelectInput(
                   dataName={dataName}
                 />
                 {index !== fields.length - 1 && (
-                  <hr className="border-neutral-content/20 w-full" />
+                  <hr className="border border-gray-400/50 w-full" />
                 )}
               </Fragment>
             ))}
@@ -85,6 +85,7 @@ function DateRangeSelectInput(
         {canAppendDateRange && lastFieldHasMetValidation() && (
           <div>
             <PlusButton
+              className={"bg-base-300"}
               onClick={() => {
                 append({} as TDateRangeInput);
               }}
@@ -163,7 +164,7 @@ function DateRangeEntry({
 
   return (
     <div className="flex gap-4 w-full" {...props}>
-      <div className="flex flex-col gap-4 w-full text-base/80 text-sm">
+      <div className="flex flex-col gap-4 w-full  text-sm">
         <div className="flex flex-wrap gap-4 w-full">
           <div className="flex-1">
             <TextInput

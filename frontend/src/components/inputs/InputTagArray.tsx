@@ -108,7 +108,7 @@ const TagCheckbox = ({
       <input
         type="checkbox"
         className={clsx(
-          "checkbox",
+          "checkbox bg-base-300",
           !isChecked && isDisabled
             ? "checkbox-disabled"
             : !isChecked

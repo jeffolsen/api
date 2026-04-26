@@ -27,7 +27,7 @@ export const RadioInput = (props: RadioInputProps) => {
           {valueOptions?.map((option: SelectableOption) => (
             <label key={option.value} className="flex items-center gap-2">
               <input
-                className="radio"
+                className="radio bg-base-300"
                 {...register(dataName)}
                 type="radio"
                 value={option.value}

@@ -1,6 +1,5 @@
 import Block, { BlockComponentStandardProps } from "../Block";
 import { FeedDeleteButton, FeedUpdateForm } from "../../forms/FeedCreateForm";
-import EmptyCard from "../../cards/EmptyCard";
 import { useNavigate } from "react-router";
 import Loading from "../../common/Loading";
 import { convertZuluToLocalDateTime } from "../../../utils/time";
@@ -42,6 +41,7 @@ import useFeedUpdateBlockData, {
   UseFeedUpdateBlockProps,
 } from "./data";
 import { paths } from "../../../config/routes";
+import EmptyCard from "../../cards/EmptyCard";
 
 type ComponentWithType = TComponent & { type?: TComponentType };
 
@@ -367,7 +367,7 @@ function ComponentTypeButton({
     <button
       onClick={() => onSelect(componentType)}
       className={clsx([
-        "btn btn-ghost border-base-content/20 text-base/70 shadow-xl",
+        "btn btn-ghost border-gray-400/50 text-base/70 shadow-xl",
         "flex flex-col gap-2 items-center justify-center",
         "w-[150px] h-[150px]",
       ])}

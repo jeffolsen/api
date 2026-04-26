@@ -45,7 +45,7 @@ function SelectedImage({ image, onClick, className }: SelectImageProps) {
   return (
     <span
       className={clsx(
-        "relative inline-flex items-center justify-center border rounded border-base-content/20 cursor-pointer shadow-xl",
+        "relative inline-flex items-center justify-center border border-gray-400/50 rounded cursor-pointer shadow-xl",
         "w-[75px] h-[75px] sm:w-[100px] sm:h-[100px]",
         className,
       )}
@@ -139,7 +139,7 @@ function ImageSelectInput(
           ))}
           {canSelectImages && (
             <PlusButton
-              className="text-3xl w-[75px] h-[75px] sm:w-[100px] sm:h-[100px]"
+              className="text-3xl w-[75px] h-[75px] sm:w-[100px] sm:h-[100px] bg-base-300"
               onClick={() => {
                 setShowImageSelector(true);
               }}
@@ -225,7 +225,7 @@ const ImageSelector = ({
       {canSelectImages && (
         <>
           <input
-            className="flex-grow input input-bordered w-full"
+            className="flex-grow input input-bordered border-gray-400/50 w-full bg-base-300"
             type="text"
             placeholder="Search images..."
             value={searchTerm}

@@ -29,7 +29,7 @@ export const TextAreaInput = (
           position="absolute"
         />
         <textarea
-          className="flex-grow textarea textarea-bordered textarea-lg text-sm"
+          className="flex-grow textarea textarea-bordered textarea-lg text-sm bg-base-300"
           style={{ fieldSizing: "content" }}
           {...register(dataName, registerProps)}
           {...elementProps}

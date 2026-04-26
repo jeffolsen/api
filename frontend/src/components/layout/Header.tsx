@@ -57,7 +57,7 @@ function Header() {
       </header>
       <div
         className={clsx([
-          "flex flex-col gap-2 bg-neutral",
+          "flex flex-col bg-neutral",
           "max-h-lvh md:max-h-auto",
           hero &&
             "h-[calc(100lvh-64px)] sm:h-[calc(100lvh-82px)] md:h-[calc(100lvh-86px)] z-20 relative",

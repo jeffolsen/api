@@ -217,6 +217,7 @@ function ComponentModifyOrderControls({
   return (
     <div className="flex flex-col gap-1">
       <IconButton
+        color="primary"
         size="xs"
         disabled={order < 2}
         onClick={() =>
@@ -230,6 +231,7 @@ function ComponentModifyOrderControls({
       </IconButton>
       <div className="text-center text-xs">{order}</div>
       <IconButton
+        color="primary"
         size="xs"
         disabled={order >= feedLength}
         onClick={() =>

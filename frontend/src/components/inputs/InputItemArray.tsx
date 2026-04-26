@@ -91,8 +91,9 @@ function ItemArrayInput(
           }}
         >
           <ComboboxInput
-            className="input input-bordered w-full"
+            className="input input-bordered border-gray-400/50 w-full bg-base-300"
             value={searchTerm}
+            placeholder="Search item names"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           <ComboboxOptions className="w-[var(--input-width)]">

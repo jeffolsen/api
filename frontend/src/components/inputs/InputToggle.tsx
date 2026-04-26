@@ -25,7 +25,7 @@ export const ToggleInput = (props: ToggleInputProps) => {
       <label
         className={clsx([
           "form-control relative flex flex-row items-center gap-4 w-full justify-between",
-          "border rounded p-4 pl-6 border-base-content/20 text-base/80 text-sm shadow-xl",
+          "border border-gray-400/50 rounded p-4 pl-6 text-sm shadow-xl",
         ])}
       >
         <span className="flex gap-3 items-center">
@@ -38,7 +38,7 @@ export const ToggleInput = (props: ToggleInputProps) => {
           {description && <Tooltip text={description} />}
         </span>
         <input
-          className="toggle"
+          className="toggle shadow-base-300"
           {...register(dataName, registerProps)}
           {...elementProps}
           type="checkbox"

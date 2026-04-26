@@ -65,20 +65,20 @@ function FormScheduleSubmit({ control, triggerSubmit }: FormSubmitProps) {
       {showSchedule ? (
         <div className="flex flex-col md:flex-row gap-4">
           <label className={clsx("form-control gap-1 flex-1")}>
-            <span className="label-text text-sm text-base/80">Publish At</span>
+            <span className="label-text text-sm ">Publish At</span>
             <input
               type="datetime-local"
-              className="input input-bordered text-sm"
+              className="input input-bordered border-gray-400/50 text-sm bg-base-300"
               {...publishedAtField}
               value={publishedAtField.value ?? ""}
               min={minDateTimeValue}
             />
           </label>
           <label className={clsx("form-control gap-1 flex-1")}>
-            <span className="label-text text-sm text-base/80">Expired At</span>
+            <span className="label-text text-sm ">Expired At</span>
             <input
               type="datetime-local"
-              className="input input-bordered text-sm"
+              className="input input-bordered border-gray-400/50 text-sm bg-base-300"
               {...expiredAtField}
               value={expiredAtField.value ?? ""}
               min={minExpiredAtValue}
@@ -86,8 +86,8 @@ function FormScheduleSubmit({ control, triggerSubmit }: FormSubmitProps) {
           </label>
         </div>
       ) : (
-        <div className="border rounded p-4 pl-6 border-base-content/20 shasdow-xl">
-          <Text textSize="sm" className="text-base/80">
+        <div className="border border-gray-400/50 rounded p-4 pl-6 shasdow-xl">
+          <Text textSize="sm" className="">
             <SchedulingMessage
               publishedAt={publishedAtField.value}
               expiredAt={expiredAtField.value}

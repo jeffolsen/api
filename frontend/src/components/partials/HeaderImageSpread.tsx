@@ -30,9 +30,9 @@ export default function HeaderImageSpread() {
                 <Image
                   src={image.url}
                   alt={image.alt}
-                  className="!h-[calc(100%+theme(spacing.16))] !w-[calc(100%+theme(spacing.16))] -mt-2 -ml-2"
+                  className="h-full w-full scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 right-2" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60" />
               </div>
             ))}
           </>

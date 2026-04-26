@@ -17,10 +17,11 @@ export default function ComponentSchemaArrayOrderable<
   swap: (from: number, to: number) => void;
 }) {
   return (
-    <div className="card compact border border-base-content/20 rounded shadow-xl">
+    <div className="card compact rounded shadow-xl">
       <div className="card-body flex-row items-center gap-4">
         <div className="flex flex-col gap-2">
           <IconButton
+            color="primary"
             disabled={index === 0}
             onClick={() => swap(index, Math.max(0, index - 1))}
             size="xs"
@@ -28,6 +29,7 @@ export default function ComponentSchemaArrayOrderable<
             <ChevronUp />
           </IconButton>
           <IconButton
+            color="primary"
             disabled={index === fields.length - 1}
             onClick={() => swap(index, Math.min(index + 1, fields.length - 1))}
             size="xs"
