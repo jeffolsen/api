@@ -2,7 +2,7 @@ import { NextFunction, Request, RequestHandler, Response } from "express";
 import prismaClient, { Prisma } from "../db/client";
 import catchErrors from "../util/catchErrors";
 import throwError from "../util/throwError";
-import { NOT_FOUND, OK, NO_CONTENT } from "../config/errorCodes";
+import { NOT_FOUND, OK, NO_CONTENT, BAD_REQUEST } from "../config/errorCodes";
 import { MESSAGE_ITEM_NOT_FOUND } from "../config/errorMessages";
 import { getPagination, getSortOrders } from "../util/misc";
 import {
@@ -93,6 +93,7 @@ interface CreateItemBody {
   description?: string;
   tagNames?: string[];
   images?: number[];
+  overrideLink?: string;
   publishedAt?: string;
   expiredAt?: string;
   dateRanges?: {
@@ -113,6 +114,7 @@ export const createItem: RequestHandler<
     name,
     description,
     sortName,
+    overrideLink,
     tagNames,
     imageIds,
     dateRanges,
@@ -121,6 +123,20 @@ export const createItem: RequestHandler<
   } = CreateItemSchema.parse({
     ...req.body,
   });
+
+  const feed =
+    overrideLink &&
+    (await prismaClient.feed.findFirst({
+      where: {
+        profileId,
+        path: overrideLink,
+      },
+    }));
+
+  const doesntNeedALink = !overrideLink;
+  const foundALink = overrideLink && feed;
+
+  throwError(doesntNeedALink || foundALink, BAD_REQUEST, "Link not allowed");
 
   const tags =
     tagNames &&
@@ -134,6 +150,7 @@ export const createItem: RequestHandler<
       description,
       sortName,
       publishedAt,
+      overrideLink,
       expiredAt,
       tags: {
         create: tags.map(({ id }) => ({ tagId: id })),
@@ -164,6 +181,7 @@ export const updateItem: RequestHandler<
     name,
     description,
     sortName,
+    overrideLink,
     tagNames,
     imageIds,
     dateRanges,
@@ -175,6 +193,20 @@ export const updateItem: RequestHandler<
     where: { id: Number(id), authorId: profileId },
   });
   throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
+
+  const feed =
+    overrideLink &&
+    (await prismaClient.feed.findFirst({
+      where: {
+        profileId,
+        path: overrideLink,
+      },
+    }));
+
+  const doesntNeedALink = !overrideLink;
+  const foundALink = overrideLink && feed;
+
+  throwError(doesntNeedALink || foundALink, BAD_REQUEST, "Link not allowed");
 
   const tags =
     tagNames &&
@@ -188,6 +220,7 @@ export const updateItem: RequestHandler<
       name,
       description,
       sortName,
+      overrideLink,
       publishedAt,
       expiredAt,
       tags: {
@@ -213,6 +246,7 @@ export const updateItem: RequestHandler<
 interface ModifyItemBody {
   name?: string;
   description?: string;
+  overridLink?: string;
   publishedAt?: string;
   expiredAt?: string;
 }
@@ -225,7 +259,7 @@ export const modifyItem: RequestHandler<
 > = catchErrors(async (req: Request, res: Response) => {
   const { profileId } = req;
   const { id } = req.params || {};
-  const data = ModifyItemSchema.parse(req.body);
+  const { overrideLink, ...data } = ModifyItemSchema.parse(req.body);
 
   const item = await prismaClient.item.findFirst({
     where: { id: Number(id), authorId: profileId },

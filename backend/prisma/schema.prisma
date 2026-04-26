@@ -131,20 +131,21 @@ model Component {
 }
 
 model Item {
-  id          Int         @id @default(autoincrement())
-  name        String
-  description String?
-  sortName    String      @map("sort_name")
-  isPrivate   Boolean     @default(true) @map("is_private")
-  createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
-  publishedAt DateTime?   @map("published_at") @db.Timestamptz(6)
-  expiredAt   DateTime?   @map("expired_at") @db.Timestamptz(6)
-  author      Profile?    @relation("ProfileItems", fields: [authorId], references: [id], onDelete: SetNull)
-  authorId    Int?        @map("author_id")
-  dateRanges  DateRange[] @relation("ItemDateRanges")
-  tags        ItemTag[]
-  images      ItemImage[]
+  id           Int         @id @default(autoincrement())
+  name         String
+  description  String?
+  sortName     String      @map("sort_name")
+  isPrivate    Boolean     @default(true) @map("is_private")
+  overrideLink String?     @map("override_link")
+  createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  publishedAt  DateTime?   @map("published_at") @db.Timestamptz(6)
+  expiredAt    DateTime?   @map("expired_at") @db.Timestamptz(6)
+  author       Profile?    @relation("ProfileItems", fields: [authorId], references: [id], onDelete: SetNull)
+  authorId     Int?        @map("author_id")
+  dateRanges   DateRange[] @relation("ItemDateRanges")
+  tags         ItemTag[]
+  images       ItemImage[]
 
   @@map("items")
 }

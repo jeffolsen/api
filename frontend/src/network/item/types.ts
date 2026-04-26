@@ -8,6 +8,7 @@ export type TItem = {
   name: string;
   description?: string;
   sortName: string;
+  overrideLink?: string;
   publishedAt?: string | null;
   expiredAt?: string | null;
   createdAt: string;

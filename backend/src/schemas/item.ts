@@ -40,6 +40,7 @@ export const CreateItemSchema = z
   .object({
     name: nameSchema,
     description: descriptionSchema.optional(),
+    overrideLink: z.string().optional(),
     tagNames: tagNameArraySchema.default([]),
     imageIds: idArraySchema.default([]),
     dateRanges: dateRangeArraySchema.default([]),
@@ -73,6 +74,7 @@ export const ModifyItemSchema = z
   .object({
     name: nameSchema.optional(),
     description: descriptionSchema.optional(),
+    overrideLink: z.string().optional(),
   })
   .extend(publishedAtAndExpiredAtSchema.shape)
   .transform((data) => {
