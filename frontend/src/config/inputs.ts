@@ -268,3 +268,17 @@ export const subheading = (displayName: string) =>
     componentName: "Subheading",
     displayName,
   }) as FormComponentProps;
+
+export const OVERRIDE_LINK_INPUT = {
+  dataName: "overrideLink",
+  displayName: "Override Link",
+  componentName: "OverrideLinkInput",
+  description: "An internal link to a collection page",
+  input: {
+    rules: {
+      maxLength: { value: 1, message: "You can select only 1 override link" },
+    },
+  },
+} as FormComponentProps;
+
+export const OVERRIDE_LINK_DEFAULT = { overrideLink: "" };

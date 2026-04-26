@@ -14,6 +14,8 @@ const LazyLoadedInputRadio = lazy(() => import("./InputRadio"));
 
 const LazyLoadedInputReferenceFeed = lazy(() => import("./InputReferenceFeed"));
 
+const LazyLoadedInputOverrideLink = lazy(() => import("./InputOverrideLink"));
+
 const LazyLoadedInputTagArray = lazy(() => import("./InputTagArray"));
 
 const LazyLoadedInputText = lazy(() => import("./InputText"));
@@ -28,6 +30,7 @@ const Inputs = {
   ItemArray: LazyLoadedInputItemArray,
   Radio: LazyLoadedInputRadio,
   ReferenceFeed: LazyLoadedInputReferenceFeed,
+  OverrideLink: LazyLoadedInputOverrideLink,
   TagArray: LazyLoadedInputTagArray,
   Text: LazyLoadedInputText,
   TextArea: LazyLoadedInputTextArea,
