@@ -108,32 +108,8 @@ function VariantAlpha({
               </SwiperSlide>
             );
           })}
-          <div
-            className={clsx([
-              "swiper-button-prev xl:ml-6",
-              "md:!w-20 md:!h-20",
-              "!top-auto bottom-1 sm:!top-1/2",
-              "bg-base-content rounded-full bg-opacity-75 hover:bg-opacity-100",
-            ])}
-          >
-            <CircleArrowLeft
-              size={120}
-              className="!fill-none !stroke-base-300"
-            />
-          </div>
-          <div
-            className={clsx([
-              "swiper-button-next xl:mr-6",
-              "md:!w-20 md:!h-20",
-              "!top-auto bottom-1 sm:!top-1/2",
-              "bg-base-content rounded-full bg-opacity-75 hover:bg-opacity-100",
-            ])}
-          >
-            <CircleArrowRight
-              size={120}
-              className="!fill-none !stroke-base-300"
-            />
-          </div>
+          <PrevButton />
+          <NextButton />
         </Swiper>
       </ScrollInFade>
     </Block>
@@ -202,15 +178,7 @@ function VariantBeta({
   return (
     <Block {...blockProps} settings={{ ...blockProps.settings, padded: false }}>
       <ScrollInFade className="h-full w-full" critical={!!critical}>
-        <div
-          className={clsx([
-            "swiper-button-prev xl:ml-6",
-            "md:!w-20 md:!h-20",
-            "bg-base-content rounded-full bg-opacity-75 hover:bg-opacity-100 hover:bg-opacity-100",
-          ])}
-        >
-          <CircleArrowLeft size={120} className="!fill-none !stroke-base-300" />
-        </div>
+        <PrevButton />
         <Swiper
           modules={[Navigation, Autoplay, EffectFade]}
           navigation={{
@@ -221,7 +189,7 @@ function VariantBeta({
           slidesPerView={1}
           className="max-h-full h-[30rem] w-full max-w-screen-xl shadow-xl"
           autoplay={{
-            delay: 4000, // Time in ms
+            delay: 12000, // Time in ms
             disableOnInteraction: false, // Keep playing after interaction
             pauseOnMouseEnter: true, // Pause on hover
           }}
@@ -235,18 +203,7 @@ function VariantBeta({
             );
           })}
         </Swiper>
-        <div
-          className={clsx([
-            "swiper-button-next xl:mr-6",
-            "md:!w-20 md:!h-20",
-            "bg-base-content rounded-full bg-opacity-75 hover:bg-opacity-100",
-          ])}
-        >
-          <CircleArrowRight
-            size={120}
-            className="!fill-none !stroke-base-300"
-          />
-        </div>
+        <NextButton />
       </ScrollInFade>
     </Block>
   );
@@ -277,13 +234,12 @@ function BetaSlide({
         className="absolute inset-0 w-full h-full object-cover"
       />
       <div className="absolute inset-0 bg-black/30" />
-      <Heading
-        headingSize="xl"
-        headingStyles="text-neutral-content absolute bottom-6 left-6"
-      >
-        {item.name}
-      </Heading>
-      {link && <InsetLink to={link} aria-label={item.name} />}
+      <div className="absolute inset-0 flex flex-col items-start justify-center p-6 px-24 pb-18 text-left">
+        <Heading headingSize="xl" headingStyles="text-neutral-content">
+          {item.name}
+        </Heading>
+        {link && <InsetLink to={link} aria-label={item.name} />}
+      </div>
     </div>
   );
 }
@@ -316,7 +272,15 @@ function VariantGamma({
             prevEl: ".swiper-button-prev",
           }}
           spaceBetween={16}
-          slidesPerView={3}
+          slidesPerView={1}
+          breakpoints={{
+            768: {
+              slidesPerView: 2,
+            },
+            1280: {
+              slidesPerView: 3,
+            },
+          }}
           className="max-h-full h-96 w-full max-w-screen-2xl"
           autoplay={{
             delay: 4000, // Time in ms
@@ -335,28 +299,8 @@ function VariantGamma({
               </SwiperSlide>
             );
           })}
-          <div
-            className={clsx([
-              "swiper-button-prev xl:ml-6",
-              "md:!w-20 md:!h-20",
-            ])}
-          >
-            <CircleArrowLeft
-              size={120}
-              className="!fill-none !stroke-neutral-content"
-            />
-          </div>
-          <div
-            className={clsx([
-              "swiper-button-next xl:mr-6",
-              "md:!w-20 md:!h-20",
-            ])}
-          >
-            <CircleArrowRight
-              size={120}
-              className="!fill-none !stroke-neutral-content"
-            />
-          </div>
+          <PrevButton />
+          <NextButton />
         </Swiper>
       </ScrollInFade>
     </Block>
@@ -388,13 +332,41 @@ function GammaSlide({
         className="absolute inset-0 w-full h-full object-cover"
       />
       <div className="absolute inset-0 bg-black/30" />
-      <Heading
-        headingSize="lg"
-        headingStyles="text-neutral-content absolute bottom-4 left-4"
-      >
-        {item.name}
-      </Heading>
+      <div className="flex flex-col justify-center items-center absolute inset-0 p-16">
+        <Heading headingSize="md" headingStyles="text-neutral-content">
+          {item.name}
+        </Heading>
+      </div>
       {link && <InsetLink to={link} aria-label={item.name} />}
+    </div>
+  );
+}
+
+function PrevButton() {
+  return (
+    <div
+      className={clsx([
+        "swiper-button-prev",
+        "!w-16 !h-16 md:!w-20 md:!h-20",
+        "!top-auto bottom-1 lg:!top-1/2",
+        "bg-base-content rounded-full bg-opacity-75 hover:bg-opacity-100",
+      ])}
+    >
+      <CircleArrowLeft size={120} className="!fill-none !stroke-base-300" />
+    </div>
+  );
+}
+function NextButton() {
+  return (
+    <div
+      className={clsx([
+        "swiper-button-next",
+        "!w-16 !h-16 md:!w-20 md:!h-20",
+        "!top-auto bottom-1 lg:!top-1/2",
+        "bg-base-content rounded-full bg-opacity-75 hover:bg-opacity-100",
+      ])}
+    >
+      <CircleArrowRight size={120} className="!fill-none !stroke-base-300" />
     </div>
   );
 }
