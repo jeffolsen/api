@@ -1,5 +1,5 @@
-import { JSONSchemaForArrayOrEnum } from "../../utils/jsonSchemaTransformer";
-import { TSubjectType } from "../feed/types";
+import { JSONSchemaForArrayOrEnum } from "@/utils/jsonSchemaTransformer";
+import { TSubjectType } from "@/network/feed/types";
 
 export type TComponentNames =
   | "TeaserGrid"

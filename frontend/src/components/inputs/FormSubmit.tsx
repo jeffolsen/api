@@ -1,7 +1,7 @@
-import { Button } from "../common/Button";
-import { ButtonColor } from "../common/helpers/contentStyles";
+import { Button } from "@/components/common/Button";
+import { ButtonColor } from "@/components/common/helpers/contentStyles";
 import { clsx } from "clsx";
-import { FromFormProps } from "./Input";
+import { FromFormProps } from "@/components/inputs/Input";
 
 export type FormSubmitProps = {
   isSubmitting: boolean;

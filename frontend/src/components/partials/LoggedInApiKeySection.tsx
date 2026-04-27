@@ -1,22 +1,22 @@
-import { useGetProfilesApiKeys } from "../../network/apiKey";
+import { useGetProfilesApiKeys } from "@/network/apiKey";
 import {
   OTP_STATUS_CREATE_API_KEY,
   OTP_STATUS_DESTROY_API_KEY,
   useOtpStatus,
-} from "../../network/verificationCode";
+} from "@/network/verificationCode";
 import {
   GenerateApiKeyWithOTPForm,
   RequestGenerateApiKeyForm,
-} from "../forms/GenerateApiKeyForm";
+} from "@/components/forms/GenerateApiKeyForm";
 import {
   DestroyApiKeyWithOTPForm,
   RequestDestroyApiKeyForm,
-} from "../forms/DestroyApiKeyForm";
-import Loading from "../common/Loading";
-import Grid from "../common/Grid";
-import RevealCard from "../cards/RevealCard";
-import SectionHeading from "./SectionHeading";
-import Text from "../common/Text";
+} from "@/components/forms/DestroyApiKeyForm";
+import Loading from "@/components/common/Loading";
+import Grid from "@/components/common/Grid";
+import RevealCard from "@/components/cards/RevealCard";
+import SectionHeading from "@/components/partials/SectionHeading";
+import Text from "@/components/common/Text";
 
 function LoggedInApiKeySection() {
   const getApiKeys = useGetProfilesApiKeys();

@@ -1,11 +1,11 @@
-import { useGetAuthenticatedProfile } from "../../../network/profile";
+import { useGetAuthenticatedProfile } from "@/network/profile";
 import {
   BlockComponentStandardProps,
   BlockStandardFailedDataReturnType,
   BlockComponentDataReturnType,
   BlockProps,
   BlockData,
-} from "../Block";
+} from "@/components/blocks/Block";
 
 const variants = {
   default: {

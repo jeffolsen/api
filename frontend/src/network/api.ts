@@ -1,7 +1,7 @@
 import axios, { isAxiosError } from "axios";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import jsCookie from "js-cookie";
-import { EMAIL_DEFAULT } from "../config/inputs";
+import { EMAIL_DEFAULT } from "@/config/inputs";
 
 // these should match the backend routes, may need website url in front of them in production
 export const BASE_URL =

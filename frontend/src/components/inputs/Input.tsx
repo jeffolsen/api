@@ -11,8 +11,8 @@ import {
   get,
 } from "react-hook-form";
 import clsx from "clsx";
-import Text from "../common/Text";
-import Inputs from "./LazyInputs";
+import Text from "@/components/common/Text";
+import Inputs from "@/components/inputs/LazyInputs";
 import { Suspense } from "react";
 
 export type FromFormProps = {

@@ -1,22 +1,25 @@
-import Block, { BlockComponentStandardProps } from "../Block";
-import { FeedDeleteButton, FeedUpdateForm } from "../../forms/FeedCreateForm";
+import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
+import {
+  FeedDeleteButton,
+  FeedUpdateForm,
+} from "@/components/forms/FeedCreateForm";
 import { useNavigate } from "react-router";
-import Loading from "../../common/Loading";
-import { convertZuluToLocalDateTime } from "../../../utils/time";
+import Loading from "@/components/common/Loading";
+import { convertZuluToLocalDateTime } from "@/utils/time";
 import toast from "react-hot-toast";
-import Heading from "../../common/Heading";
-import Text from "../../common/Text";
-import dayjs, { techDatetime } from "../../../utils/dayjs";
-import SectionHeading from "../../partials/SectionHeading";
-import Grid from "../../common/Grid";
-import { ScheduleStatus } from "../../inputs/FormSubmitAndPublish";
-import { TComponent } from "../../../network/component";
+import Heading from "@/components/common/Heading";
+import Text from "@/components/common/Text";
+import dayjs, { techDatetime } from "@/utils/dayjs";
+import SectionHeading from "@/components/partials/SectionHeading";
+import Grid from "@/components/common/Grid";
+import { ScheduleStatus } from "@/components/inputs/FormSubmitAndPublish";
+import { TComponent } from "@/network/component";
 import {
   TComponentType,
   GetComponentTypesResponse,
-} from "../../../network/componentType";
+} from "@/network/componentType";
 import { useMemo, useState } from "react";
-import Button from "../../common/Button";
+import Button from "@/components/common/Button";
 import {
   Plus,
   GalleryThumbnails,
@@ -27,7 +30,7 @@ import {
   Spotlight,
   CornerDownLeft,
 } from "lucide-react";
-import Modal from "../../layout/Modal";
+import Modal from "@/components/layout/Modal";
 import clsx from "clsx";
 import {
   ComponentCreateForm,
@@ -35,13 +38,13 @@ import {
   ComponentDeleteButton,
   ComponentModifyOrderControls,
   ComponentUpdateForm,
-} from "../../forms/ComponentCreateForm";
+} from "@/components/forms/ComponentCreateForm";
 import useFeedUpdateBlockData, {
   UseFeedUpdateBlockData,
   UseFeedUpdateBlockProps,
-} from "./data";
-import { paths } from "../../../config/routes";
-import EmptyCard from "../../cards/EmptyCard";
+} from "@/components/blocks/CmsFeedUpdateBlock/data";
+import { paths } from "@/config/routes";
+import EmptyCard from "@/components/cards/EmptyCard";
 
 type ComponentWithType = TComponent & { type?: TComponentType };
 

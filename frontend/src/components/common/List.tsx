@@ -1,5 +1,5 @@
 import clsx, { ClassValue } from "clsx";
-import { sizeClasses } from "./helpers/contentStyles";
+import { sizeClasses } from "@/components/common/helpers/contentStyles";
 import { ReactNode } from "react";
 
 type Size = keyof typeof sizeClasses;

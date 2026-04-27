@@ -4,11 +4,19 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from "@tanstack/react-query";
-import { FEEDS_ENDPOINT, COMPONENTS_ENDPOINT, withErrorHandling } from "../api";
-import { COMPONENTS_KEY } from "../component";
-import { useAuthState } from "../../contexts/AuthContext";
-import { GetFeedsResponse, TFeedInput, TFeedsParams } from "./types";
-import { TComponent } from "../component/types";
+import {
+  FEEDS_ENDPOINT,
+  COMPONENTS_ENDPOINT,
+  withErrorHandling,
+} from "@/network/api";
+import { COMPONENTS_KEY } from "@/network/component";
+import { useAuthState } from "@/contexts/AuthContext";
+import {
+  GetFeedsResponse,
+  TFeedInput,
+  TFeedsParams,
+} from "@/network/feed/types";
+import { TComponent } from "@/network/component/types";
 
 export const FEEDS_KEY = "feeds" as const;
 
@@ -132,4 +140,4 @@ export const useDeleteFeed = () => {
   });
 };
 
-export * from "./types";
+export * from "@/network/feed/types";

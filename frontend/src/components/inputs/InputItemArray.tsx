@@ -10,14 +10,14 @@ import {
   ChildFromFormProps,
   FieldArrayMinMaxRule,
   FormError,
-} from "./Input";
-import { TItem, GetItemsResponse, useGetItems } from "../../network/item";
+} from "@/components/inputs/Input";
+import { TItem, GetItemsResponse, useGetItems } from "@/network/item";
 import { useFieldArray } from "react-hook-form";
-import Grid from "../common/Grid";
-import useDebounce from "../../hooks/useDebounce";
+import Grid from "@/components/common/Grid";
+import useDebounce from "@/hooks/useDebounce";
 import { Plus } from "lucide-react";
-import ComponentSchemaArrayOrderable from "../partials/ComponentSchemaArrayOrderable";
-import FieldSetWrapperWithMinMax from "../partials/FieldSetWrapper";
+import ComponentSchemaArrayOrderable from "@/components/partials/ComponentSchemaArrayOrderable";
+import FieldSetWrapperWithMinMax from "@/components/partials/FieldSetWrapper";
 
 type ItemIdField = { id: string; itemId: TItem["id"]; name: TItem["name"] };
 type ItemIdArrayFields = Array<ItemIdField>;

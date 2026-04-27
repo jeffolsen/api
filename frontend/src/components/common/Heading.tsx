@@ -1,7 +1,7 @@
 import clsx, { ClassValue } from "clsx";
 import { PropsWithChildren } from "react";
-import { useHeadingLevel } from "../../contexts/HeadingLevelContext";
-export { HeadingLevelProvider } from "../../contexts/HeadingLevelProvider";
+import { useHeadingLevel } from "@/contexts/HeadingLevelContext";
+export { HeadingLevelProvider } from "@/contexts/HeadingLevelProvider";
 
 export type HeadingProps = {
   headingSize?: keyof typeof sizes;

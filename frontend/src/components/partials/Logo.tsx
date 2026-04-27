@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import { InsetLink } from "../common/Link";
+import { InsetLink } from "@/components/common/Link";
 
 function Logo() {
   return (

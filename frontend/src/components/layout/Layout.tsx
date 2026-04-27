@@ -1,13 +1,13 @@
 import { PropsWithChildren } from "react";
-import Header from "./Header";
-import Footer from "./Footer";
-import { HeadingLevelProvider } from "../common/Heading";
-import { TComponent } from "../../network/component";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import { HeadingLevelProvider } from "@/components/common/Heading";
+import { TComponent } from "@/network/component";
 import clsx from "clsx";
 import {
   mainSpacing,
   mainVerticalPadding,
-} from "../common/helpers/layoutStyles";
+} from "@/components/common/helpers/layoutStyles";
 
 function Layout({
   children,

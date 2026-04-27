@@ -1,11 +1,11 @@
-import BasicCard from "../cards/BasicCard";
-import SectionHeading from "./SectionHeading";
-import { useGetProfileVerificationCodes } from "../../network/verificationCode";
-import Grid from "../common/Grid";
-import Loading from "../common/Loading";
-import DropDownMenu, { DropDownItem } from "../common/DropDownMenu";
+import BasicCard from "@/components/cards/BasicCard";
+import SectionHeading from "@/components/partials/SectionHeading";
+import { useGetProfileVerificationCodes } from "@/network/verificationCode";
+import Grid from "@/components/common/Grid";
+import Loading from "@/components/common/Loading";
+import DropDownMenu, { DropDownItem } from "@/components/common/DropDownMenu";
 import { useCallback, useMemo, useState } from "react";
-import dayjs, { longDate, techDatetime } from "../../utils/dayjs";
+import dayjs, { longDate, techDatetime } from "@/utils/dayjs";
 
 type VerificationCode = {
   id: number;

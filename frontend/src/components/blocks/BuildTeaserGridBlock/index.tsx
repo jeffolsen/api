@@ -1,24 +1,26 @@
-import { TFeed } from "../../../network/feed";
-import { TItem } from "../../../network/item";
-import { TImage } from "../../../network/image";
-import Text from "../../common/Text";
-import BlockWrapper, { BlockComponentStandardProps } from "../Block";
+import { TFeed } from "@/network/feed";
+import { TItem } from "@/network/item";
+import { TImage } from "@/network/image";
+import Text from "@/components/common/Text";
+import BlockWrapper, {
+  BlockComponentStandardProps,
+} from "@/components/blocks/Block";
 import useTeaserGridBlockData, {
   UseTeaserGridBlockData,
   UseTeaserGridBlockProps,
-} from "./data";
-import Grid from "../../common/Grid";
+} from "@/components/blocks/BuildTeaserGridBlock/data";
+import Grid from "@/components/common/Grid";
 import clsx from "clsx";
 import {
   mainSpacing,
   smVerticalPadding,
   xsSpacing,
-} from "../../common/helpers/layoutStyles";
-import Image from "../../common/Image";
-import Heading from "../../common/Heading";
-import { InsetLink } from "../../common/Link";
-import { useGetAppItemImages } from "../../../network/app";
-import getItemLink from "../../../utils/getItemLink";
+} from "@/components/common/helpers/layoutStyles";
+import Image from "@/components/common/Image";
+import Heading from "@/components/common/Heading";
+import { InsetLink } from "@/components/common/Link";
+import { useGetAppItemImages } from "@/network/app";
+import getItemLink from "@/utils/getItemLink";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useTeaserGridBlockData(config);

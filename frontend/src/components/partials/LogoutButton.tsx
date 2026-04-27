@@ -1,5 +1,5 @@
-import Button from "../common/Button";
-import { useLogout } from "../../network/session";
+import Button from "@/components/common/Button";
+import { useLogout } from "@/network/session";
 
 function LogoutButton() {
   const logout = useLogout();

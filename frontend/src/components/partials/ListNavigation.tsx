@@ -1,8 +1,8 @@
-import { paths } from "../../config/routes";
-import { useSearchParam } from "../../hooks/useSearchParam";
-import Button from "../common/Button";
-import DropDownMenu from "../common/DropDownMenu";
-import { PaginateItemBar } from "../common/Pagination";
+import { paths } from "@/config/routes";
+import { useSearchParam } from "@/hooks/useSearchParam";
+import Button from "@/components/common/Button";
+import DropDownMenu from "@/components/common/DropDownMenu";
+import { PaginateItemBar } from "@/components/common/Pagination";
 import { Plus } from "lucide-react";
 import { useMemo } from "react";
 

@@ -1,7 +1,7 @@
-import { PaginationParams } from "../api";
-import { TDateRangeInput } from "../dataRange/types";
-import { TImage } from "../image/types";
-import { TTagInput, TTagName } from "../tag/types";
+import { PaginationParams } from "@/network/api";
+import { TDateRangeInput } from "@/network/dateRange/types";
+import { TImage } from "@/network/image/types";
+import { TTagInput, TTagName } from "@/network/tag/types";
 
 export type TItem = {
   id: number;

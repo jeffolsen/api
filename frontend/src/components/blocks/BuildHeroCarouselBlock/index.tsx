@@ -1,26 +1,26 @@
-import { TItem } from "../../../network/item";
-import { TFeed } from "../../../network/feed";
-import { TImage } from "../../../network/image";
-import Text from "../../common/Text";
-import Block, { BlockComponentStandardProps } from "../Block";
+import { TItem } from "@/network/item";
+import { TFeed } from "@/network/feed";
+import { TImage } from "@/network/image";
+import Text from "@/components/common/Text";
+import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
 import useHeroCarouselBlockData, {
   UseHeroCarouselBlockData,
   UseHeroCarouselBlockProps,
-} from "./data";
-import Heading from "../../common/Heading";
-import getItemLink from "../../../utils/getItemLink";
+} from "@/components/blocks/BuildHeroCarouselBlock/data";
+import Heading from "@/components/common/Heading";
+import getItemLink from "@/utils/getItemLink";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
-import { useGetAppItemImages } from "../../../network/app";
-import Image from "../../common/Image";
-import { InsetLink } from "../../common/Link";
+import { useGetAppItemImages } from "@/network/app";
+import Image from "@/components/common/Image";
+import { InsetLink } from "@/components/common/Link";
 import { CircleArrowLeft, CircleArrowRight } from "lucide-react";
 import { clsx } from "clsx";
-import ScrollInFade from "../../common/ScrollInFade";
+import ScrollInFade from "@/components/common/ScrollInFade";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useHeroCarouselBlockData(config);
@@ -349,10 +349,13 @@ function PrevButton() {
         "swiper-button-prev",
         "!w-16 !h-16 md:!w-20 md:!h-20",
         "!top-auto bottom-1 lg:!top-1/2",
-        "bg-base-content rounded-full bg-opacity-75 hover:bg-opacity-100",
+        "bg-neutral rounded-full group hover:bg-primary transition-colors duration-300",
       ])}
     >
-      <CircleArrowLeft size={120} className="!fill-none !stroke-base-300" />
+      <CircleArrowLeft
+        size={120}
+        className="!fill-none !stroke-neutral-content"
+      />
     </div>
   );
 }
@@ -363,10 +366,13 @@ function NextButton() {
         "swiper-button-next",
         "!w-16 !h-16 md:!w-20 md:!h-20",
         "!top-auto bottom-1 lg:!top-1/2",
-        "bg-base-content rounded-full bg-opacity-75 hover:bg-opacity-100",
+        "bg-neutral rounded-full group hover:bg-primary transition-colors duration-300",
       ])}
     >
-      <CircleArrowRight size={120} className="!fill-none !stroke-base-300" />
+      <CircleArrowRight
+        size={120}
+        className="!fill-none !stroke-neutral-content"
+      />
     </div>
   );
 }

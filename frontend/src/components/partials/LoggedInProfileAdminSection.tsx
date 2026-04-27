@@ -1,14 +1,14 @@
 import {
   OTP_STATUS_DELETE_PROFILE,
   useOtpStatus,
-} from "../../network/verificationCode";
+} from "@/network/verificationCode";
 import {
   RequestUnregisterForm,
   UnregisterWithOTPForm,
-} from "../forms/UnregisterForm";
-import { ResetPasswordWithSessionForm } from "../forms/ResetPasswordForm";
-import RevealCard from "../cards/RevealCard";
-import SectionHeading from "./SectionHeading";
+} from "@/components/forms/UnregisterForm";
+import { ResetPasswordWithSessionForm } from "@/components/forms/ResetPasswordForm";
+import RevealCard from "@/components/cards/RevealCard";
+import SectionHeading from "@/components/partials/SectionHeading";
 
 function LoggedInDeleteProfileSection() {
   const otpStatus = useOtpStatus();

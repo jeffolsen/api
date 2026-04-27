@@ -4,7 +4,7 @@ import {
   ChildFromFormProps,
   RequiredLabel,
   FormError,
-} from "./Input";
+} from "@/components/inputs/Input";
 
 export type TextInputProps = Omit<
   AtomicFormComponentProps & ChildFromFormProps,

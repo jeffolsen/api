@@ -1,23 +1,23 @@
-import Block, { BlockComponentStandardProps } from "../Block";
-import EmptyCard from "../../cards/EmptyCard";
-import Loading from "../../common/Loading";
+import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
+import EmptyCard from "@/components/cards/EmptyCard";
+import Loading from "@/components/common/Loading";
 import {
   ItemDeleteButton,
   ItemRepublishForm,
   ItemUpdateForm,
-} from "../../forms/ItemCreateForm";
-import { convertZuluToLocalDateTime } from "../../../utils/time";
-import Text from "../../common/Text";
-import dayjs, { techDatetime } from "../../../utils/dayjs";
+} from "@/components/forms/ItemCreateForm";
+import { convertZuluToLocalDateTime } from "@/utils/time";
+import Text from "@/components/common/Text";
+import dayjs, { techDatetime } from "@/utils/dayjs";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
-import Heading from "../../common/Heading";
-import { ScheduleStatus } from "../../inputs/FormSubmitAndPublish";
+import Heading from "@/components/common/Heading";
+import { ScheduleStatus } from "@/components/inputs/FormSubmitAndPublish";
 import useItemUpdateBlockData, {
   UseItemUpdateBlockData,
   UseItemUpdateBlockProps,
-} from "./data";
-import { paths } from "../../../config/routes";
+} from "@/components/blocks/CmsItemUpdateBlock/data";
+import { paths } from "@/config/routes";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useItemUpdateBlockData(config);

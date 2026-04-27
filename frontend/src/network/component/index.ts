@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FEEDS_KEY } from "../feed";
-import { useAuthState } from "../../contexts/AuthContext";
-import { COMPONENTS_ENDPOINT, withErrorHandling } from "../api";
-import { TComponent, TComponentInput } from "./types";
-import { TFeed } from "../feed/types";
+import { FEEDS_KEY } from "@/network/feed";
+import { useAuthState } from "@/contexts/AuthContext";
+import { COMPONENTS_ENDPOINT, withErrorHandling } from "@/network/api";
+import { TComponent, TComponentInput } from "@/network/component/types";
+import { TFeed } from "@/network/feed/types";
 
 export const COMPONENTS_KEY = "components" as const;
 
@@ -99,4 +99,4 @@ export const useDeleteComponent = () => {
   });
 };
 
-export * from "./types";
+export * from "@/network/component/types";

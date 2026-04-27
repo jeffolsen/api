@@ -1,6 +1,6 @@
-import Heading from "../common/Heading";
-import Text from "../common/Text";
-import EmptyCard from "./EmptyCard";
+import Heading from "@/components/common/Heading";
+import Text from "@/components/common/Text";
+import EmptyCard from "@/components/cards/EmptyCard";
 import { PropsWithChildren } from "react";
 
 export type BasicCardProps = {

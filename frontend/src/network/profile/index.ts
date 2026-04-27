@@ -1,19 +1,19 @@
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { OTP_STATUS_KEY } from "../verificationCode";
+import { OTP_STATUS_KEY } from "@/network/verificationCode";
 import {
   PROFILE_ENDPOINT,
   PASSWORD_RESET_WITH_OTP_ENDPOINT,
   PASSWORD_CHANGE_ENDPOINT,
   withErrorHandling,
   useEmail,
-} from "../api";
-import { useAuthState } from "../../contexts/AuthContext";
+} from "@/network/api";
+import { useAuthState } from "@/contexts/AuthContext";
 import {
   DeleteProfileWithOTPFormInput,
   PasswordResetWithOTPFormInput,
   PasswordResetWithSessionFormInput,
-} from "./types";
-import { OTP_STATUS_NONE } from "../verificationCode/types";
+} from "@/network/profile/types";
+import { OTP_STATUS_NONE } from "@/network/verificationCode/types";
 
 const PROFILE_KEY = "profile" as const;
 
@@ -93,4 +93,4 @@ export const useDeleteProfileWithOTP = () => {
   });
 };
 
-export * from "./types";
+export * from "@/network/profile/types";

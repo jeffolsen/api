@@ -1,13 +1,13 @@
 import { keepPreviousData } from "@tanstack/react-query";
-import { useGetAuthenticatedProfile } from "../../../network/profile";
+import { useGetAuthenticatedProfile } from "@/network/profile";
 import {
   BlockProps,
   BlockComponentStandardProps,
   BlockComponentDataReturnType,
   BlockData,
-} from "../Block";
-import { useSearchParam } from "../../../hooks/useSearchParam";
-import { TFeedSort, TSubjectType, useGetFeeds } from "../../../network/feed";
+} from "@/components/blocks/Block";
+import { useSearchParam } from "@/hooks/useSearchParam";
+import { TFeedSort, TSubjectType, useGetFeeds } from "@/network/feed";
 
 const variants = {
   default: {

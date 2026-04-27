@@ -3,21 +3,21 @@ import {
   PASSWORD_INPUT,
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
-} from "../../config/inputs";
+} from "@/config/inputs";
 import {
   useDeleteProfileWithOTP,
   DeleteProfileWithOTPFormInput,
-} from "../../network/profile";
+} from "@/network/profile";
 import {
   useRequestDeleteProfile,
   RequestDeleteProfileInput,
-} from "../../network/verificationCode";
+} from "@/network/verificationCode";
 import {
   FormWithHeading,
   FormWithHeadingProps,
   FormReponseHandlerProps,
-} from "./Form";
-import { withFormHandling } from "../../network/api";
+} from "@/components/forms/Form";
+import { withFormHandling } from "@/network/api";
 
 function RequestUnregisterForm({
   handleSuccess,

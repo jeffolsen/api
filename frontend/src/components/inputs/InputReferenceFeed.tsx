@@ -10,14 +10,14 @@ import {
   ChildFromFormProps,
   FieldArrayMinMaxRule,
   FormError,
-} from "./Input";
-import { TFeed, GetFeedsResponse, useGetFeeds } from "../../network/feed";
+} from "@/components/inputs/Input";
+import { TFeed, GetFeedsResponse, useGetFeeds } from "@/network/feed";
 import { useFieldArray } from "react-hook-form";
-import Grid from "../common/Grid";
-import useDebounce from "../../hooks/useDebounce";
+import Grid from "@/components/common/Grid";
+import useDebounce from "@/hooks/useDebounce";
 import { Plus } from "lucide-react";
-import ComponentSchemaArrayOrderable from "../partials/ComponentSchemaArrayOrderable";
-import FieldSetWrapperWithMinMax from "../partials/FieldSetWrapper";
+import ComponentSchemaArrayOrderable from "@/components/partials/ComponentSchemaArrayOrderable";
+import FieldSetWrapperWithMinMax from "@/components/partials/FieldSetWrapper";
 
 type FeedIdField = { id: string; feedId: TFeed["id"]; path: TFeed["path"] };
 type FeedIdArrayFields = Array<FeedIdField>;

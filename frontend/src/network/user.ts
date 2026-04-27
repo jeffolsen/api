@@ -3,10 +3,10 @@ import api, {
   FEEDS_ENDPOINT,
   ITEMS_ENDPOINT,
   REFRESH_ENDPOINT,
-} from "./api";
-import { ITEMS_KEY } from "./item";
-import { FEEDS_KEY } from "./feed";
-import { COMPONENTS_KEY } from "./component";
+} from "@/network/api";
+import { ITEMS_KEY } from "@/network/item";
+import { FEEDS_KEY } from "@/network/feed";
+import { COMPONENTS_KEY } from "@/network/component";
 
 export const userFeedsQueryKey = (queryParams?: unknown) =>
   [FEEDS_KEY, queryParams] as const;

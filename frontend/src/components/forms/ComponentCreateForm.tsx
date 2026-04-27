@@ -1,10 +1,10 @@
-import { subheading, NAME_INPUT, NAME_DEFAULT } from "../../config/inputs";
+import { subheading, NAME_INPUT, NAME_DEFAULT } from "@/config/inputs";
 import Form, {
   FormWithHeading,
   FormReponseHandlerProps,
   FormWithHeadingProps,
-} from "./Form";
-import { withFormHandling } from "../../network/api";
+} from "@/components/forms/Form";
+import { withFormHandling } from "@/network/api";
 import {
   TComponent,
   TComponentInput,
@@ -12,26 +12,26 @@ import {
   useModifyComponent,
   useUpdateComponent,
   useDeleteComponent,
-} from "../../network/component";
+} from "@/network/component";
 import {
   TComponentType,
   useGetComponentTypeById,
-} from "../../network/componentType";
-import { TFeed, useGetFeedComponents } from "../../network/feed";
+} from "@/network/componentType";
+import { TFeed, useGetFeedComponents } from "@/network/feed";
 import {
   convertLocalDateTimeToZulu,
   convertZuluToLocalDateTime,
-} from "../../utils/time";
-import FormScheduleSubmit from "../inputs/FormSubmitAndSchedule";
-import Loading from "../common/Loading";
+} from "@/utils/time";
+import FormScheduleSubmit from "@/components/inputs/FormSubmitAndSchedule";
+import Loading from "@/components/common/Loading";
 import { useMemo } from "react";
 import convertJSONSchemaToFormInputs, {
   propertyValuesFromFormMapper,
   propertyValuesToFormMapper,
-} from "../../utils/jsonSchemaTransformer";
-import Button, { IconButton } from "../common/Button";
+} from "@/utils/jsonSchemaTransformer";
+import Button, { IconButton } from "@/components/common/Button";
 import { ChevronUp, ChevronDown, Trash } from "lucide-react";
-import FormPublishSubmit from "../inputs/FormSubmitAndPublish";
+import FormPublishSubmit from "@/components/inputs/FormSubmitAndPublish";
 
 type FormValues = {
   typeId: TComponentType["id"];

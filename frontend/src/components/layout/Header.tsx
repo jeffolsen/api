@@ -1,21 +1,21 @@
-import { HeadingLevelProvider } from "../common/Heading";
-import Button from "../common/Button";
-import { TComponent } from "../../network/component";
-import BreadCrumbs from "./BreadCrumbs";
+import { HeadingLevelProvider } from "@/components/common/Heading";
+import Button from "@/components/common/Button";
+import { TComponent } from "@/network/component";
+import BreadCrumbs from "@/components/layout/BreadCrumbs";
 import { useLoaderData } from "react-router";
 import { Suspense } from "react";
-import Blocks from "../blocks/Blocks";
-import ThemeToggle from "../partials/ThemeToggle";
+import Blocks from "@/components/blocks/Blocks";
+import ThemeToggle from "@/components/partials/ThemeToggle";
 import clsx from "clsx";
-import Logo from "../partials/Logo";
-import HeaderImageSpread from "../partials/HeaderImageSpread";
+import Logo from "@/components/partials/Logo";
+import HeaderImageSpread from "@/components/partials/HeaderImageSpread";
 import {
   Popover,
   PopoverBackdrop,
   PopoverButton,
   PopoverPanel,
 } from "@headlessui/react";
-import LogoutButton from "../partials/LogoutButton";
+import LogoutButton from "@/components/partials/LogoutButton";
 
 const navItems = [
   { label: "Home", to: "/" },

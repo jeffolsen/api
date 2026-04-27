@@ -4,23 +4,23 @@ import {
   PASSWORD_INPUT,
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
-} from "../../config/inputs";
+} from "@/config/inputs";
 import {
   RequestLogoutAllSessionsInput,
   useRequestLogoutAllSessions,
-} from "../../network/verificationCode";
+} from "@/network/verificationCode";
 import {
   useResetSessionsWithOTP,
   ResetSessionsWithOTPFormInput,
   useLogoutAllWithSession,
   LogoutAllWithSessionFormInput,
-} from "../../network/session";
+} from "@/network/session";
 import {
   FormWithHeading,
   FormWithHeadingProps,
   FormReponseHandlerProps,
-} from "./Form";
-import { useEmail, withFormHandling } from "../../network/api";
+} from "@/components/forms/Form";
+import { useEmail, withFormHandling } from "@/network/api";
 
 function RequestLogoutAllSessionsForm({
   handleSuccess,

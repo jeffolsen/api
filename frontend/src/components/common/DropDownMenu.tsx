@@ -5,8 +5,8 @@ import {
   ListboxOptions,
 } from "@headlessui/react";
 import { useState } from "react";
-import Button from "./Button";
-import { ButtonColor } from "./helpers/contentStyles";
+import Button from "@/components/common/Button";
+import { ButtonColor } from "@/components/common/helpers/contentStyles";
 import clsx, { ClassValue } from "clsx";
 
 export type DropDownItem = {

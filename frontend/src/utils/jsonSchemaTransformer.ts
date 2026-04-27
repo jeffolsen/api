@@ -1,11 +1,11 @@
 import { EmptyObject } from "react-hook-form";
-import { FormComponentProps } from "../components/inputs/Input";
+import { FormComponentProps } from "@/components/inputs/Input";
 import {
   convertIdArrayToNumbers,
   convertNumbersToIdArray,
   convertStringsToTagnameArray,
   convertTagnameArrayToStrings,
-} from "./formToApiMapper";
+} from "@/utils/formToApiMapper";
 
 function getMaxItems(schema: JSONSchemaForArray): {
   maxLength?: { value: number; message: string };

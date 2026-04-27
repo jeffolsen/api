@@ -2,8 +2,8 @@ import {
   FieldArrayMinAndMax,
   FieldArrayMinMaxRule,
   RequiredLabel,
-} from "../inputs/Input";
-import Tooltip from "../common/Tooltip";
+} from "@/components/inputs/Input";
+import Tooltip from "@/components/common/Tooltip";
 import { PropsWithChildren } from "react";
 
 type FieldSetWrapperWithMinMaxProps = {

@@ -9,15 +9,15 @@ import {
   ITEMS_ENDPOINT,
   PaginationParams,
   TAGS_ENDPOINT,
-} from "./api";
-import { ITEMS_KEY } from "./item";
-import { FEEDS_KEY } from "./feed";
-import { TAGS_KEY } from "./tag";
-import { IMAGES_KEY } from "./image";
-import { DATE_RANGES_KEY } from "./dataRange/types";
-import { COMPONENTS_KEY } from "./component";
-import { GetImagesResponse, TImageType } from "./image/types";
-import { GetItemsResponse, TItemQueryParams } from "./item/types";
+} from "@/network/api";
+import { ITEMS_KEY } from "@/network/item";
+import { FEEDS_KEY } from "@/network/feed";
+import { TAGS_KEY } from "@/network/tag";
+import { IMAGES_KEY } from "@/network/image";
+import { DATE_RANGES_KEY } from "@/network/dateRange/types";
+import { COMPONENTS_KEY } from "@/network/component";
+import { GetImagesResponse, TImageType } from "@/network/image/types";
+import { GetItemsResponse, TItemQueryParams } from "@/network/item/types";
 
 const APP_KEY = "app" as const;
 const API_KEY_HEADER = "X-Api-Key" as const;

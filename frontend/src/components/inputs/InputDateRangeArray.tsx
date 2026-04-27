@@ -6,12 +6,12 @@ import {
   ChildInputProps,
   FormError,
   FieldArrayMinMaxRule,
-} from "./Input";
-import { XButton, PlusButton } from "../common/Button";
-import TextInput, { TextInputProps } from "./InputText";
+} from "@/components/inputs/Input";
+import { XButton, PlusButton } from "@/components/common/Button";
+import TextInput, { TextInputProps } from "@/components/inputs/InputText";
 import { Fragment } from "react";
-import { TDateRangeInput } from "../../network/dataRange";
-import FieldSetWrapperWithMinMax from "../partials/FieldSetWrapper";
+import { TDateRangeInput } from "@/network/dateRange";
+import FieldSetWrapperWithMinMax from "@/components/partials/FieldSetWrapper";
 
 function DateRangeSelectInput(
   props: CompoundFormComponentProps & FromFormProps,

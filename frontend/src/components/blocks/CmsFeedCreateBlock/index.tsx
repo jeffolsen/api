@@ -1,13 +1,13 @@
-import Block, { BlockComponentStandardProps } from "../Block";
-import { FeedCreateForm } from "../../forms/FeedCreateForm";
-import EmptyCard from "../../cards/EmptyCard";
+import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
+import { FeedCreateForm } from "@/components/forms/FeedCreateForm";
+import EmptyCard from "@/components/cards/EmptyCard";
 import { useNavigate } from "react-router";
-import { TFeed } from "../../../network/feed";
+import { TFeed } from "@/network/feed";
 import useFeedCreateBlockData, {
   UseFeedCreateBlockData,
   UseFeedCreateBlockProps,
-} from "./data";
-import { paths } from "../../../config/routes";
+} from "@/components/blocks/CmsFeedCreateBlock/data";
+import { paths } from "@/config/routes";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useFeedCreateBlockData(config);

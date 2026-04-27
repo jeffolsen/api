@@ -1,5 +1,5 @@
-import { HeadingLevelProvider } from "../common/Heading";
-import Link from "../common/Link";
+import { HeadingLevelProvider } from "@/components/common/Heading";
+import Link from "@/components/common/Link";
 
 function Footer() {
   return (

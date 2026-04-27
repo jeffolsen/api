@@ -1,13 +1,13 @@
-import Grid from "../common/Grid";
-import BasicCard from "../cards/BasicCard";
-import SectionHeading from "./SectionHeading";
-import Button from "../common/Button";
-import { useGetProfilesSessions } from "../../network/session";
-import { LogoutAllSessionsWithSessionForm } from "../forms/LogoutAllSessionsForm";
-import Text from "../common/Text";
-import Modal from "../layout/Modal";
+import Grid from "@/components/common/Grid";
+import BasicCard from "@/components/cards/BasicCard";
+import SectionHeading from "@/components/partials/SectionHeading";
+import Button from "@/components/common/Button";
+import { useGetProfilesSessions } from "@/network/session";
+import { LogoutAllSessionsWithSessionForm } from "@/components/forms/LogoutAllSessionsForm";
+import Text from "@/components/common/Text";
+import Modal from "@/components/layout/Modal";
 import { useState } from "react";
-import LogoutButton from "./LogoutButton";
+import LogoutButton from "@/components/partials/LogoutButton";
 
 function LogoutAllModalContent() {
   return (

@@ -1,10 +1,10 @@
 import { PropsWithChildren } from "react";
-import { HeadingLevelProvider } from "../../contexts/HeadingLevelProvider";
-import Wrapper, { WrapperProps } from "../common/Wrapper";
-import Heading, { HeadingProps } from "../common/Heading";
-import { LocalFeedComponent } from "../../config/routes";
-import { TComponent } from "../../network/component";
-import ScrollInFade from "../common/ScrollInFade";
+import { HeadingLevelProvider } from "@/contexts/HeadingLevelProvider";
+import Wrapper, { WrapperProps } from "@/components/common/Wrapper";
+import Heading, { HeadingProps } from "@/components/common/Heading";
+import { LocalFeedComponent } from "@/config/routes";
+import { TComponent } from "@/network/component";
+import ScrollInFade from "@/components/common/ScrollInFade";
 
 export type BlockWrapperProps<T> = {
   name?: string;

@@ -4,14 +4,14 @@ import {
   EMAIL_INPUT,
   PASSWORD_DEFAULT,
   PASSWORD_INPUT,
-} from "../../config/inputs";
+} from "@/config/inputs";
 import {
   FormWithHeading,
   FormWithHeadingProps,
   FormReponseHandlerProps,
-} from "./Form";
-import { RegisterFormInput, useRegister } from "../../network/auth";
-import { useEmail, withFormHandling } from "../../network/api";
+} from "@/components/forms/Form";
+import { RegisterFormInput, useRegister } from "@/network/auth";
+import { useEmail, withFormHandling } from "@/network/api";
 
 function RegisterForm({
   handleSuccess,

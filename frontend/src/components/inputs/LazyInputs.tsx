@@ -1,28 +1,42 @@
 import { lazy } from "react";
 
 const LazyLoadedInputDateRangeArray = lazy(
-  () => import("./InputDateRangeArray"),
+  () => import("@/components/inputs/InputDateRangeArray"),
 );
 
 const LazyLoadedInputImageSelectArray = lazy(
-  () => import("./InputImageSelectArray"),
+  () => import("@/components/inputs/InputImageSelectArray"),
 );
 
-const LazyLoadedInputItemArray = lazy(() => import("./InputItemArray"));
+const LazyLoadedInputItemArray = lazy(
+  () => import("@/components/inputs/InputItemArray"),
+);
 
-const LazyLoadedInputRadio = lazy(() => import("./InputRadio"));
+const LazyLoadedInputRadio = lazy(
+  () => import("@/components/inputs/InputRadio"),
+);
 
-const LazyLoadedInputReferenceFeed = lazy(() => import("./InputReferenceFeed"));
+const LazyLoadedInputReferenceFeed = lazy(
+  () => import("@/components/inputs/InputReferenceFeed"),
+);
 
-const LazyLoadedInputOverrideLink = lazy(() => import("./InputOverrideLink"));
+const LazyLoadedInputOverrideLink = lazy(
+  () => import("@/components/inputs/InputOverrideLink"),
+);
 
-const LazyLoadedInputTagArray = lazy(() => import("./InputTagArray"));
+const LazyLoadedInputTagArray = lazy(
+  () => import("@/components/inputs/InputTagArray"),
+);
 
-const LazyLoadedInputText = lazy(() => import("./InputText"));
+const LazyLoadedInputText = lazy(() => import("@/components/inputs/InputText"));
 
-const LazyLoadedInputTextArea = lazy(() => import("./InputTextArea"));
+const LazyLoadedInputTextArea = lazy(
+  () => import("@/components/inputs/InputTextArea"),
+);
 
-const LazyLoadedInputToggle = lazy(() => import("./InputToggle"));
+const LazyLoadedInputToggle = lazy(
+  () => import("@/components/inputs/InputToggle"),
+);
 
 const Inputs = {
   DateRangeArray: LazyLoadedInputDateRangeArray,

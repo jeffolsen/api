@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { TAGS_ENDPOINT } from "../api";
-import { useAuthState } from "../../contexts/AuthContext";
+import { TAGS_ENDPOINT } from "@/network/api";
+import { useAuthState } from "@/contexts/AuthContext";
 
 export const TAGS_KEY = "tags" as const;
 
@@ -16,4 +16,4 @@ export const useGetTags = () => {
   });
 };
 
-export * from "./types";
+export * from "@/network/tag/types";

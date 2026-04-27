@@ -1,7 +1,7 @@
-import BasicCard from "./BasicCard";
-import { Button, XButton } from "../common/Button";
+import BasicCard from "@/components/cards/BasicCard";
+import { Button, XButton } from "@/components/common/Button";
 import { PropsWithChildren, useState } from "react";
-import { ButtonColor } from "../common/helpers/contentStyles";
+import { ButtonColor } from "@/components/common/helpers/contentStyles";
 
 type RevealCardProps = {
   title?: string;

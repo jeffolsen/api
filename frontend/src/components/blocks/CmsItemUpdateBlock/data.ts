@@ -3,14 +3,14 @@ import {
   useGetItemDateRanges,
   useGetItemImages,
   useGetItemsTags,
-} from "../../../network/item";
+} from "@/network/item";
 import {
   BlockProps,
   BlockData,
   BlockComponentStandardProps,
   BlockComponentDataReturnType,
-} from "../Block";
-import { NotFoundError } from "../../../utils/errors";
+} from "@/components/blocks/Block";
+import { NotFoundError } from "@/utils/errors";
 
 const variants = {
   default: {

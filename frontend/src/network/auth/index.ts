@@ -1,13 +1,13 @@
-import { OTP_STATUS_KEY } from "../verificationCode";
+import { OTP_STATUS_KEY } from "@/network/verificationCode";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   REGISTER_ENDPOINT,
   LOGIN_WITH_OTP_ENDPOINT,
   withErrorHandling,
-} from "../api";
-import { useAuthState } from "../../contexts/AuthContext";
-import { LoginWithOTPFormInput, RegisterFormInput } from "./types";
-import { OTP_STATUS_NONE } from "../verificationCode/types";
+} from "@/network/api";
+import { useAuthState } from "@/contexts/AuthContext";
+import { LoginWithOTPFormInput, RegisterFormInput } from "@/network/auth/types";
+import { OTP_STATUS_NONE } from "@/network/verificationCode/types";
 
 export const useRegister = () => {
   const { api } = useAuthState();
@@ -47,4 +47,4 @@ export const useLoginWithOTP = () => {
   });
 };
 
-export * from "./types";
+export * from "@/network/auth/types";

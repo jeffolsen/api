@@ -1,10 +1,10 @@
-import Button from "../common/Button";
-import Heading from "../common/Heading";
-import Text from "../common/Text";
-import dayjs, { longDatetime, techDatetime } from "../../utils/dayjs";
-import { TProfile } from "../../network/profile";
+import Button from "@/components/common/Button";
+import Heading from "@/components/common/Heading";
+import Text from "@/components/common/Text";
+import dayjs, { longDatetime, techDatetime } from "@/utils/dayjs";
+import { TProfile } from "@/network/profile";
 import { PropsWithChildren } from "react";
-import { paths } from "../../config/routes";
+import { paths } from "@/config/routes";
 
 type DashBoardLayoutProps = PropsWithChildren<{
   profile: TProfile;

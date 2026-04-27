@@ -1,9 +1,10 @@
 import { Suspense } from "react";
-import Loading from "../components/common/Loading";
-import { LocalFeedWithComponents } from "../config/routes";
-import Blocks from "../components/blocks/Blocks";
-import { NotFoundError } from "../utils/errors";
-import { isAuthenticated } from "../network/api";
+import Loading from "@/components/common/Loading";
+import { LocalFeedWithComponents } from "@/config/routes";
+import Blocks from "@/components/blocks/Blocks";
+import { NotFoundError } from "@/utils/errors";
+import { isAuthenticated } from "@/network/api";
+import DocumentHead from "@/components/layout/DocumentHead";
 
 export default function PageResolver({
   pageData,
@@ -50,7 +51,14 @@ export default function PageResolver({
     throw new NotFoundError(`No renderable components found for path: ${path}`);
   }
 
-  return <Suspense fallback={<Loading />}>{renderedComponents}</Suspense>;
+  return (
+    <>
+      <DocumentHead
+        feed={{ ...pageData, components: h1RespectingComponents }}
+      />
+      <Suspense fallback={<Loading />}>{renderedComponents}</Suspense>
+    </>
+  );
 }
 
 const filterByAuthentication = (

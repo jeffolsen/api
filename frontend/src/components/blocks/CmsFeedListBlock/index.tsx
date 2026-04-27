@@ -1,37 +1,40 @@
-import Block, { BlockComponentStandardProps } from "../Block";
-import Heading, { HeadingLevelProvider } from "../../common/Heading";
-import Button from "../../common/Button";
-import Loading from "../../common/Loading";
-import DashBoardLayout from "../../layout/DashBoardLayout";
-import { useGetAuthenticatedProfile } from "../../../network/profile";
-import SectionHeading from "../../partials/SectionHeading";
-import { TFeed, GetFeedsResponse, useGetFeeds } from "../../../network/feed";
-import Grid from "../../common/Grid";
-import BasicCard from "../../cards/BasicCard";
-import EmptyCard from "../../cards/EmptyCard";
-import { convertZuluToLocalDateTime } from "../../../utils/time";
-import dayjs, { techDatetime } from "../../../utils/dayjs";
-import Text from "../../common/Text";
-import { ScheduleStatus } from "../../inputs/FormSubmitAndPublish";
+import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
+import Heading, { HeadingLevelProvider } from "@/components/common/Heading";
+import Button from "@/components/common/Button";
+import Loading from "@/components/common/Loading";
+import DashBoardLayout from "@/components/layout/DashBoardLayout";
+import { useGetAuthenticatedProfile } from "@/network/profile";
+import SectionHeading from "@/components/partials/SectionHeading";
+import { TFeed, GetFeedsResponse, useGetFeeds } from "@/network/feed";
+import Grid from "@/components/common/Grid";
+import BasicCard from "@/components/cards/BasicCard";
+import EmptyCard from "@/components/cards/EmptyCard";
+import { convertZuluToLocalDateTime } from "@/utils/time";
+import dayjs, { techDatetime } from "@/utils/dayjs";
+import Text from "@/components/common/Text";
+import { ScheduleStatus } from "@/components/inputs/FormSubmitAndPublish";
 import {
   FeedDeleteButton,
   FeedRepublishForm,
-} from "../../forms/FeedCreateForm";
+} from "@/components/forms/FeedCreateForm";
 import { toast } from "react-hot-toast/headless";
-import { ListNavigation, ListSortControl } from "../../partials/ListNavigation";
+import {
+  ListNavigation,
+  ListSortControl,
+} from "@/components/partials/ListNavigation";
 import {
   useSearchParam,
   useSearchParamWithDefault,
-} from "../../../hooks/useSearchParam";
-import DropDownMenu from "../../common/DropDownMenu";
+} from "@/hooks/useSearchParam";
+import DropDownMenu from "@/components/common/DropDownMenu";
 import { useMemo } from "react";
 import useFeedListBlockData, {
   UseFeedUpdateBlockData,
   UseFeedUpdateBlockProps,
-} from "./data";
-import { paths } from "../../../config/routes";
-import { useGetItems, GetItemsResponse } from "../../../network/item";
-import FetchTransition from "../../common/FetchTransition";
+} from "@/components/blocks/CmsFeedListBlock/data";
+import { paths } from "@/config/routes";
+import { useGetItems, GetItemsResponse } from "@/network/item";
+import FetchTransition from "@/components/common/FetchTransition";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useFeedListBlockData(config);

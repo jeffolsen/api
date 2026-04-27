@@ -1,5 +1,5 @@
-import { PaginationParams } from "../api";
-import { TComponent, TComponentWithType } from "../component/types";
+import { PaginationParams } from "@/network/api";
+import { TComponent, TComponentWithType } from "@/network/component/types";
 
 export type TSubjectType = "COLLECTION" | "SINGLE";
 

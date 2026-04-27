@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react";
-import Heading from "../common/Heading";
-import Text from "../common/Text";
+import Heading from "@/components/common/Heading";
+import Text from "@/components/common/Text";
 
 function SectionHeading({
   text,

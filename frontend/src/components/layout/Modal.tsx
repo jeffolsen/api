@@ -1,8 +1,8 @@
 import { PropsWithChildren, Dispatch, SetStateAction } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import clsx, { ClassValue } from "clsx";
-import { HeadingLevelProvider } from "../common/Heading";
-import { XButton } from "../common/Button";
+import { HeadingLevelProvider } from "@/components/common/Heading";
+import { XButton } from "@/components/common/Button";
 
 // TODO: Implement ModalContext to prevent multiple modals
 // from being open at the same time and to allow for nested modals.

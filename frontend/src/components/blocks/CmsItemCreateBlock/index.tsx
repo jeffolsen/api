@@ -1,13 +1,13 @@
-import Block, { BlockComponentStandardProps } from "../Block";
-import { ItemCreateForm } from "../../forms/ItemCreateForm";
-import EmptyCard from "../../cards/EmptyCard";
+import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
+import { ItemCreateForm } from "@/components/forms/ItemCreateForm";
+import EmptyCard from "@/components/cards/EmptyCard";
 import { useNavigate } from "react-router";
-import { TItem } from "../../../network/item";
+import { TItem } from "@/network/item";
 import useItemCreateBlockData, {
   UseItemCreateBlockData,
   UseItemCreateBlockProps,
-} from "./data";
-import { paths } from "../../../config/routes";
+} from "@/components/blocks/CmsItemCreateBlock/data";
+import { paths } from "@/config/routes";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useItemCreateBlockData(config);

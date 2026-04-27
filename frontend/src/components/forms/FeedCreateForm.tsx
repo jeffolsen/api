@@ -1,30 +1,30 @@
-// import { TComponentInput } from "../../network/component";
+// import { TComponentInput } from "@/network/component";
 import {
   useCreateFeed,
   useUpdateFeed,
   useModifyFeed,
   useDeleteFeed,
   TFeedInput,
-} from "../../network/feed";
+} from "@/network/feed";
 import {
   convertLocalDateTimeToZulu,
   convertZuluToLocalDateTime,
-} from "../../utils/time";
-import FormScheduleSubmit from "../inputs/FormSubmitAndSchedule";
-import { withFormHandling } from "../../network/api";
+} from "@/utils/time";
+import FormScheduleSubmit from "@/components/inputs/FormSubmitAndSchedule";
+import { withFormHandling } from "@/network/api";
 import Form, {
   FormWithHeading,
   FormReponseHandlerProps,
   FormWithHeadingProps,
-} from "./Form";
+} from "@/components/forms/Form";
 import {
   IS_SINGLE_SUBJECT_TYPE_DEFAULT,
   IS_SINGLE_SUBJECT_TYPE_INPUT,
   PATH_DEFAULT,
   PATH_INPUT,
-} from "../../config/inputs";
-import FormPublishSubmit from "../inputs/FormSubmitAndPublish";
-import { Button } from "../common/Button";
+} from "@/config/inputs";
+import FormPublishSubmit from "@/components/inputs/FormSubmitAndPublish";
+import { Button } from "@/components/common/Button";
 import { Trash } from "lucide-react";
 
 type FormValues = {

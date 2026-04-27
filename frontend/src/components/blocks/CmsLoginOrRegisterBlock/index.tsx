@@ -1,31 +1,34 @@
-import { TOO_MANY_REQUESTS } from "../../../network/api";
+import { TOO_MANY_REQUESTS } from "@/network/api";
 import {
   OTP_STATUS_LOGIN,
   OTP_STATUS_LOGOUT_ALL,
   OTP_STATUS_PASSWORD_RESET,
   useOtpStatus,
-} from "../../../network/verificationCode";
-import { RequestLoginForm, LoginWithOTPForm } from "../../forms/LoginForm";
+} from "@/network/verificationCode";
+import {
+  RequestLoginForm,
+  LoginWithOTPForm,
+} from "@/components/forms/LoginForm";
 import {
   RequestResetPasswordForm,
   ResetPasswordWithOTPForm,
-} from "../../forms/ResetPasswordForm";
+} from "@/components/forms/ResetPasswordForm";
 import {
   RequestLogoutAllSessionsForm,
   LogoutAllSessionsWithOTPForm,
-} from "../../forms/LogoutAllSessionsForm";
-import RegisterForm from "../../forms/RegisterForm";
-import Block, { BlockComponentStandardProps } from "../Block";
-import Text from "../../common/Text";
-import Tabs, { TabsProps, TabPanelProps } from "../../common/Tabs";
-import { useSearchParam } from "../../../hooks/useSearchParam";
+} from "@/components/forms/LogoutAllSessionsForm";
+import RegisterForm from "@/components/forms/RegisterForm";
+import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
+import Text from "@/components/common/Text";
+import Tabs, { TabsProps, TabPanelProps } from "@/components/common/Tabs";
+import { useSearchParam } from "@/hooks/useSearchParam";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
-import Modal from "../../layout/Modal";
+import Modal from "@/components/layout/Modal";
 import useCmsLoginOrRegisterBlockData, {
   UseLoginOrRegisterBlockData,
   UseLoginOrRegisterBlockProps,
-} from "./data";
+} from "@/components/blocks/CmsLoginOrRegisterBlock/data";
 
 const tabs: TabsProps["tabs"] = [
   {

@@ -9,12 +9,12 @@ import {
   AtomicFormComponentProps,
   ChildFromFormProps,
   FormError,
-} from "./Input";
-import { TFeed, GetFeedsResponse, useGetFeeds } from "../../network/feed";
-import useDebounce from "../../hooks/useDebounce";
+} from "@/components/inputs/Input";
+import { TFeed, GetFeedsResponse, useGetFeeds } from "@/network/feed";
+import useDebounce from "@/hooks/useDebounce";
 import { Plus } from "lucide-react";
-import FieldSetWrapperWithMinMax from "../partials/FieldSetWrapper";
-import { XButton } from "../common/Button";
+import FieldSetWrapperWithMinMax from "@/components/partials/FieldSetWrapper";
+import { XButton } from "@/components/common/Button";
 
 type FeedIdField = { id: string; path: TFeed["path"] };
 

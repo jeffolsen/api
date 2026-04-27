@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { IconButton, XButton } from "../common/Button";
+import { IconButton, XButton } from "@/components/common/Button";
 
 export default function ComponentSchemaArrayOrderable<
   T extends { id: string },

@@ -1,6 +1,6 @@
 import { useLocation } from "react-router";
-import Link from "../common/Link";
-import Wrapper from "../common/Wrapper";
+import Link from "@/components/common/Link";
+import Wrapper from "@/components/common/Wrapper";
 
 function BreadCrumbs() {
   const location = useLocation();

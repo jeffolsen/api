@@ -1,5 +1,5 @@
 import { PropsWithChildren, useContext, useMemo } from "react";
-import { HeadingLevel } from "./HeadingLevelContext";
+import { HeadingLevel } from "@/contexts/HeadingLevelContext";
 
 export const HeadingLevelProvider = ({ children }: PropsWithChildren) => {
   const level = useContext(HeadingLevel);

@@ -1,8 +1,8 @@
-import Block, { BlockComponentStandardProps } from "../Block";
-import Text from "../../common/Text";
-import { Button } from "../../common/Button";
+import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
+import Text from "@/components/common/Text";
+import { Button } from "@/components/common/Button";
 import { useNavigate } from "react-router";
-import useFourOhOneBlockData from "./data";
+import useFourOhOneBlockData from "@/components/blocks/DefaultFourOhOneBlock/data";
 
 function FourOhOneBlock(config: BlockComponentStandardProps) {
   const result = useFourOhOneBlockData(config);

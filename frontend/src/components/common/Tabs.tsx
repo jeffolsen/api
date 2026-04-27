@@ -1,8 +1,8 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import clsx, { ClassValue } from "clsx";
 import { Fragment, useEffect } from "react";
-import { BlockUrlIdentifier } from "../blocks/Block";
-import { useSearchParamWithDefault } from "../../hooks/useSearchParam";
+import { BlockUrlIdentifier } from "@/components/blocks/Block";
+import { useSearchParamWithDefault } from "@/hooks/useSearchParam";
 
 export type TabPanelProps = {
   urlIdentifier: string;

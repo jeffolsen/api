@@ -7,8 +7,8 @@ import {
   REQUEST_DELETE_PROFILE_ENDPOINT,
   REQUEST_MANAGE_API_KEY_ENDPOINT,
   withErrorHandling,
-} from "../api";
-import { useAuthState } from "../../contexts/AuthContext";
+} from "@/network/api";
+import { useAuthState } from "@/contexts/AuthContext";
 import {
   OTP_STATUS_CREATE_API_KEY,
   OTP_STATUS_DELETE_PROFILE,
@@ -24,7 +24,7 @@ import {
   RequestLogoutAllSessionsInput,
   RequestPasswordResetInput,
   RequestVerificationCodeInput,
-} from "./types";
+} from "@/network/verificationCode/types";
 
 const VERIFICATION_CODES_KEY = "verificationCodes" as const;
 export const OTP_STATUS_KEY = "pendingOtp" as const;
@@ -134,4 +134,4 @@ export const useRequestDestroyApiKey = () => {
   });
 };
 
-export * from "./types";
+export * from "@/network/verificationCode/types";

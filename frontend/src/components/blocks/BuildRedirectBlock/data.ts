@@ -3,8 +3,8 @@ import {
   BlockData,
   BlockComponentStandardProps,
   BlockComponentDataReturnType,
-} from "../Block";
-import { isAuthenticated } from "../../../network/api";
+} from "@/components/blocks/Block";
+import { isAuthenticated } from "@/network/api";
 
 function useRedirectBlockData({
   component,

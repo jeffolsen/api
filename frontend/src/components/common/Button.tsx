@@ -10,10 +10,10 @@ import {
   buttonColorClasses,
   buttonSizeClasses,
   ButtonSize,
-} from "./helpers/contentStyles";
+} from "@/components/common/helpers/contentStyles";
 import clsx, { ClassValue } from "clsx";
 import { LinkProps } from "react-router";
-import { CustomLink } from "./Link";
+import { CustomLink } from "@/components/common/Link";
 
 type ButtonBaseProps = {
   color?: ButtonColor;

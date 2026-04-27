@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
-import { BlockComponentStandardProps } from "../Block";
-import useRedirectBlockData from "./data";
+import { BlockComponentStandardProps } from "@/components/blocks/Block";
+import useRedirectBlockData from "@/components/blocks/BuildRedirectBlock/data";
 import { toast } from "react-hot-toast";
 import { useEffect } from "react";
 

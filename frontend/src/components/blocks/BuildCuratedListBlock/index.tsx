@@ -1,26 +1,26 @@
-import { TFeed } from "../../../network/feed";
-import Block, { BlockComponentStandardProps } from "../Block";
+import { TFeed } from "@/network/feed";
+import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
 import useCuratedListBlockData, {
   UseCuratedListBlockData,
   UseCuratedListBlockProps,
-} from "./data";
-import Text from "../../common/Text";
-import Heading from "../../common/Heading";
-import Grid from "../../common/Grid";
-import getItemLink from "../../../utils/getItemLink";
-import { TItem } from "../../../network/item";
-import Link from "../../common/Link";
+} from "@/components/blocks/BuildCuratedListBlock/data";
+import Text from "@/components/common/Text";
+import Heading from "@/components/common/Heading";
+import Grid from "@/components/common/Grid";
+import getItemLink from "@/utils/getItemLink";
+import { TItem } from "@/network/item";
+import Link from "@/components/common/Link";
 import { clsx } from "clsx";
 import {
   mainSpacing,
   smSpacing,
   smVerticalPadding,
   xsVerticalPadding,
-} from "../../common/helpers/layoutStyles";
-import { useGetAppItemImages } from "../../../network/app";
-import { TImage } from "../../../network/image";
-import Image from "../../common/Image";
-import ScrollInFade from "../../common/ScrollInFade";
+} from "@/components/common/helpers/layoutStyles";
+import { useGetAppItemImages } from "@/network/app";
+import { TImage } from "@/network/image";
+import Image from "@/components/common/Image";
+import ScrollInFade from "@/components/common/ScrollInFade";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useCuratedListBlockData(config);

@@ -6,7 +6,7 @@ export const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export const NUMERIC_CODE_REGEX = /^\d{6}/;
 export const RELATIVE_PATH_REGEX = /^[a-z]+(?:[/-][a-z]+)*$/;
 
-import { FormComponentProps } from "../components/inputs/Input";
+import { FormComponentProps } from "@/components/inputs/Input";
 
 export const EMAIL_INPUT = {
   dataName: "email",
@@ -214,7 +214,7 @@ export const tagnamesDefaultFromStrings = (tagnames: string[]) => ({
   tagNames: tagnames.map((tagname) => ({ tagname })),
 });
 
-import { TDateRangeInput } from "../network/dataRange";
+import { TDateRangeInput } from "@/network/dateRange";
 export const DATE_RANGES_INPUT = {
   dataName: "dateRanges",
   displayName: "Date Ranges",

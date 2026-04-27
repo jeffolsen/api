@@ -1,19 +1,19 @@
 import { useCallback, useState } from "react";
 import { useFieldArray } from "react-hook-form";
-import { useGetImages } from "../../network/image";
+import { useGetImages } from "@/network/image";
 import {
   AtomicFormComponentProps,
   ChildFromFormProps,
   FieldArrayMinAndMax,
   FieldArrayMinMaxRule,
   FormError,
-} from "./Input";
+} from "@/components/inputs/Input";
 
-import Modal from "../layout/Modal";
-import Image from "../common/Image";
-import Button, { PlusButton, XButton } from "../common/Button";
-import Loading from "../common/Loading";
-import FieldSetWrapperWithMinMax from "../partials/FieldSetWrapper";
+import Modal from "@/components/layout/Modal";
+import Image from "@/components/common/Image";
+import Button, { PlusButton, XButton } from "@/components/common/Button";
+import Loading from "@/components/common/Loading";
+import FieldSetWrapperWithMinMax from "@/components/partials/FieldSetWrapper";
 import { clsx } from "clsx";
 
 const typeFilters = ["ICON", "LANDSCAPE", "PORTRAIT", "OTHER", ""] as const;

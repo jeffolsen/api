@@ -1,11 +1,11 @@
-import Button from "./Button";
+import Button from "@/components/common/Button";
 import {
   ChevronFirst,
   ChevronLast,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useSearchParamWithDefault } from "../../hooks/useSearchParam";
+import { useSearchParamWithDefault } from "@/hooks/useSearchParam";
 import { useEffect } from "react";
 
 export const PaginateItemBar = ({

@@ -1,6 +1,6 @@
 import { useController } from "react-hook-form";
-import { FormSubmitProps } from "./FormSubmit";
-import Button from "../common/Button";
+import { FormSubmitProps } from "@/components/inputs/FormSubmit";
+import Button from "@/components/common/Button";
 
 function PublishInput({ control, triggerSubmit }: FormSubmitProps) {
   const { field: publishedAtField } = useController({

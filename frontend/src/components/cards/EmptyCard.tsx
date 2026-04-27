@@ -1,4 +1,4 @@
-import { HeadingLevelProvider } from "../common/Heading";
+import { HeadingLevelProvider } from "@/components/common/Heading";
 
 function EmptyCard({ children }: { children: React.ReactNode }) {
   return (

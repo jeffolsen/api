@@ -1,15 +1,15 @@
-import { useGetComponentTypes } from "../../../network/componentType";
+import { useGetComponentTypes } from "@/network/componentType";
 import {
   TSubjectType,
   useGetFeedById,
   useGetFeedComponents,
-} from "../../../network/feed";
+} from "@/network/feed";
 import {
   BlockProps,
   BlockData,
   BlockComponentStandardProps,
   BlockComponentDataReturnType,
-} from "../Block";
+} from "@/components/blocks/Block";
 
 const variants = {
   default: {

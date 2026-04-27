@@ -1,11 +1,11 @@
-import { isAuthenticated } from "../../../network/api";
+import { isAuthenticated } from "@/network/api";
 import {
   BlockProps,
   BlockData,
   BlockComponentDataReturnType,
   BlockComponentStandardProps,
   BlockStandardFailedDataReturnType,
-} from "../Block";
+} from "@/components/blocks/Block";
 
 const variants = {
   default: {

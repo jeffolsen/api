@@ -10,23 +10,23 @@ import {
   EMAIL_INPUT,
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
-} from "../../config/inputs";
+} from "@/config/inputs";
 import {
   useRequestPasswordReset,
   RequestPasswordResetInput,
-} from "../../network/verificationCode";
+} from "@/network/verificationCode";
 import {
   usePasswordResetWithOTP,
   PasswordResetWithOTPFormInput,
   usePasswordResetWithSession,
   PasswordResetWithSessionFormInput,
-} from "../../network/profile";
+} from "@/network/profile";
 import {
   FormWithHeading,
   FormWithHeadingProps,
   FormReponseHandlerProps,
-} from "./Form";
-import { useEmail, withFormHandling } from "../../network/api";
+} from "@/components/forms/Form";
+import { useEmail, withFormHandling } from "@/network/api";
 
 function RequestResetPasswordForm({
   handleSuccess,

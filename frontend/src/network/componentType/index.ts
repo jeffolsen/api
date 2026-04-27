@@ -1,11 +1,11 @@
 import { QueryOptions, useQuery } from "@tanstack/react-query";
-import { COMPONENT_TYPES_ENDPOINT } from "../api";
-import { useAuthState } from "../../contexts/AuthContext";
+import { COMPONENT_TYPES_ENDPOINT } from "@/network/api";
+import { useAuthState } from "@/contexts/AuthContext";
 import {
   GetComponentTypesResponse,
   TComponentTypesQueryParams,
   TGetComponentTypeByIdResponse,
-} from "./types";
+} from "@/network/componentType/types";
 
 export const COMPONENT_TYPES_KEY = "componentsTypes" as const;
 
@@ -39,4 +39,4 @@ export const useGetComponentTypeById = (id: number) => {
   });
 };
 
-export * from "./types";
+export * from "@/network/componentType/types";

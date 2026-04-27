@@ -1,5 +1,5 @@
-import { TFeed } from "../network/feed";
-import { TComponent } from "../network/component";
+import { TFeed } from "@/network/feed";
+import { TComponent } from "@/network/component";
 
 export const cmsPaths = {
   cmsHome: "/cms",

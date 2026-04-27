@@ -1,11 +1,11 @@
 import { PropsWithChildren, useState, useEffect, useCallback } from "react";
-import { AuthState } from "./AuthContext";
+import { AuthState } from "@/contexts/AuthContext";
 import api, {
   isAuthenticated,
   setIsAuthenticated,
   REFRESH_ENDPOINT,
   LOGOUT_ENDPOINT,
-} from "../network/api";
+} from "@/network/api";
 import createAuthRefreshInterceptor from "axios-auth-refresh";
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {

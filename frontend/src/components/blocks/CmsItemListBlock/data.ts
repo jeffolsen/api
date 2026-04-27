@@ -1,14 +1,14 @@
 import { keepPreviousData } from "@tanstack/react-query";
-import { useGetAuthenticatedProfile } from "../../../network/profile";
-import { useGetItems, TItemSort } from "../../../network/item";
-import { TTagName } from "../../../network/tag";
+import { useGetAuthenticatedProfile } from "@/network/profile";
+import { useGetItems, TItemSort } from "@/network/item";
+import { TTagName } from "@/network/tag";
 import {
   BlockProps,
   BlockComponentStandardProps,
   BlockComponentDataReturnType,
   BlockData,
-} from "../Block";
-import { useSearchParam } from "../../../hooks/useSearchParam";
+} from "@/components/blocks/Block";
+import { useSearchParam } from "@/hooks/useSearchParam";
 
 const variants = {
   default: {

@@ -7,18 +7,18 @@ import {
   SLUG_INPUT,
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
-} from "../../config/inputs";
+} from "@/config/inputs";
 import {
   FormWithHeading,
   FormWithHeadingProps,
   FormReponseHandlerProps,
-} from "./Form";
+} from "@/components/forms/Form";
 import {
   useRequestGenerateApiKey,
   RequestGenerateApiKeyInput,
-} from "../../network/verificationCode";
-import { useGenerateApiKey, GenerateApiKeyInput } from "../../network/apiKey";
-import { withFormHandling } from "../../network/api";
+} from "@/network/verificationCode";
+import { useGenerateApiKey, GenerateApiKeyInput } from "@/network/apiKey";
+import { withFormHandling } from "@/network/api";
 
 function RequestGenerateApiKeyForm({
   handleError,

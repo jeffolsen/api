@@ -3,9 +3,9 @@ import {
   BlockComponentStandardProps,
   BlockData,
   BlockComponentDataReturnType,
-} from "../Block";
+} from "@/components/blocks/Block";
 import { keepPreviousData } from "@tanstack/react-query";
-import { useGetAppItems, useGetAppFeedById } from "../../../network/app";
+import { useGetAppItems, useGetAppFeedById } from "@/network/app";
 
 const variants = {
   alpha: {

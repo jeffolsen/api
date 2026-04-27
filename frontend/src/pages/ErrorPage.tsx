@@ -1,9 +1,10 @@
 import { Suspense } from "react";
 import { useLocation, useRouteError } from "react-router";
-import Loading from "../components/common/Loading";
-import Blocks from "../components/blocks/Blocks";
-import { fourOhFourComponent } from "../config/routes";
-import Layout from "../components/layout/Layout";
+import Loading from "@/components/common/Loading";
+import Blocks from "@/components/blocks/Blocks";
+import { fourOhFourComponent, fourOhFourFeed } from "@/config/routes";
+import Layout from "@/components/layout/Layout";
+import DocumentHead from "@/components/layout/DocumentHead";
 
 export default function ErrorPage() {
   const error = useRouteError();
@@ -14,13 +15,16 @@ export default function ErrorPage() {
     <Layout>
       <>
         {path && error ? (
-          <Suspense fallback={<Loading />}>
-            <Blocks.FourOhFour
-              component={fourOhFourComponent}
-              params={{}}
-              path={path}
-            />
-          </Suspense>
+          <>
+            <DocumentHead feed={fourOhFourFeed} />
+            <Suspense fallback={<Loading />}>
+              <Blocks.FourOhFour
+                component={fourOhFourComponent}
+                params={{}}
+                path={path}
+              />
+            </Suspense>
+          </>
         ) : (
           <Loading />
         )}

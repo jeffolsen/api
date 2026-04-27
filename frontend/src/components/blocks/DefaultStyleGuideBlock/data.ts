@@ -1,7 +1,7 @@
 import {
   BlockComponentDataReturnType,
   BlockComponentStandardProps,
-} from "../Block";
+} from "@/components/blocks/Block";
 
 const variants = {
   default: {

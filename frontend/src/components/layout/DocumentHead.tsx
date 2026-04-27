@@ -2,10 +2,10 @@ import {
   cmsPaths,
   LocalFeedWithComponents,
   LocalFeedComponent,
-} from "../../config/routes";
-import { TItemRelations, TItem } from "../../network/item";
+} from "@/config/routes";
+import { TItemRelations, TItem } from "@/network/item";
 import { useMemo } from "react";
-// import { siteJsonLd } from "../../config/site";
+// import { siteJsonLd } from "@/config/site";
 // import { useHead } from "@unhead/react";
 
 const MAX_TITLE_LENGHTH = 60;
@@ -29,13 +29,6 @@ export default function DocumentHead({
   const isCmsPreview =
     feed.path.startsWith(cmsPaths.cmsPreview.slice(1)) &&
     feed.path !== cmsPaths.cmsPreview.slice(1);
-
-  console.log(
-    "isCmsPreview",
-    isCmsPreview,
-    feed.path,
-    cmsPaths.cmsPreview.slice(1),
-  );
 
   const pageData = useMemo(() => {
     const data = {} as {

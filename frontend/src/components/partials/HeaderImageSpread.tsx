@@ -1,8 +1,8 @@
-import shuffleArray from "../../utils/shuffle";
+import shuffleArray from "@/utils/shuffle";
 import { useMemo } from "react";
-import { TImage } from "../../network/image";
-import Image from "../common/Image";
-import { useGetAppImages } from "../../network/app";
+import { TImage } from "@/network/image";
+import Image from "@/components/common/Image";
+import { useGetAppImages } from "@/network/app";
 import { clsx } from "clsx";
 
 export default function HeaderImageSpread() {

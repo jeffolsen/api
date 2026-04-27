@@ -2,61 +2,65 @@ import { lazy } from "react";
 
 // Building blocks
 const LazyLoadedBuildDetailBlock = lazy(
-  () => import("./BuildDetailBlock/index"),
+  () => import("@/components/blocks/BuildDetailBlock/index"),
 );
 const LazyLoadedBuildHeroCarouselBlock = lazy(
-  () => import("./BuildHeroCarouselBlock/index"),
+  () => import("@/components/blocks/BuildHeroCarouselBlock/index"),
 );
 const LazyLoadedRelatedContentBlock = lazy(
-  () => import("./BuildRelatedContentBlock/index"),
+  () => import("@/components/blocks/BuildRelatedContentBlock/index"),
 );
 const LazyLoadedTeaserGridBlock = lazy(
-  () => import("./BuildTeaserGridBlock/index"),
+  () => import("@/components/blocks/BuildTeaserGridBlock/index"),
 );
 const LazyLoadedBuildCuratedListBlock = lazy(
-  () => import("./BuildCuratedListBlock/index"),
+  () => import("@/components/blocks/BuildCuratedListBlock/index"),
 );
 const LazyLoadedBuildContentHeaderBlock = lazy(
-  () => import("./BuildContentHeaderBlock/index"),
+  () => import("@/components/blocks/BuildContentHeaderBlock/index"),
 );
 const LazyLoadedBuildRedirectBlock = lazy(
-  () => import("./BuildRedirectBlock/index"),
+  () => import("@/components/blocks/BuildRedirectBlock/index"),
 );
 
 // Default blocks
 const LazyLoadedGenericBlock = lazy(
-  () => import("./DefaultGenericBlock/index"),
+  () => import("@/components/blocks/DefaultGenericBlock/index"),
 );
 const LazyLoadedFourOhFourBlock = lazy(
-  () => import("./DefaultFourOhFourBlock/index"),
+  () => import("@/components/blocks/DefaultFourOhFourBlock/index"),
 );
 const LazyLoadedFourOhOneBlock = lazy(
-  () => import("./DefaultFourOhOneBlock/index"),
+  () => import("@/components/blocks/DefaultFourOhOneBlock/index"),
 );
 const LazyLoadedStyleGuideBlock = lazy(
-  () => import("./DefaultStyleGuideBlock"),
+  () => import("@/components/blocks/DefaultStyleGuideBlock"),
 );
 
 // CMS Blocks
 const LazyLoadedLoginRegisterBlock = lazy(
-  () => import("./CmsLoginOrRegisterBlock/index"),
+  () => import("@/components/blocks/CmsLoginOrRegisterBlock/index"),
 );
 const LazyLoadedProfileDashboardBlock = lazy(
-  () => import("./CmsProfileDashboardBlock/index"),
+  () => import("@/components/blocks/CmsProfileDashboardBlock/index"),
 );
-const LazyLoadedItemListBlock = lazy(() => import("./CmsItemListBlock/index"));
+const LazyLoadedItemListBlock = lazy(
+  () => import("@/components/blocks/CmsItemListBlock/index"),
+);
 const LazyLoadedItemCreateBlock = lazy(
-  () => import("./CmsItemCreateBlock/index"),
+  () => import("@/components/blocks/CmsItemCreateBlock/index"),
 );
 const LazyLoadedItemUpdateBlock = lazy(
-  () => import("./CmsItemUpdateBlock/index"),
+  () => import("@/components/blocks/CmsItemUpdateBlock/index"),
 );
-const LazyLoadedFeedListBlock = lazy(() => import("./CmsFeedListBlock/index"));
+const LazyLoadedFeedListBlock = lazy(
+  () => import("@/components/blocks/CmsFeedListBlock/index"),
+);
 const LazyLoadedFeedCreateBlock = lazy(
-  () => import("./CmsFeedCreateBlock/index"),
+  () => import("@/components/blocks/CmsFeedCreateBlock/index"),
 );
 const LazyLoadedFeedUpdateBlock = lazy(
-  () => import("./CmsFeedUpdateBlock/index"),
+  () => import("@/components/blocks/CmsFeedUpdateBlock/index"),
 );
 
 const Blocks = {

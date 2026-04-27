@@ -1,14 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { OTP_STATUS_KEY } from "../verificationCode";
+import { OTP_STATUS_KEY } from "@/network/verificationCode";
 import {
   GENERATE_API_KEY_ENDPOINT,
   GET_PROFILES_API_KEYS_ENDPOINT,
   DESTROY_API_KEY_ENDPOINT,
   withErrorHandling,
-} from "../api";
-import { useAuthState } from "../../contexts/AuthContext";
-import { DestroyApiKeyInput, GenerateApiKeyInput } from "./types";
-import { OTP_STATUS_NONE } from "../verificationCode/types";
+} from "@/network/api";
+import { useAuthState } from "@/contexts/AuthContext";
+import {
+  DestroyApiKeyInput,
+  GenerateApiKeyInput,
+} from "@/network/apiKey/types";
+import { OTP_STATUS_NONE } from "@/network/verificationCode/types";
 
 const API_KEYS_KEY = "apiKeys" as const;
 
@@ -70,4 +73,4 @@ export const useDestroyApiKey = () => {
   });
 };
 
-export * from "./types";
+export * from "@/network/apiKey/types";

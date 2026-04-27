@@ -4,8 +4,8 @@ import {
   ChildFromFormProps,
   RequiredLabel,
   FormError,
-} from "./Input";
-import Tooltip from "../common/Tooltip";
+} from "@/components/inputs/Input";
+import Tooltip from "@/components/common/Tooltip";
 
 export type ToggleInputProps = Omit<
   AtomicFormComponentProps & ChildFromFormProps,

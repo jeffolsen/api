@@ -6,10 +6,10 @@ import {
   SESSIONS_RESET_WITH_OTP_ENDPOINT,
   withErrorHandling,
   useEmail,
-} from "../api";
-import { useAuthState } from "../../contexts/AuthContext";
-import { OTP_STATUS_KEY } from "../verificationCode";
-import { OTP_STATUS_NONE } from "../verificationCode/types";
+} from "@/network/api";
+import { useAuthState } from "@/contexts/AuthContext";
+import { OTP_STATUS_KEY } from "@/network/verificationCode";
+import { OTP_STATUS_NONE } from "@/network/verificationCode/types";
 
 const SESSION_KEY = "sessions" as const;
 
@@ -101,4 +101,4 @@ export const useResetSessionsWithOTP = () => {
   });
 };
 
-export * from "./types";
+export * from "@/network/session/types";

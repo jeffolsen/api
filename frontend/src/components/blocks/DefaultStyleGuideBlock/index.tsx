@@ -1,11 +1,11 @@
-import Button from "../../common/Button";
-import Heading, { HeadingLevelProvider } from "../../common/Heading";
-import List from "../../common/List";
-import Text from "../../common/Text";
-import Block, { BlockComponentStandardProps } from "../Block";
-import Modal from "../../layout/Modal";
+import Button from "@/components/common/Button";
+import Heading, { HeadingLevelProvider } from "@/components/common/Heading";
+import List from "@/components/common/List";
+import Text from "@/components/common/Text";
+import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
+import Modal from "@/components/layout/Modal";
 import { useState } from "react";
-import useStyleGuideBlockData from "./data";
+import useStyleGuideBlockData from "@/components/blocks/DefaultStyleGuideBlock/data";
 
 function StyleGuideBlock(config: BlockComponentStandardProps) {
   const result = useStyleGuideBlockData(config);

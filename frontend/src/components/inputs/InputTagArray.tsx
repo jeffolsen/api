@@ -1,17 +1,17 @@
 import { useFieldArray } from "react-hook-form";
-import { TTagName, useGetTags } from "../../network/tag";
-import Grid from "../common/Grid";
+import { TTagName, useGetTags } from "@/network/tag";
+import Grid from "@/components/common/Grid";
 import { useCallback } from "react";
 import {
   AtomicFormComponentProps,
   ChildFromFormProps,
   FieldArrayMinMaxRule,
   FormError,
-} from "./Input";
+} from "@/components/inputs/Input";
 import clsx from "clsx";
-import Loading from "../common/Loading";
-import { TTagInput } from "../../network/tag";
-import FieldSetWrapperWithMinMax from "../partials/FieldSetWrapper";
+import Loading from "@/components/common/Loading";
+import { TTagInput } from "@/network/tag";
+import FieldSetWrapperWithMinMax from "@/components/partials/FieldSetWrapper";
 
 type TagnameArrayFields = Array<TTagInput & { id: string }>;
 

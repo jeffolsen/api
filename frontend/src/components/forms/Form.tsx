@@ -2,9 +2,12 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import clsx from "clsx";
 import toast from "react-hot-toast";
-import Heading, { HeadingProps, HeadingLevelProvider } from "../common/Heading";
-import FormInput, { FormComponentProps } from "../inputs/Input";
-import FormSubmit, { FormSubmitProps } from "../inputs/FormSubmit";
+import Heading, {
+  HeadingProps,
+  HeadingLevelProvider,
+} from "@/components/common/Heading";
+import FormInput, { FormComponentProps } from "@/components/inputs/Input";
+import FormSubmit, { FormSubmitProps } from "@/components/inputs/FormSubmit";
 import { FC } from "react";
 
 export type SubmitArgs = Record<string, unknown>;

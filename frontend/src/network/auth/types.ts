@@ -1,4 +1,4 @@
-import { OtpInput } from "../verificationCode/types";
+import { OtpInput } from "@/network/verificationCode/types";
 
 export type RegisterFormInput = {
   email: string;

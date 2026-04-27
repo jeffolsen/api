@@ -1,5 +1,5 @@
-import { TComponentType } from "../componentType/types";
-import { TFeed } from "../feed/types";
+import { TComponentType } from "@/network/componentType/types";
+import { TFeed } from "@/network/feed/types";
 
 export type TComponent = {
   id: number;

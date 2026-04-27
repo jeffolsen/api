@@ -1,40 +1,39 @@
-import Block, { BlockComponentStandardProps } from "../Block";
-import Grid from "../../common/Grid";
-import {
-  TItem,
-  useGetItemsTags,
-  GetItemsResponse,
-} from "../../../network/item";
-import EmptyCard from "../../cards/EmptyCard";
-import Heading, { HeadingLevelProvider } from "../../common/Heading";
-import Text from "../../common/Text";
-import { convertZuluToLocalDateTime } from "../../../utils/time";
-import dayjs, { techDatetime } from "../../../utils/dayjs";
+import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
+import Grid from "@/components/common/Grid";
+import { TItem, useGetItemsTags, GetItemsResponse } from "@/network/item";
+import EmptyCard from "@/components/cards/EmptyCard";
+import Heading, { HeadingLevelProvider } from "@/components/common/Heading";
+import Text from "@/components/common/Text";
+import { convertZuluToLocalDateTime } from "@/utils/time";
+import dayjs, { techDatetime } from "@/utils/dayjs";
 import {
   ItemDeleteButton,
   ItemRepublishForm,
-} from "../../forms/ItemCreateForm";
+} from "@/components/forms/ItemCreateForm";
 import { toast } from "react-hot-toast/headless";
-import Button from "../../common/Button";
-import Loading from "../../common/Loading";
-import DashBoardLayout from "../../layout/DashBoardLayout";
-import SectionHeading from "../../partials/SectionHeading";
-import { ScheduleStatus } from "../../inputs/FormSubmitAndPublish";
-import DropDownMenu from "../../common/DropDownMenu";
+import Button from "@/components/common/Button";
+import Loading from "@/components/common/Loading";
+import DashBoardLayout from "@/components/layout/DashBoardLayout";
+import SectionHeading from "@/components/partials/SectionHeading";
+import { ScheduleStatus } from "@/components/inputs/FormSubmitAndPublish";
+import DropDownMenu from "@/components/common/DropDownMenu";
 import {
   useSearchParamWithDefault,
   useSearchParam,
-} from "../../../hooks/useSearchParam";
-import { TTag, useGetTags } from "../../../network/tag";
+} from "@/hooks/useSearchParam";
+import { TTag, useGetTags } from "@/network/tag";
 import { useMemo } from "react";
-import { ListNavigation, ListSortControl } from "../../partials/ListNavigation";
-import BasicCard from "../../cards/BasicCard";
+import {
+  ListNavigation,
+  ListSortControl,
+} from "@/components/partials/ListNavigation";
+import BasicCard from "@/components/cards/BasicCard";
 import useItemListBlockData, {
   UseItemListBlockData,
   UseItemListBlockProps,
-} from "./data";
-import { paths } from "../../../config/routes";
-import FetchTransition from "../../common/FetchTransition";
+} from "@/components/blocks/CmsItemListBlock/data";
+import { paths } from "@/config/routes";
+import FetchTransition from "@/components/common/FetchTransition";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useItemListBlockData(config);

@@ -1,16 +1,16 @@
-import { HeadingLevelProvider } from "../../common/Heading";
-import Block, { BlockComponentStandardProps } from "../Block";
+import { HeadingLevelProvider } from "@/components/common/Heading";
+import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
 import useProfileDashboardBlockData, {
   UseProfileDashboardBlockProps,
   UseProfileDashboardBlockData,
-} from "./data";
-import Loading from "../../common/Loading";
-import DashBoardLayout from "../../layout/DashBoardLayout";
+} from "@/components/blocks/CmsProfileDashboardBlock/data";
+import Loading from "@/components/common/Loading";
+import DashBoardLayout from "@/components/layout/DashBoardLayout";
 
-import LoggedInSessionSection from "../../partials/LoggedInSessionSection";
-import LoggedInCodesSection from "../../partials/LoggedInCodesSection";
-import LoggedInApiKeySection from "../../partials/LoggedInApiKeySection";
-import LoggedInProfileAdminSection from "../../partials/LoggedInProfileAdminSection";
+import LoggedInSessionSection from "@/components/partials/LoggedInSessionSection";
+import LoggedInCodesSection from "@/components/partials/LoggedInCodesSection";
+import LoggedInApiKeySection from "@/components/partials/LoggedInApiKeySection";
+import LoggedInProfileAdminSection from "@/components/partials/LoggedInProfileAdminSection";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useProfileDashboardBlockData(config);

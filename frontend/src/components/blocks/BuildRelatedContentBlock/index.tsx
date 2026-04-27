@@ -1,2 +1,2 @@
-import GenericBlock from "../DefaultGenericBlock";
+import GenericBlock from "@/components/blocks/DefaultGenericBlock";
 export default GenericBlock;

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useController } from "react-hook-form";
 import clsx from "clsx";
-import { FormSubmitProps } from "./FormSubmit";
-import Button from "../common/Button";
-import Text from "../common/Text";
+import { FormSubmitProps } from "@/components/inputs/FormSubmit";
+import Button from "@/components/common/Button";
+import Text from "@/components/common/Text";
 import toast from "react-hot-toast";
 
 function FormScheduleSubmit({ control, triggerSubmit }: FormSubmitProps) {

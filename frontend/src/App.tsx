@@ -1,7 +1,7 @@
 import { useLoaderData } from "react-router";
-import Layout from "./components/layout/Layout.tsx";
-import PageResolver from "./pages/PageResolver.tsx";
-import { TComponent } from "./network/component/index.ts";
+import Layout from "@/components/layout/Layout.tsx";
+import PageResolver from "@/pages/PageResolver.tsx";
+import { TComponent } from "@/network/component/index.ts";
 
 function App() {
   const data = useLoaderData();
@@ -20,13 +20,6 @@ function App() {
         params={data.params}
         path={data.path}
       />
-
-      <details>
-        <summary>Loader Data</summary>
-        <pre>
-          <code>{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      </details>
     </Layout>
   );
 }
