@@ -1,22 +1,28 @@
-import { NextFunction, Request, RequestHandler, Response } from "express";
-import catchErrors from "../util/catchErrors";
-import { BAD_REQUEST, NO_CONTENT, OK, NOT_FOUND } from "../config/errorCodes";
+import { Request, RequestHandler, Response } from "express";
+import catchErrors from "../../util/catchErrors";
+import {
+  BAD_REQUEST,
+  NO_CONTENT,
+  OK,
+  NOT_FOUND,
+} from "../../config/errorCodes";
 import {
   MESSAGE_CREDENTIALS,
   MESSAGE_PROFILE_ID,
-} from "../config/errorMessages";
+} from "../../config/errorMessages";
 
-import throwError from "../util/throwError";
-import prismaClient, { CodeType } from "../db/client";
-import { processVerificationCode } from "../services/auth";
+import throwError from "../../util/throwError";
+import prismaClient, { CodeType } from "../../db/client";
+import { processVerificationCode } from "../../services/auth";
 import {
   DeleteProfileSchema,
   passwordTransform,
   ProfileCreateTransform,
   ResetPasswordWithCodeSchema,
   ChangePasswordWithSessionSchema,
-} from "../schemas/profile";
-import { clearAuthCookies } from "../util/cookie";
+} from "../../schemas/profile";
+import { clearAuthCookies } from "../../util/cookie";
+import { compareValue } from "../../util/bcrypt";
 
 export const getAuthenticatedProfile: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {
@@ -27,7 +33,14 @@ export const getAuthenticatedProfile: RequestHandler = catchErrors(
     });
     throwError(profile, BAD_REQUEST, MESSAGE_PROFILE_ID);
 
-    res.status(OK).json({ profile: profile.clientSafe() });
+    res.status(OK).json({
+      profile: {
+        id: profile.id,
+        email: profile.email,
+        createdAt: profile.createdAt,
+        updatedAt: profile.updatedAt,
+      },
+    });
   },
 );
 
@@ -66,7 +79,6 @@ interface ResetPasswordBody {
   confirmPassword: string;
 }
 
-// from logged out state, so no profileId in req
 export const resetPasswordWithCode: RequestHandler<
   unknown,
   unknown,
@@ -130,7 +142,7 @@ export const changePasswordWithSession: RequestHandler<
     where: { id: profileId },
   });
   throwError(
-    profile && (await profile.comparePassword(password)),
+    profile && (await compareValue(password, profile.password)),
     NOT_FOUND,
     MESSAGE_PROFILE_ID,
   );

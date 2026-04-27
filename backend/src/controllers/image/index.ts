@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction, RequestHandler } from "express";
-import { MESSAGE_IMAGES_NOT_FOUND } from "../config/errorMessages";
-import { NOT_FOUND, OK } from "../config/errorCodes";
-import catchErrors from "../util/catchErrors";
-import throwError from "../util/throwError";
-import prismaClient, { ImageType } from "../db/client";
-import { GetAllImagesQuerySchema } from "../schemas/image";
-import { getSortOrders, getPagination } from "../util/misc";
+import { Request, Response, RequestHandler } from "express";
+import { MESSAGE_IMAGES_NOT_FOUND } from "../../config/errorMessages";
+import { NOT_FOUND, OK } from "../../config/errorCodes";
+import catchErrors from "../../util/catchErrors";
+import throwError from "../../util/throwError";
+import prismaClient, { ImageType } from "../../db/client";
+import { GetAllImagesQuerySchema } from "../../schemas/image";
+import { getSortOrders, getPagination } from "../../util/misc";
 
 type ImageQuery = {
   type?: string;

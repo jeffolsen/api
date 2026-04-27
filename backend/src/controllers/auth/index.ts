@@ -1,16 +1,16 @@
 import { RequestHandler } from "express";
-import { initProfileSession, refreshAccessToken } from "../services/auth";
-import { setAuthCookies } from "../util/cookie";
-import catchErrors from "../util/catchErrors";
+import { initProfileSession, refreshAccessToken } from "../../services/auth";
+import { setAuthCookies } from "../../util/cookie";
+import catchErrors from "../../util/catchErrors";
 import {
   MESSAGE_EMAIL_TAKEN,
   MESSAGE_CREDENTIALS,
-} from "../config/errorMessages";
-import { OK, CREATED, NOT_FOUND, CONFLICT } from "../config/errorCodes";
-import throwError from "../util/throwError";
-import prismaClient from "../db/client";
-import { loginSchema, RegisterSchema } from "../schemas/auth";
-import { ProfileCreateTransform } from "../schemas/profile";
+} from "../../config/errorMessages";
+import { OK, CREATED, NOT_FOUND, CONFLICT } from "../../config/errorCodes";
+import throwError from "../../util/throwError";
+import prismaClient from "../../db/client";
+import { loginSchema, RegisterSchema } from "../../schemas/auth";
+import { ProfileCreateTransform } from "../../schemas/profile";
 import { Request, Response } from "express";
 
 interface RegisterBody {

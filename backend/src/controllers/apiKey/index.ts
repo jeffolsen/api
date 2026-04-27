@@ -4,24 +4,28 @@ import {
   MESSAGE_API_KEY_SLUG_NOT_FOUND,
   MESSAGE_NO_ACCESS,
   MESSAGE_CREDENTIALS,
-} from "../config/errorMessages";
+} from "../../config/errorMessages";
 import {
   CONFLICT,
   FORBIDDEN,
   NOT_FOUND,
   OK,
   CREATED,
-} from "../config/errorCodes";
+} from "../../config/errorCodes";
 import { RequestHandler } from "express";
-import throwError from "../util/throwError";
-import catchErrors from "../util/catchErrors";
-import prismaClient, { CodeType } from "../db/client";
-import { processVerificationCode } from "../services/auth";
+import throwError from "../../util/throwError";
+import catchErrors from "../../util/catchErrors";
+import prismaClient, { CodeType } from "../../db/client";
+import { processVerificationCode } from "../../services/auth";
+import {
+  isApiKeyLimitReached,
+  generateApiKeyValue,
+} from "../../services/apiKey";
 import {
   ApiKeyCreateTransform,
   ApiKeyDestroySchema,
   ApiKeyGenerateSchema,
-} from "../schemas/apikey";
+} from "../../schemas/apikey";
 import { Request, Response } from "express";
 
 export const getProfilesApiKeys: RequestHandler = catchErrors(
@@ -68,7 +72,7 @@ export const generate: RequestHandler<
   });
   throwError(profile, NOT_FOUND, MESSAGE_CREDENTIALS);
 
-  const tooManyApiKeys = await prismaClient.apiKey.maxExceeded(profile.id);
+  const tooManyApiKeys = await isApiKeyLimitReached(profile.id);
   throwError(!tooManyApiKeys, FORBIDDEN, MESSAGE_API_KEY_LIMIT_REACHED);
 
   const slugExists = await prismaClient.apiKey.findUnique({
@@ -83,7 +87,7 @@ export const generate: RequestHandler<
     userAgent,
   });
 
-  const value = prismaClient.apiKey.generateKeyValue();
+  const value = generateApiKeyValue();
   const apiKeyData = await ApiKeyCreateTransform.parseAsync({
     profileId,
     slug,

@@ -1,17 +1,17 @@
-import { NextFunction, Request, RequestHandler, Response } from "express";
-import { NOT_FOUND, OK } from "../config/errorCodes";
-import catchErrors from "../util/catchErrors";
-import throwError from "../util/throwError";
-import prismaClient from "../db/client";
+import { Request, RequestHandler, Response } from "express";
+import { NOT_FOUND, OK } from "../../config/errorCodes";
+import catchErrors from "../../util/catchErrors";
+import throwError from "../../util/throwError";
+import prismaClient from "../../db/client";
 import {
   GetFeedsResourcesSchema,
   GetFeedsResourceByIdSchema,
   GetFeedComponentsQuery,
-} from "../schemas/feed";
+} from "../../schemas/feed";
 import {
   MESSAGE_FEED_NOT_FOUND,
   MESSAGE_COMPONENTS_NOT_FOUND,
-} from "../config/errorMessages";
+} from "../../config/errorMessages";
 
 type GetComponentsQuery = {
   published?: boolean;

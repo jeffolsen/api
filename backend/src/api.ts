@@ -27,10 +27,15 @@ import {
   VERIFICATION_CODE_ROUTES,
   IMAGE_ROUTES,
   COMPONENT_TYPE_ROUTES,
+  HEALTH_ENDPOINT,
 } from "./config/routes";
+import { MESSAGE_HEALTHY } from "./config/errorMessages";
 
 const apiRouter = express.Router();
 // auth and profile routes don't require authentication
+apiRouter.get(HEALTH_ENDPOINT, (req, res) => {
+  res.status(200).json({ message: MESSAGE_HEALTHY });
+});
 apiRouter.use(VERIFICATION_CODE_ROUTES, verificationCodeRoutes);
 apiRouter.use(AUTH_ROUTES, authRoutes);
 apiRouter.use(PROFILE_ROUTES, profileRoutes);

@@ -1,9 +1,4 @@
-import prismaClient, {
-  ApiKey,
-  CodeType,
-  ExtendedProfile,
-  Profile,
-} from "../db/client";
+import prismaClient, { ApiKey, CodeType, Profile } from "../db/client";
 import {
   signAccessToken,
   signRefreshToken,
@@ -30,6 +25,17 @@ import generateCode from "../util/generateCode";
 import { getNewVerificationCodeExpirationDate } from "../util/date";
 import { PROFILE_SESSION } from "../util/scope";
 import { VerificationCodeCreateTransform } from "../schemas/verificationCode";
+import { compareValue } from "../util/bcrypt";
+import {
+  startSession,
+  isSessionCurrent,
+  isSessionLimitReached,
+} from "./session";
+import {
+  useVerificationCode,
+  isVerificationCodeLimitReached,
+  isDailyEmailLimitReached,
+} from "./verificationCode";
 
 interface LogInProfileParams {
   profile: Profile;
@@ -44,7 +50,7 @@ export const initProfileSession = async ({
 }: LogInProfileParams) => {
   const { id: profileId } = profile;
 
-  const tooManySessions = await prismaClient.session.maxExceeded(profileId);
+  const tooManySessions = await isSessionLimitReached(profileId);
   throwError(!tooManySessions, TOO_MANY_REQUESTS, MESSAGE_SESSION_TOO_MANY);
 
   await processVerificationCode({
@@ -54,7 +60,7 @@ export const initProfileSession = async ({
     userAgent,
   });
 
-  const session = await prismaClient.session.start({
+  const session = await startSession({
     profileId,
     scope: PROFILE_SESSION,
     userAgent,
@@ -88,7 +94,11 @@ export const refreshAccessToken = async ({
     include: { profile: true },
   });
   throwError(sessionWithProfile?.profile, BAD_REQUEST, MESSAGE_INVALID_TOKEN);
-  throwError(sessionWithProfile.isCurrent(), FORBIDDEN, MESSAGE_UNAUTHORIZED);
+  throwError(
+    isSessionCurrent(sessionWithProfile),
+    FORBIDDEN,
+    MESSAGE_UNAUTHORIZED,
+  );
 
   const { profile, ...session } = sessionWithProfile;
 
@@ -96,7 +106,7 @@ export const refreshAccessToken = async ({
 };
 
 interface SendVerificationCode {
-  profile: ExtendedProfile;
+  profile: Profile;
   codeType: CodeType;
   userAgent: string;
 }
@@ -107,11 +117,11 @@ export const sendVerificationCode = async ({
   userAgent,
 }: SendVerificationCode) => {
   const { id: profileId, email } = profile;
-  const tooManyVerifcationCodes =
-    (await prismaClient.verificationCode.systemDailyMaxExceeded()) ||
-    (await prismaClient.verificationCode.maxExceeded(profileId, codeType));
+  const tooManyVerificationCodes =
+    (await isDailyEmailLimitReached()) ||
+    (await isVerificationCodeLimitReached(profileId, codeType));
   throwError(
-    !tooManyVerifcationCodes,
+    !tooManyVerificationCodes,
     TOO_MANY_REQUESTS,
     MESSAGE_VERIFICATION_CODE_TOO_MANY,
   );
@@ -161,16 +171,12 @@ export const processVerificationCode = async ({
     orderBy: { createdAt: "desc" },
   });
   throwError(
-    verificationCode && (await verificationCode.validate(value)),
+    verificationCode && (await compareValue(value, verificationCode.value)),
     NOT_FOUND,
     MESSAGE_CREDENTIALS,
   );
 
-  const usedVerificationCode = await prismaClient.verificationCode.use(
-    verificationCode.id,
-  );
-
-  return usedVerificationCode;
+  return await useVerificationCode(verificationCode.id);
 };
 
 type AuthenticateWithApiKeyResult = ApiKey | null;
@@ -184,7 +190,6 @@ type AuthenticateWithApiKeyInput = {
 export const authenticateWithApiKey = async ({
   apiKey,
   apiSlug,
-  origin,
 }: AuthenticateWithApiKeyInput): Promise<AuthenticateWithApiKeyResult> => {
   if (!apiKey || !apiSlug) return null;
 
@@ -194,12 +199,6 @@ export const authenticateWithApiKey = async ({
       value: apiKey,
     },
   });
-
-  throwError(
-    apiKeyRecord && apiKeyRecord.origin === origin,
-    BAD_REQUEST,
-    MESSAGE_INVALID_TOKEN,
-  );
 
   return apiKeyRecord;
 };

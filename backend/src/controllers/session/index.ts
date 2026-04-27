@@ -1,16 +1,18 @@
 import { RequestHandler } from "express";
-import catchErrors from "../util/catchErrors";
+import catchErrors from "../../util/catchErrors";
 import {
   MESSAGE_CREDENTIALS,
   MESSAGE_SESSIONS_NOT_FOUND,
-} from "../config/errorMessages";
-import { NOT_FOUND, OK } from "../config/errorCodes";
-import prismaClient, { CodeType } from "../db/client";
-import throwError from "../util/throwError";
-import { processVerificationCode } from "../services/auth";
-import { clearAuthCookies } from "../util/cookie";
-import { SessionLogoutAllSchema } from "../schemas/session";
-import { passwordSchema } from "../schemas/properties";
+} from "../../config/errorMessages";
+import { NOT_FOUND, OK } from "../../config/errorCodes";
+import prismaClient, { CodeType } from "../../db/client";
+import throwError from "../../util/throwError";
+import { processVerificationCode } from "../../services/auth";
+import { logOutSession, logOutAllSessions } from "../../services/session";
+import { clearAuthCookies } from "../../util/cookie";
+import { SessionLogoutAllSchema } from "../../schemas/session";
+import { passwordSchema } from "../../schemas/properties";
+import { compareValue } from "../../util/bcrypt";
 import { Request, Response } from "express";
 
 export const getProfilesSessions: RequestHandler = catchErrors(
@@ -35,7 +37,7 @@ export const logout: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {
     const { sessionId } = req;
 
-    await prismaClient.session.logOut(sessionId);
+    await logOutSession(sessionId);
 
     clearAuthCookies(res).sendStatus(OK);
   },
@@ -57,12 +59,12 @@ export const logoutAllWithSession: RequestHandler<
     where: { id: profileId },
   });
   throwError(
-    profile && (await profile.comparePassword(password)),
+    profile && (await compareValue(password, profile.password)),
     NOT_FOUND,
     MESSAGE_CREDENTIALS,
   );
 
-  await prismaClient.session.logOutAll(profile.id);
+  await logOutAllSessions(profile.id);
 
   clearAuthCookies(res).sendStatus(OK);
 });
@@ -94,7 +96,7 @@ export const logoutAllWithCode: RequestHandler<
     userAgent,
   });
 
-  const sessions = await prismaClient.session.logOutAll(profile.id);
+  const sessions = await logOutAllSessions(profile.id);
   throwError(sessions?.count, NOT_FOUND, MESSAGE_SESSIONS_NOT_FOUND);
 
   clearAuthCookies(res).sendStatus(OK);

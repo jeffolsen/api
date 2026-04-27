@@ -1,6 +1,6 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import catchErrors from "../util/catchErrors";
-import { OK } from "../config/errorCodes";
+import catchErrors from "../../util/catchErrors";
+import { OK } from "../../config/errorCodes";
 
 export const getDateRangeById: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {

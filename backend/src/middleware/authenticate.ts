@@ -7,10 +7,11 @@ import date from "../util/date";
 import throwError from "../util/throwError";
 import { authenticateWithApiKey } from "../services/auth";
 import { defaultApiKeyScope } from "../util/scope";
+import { isSessionCurrent } from "../services/session";
 
 const authenticate: RequestHandler = async (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ) => {
   const origin = req.get("origin") || req.get("referer") || "";
@@ -31,7 +32,7 @@ const authenticate: RequestHandler = async (
   const userAgent = req.headers["user-agent"];
   throwError(accessToken && userAgent, UNAUTHORIZED, MESSAGE_INVALID_TOKEN);
 
-  const payload = await verifyAccessToken(accessToken);
+  const payload = verifyAccessToken(accessToken);
   throwError(payload?.expiredAt, UNAUTHORIZED, MESSAGE_INVALID_TOKEN);
 
   const { sessionId, expiredAt } = payload;
@@ -43,8 +44,7 @@ const authenticate: RequestHandler = async (
   });
   throwError(session, UNAUTHORIZED, MESSAGE_INVALID_TOKEN);
 
-  const sessionStillCurrent = session.isCurrent();
-  throwError(sessionStillCurrent, UNAUTHORIZED, MESSAGE_INVALID_TOKEN);
+  throwError(isSessionCurrent(session), UNAUTHORIZED, MESSAGE_INVALID_TOKEN);
 
   const { profileId, scope } = session;
 
