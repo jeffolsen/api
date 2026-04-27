@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { dateTimeSchema, descriptionSchema } from "./properties";
-import { MESSAGE_START_END_DATE } from "../config/errorMessages";
+import { MESSAGE_START_END_DATE } from "@config/errorMessages";
 
 export const dateRangeSchema = z
   .object({

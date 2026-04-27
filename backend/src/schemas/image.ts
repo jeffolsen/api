@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ImageType } from "../db/client";
+import { ImageType } from "@db/client";
 
 export const imageTypeSchema = z.enum(ImageType);
 

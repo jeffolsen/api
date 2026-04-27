@@ -1,13 +1,13 @@
 import express from "express";
-import authorizeScope from "../middleware/authorizeScope";
+import authorizeScope from "@middleware/authorizeScope";
 import {
   UPDATE_ITEM_SCOPE,
   DELETE_DATE_RANGE_SCOPE,
   READ_ITEM_SCOPE,
   READ_DATE_RANGE_SCOPE,
-} from "../config/scopes";
-import { DATE_RANGE_ROUTES, ID_PARAM, ITEM_ID_PARAM } from "../config/routes";
-import itemDateRangeApi from "../controllers/itemDateRange";
+} from "@config/scopes";
+import { DATE_RANGE_ROUTES, ID_PARAM, ITEM_ID_PARAM } from "@config/routes";
+import itemDateRangeApi from "@controllers/itemDateRange";
 
 const router = express.Router();
 

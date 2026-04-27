@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { RELATIVE_PATH_REGEX } from "../config/constants";
+import { RELATIVE_PATH_REGEX } from "@config/constants";
 import {
   idArraySchema,
   idStringSchema,

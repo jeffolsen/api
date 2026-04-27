@@ -2,7 +2,7 @@ import {
   ACCESS_TOKEN_LIFESPAN,
   SESSION_TOKEN_LIFESPAN,
   VERIFICATION_CODE_LIFESPAN,
-} from "../config/constants";
+} from "@config/constants";
 
 export const getNewVerificationCodeExpirationDate = (): Date =>
   new Date(Date.now() + VERIFICATION_CODE_LIFESPAN);

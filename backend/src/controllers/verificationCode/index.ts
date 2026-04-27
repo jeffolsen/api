@@ -4,27 +4,27 @@ import {
   VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
   VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT,
   VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT,
-} from "../../config/routes";
+} from "@config/routes";
 import {
   MESSAGE_ENDPOINT_NOT_FOUND,
   MESSAGE_CREDENTIALS,
   MESSAGE_MALFORMED,
   MESSAGE_SESSION_TOO_MANY,
-} from "../../config/errorMessages";
+} from "@config/errorMessages";
 import {
   NOT_FOUND,
   OK,
   BAD_REQUEST,
   TOO_MANY_REQUESTS,
-} from "../../config/errorCodes";
+} from "@config/errorCodes";
 import { RequestHandler } from "express";
-import catchErrors from "../../util/catchErrors";
-import prismaClient, { CodeType } from "../../db/client";
-import { sendVerificationCode } from "../../services/auth";
-import { isSessionLimitReached } from "../../services/session";
-import throwError from "../../util/throwError";
-import { requestVerificationCodeSchema } from "../../schemas/verificationCode";
-import { compareValue } from "../../util/bcrypt";
+import catchErrors from "@util/catchErrors";
+import prismaClient, { CodeType } from "@db/client";
+import { sendVerificationCode } from "@services/auth";
+import { isSessionLimitReached } from "@services/session";
+import throwError from "@util/throwError";
+import { requestVerificationCodeSchema } from "@schemas/verificationCode";
+import { compareValue } from "@util/bcrypt";
 import { Request, Response } from "express";
 
 export const getProfileVerificationCodes: RequestHandler = catchErrors(

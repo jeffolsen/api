@@ -6,8 +6,8 @@
   "type": "commonjs",
   "private": true,
   "scripts": {
-    "dev": "prisma generate && nodemon --watch src --ext ts --exec ts-node --files src/server.ts",
-    "build": "prisma generate && tsc",
+    "dev": "prisma generate && nodemon --watch src --ext ts --exec 'ts-node -r tsconfig-paths/register --files src/server.ts'",
+    "build": "prisma generate && rimraf dist && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "start": "node dist/server.js",
     "seed": "yarn add git+ssh://git@github.com/jeffolsen/content.git && tsc && prisma db seed",
     "test": "jest",
@@ -50,9 +50,12 @@
     "nodemon": "^3.1.10",
     "prettier": "^3.7.4",
     "prisma": "^6.19.0",
+    "rimraf": "^6.1.3",
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.50.0"
   },

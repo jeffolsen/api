@@ -8,7 +8,7 @@ import {
 } from "./properties";
 import { tagNameArraySchema } from "./tag";
 import { dateRangeArraySchema } from "./dateRange";
-import sortWord from "../util/sortWord";
+import sortWord from "@util/sortWord";
 
 const validItemSortValues = [
   "sortName",

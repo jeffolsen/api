@@ -1,11 +1,11 @@
-import env from "./config/env";
+import env from "@config/env";
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import errorHandler from "./middleware/errorHandler";
+import errorHandler from "@middleware/errorHandler";
 import path from "path";
-import apiRouter, { BASE_API_URL } from "./api";
-// import rateLimiter from "./middleware/rateLimit";
+import apiRouter, { BASE_API_URL } from "@/api";
+// import rateLimiter from "@middleware/rateLimit";
 
 const app = express();
 const PORT = env.PORT || 5001;

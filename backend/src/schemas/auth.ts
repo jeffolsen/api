@@ -1,4 +1,4 @@
-import { MESSAGE_PASSWORD_MATCH } from "../config/errorMessages";
+import { MESSAGE_PASSWORD_MATCH } from "@config/errorMessages";
 import { z } from "zod";
 import { ProfileDataSchema } from "./profile";
 import { passwordSchema, verificationCodeValueSchema } from "./properties";

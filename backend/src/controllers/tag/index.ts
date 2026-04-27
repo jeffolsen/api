@@ -1,7 +1,7 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import catchErrors from "../../util/catchErrors";
-import { OK } from "../../config/errorCodes";
-import prismaClient from "../../db/client";
+import catchErrors from "@util/catchErrors";
+import { OK } from "@config/errorCodes";
+import prismaClient from "@db/client";
 
 export const getAllTags: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {

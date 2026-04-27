@@ -1,5 +1,5 @@
-import prismaClient from "../db/client";
-import { MAX_PROFILE_API_KEYS } from "../config/constants";
+import prismaClient from "@db/client";
+import { MAX_PROFILE_API_KEYS } from "@config/constants";
 import { randomUUID } from "node:crypto";
 
 export const generateApiKeyValue = () => randomUUID();

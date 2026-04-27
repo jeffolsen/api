@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { parseScopeString } from "../util/scope";
-import { MESSAGE_NO_ACCESS } from "../config/errorMessages";
-import { FORBIDDEN } from "../config/errorCodes";
-import throwError from "../util/throwError";
+import { parseScopeString } from "@util/scope";
+import { MESSAGE_NO_ACCESS } from "@config/errorMessages";
+import { FORBIDDEN } from "@config/errorCodes";
+import throwError from "@util/throwError";
 
 type ScopeParams = string[];
 

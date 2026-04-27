@@ -1,10 +1,10 @@
-import prismaClient from "../db/client";
-import { MAX_PROFILE_SESSIONS } from "../config/constants";
+import prismaClient from "@db/client";
+import { MAX_PROFILE_SESSIONS } from "@config/constants";
 import {
   SessionCreateTransform,
   SessionCreateTransformType,
-} from "../schemas/session";
-import date, { getNewRefreshTokenExpirationDate } from "../util/date";
+} from "@schemas/session";
+import date, { getNewRefreshTokenExpirationDate } from "@util/date";
 
 export const isSessionCurrent = (session: {
   expiredAt: Date | null;

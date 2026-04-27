@@ -26,7 +26,7 @@ import {
   DELETE_FEED_SCOPE,
   DELETE_COMPONENT_SCOPE,
   READ_COMPONENT_TYPE_SCOPE,
-} from "../config/scopes";
+} from "@config/scopes";
 
 export const defaultProfileScope = () =>
   createScopeString([

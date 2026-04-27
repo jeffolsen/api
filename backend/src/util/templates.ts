@@ -1,4 +1,4 @@
-import { CodeType } from "../db/client";
+import { CodeType } from "@db/client";
 
 type TEMPLATES = Record<CodeType, (topic: CodeType, code: string) => string>;
 

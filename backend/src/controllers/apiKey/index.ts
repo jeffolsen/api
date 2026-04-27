@@ -4,28 +4,25 @@ import {
   MESSAGE_API_KEY_SLUG_NOT_FOUND,
   MESSAGE_NO_ACCESS,
   MESSAGE_CREDENTIALS,
-} from "../../config/errorMessages";
+} from "@config/errorMessages";
 import {
   CONFLICT,
   FORBIDDEN,
   NOT_FOUND,
   OK,
   CREATED,
-} from "../../config/errorCodes";
+} from "@config/errorCodes";
 import { RequestHandler } from "express";
-import throwError from "../../util/throwError";
-import catchErrors from "../../util/catchErrors";
-import prismaClient, { CodeType } from "../../db/client";
-import { processVerificationCode } from "../../services/auth";
-import {
-  isApiKeyLimitReached,
-  generateApiKeyValue,
-} from "../../services/apiKey";
+import throwError from "@util/throwError";
+import catchErrors from "@util/catchErrors";
+import prismaClient, { CodeType } from "@db/client";
+import { processVerificationCode } from "@services/auth";
+import { isApiKeyLimitReached, generateApiKeyValue } from "@services/apiKey";
 import {
   ApiKeyCreateTransform,
   ApiKeyDestroySchema,
   ApiKeyGenerateSchema,
-} from "../../schemas/apikey";
+} from "@schemas/apikey";
 import { Request, Response } from "express";
 
 export const getProfilesApiKeys: RequestHandler = catchErrors(

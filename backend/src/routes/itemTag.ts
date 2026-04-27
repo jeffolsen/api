@@ -1,12 +1,12 @@
 import express from "express";
-import authorizeScope from "../middleware/authorizeScope";
+import authorizeScope from "@middleware/authorizeScope";
 import {
   UPDATE_ITEM_SCOPE,
   READ_ITEM_SCOPE,
   READ_TAG_SCOPE,
-} from "../config/scopes";
-import { TAG_ROUTES, ID_PARAM, ITEM_ID_PARAM } from "../config/routes";
-import itemTagApi from "../controllers/itemTag";
+} from "@config/scopes";
+import { TAG_ROUTES, ID_PARAM, ITEM_ID_PARAM } from "@config/routes";
+import itemTagApi from "@controllers/itemTag";
 
 const router = express.Router();
 

@@ -1,24 +1,24 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import catchErrors from "../../util/catchErrors";
-import prismaClient, { type Prisma } from "../../db/client";
-import { NO_CONTENT, NOT_FOUND, OK } from "../../config/errorCodes";
-import throwError from "../../util/throwError";
+import catchErrors from "@util/catchErrors";
+import prismaClient, { type Prisma } from "@db/client";
+import { NO_CONTENT, NOT_FOUND, OK } from "@config/errorCodes";
+import throwError from "@util/throwError";
 import {
   CreateComponentSchema,
   ModifyComponentSchema,
   UpdateComponentSchema,
-} from "../../schemas/component";
+} from "@schemas/component";
 import {
   reorderComponentsForCreation,
   reorderComponentsForDeletion,
   reorderComponentsForUpdate,
   validateComponentPropertyValues,
-} from "../../services/components";
+} from "@services/components";
 import {
   MESSAGE_COMPONENT_TYPE_NOT_FOUND,
   MESSAGE_COMPONENTS_NOT_FOUND,
   MESSAGE_FEED_NOT_FOUND,
-} from "../../config/errorMessages";
+} from "@config/errorMessages";
 
 export const getAllComponents: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {

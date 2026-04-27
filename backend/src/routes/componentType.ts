@@ -1,8 +1,8 @@
 import express from "express";
-import authorizeScope from "../middleware/authorizeScope";
-import { READ_COMPONENT_TYPE_SCOPE } from "../config/scopes";
-import { COLLECTION_ENDPOINT, ID_PARAM, NAME_PARAM } from "../config/routes";
-import componentTypeApi from "../controllers/componentType";
+import authorizeScope from "@middleware/authorizeScope";
+import { READ_COMPONENT_TYPE_SCOPE } from "@config/scopes";
+import { COLLECTION_ENDPOINT, ID_PARAM, NAME_PARAM } from "@config/routes";
+import componentTypeApi from "@controllers/componentType";
 
 const router = express.Router();
 

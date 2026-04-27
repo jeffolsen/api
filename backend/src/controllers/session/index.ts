@@ -1,18 +1,18 @@
 import { RequestHandler } from "express";
-import catchErrors from "../../util/catchErrors";
+import catchErrors from "@util/catchErrors";
 import {
   MESSAGE_CREDENTIALS,
   MESSAGE_SESSIONS_NOT_FOUND,
-} from "../../config/errorMessages";
-import { NOT_FOUND, OK } from "../../config/errorCodes";
-import prismaClient, { CodeType } from "../../db/client";
-import throwError from "../../util/throwError";
-import { processVerificationCode } from "../../services/auth";
-import { logOutSession, logOutAllSessions } from "../../services/session";
-import { clearAuthCookies } from "../../util/cookie";
-import { SessionLogoutAllSchema } from "../../schemas/session";
-import { passwordSchema } from "../../schemas/properties";
-import { compareValue } from "../../util/bcrypt";
+} from "@config/errorMessages";
+import { NOT_FOUND, OK } from "@config/errorCodes";
+import prismaClient, { CodeType } from "@db/client";
+import throwError from "@util/throwError";
+import { processVerificationCode } from "@services/auth";
+import { logOutSession, logOutAllSessions } from "@services/session";
+import { clearAuthCookies } from "@util/cookie";
+import { SessionLogoutAllSchema } from "@schemas/session";
+import { passwordSchema } from "@schemas/properties";
+import { compareValue } from "@util/bcrypt";
 import { Request, Response } from "express";
 
 export const getProfilesSessions: RequestHandler = catchErrors(

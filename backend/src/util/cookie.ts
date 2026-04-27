@@ -4,8 +4,8 @@ import {
   BASE_API_URL,
   AUTH_REFRESH_ENDPOINT,
   AUTH_ROUTES,
-} from "../config/routes";
-import env from "../config/env";
+} from "@config/routes";
+import env from "@config/env";
 
 export const ACCESS_TOKEN_NAME = "accessToken";
 export const REFRESH_TOKEN_NAME = "refreshToken";

@@ -1,13 +1,13 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import prismaClient from "../db/client";
-import { verifyAccessToken } from "../util/jwt";
-import { MESSAGE_INVALID_TOKEN } from "../config/errorMessages";
-import { UNAUTHORIZED } from "../config/errorCodes";
-import date from "../util/date";
-import throwError from "../util/throwError";
-import { authenticateWithApiKey } from "../services/auth";
-import { defaultApiKeyScope } from "../util/scope";
-import { isSessionCurrent } from "../services/session";
+import prismaClient from "@db/client";
+import { verifyAccessToken } from "@util/jwt";
+import { MESSAGE_INVALID_TOKEN } from "@config/errorMessages";
+import { UNAUTHORIZED } from "@config/errorCodes";
+import date from "@util/date";
+import throwError from "@util/throwError";
+import { authenticateWithApiKey } from "@services/auth";
+import { defaultApiKeyScope } from "@util/scope";
+import { isSessionCurrent } from "@services/session";
 
 const authenticate: RequestHandler = async (
   req: Request,

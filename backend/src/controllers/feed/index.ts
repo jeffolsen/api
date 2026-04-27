@@ -1,18 +1,18 @@
 import { Request, RequestHandler, Response } from "express";
-import prismaClient, { SubjectType } from "../../db/client";
-import catchErrors from "../../util/catchErrors";
-import { NOT_FOUND, OK } from "../../config/errorCodes";
-import { idStringSchema } from "../../schemas/properties";
+import prismaClient, { SubjectType } from "@db/client";
+import catchErrors from "@util/catchErrors";
+import { NOT_FOUND, OK } from "@config/errorCodes";
+import { idStringSchema } from "@schemas/properties";
 import {
   GetAllFeedsQuerySchema,
   CreateFeedBodySchema,
   UpdateFeedBodySchema,
   DeleteFeedParamsSchema,
   ModifyFeedBodySchema,
-} from "../../schemas/feed";
-import { getPagination, getSortOrders } from "../../util/misc";
-import throwError from "../../util/throwError";
-import { MESSAGE_FEED_NOT_FOUND } from "../../config/errorMessages";
+} from "@schemas/feed";
+import { getPagination, getSortOrders } from "@util/misc";
+import throwError from "@util/throwError";
+import { MESSAGE_FEED_NOT_FOUND } from "@config/errorMessages";
 
 type GetFeedsQuery = {
   searchPath?: string;

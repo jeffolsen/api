@@ -1,20 +1,20 @@
 import express from "express";
-import authRoutes from "./routes/auth";
-import profileRoutes from "./routes/profile";
-import sessionRoutes from "./routes/session";
-import verificationCodeRoutes from "./routes/verificationCode";
-import feedRoutes from "./routes/feed";
-import feedComponentRoutes from "./routes/feedComponent";
-import tagRoutes from "./routes/tag";
-import itemRoutes from "./routes/item";
-import itemTagRoutes from "./routes/itemTag";
-import itemImageRoutes from "./routes/itemImage";
-import itemDateRangeRoutes from "./routes/itemDateRange";
-import componentRoutes from "./routes/component";
-import apiKeyRoutes from "./routes/apiKey";
-import imageRoutes from "./routes/image";
-import componentTypeRoutes from "./routes/componentType";
-import authenticate from "./middleware/authenticate";
+import authRoutes from "@/routes/auth";
+import profileRoutes from "@/routes/profile";
+import sessionRoutes from "@/routes/session";
+import verificationCodeRoutes from "@/routes/verificationCode";
+import feedRoutes from "@/routes/feed";
+import feedComponentRoutes from "@/routes/feedComponent";
+import tagRoutes from "@/routes/tag";
+import itemRoutes from "@/routes/item";
+import itemTagRoutes from "@/routes/itemTag";
+import itemImageRoutes from "@/routes/itemImage";
+import itemDateRangeRoutes from "@/routes/itemDateRange";
+import componentRoutes from "@/routes/component";
+import apiKeyRoutes from "@/routes/apiKey";
+import imageRoutes from "@/routes/image";
+import componentTypeRoutes from "@/routes/componentType";
+import authenticate from "@middleware/authenticate";
 import {
   API_KEY_ROUTES,
   AUTH_ROUTES,
@@ -28,8 +28,8 @@ import {
   IMAGE_ROUTES,
   COMPONENT_TYPE_ROUTES,
   HEALTH_ENDPOINT,
-} from "./config/routes";
-import { MESSAGE_HEALTHY } from "./config/errorMessages";
+} from "@config/routes";
+import { MESSAGE_HEALTHY } from "@config/errorMessages";
 
 const apiRouter = express.Router();
 // auth and profile routes don't require authentication
@@ -57,4 +57,4 @@ apiRouter.use(FEED_ROUTES, authenticate, feedRoutes);
 apiRouter.use(FEED_ROUTES, authenticate, feedComponentRoutes);
 
 export default apiRouter;
-export { BASE_API_URL } from "./config/routes";
+export { BASE_API_URL } from "@config/routes";

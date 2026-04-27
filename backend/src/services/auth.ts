@@ -1,9 +1,9 @@
-import prismaClient, { ApiKey, CodeType, Profile } from "../db/client";
+import prismaClient, { ApiKey, CodeType, Profile } from "@db/client";
 import {
   signAccessToken,
   signRefreshToken,
   verifyRefreshToken,
-} from "../util/jwt";
+} from "@util/jwt";
 import {
   MESSAGE_UNAUTHORIZED,
   MESSAGE_VERIFICATION_CODE_TOO_MANY,
@@ -11,21 +11,21 @@ import {
   MESSAGE_INVALID_TOKEN,
   MESSAGE_SESSION_TOO_MANY,
   MESSAGE_CREDENTIALS,
-} from "../config/errorMessages";
+} from "@config/errorMessages";
 import {
   TOO_MANY_REQUESTS,
   BAD_REQUEST,
   INTERNAL_SERVER_ERROR,
   FORBIDDEN,
   NOT_FOUND,
-} from "../config/errorCodes";
-import throwError from "../util/throwError";
-import sendEmail from "../util/sendEmail";
-import generateCode from "../util/generateCode";
-import { getNewVerificationCodeExpirationDate } from "../util/date";
-import { PROFILE_SESSION } from "../util/scope";
-import { VerificationCodeCreateTransform } from "../schemas/verificationCode";
-import { compareValue } from "../util/bcrypt";
+} from "@config/errorCodes";
+import throwError from "@util/throwError";
+import sendEmail from "@util/sendEmail";
+import generateCode from "@util/generateCode";
+import { getNewVerificationCodeExpirationDate } from "@util/date";
+import { PROFILE_SESSION } from "@util/scope";
+import { VerificationCodeCreateTransform } from "@schemas/verificationCode";
+import { compareValue } from "@util/bcrypt";
 import {
   startSession,
   isSessionCurrent,

@@ -1,16 +1,16 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import { NOT_FOUND, OK } from "../../config/errorCodes";
-import catchErrors from "../../util/catchErrors";
-import throwError from "../../util/throwError";
-import prismaClient from "../../db/client";
+import { NOT_FOUND, OK } from "@config/errorCodes";
+import catchErrors from "@util/catchErrors";
+import throwError from "@util/throwError";
+import prismaClient from "@db/client";
 import {
   GetItemResourceByIdSchema,
   GetItemsResourcesSchema,
-} from "../../schemas/item";
+} from "@schemas/item";
 import {
   MESSAGE_ITEM_NOT_FOUND,
   MESSAGE_TAGS_NOT_FOUND,
-} from "../../config/errorMessages";
+} from "@config/errorMessages";
 
 export const getItemTags: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {

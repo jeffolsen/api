@@ -1,6 +1,6 @@
-import { CodeType } from "../db/client";
-import env from "../config/env";
-import resend from "../config/resend";
+import { CodeType } from "@db/client";
+import env from "@config/env";
+import resend from "@config/resend";
 import templates from "./templates";
 
 const getSender = () => "onboarding@resend.dev";

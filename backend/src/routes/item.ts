@@ -1,13 +1,13 @@
 import express from "express";
-import authorizeScope from "../middleware/authorizeScope";
+import authorizeScope from "@middleware/authorizeScope";
 import {
   CREATE_ITEM_SCOPE,
   DELETE_ITEM_SCOPE,
   READ_ITEM_SCOPE,
   UPDATE_ITEM_SCOPE,
-} from "../config/scopes";
-import { COLLECTION_ENDPOINT, ID_PARAM } from "../config/routes";
-import itemApi from "../controllers/item";
+} from "@config/scopes";
+import { COLLECTION_ENDPOINT, ID_PARAM } from "@config/routes";
+import itemApi from "@controllers/item";
 
 const router = express.Router();
 

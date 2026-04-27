@@ -1,10 +1,10 @@
 import express from "express";
-import authApi from "../controllers/auth";
+import authApi from "@controllers/auth";
 import {
   AUTH_LOGIN_ENDPOINT,
   AUTH_REGISTER_ENDPOINT,
   AUTH_REFRESH_ENDPOINT,
-} from "../config/routes";
+} from "@config/routes";
 
 const router = express.Router();
 

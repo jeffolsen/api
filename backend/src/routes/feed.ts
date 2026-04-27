@@ -1,13 +1,13 @@
 import express from "express";
-import authorizeScope from "../middleware/authorizeScope";
+import authorizeScope from "@middleware/authorizeScope";
 import {
   CREATE_FEED_SCOPE,
   DELETE_FEED_SCOPE,
   READ_FEED_SCOPE,
   UPDATE_FEED_SCOPE,
-} from "../config/scopes";
-import { COLLECTION_ENDPOINT, ID_PARAM, PATH_PARAM } from "../config/routes";
-import feedApi from "../controllers/feed";
+} from "@config/scopes";
+import { COLLECTION_ENDPOINT, ID_PARAM, PATH_PARAM } from "@config/routes";
+import feedApi from "@controllers/feed";
 
 const router = express.Router();
 

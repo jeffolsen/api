@@ -10,14 +10,14 @@ import {
   MESSAGE_IDS_UNIQUE,
   MESSAGE_PASSWORD_FORMAT,
   MESSAGE_SESSION_USER_AGENT,
-} from "../config/errorMessages";
+} from "@config/errorMessages";
 import {
   NUMERIC_CODE_REGEX,
   PASSWORD_REGEX,
   SLUG_REGEX,
-} from "../config/constants";
-import { API_KEY_SESSION, PROFILE_SESSION } from "../util/scope";
-import { CodeType, ImageType, SubjectType } from "../generated/prisma/client";
+} from "@config/constants";
+import { API_KEY_SESSION, PROFILE_SESSION } from "@util/scope";
+import { CodeType, ImageType, SubjectType } from "@/generated/prisma/client";
 
 export const verificationCodeTypeSchema = z.enum(CodeType, MESSAGE_CODE_TYPE);
 export const subjectTypeSchema = z.enum(SubjectType, "Invalid subject type");

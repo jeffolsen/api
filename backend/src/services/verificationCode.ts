@@ -1,10 +1,7 @@
-import prismaClient from "../db/client";
-import { CodeType } from "../db/client";
-import {
-  MAX_DAILY_SYSTEM_EMAILS,
-  MAX_PROFILE_CODES,
-} from "../config/constants";
-import { getVerificationCodeExpirationWindow, oneDayAgo } from "../util/date";
+import prismaClient from "@db/client";
+import { CodeType } from "@db/client";
+import { MAX_DAILY_SYSTEM_EMAILS, MAX_PROFILE_CODES } from "@config/constants";
+import { getVerificationCodeExpirationWindow, oneDayAgo } from "@util/date";
 
 export const useVerificationCode = async (id: number) => {
   return await prismaClient.verificationCode.update({

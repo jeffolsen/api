@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import { hashValue, compareValue } from "../bcrypt";
+import { hashValue, compareValue } from "@util/bcrypt";
 
 describe("hashValue", () => {
   it("should return a different string than its input string", async () => {

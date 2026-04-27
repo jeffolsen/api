@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SubjectType } from "../db/client";
+import { SubjectType } from "@db/client";
 
 export const TagAllowListSchema = z.object({
   tagAllowList: z.array(z.string()),

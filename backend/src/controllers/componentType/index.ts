@@ -1,8 +1,8 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import catchErrors from "../../util/catchErrors";
-import prismaClient from "../../db/client";
-import { OK } from "../../config/errorCodes";
-import { GetAllComponentTypesQuerySchema } from "../../schemas/componentType";
+import catchErrors from "@util/catchErrors";
+import prismaClient from "@db/client";
+import { OK } from "@config/errorCodes";
+import { GetAllComponentTypesQuerySchema } from "@schemas/componentType";
 
 type GetComponentTypesQuery = {
   subjectType?: string;

@@ -1,9 +1,6 @@
 import jwt from "jsonwebtoken";
-import env from "../config/env";
-import {
-  ACCESS_TOKEN_OPTIONS,
-  SESSION_TOKEN_OPTIONS,
-} from "../config/constants";
+import env from "@config/env";
+import { ACCESS_TOKEN_OPTIONS, SESSION_TOKEN_OPTIONS } from "@config/constants";
 import { getNewAccessTokenExpirationDate } from "./date";
 
 export interface TokenPayload {

@@ -1,6 +1,6 @@
-import { MESSAGE_PROFILE_ID } from "../config/errorMessages";
+import { MESSAGE_PROFILE_ID } from "@config/errorMessages";
 import { z } from "zod";
-import { hashValue } from "../util/bcrypt";
+import { hashValue } from "@util/bcrypt";
 import {
   apiKeyOriginSchema,
   apiKeySlugSchema,

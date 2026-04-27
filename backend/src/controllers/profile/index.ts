@@ -1,28 +1,20 @@
 import { Request, RequestHandler, Response } from "express";
-import catchErrors from "../../util/catchErrors";
-import {
-  BAD_REQUEST,
-  NO_CONTENT,
-  OK,
-  NOT_FOUND,
-} from "../../config/errorCodes";
-import {
-  MESSAGE_CREDENTIALS,
-  MESSAGE_PROFILE_ID,
-} from "../../config/errorMessages";
+import catchErrors from "@util/catchErrors";
+import { BAD_REQUEST, NO_CONTENT, OK, NOT_FOUND } from "@config/errorCodes";
+import { MESSAGE_CREDENTIALS, MESSAGE_PROFILE_ID } from "@config/errorMessages";
 
-import throwError from "../../util/throwError";
-import prismaClient, { CodeType } from "../../db/client";
-import { processVerificationCode } from "../../services/auth";
+import throwError from "@util/throwError";
+import prismaClient, { CodeType } from "@db/client";
+import { processVerificationCode } from "@services/auth";
 import {
   DeleteProfileSchema,
   passwordTransform,
   ProfileCreateTransform,
   ResetPasswordWithCodeSchema,
   ChangePasswordWithSessionSchema,
-} from "../../schemas/profile";
-import { clearAuthCookies } from "../../util/cookie";
-import { compareValue } from "../../util/bcrypt";
+} from "@schemas/profile";
+import { clearAuthCookies } from "@util/cookie";
+import { compareValue } from "@util/bcrypt";
 
 export const getAuthenticatedProfile: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {

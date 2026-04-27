@@ -1,6 +1,6 @@
-import { MESSAGE_PASSWORD_MATCH } from "../config/errorMessages";
+import { MESSAGE_PASSWORD_MATCH } from "@config/errorMessages";
 import { z } from "zod";
-import { hashValue } from "../util/bcrypt";
+import { hashValue } from "@util/bcrypt";
 import {
   emailSchema,
   passwordSchema,

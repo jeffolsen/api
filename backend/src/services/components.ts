@@ -1,7 +1,7 @@
-import { ObjectSchema, validatePropertySchema } from "../schemas/componentType";
-import { Component, ComponentType } from "../db/client";
-import throwError from "../util/throwError";
-import { BAD_REQUEST } from "../config/errorCodes";
+import { ObjectSchema, validatePropertySchema } from "@schemas/componentType";
+import { Component, ComponentType } from "@db/client";
+import throwError from "@util/throwError";
+import { BAD_REQUEST } from "@config/errorCodes";
 
 export const validateComponentPropertyValues = async (
   componentType: ComponentType,

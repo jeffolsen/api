@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { hashValue } from "../util/bcrypt";
+import { hashValue } from "@util/bcrypt";
 import {
   idSchema,
   passwordSchema,

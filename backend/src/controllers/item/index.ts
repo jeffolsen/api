@@ -1,21 +1,16 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import prismaClient, { Prisma } from "../../db/client";
-import catchErrors from "../../util/catchErrors";
-import throwError from "../../util/throwError";
-import {
-  NOT_FOUND,
-  OK,
-  NO_CONTENT,
-  BAD_REQUEST,
-} from "../../config/errorCodes";
-import { MESSAGE_ITEM_NOT_FOUND } from "../../config/errorMessages";
-import { getPagination, getSortOrders } from "../../util/misc";
+import prismaClient, { Prisma } from "@db/client";
+import catchErrors from "@util/catchErrors";
+import throwError from "@util/throwError";
+import { NOT_FOUND, OK, NO_CONTENT, BAD_REQUEST } from "@config/errorCodes";
+import { MESSAGE_ITEM_NOT_FOUND } from "@config/errorMessages";
+import { getPagination, getSortOrders } from "@util/misc";
 import {
   CreateItemSchema,
   GetAllItemsQuerySchema,
   GetItemByIdSchema,
   ModifyItemSchema,
-} from "../../schemas/item";
+} from "@schemas/item";
 
 type GetItemsQuery = {
   privateOnly?: boolean;

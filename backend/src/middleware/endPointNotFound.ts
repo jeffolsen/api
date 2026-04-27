@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import createHttpError from "http-errors";
-import { NOT_FOUND } from "../config/errorCodes";
+import { NOT_FOUND } from "@config/errorCodes";
 
 export const endPointNotFound = async (
   req: Request,
