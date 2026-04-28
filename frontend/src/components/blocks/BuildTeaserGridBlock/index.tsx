@@ -71,11 +71,10 @@ function VariantAlpha({
   blockProps: UseTeaserGridBlockProps;
 }) {
   const { itemsData, referenceFeedData } = blockData;
-  const feedPath = (referenceFeedData?.data as TFeed)?.path;
-
-  if (itemsData.isLoading) {
+  if (itemsData.isLoading || referenceFeedData?.isLoading) {
     return null;
   }
+  const feed = referenceFeedData?.data?.feed;
 
   return (
     <BlockWrapper
@@ -87,7 +86,7 @@ function VariantAlpha({
         columns={{ md: "2" }}
         items={(itemsData.data?.items ?? []).map((item, index) => ({
           id: item.id,
-          content: <AlphaCard index={index} item={item} feedPath={feedPath} />,
+          content: <AlphaCard index={index} item={item} feed={feed} />,
         }))}
       />
     </BlockWrapper>
@@ -96,14 +95,14 @@ function VariantAlpha({
 
 function AlphaCard({
   item,
-  feedPath,
+  feed,
 }: {
   index: number;
   item: TItem;
-  feedPath: string;
+  feed: TFeed | undefined;
 }) {
   const getImages = useGetAppItemImages(item.id);
-  const link = getItemLink(feedPath, item.id);
+  const link = getItemLink(feed, item.id);
   const image = getImages?.data?.images?.find(
     (img: TImage) => img.type === "LANDSCAPE",
   );
@@ -139,11 +138,10 @@ function VariantBeta({
   blockProps: UseTeaserGridBlockProps;
 }) {
   const { itemsData, referenceFeedData } = blockData;
-  const feedPath = (referenceFeedData?.data as TFeed)?.path;
-
-  if (itemsData.isLoading) {
+  if (itemsData.isLoading || referenceFeedData?.isLoading) {
     return null;
   }
+  const feed = referenceFeedData?.data?.feed;
 
   return (
     <BlockWrapper
@@ -155,7 +153,7 @@ function VariantBeta({
         columns={{ sm: "2", lg: "3" }}
         items={(itemsData.data?.items ?? []).map((item, index) => ({
           id: item.id,
-          content: <BetaCard index={index} item={item} feedPath={feedPath} />,
+          content: <BetaCard index={index} item={item} feed={feed} />,
         }))}
       />
     </BlockWrapper>
@@ -164,14 +162,14 @@ function VariantBeta({
 
 function BetaCard({
   item,
-  feedPath,
+  feed,
 }: {
   index: number;
   item: TItem;
-  feedPath: string;
+  feed: TFeed | undefined;
 }) {
   const getImages = useGetAppItemImages(item.id);
-  const link = getItemLink(feedPath, item.id);
+  const link = getItemLink(feed, item.id);
   const image = getImages?.data?.images?.find(
     (img: TImage) => img.type === "LANDSCAPE",
   );
@@ -207,11 +205,10 @@ function VariantGamma({
   blockProps: UseTeaserGridBlockProps;
 }) {
   const { itemsData, referenceFeedData } = blockData;
-  const feedPath = (referenceFeedData?.data as TFeed)?.path;
-
-  if (itemsData.isLoading) {
+  if (itemsData.isLoading || referenceFeedData?.isLoading) {
     return null;
   }
+  const feed = referenceFeedData?.data?.feed;
 
   return (
     <BlockWrapper
@@ -223,7 +220,7 @@ function VariantGamma({
         columns={{ sm: "2", md: "3", lg: "4", xl: "5" }}
         items={(itemsData.data?.items ?? []).map((item, index) => ({
           id: item.id,
-          content: <GammaCard index={index} item={item} feedPath={feedPath} />,
+          content: <GammaCard index={index} item={item} feed={feed} />,
         }))}
       />
     </BlockWrapper>
@@ -232,14 +229,14 @@ function VariantGamma({
 
 function GammaCard({
   item,
-  feedPath,
+  feed,
 }: {
   index: number;
   item: TItem;
-  feedPath: string;
+  feed: TFeed | undefined;
 }) {
   const getImages = useGetAppItemImages(item.id);
-  const link = getItemLink(feedPath, item.id);
+  const link = getItemLink(feed, item.id);
   const image = getImages?.data?.images?.find(
     (img: TImage) => img.type === "ICON" || img.type === "PORTRAIT",
   );

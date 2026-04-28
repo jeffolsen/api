@@ -1,6 +1,8 @@
-const getItemLink = (feedPath: string | undefined, itemId: number) => {
-  if (!feedPath) return null;
-  return feedPath.replace(":id", String(itemId));
+import { TFeed } from "@/network/feed";
+
+const getItemLink = (feed: TFeed | undefined, itemId: number) => {
+  if (feed?.subjectType === "SINGLE") return `/${feed.path}/${String(itemId)}`;
+  return null;
 };
 
 export default getItemLink;

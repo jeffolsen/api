@@ -71,12 +71,11 @@ function VariantAlpha({
   blockData: UseHeroCarouselBlockData;
 }) {
   const { itemsData, referenceFeedData } = blockData;
-  const feedPath = (referenceFeedData?.data as TFeed)?.path;
   const critical = blockProps.settings;
-
-  if (itemsData.isLoading) {
+  if (itemsData.isLoading || referenceFeedData?.isLoading) {
     return null;
   }
+  const feed = referenceFeedData?.data?.feed;
 
   return (
     <Block
@@ -104,7 +103,7 @@ function VariantAlpha({
           {(itemsData.data?.items ?? []).map((item: TItem) => {
             return (
               <SwiperSlide key={item.id} className="max-h-full h-full w-full">
-                <AlphaSlide item={item} feedPath={feedPath} />
+                <AlphaSlide item={item} feed={feed} />
               </SwiperSlide>
             );
           })}
@@ -116,15 +115,9 @@ function VariantAlpha({
   );
 }
 
-function AlphaSlide({
-  item,
-  feedPath,
-}: {
-  item: TItem;
-  feedPath: string | undefined;
-}) {
+function AlphaSlide({ item, feed }: { item: TItem; feed: TFeed | undefined }) {
   const getImages = useGetAppItemImages(item.id);
-  const link = getItemLink(feedPath, item.id);
+  const link = getItemLink(feed, item.id);
   const image = getImages?.data?.images?.find(
     (img: TImage) => img.type === "LANDSCAPE",
   );
@@ -168,12 +161,11 @@ function VariantBeta({
   blockProps: UseHeroCarouselBlockProps;
 }) {
   const { itemsData, referenceFeedData } = blockData;
-  const feedPath = (referenceFeedData?.data as TFeed)?.path;
   const critical = blockProps.settings.critical;
-
-  if (itemsData.isLoading) {
+  if (itemsData.isLoading || referenceFeedData?.isLoading) {
     return null;
   }
+  const feed = referenceFeedData?.data?.feed;
 
   return (
     <Block {...blockProps} settings={{ ...blockProps.settings, padded: false }}>
@@ -198,7 +190,7 @@ function VariantBeta({
           {(itemsData.data?.items ?? []).map((item: TItem) => {
             return (
               <SwiperSlide key={item.id} className="max-h-full h-full w-full">
-                <BetaSlide item={item} feedPath={feedPath} />
+                <BetaSlide item={item} feed={feed} />
               </SwiperSlide>
             );
           })}
@@ -209,15 +201,9 @@ function VariantBeta({
   );
 }
 
-function BetaSlide({
-  item,
-  feedPath,
-}: {
-  item: TItem;
-  feedPath: string | undefined;
-}) {
+function BetaSlide({ item, feed }: { item: TItem; feed: TFeed | undefined }) {
   const getImages = useGetAppItemImages(item.id);
-  const link = getItemLink(feedPath, item.id);
+  const link = getItemLink(feed, item.id);
   const image = getImages?.data?.images?.find(
     (img: TImage) => img.type === "LANDSCAPE",
   );
@@ -252,12 +238,11 @@ function VariantGamma({
   blockProps: UseHeroCarouselBlockProps;
 }) {
   const { itemsData, referenceFeedData } = blockData;
-  const feedPath = (referenceFeedData?.data as TFeed)?.path;
   const critical = blockProps.settings.critical;
-
-  if (itemsData.isLoading) {
+  if (itemsData.isLoading || referenceFeedData?.isLoading) {
     return null;
   }
+  const feed = referenceFeedData?.data?.feed;
 
   return (
     <Block
@@ -295,7 +280,7 @@ function VariantGamma({
                 key={item.id}
                 className="max-h-full h-full w-full shadow-xl"
               >
-                <GammaSlide item={item} feedPath={feedPath} />
+                <GammaSlide item={item} feed={feed} />
               </SwiperSlide>
             );
           })}
@@ -307,15 +292,9 @@ function VariantGamma({
   );
 }
 
-function GammaSlide({
-  item,
-  feedPath,
-}: {
-  item: TItem;
-  feedPath: string | undefined;
-}) {
+function GammaSlide({ item, feed }: { item: TItem; feed: TFeed | undefined }) {
   const getImages = useGetAppItemImages(item.id);
-  const link = getItemLink(feedPath, item.id);
+  const link = getItemLink(feed, item.id);
   const image = getImages?.data?.images?.find(
     (img: TImage) => img.type === "LANDSCAPE",
   );

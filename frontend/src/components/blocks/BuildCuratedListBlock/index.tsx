@@ -15,6 +15,7 @@ import {
   mainSpacing,
   smSpacing,
   smVerticalPadding,
+  xsSpacing,
   xsVerticalPadding,
 } from "@/components/common/helpers/layoutStyles";
 import { useGetAppItemImages } from "@/network/app";
@@ -71,11 +72,11 @@ function VariantAlpha({
   blockData: UseCuratedListBlockData;
 }) {
   const { itemsData, referenceFeedData } = blockData;
-  const feedPath = (referenceFeedData?.data as TFeed)?.path;
 
-  if (itemsData.isLoading) {
+  if (itemsData.isLoading || referenceFeedData?.isLoading) {
     return null;
   }
+  const feed = referenceFeedData?.data?.feed;
 
   return (
     <Block
@@ -86,7 +87,7 @@ function VariantAlpha({
         className={clsx([mainSpacing, smVerticalPadding])}
         items={(itemsData.data?.items ?? []).map((item, index) => ({
           id: item.id,
-          content: <AlphaCard index={index} item={item} feedPath={feedPath} />,
+          content: <AlphaCard index={index} item={item} feed={feed} />,
         }))}
       />
     </Block>
@@ -95,16 +96,16 @@ function VariantAlpha({
 
 const AlphaCard = ({
   item,
-  feedPath,
+  feed,
   index,
 }: {
   item: TItem;
-  feedPath?: string;
+  feed?: TFeed;
   index: number;
 }) => {
   const maxImages = 3;
   const getImages = useGetAppItemImages(item.id);
-  const link = getItemLink(feedPath, item.id);
+  const link = getItemLink(feed, item.id);
   const images = getImages?.data?.images
     ?.filter(
       (img: TImage) => img.type === "LANDSCAPE" || img.type === "PORTRAIT",
@@ -124,7 +125,7 @@ const AlphaCard = ({
     >
       <div
         className={clsx([
-          "card md:card-side h-[30rem] w-full max-w-4xl flex-none justify-center",
+          "card md:card-side h-[30rem] w-full max-w-5xl flex-none justify-center",
           "bg-base-100 shadow-xl",
           index % 2 === 0 ? "md:flex-row-reverse text-right" : "text-left",
         ])}
@@ -138,6 +139,7 @@ const AlphaCard = ({
           {images.map((img: TImage, i: number) => {
             return (
               <Image
+                key={i}
                 src={img.url}
                 alt=""
                 fit="cover"
@@ -177,22 +179,20 @@ function VariantBeta({
   blockData: UseCuratedListBlockData;
 }) {
   const { itemsData, referenceFeedData } = blockData;
-  const feedPath = (referenceFeedData?.data as TFeed)?.path;
-
-  if (itemsData.isLoading) {
+  if (itemsData.isLoading || referenceFeedData?.isLoading) {
     return null;
   }
-
+  const feed = referenceFeedData?.data?.feed;
   return (
     <Block
       name={blockProps.name + " - Beta Variant"}
       settings={{ ...blockProps.settings, padded: false }}
     >
       <Grid
-        className={clsx([mainSpacing, smVerticalPadding])}
+        className={clsx([smSpacing, smVerticalPadding])}
         items={(itemsData.data?.items ?? []).map((item, index) => ({
           id: item.id,
-          content: <BetaCard index={index} item={item} feedPath={feedPath} />,
+          content: <BetaCard index={index} item={item} feed={feed} />,
         }))}
       />
     </Block>
@@ -201,15 +201,15 @@ function VariantBeta({
 
 const BetaCard = ({
   item,
-  feedPath,
+  feed,
 }: {
   item: TItem;
-  feedPath?: string;
+  feed?: TFeed;
   index: number;
 }) => {
   const maxImages = 1;
   const getImages = useGetAppItemImages(item.id);
-  const link = getItemLink(feedPath, item.id);
+  const link = getItemLink(feed, item.id);
   const images = getImages?.data?.images
     ?.filter(
       (img: TImage) => img.type === "LANDSCAPE" || img.type === "PORTRAIT",
@@ -258,23 +258,21 @@ function VariantGamma({
   blockData: UseCuratedListBlockData;
 }) {
   const { itemsData, referenceFeedData } = blockData;
-  const feedPath = (referenceFeedData?.data as TFeed)?.path;
-  console.log("feedPath", feedPath);
-
-  if (itemsData.isLoading) {
+  if (itemsData.isLoading || referenceFeedData?.isLoading) {
     return null;
   }
+  const feed = referenceFeedData?.data?.feed;
 
   return (
     <Block
-      name={blockProps.name + " - Alpha Variant"}
+      name={blockProps.name + " - Gamma Variant"}
       settings={{ ...blockProps.settings }}
     >
       <Grid
-        className={clsx([smSpacing, xsVerticalPadding, "auto-rows-auto"])}
+        className={clsx([xsSpacing, xsVerticalPadding, "auto-rows-auto"])}
         items={(itemsData.data?.items ?? []).map((item, index) => ({
           id: item.id,
-          content: <GammaCard index={index} item={item} feedPath={feedPath} />,
+          content: <GammaCard index={index} item={item} feed={feed} />,
         }))}
       />
     </Block>
@@ -283,13 +281,13 @@ function VariantGamma({
 
 const GammaCard = ({
   item,
-  feedPath,
+  feed,
 }: {
   item: TItem;
-  feedPath?: string;
+  feed?: TFeed;
   index: number;
 }) => {
-  const link = getItemLink(feedPath, item.id);
+  const link = getItemLink(feed, item.id);
 
   return (
     <ScrollInFade
@@ -300,9 +298,7 @@ const GammaCard = ({
     >
       <div className="card-body">
         <Heading headingSize="sm">{item.name}</Heading>
-        <Text textSize="sm" className="line-clamp-2">
-          {item.description}
-        </Text>
+        <Text textSize="sm">{item.description}</Text>
         {link && (
           <Link as="Link" to={link}>
             Goto Item
