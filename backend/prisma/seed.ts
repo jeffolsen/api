@@ -1,8 +1,11 @@
 import "dotenv/config";
-import prismaClient, { ImageType, Prisma, SubjectType } from "../src/db/client";
-import { passwordTransform } from "../src/schemas/profile";
+import { randomUUID } from "node:crypto";
+import { PrismaClient, Prisma } from "../src/generated/prisma/client";
+import { hashValue } from "../src/util/bcrypt";
 import content from "content";
 import sortWord from "../src/util/sortWord";
+
+const prismaClient = new PrismaClient();
 
 async function main() {
   for (const name of content.deletes.tags) {
@@ -58,66 +61,101 @@ async function main() {
     });
   }
 
-  const { ADMIN_USER, ADMIN_PASSWORD, ADMIN_API_SLUG, ADMIN_API_ORIGIN } =
-    process.env;
-  if (
-    !!ADMIN_USER &&
-    !!ADMIN_PASSWORD &&
-    !!ADMIN_API_SLUG &&
-    !!ADMIN_API_ORIGIN
-  ) {
+  const { ADMIN_USER, ADMIN_PASSWORD, ADMIN_API_SLUG } = process.env;
+  if (!!ADMIN_USER && !!ADMIN_PASSWORD && !!ADMIN_API_SLUG) {
+    // get the profile and all items with a slug that matches the content slugs
     const profile = await prismaClient.profile.upsert({
       where: { email: process.env.ADMIN_USER },
       update: {
-        password: await passwordTransform.parseAsync(
-          process.env.ADMIN_PASSWORD,
-        ),
+        password: await hashValue(process.env.ADMIN_PASSWORD as string),
       },
       create: {
         email: process.env.ADMIN_USER as string,
-        password: await passwordTransform.parseAsync(
-          process.env.ADMIN_PASSWORD,
-        ),
+        password: await hashValue(process.env.ADMIN_PASSWORD as string),
       },
-      include: { items: true },
+      include: {
+        items: {
+          where: {
+            slug: { in: content.upserts.items?.map(({ slug }) => slug) },
+          },
+        },
+      },
     });
-    const apiKeyValue = prismaClient.apiKey.generateKeyValue();
-    const apiKey = await prismaClient.apiKey.upsert({
+    const apiKeyValue = randomUUID();
+    await prismaClient.apiKey.upsert({
       where: { profileId: profile.id, slug: ADMIN_API_SLUG },
-      update: {},
+      update: {
+        origin: null,
+      },
       create: {
         profileId: profile.id,
         slug: ADMIN_API_SLUG,
-        origin: ADMIN_API_ORIGIN as string,
         value: apiKeyValue,
       },
     });
     console.log(`Admin API key value: ${apiKeyValue}`);
 
-    if (profile.items.length < 10) {
-      for (const item of content.upserts.items ?? []) {
-        const { tags: tagNames, images: imageUrls, name, description } = item;
-        const tags = await prismaClient.tag.findMany({
-          where: { name: { in: tagNames } },
-        });
-        const images = await prismaClient.image.findMany({
-          where: { url: { in: imageUrls } },
-        });
-        await prismaClient.item.create({
-          data: {
-            name,
-            sortName: sortWord(name),
-            description,
-            authorId: profile.id,
-            isPrivate: !!item.isPrivate,
-            publishedAt: new Date(),
-            tags: {
-              create: tags.map(({ id }) => ({ tagId: id })),
+    if (profile.items.length < content.upserts.items?.length) {
+      for (const item of content.upserts.items) {
+        const {
+          tags: tagNames,
+          images: imageUrls,
+          name,
+          description,
+          slug,
+        } = item;
+
+        await prismaClient.$transaction(async (tx) => {
+          const newTagsIds = (
+            await prismaClient.tag.findMany({
+              where: { name: { in: tagNames } },
+            })
+          ).map((tag: { id: number }) => tag.id);
+          const newImagesIds = (
+            await prismaClient.image.findMany({
+              where: { url: { in: imageUrls } },
+            })
+          ).map((image: { id: number }) => image.id);
+
+          // maybe diff the new ids with existing ones before update
+          await prismaClient.item.upsert({
+            where: { authorId: profile.id, slug },
+            update: {
+              name,
+              sortName: sortWord(name),
+              description,
+              authorId: profile.id,
+              isPrivate: !!item.isPrivate,
+              publishedAt: new Date(),
+              tags: {
+                deleteMany: {},
+                create: newTagsIds.map((id: number) => ({ tagId: id })),
+              },
+              images: {
+                deleteMany: {},
+                create: newImagesIds.map((id: number) => ({
+                  imageId: id,
+                })),
+              },
             },
-            images: {
-              create: images.map(({ id }) => ({ imageId: id })),
+            create: {
+              name,
+              sortName: sortWord(name),
+              description,
+              authorId: profile.id,
+              isPrivate: !!item.isPrivate,
+              slug: slug,
+              publishedAt: new Date(),
+              tags: {
+                create: newTagsIds.map((id: number) => ({ tagId: id })),
+              },
+              images: {
+                create: newImagesIds.map((id: number) => ({
+                  imageId: id,
+                })),
+              },
             },
-          },
+          });
         });
       }
     }

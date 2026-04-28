@@ -10,6 +10,7 @@
     "build": "prisma generate && rimraf dist && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "start": "node dist/server.js",
     "seed": "yarn add git+ssh://git@github.com/jeffolsen/content.git && tsc && prisma db seed",
+    "content": "yarn add git+ssh://git@github.com/jeffolsen/content.git",
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint"

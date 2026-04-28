@@ -5,6 +5,7 @@ import {
   idArraySchema,
   idStringSchema,
   publishedAtAndExpiredAtSchema,
+  slugArraySchema,
 } from "./properties";
 import { tagNameArraySchema } from "./tag";
 import { dateRangeArraySchema } from "./dateRange";
@@ -99,6 +100,16 @@ export const GetAllItemsQuerySchema = z.object({
       return [];
     }, idArraySchema)
     .default([]),
+  slugs: z.preprocess((val) => {
+    if (typeof val === "string") {
+      const slugArray = val
+        .split(",")
+        .map((slug) => slug.trim())
+        .filter(Boolean);
+      return slugArray;
+    }
+    return [];
+  }, slugArraySchema),
   searchName: z.string().optional(),
   sort: z.preprocess((val) => {
     if (typeof val === "string") {

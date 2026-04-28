@@ -132,6 +132,7 @@ model Component {
 
 model Item {
   id           Int         @id @default(autoincrement())
+  slug         String      @unique
   name         String
   description  String?
   sortName     String      @map("sort_name")

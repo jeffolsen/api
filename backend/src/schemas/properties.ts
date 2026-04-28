@@ -10,6 +10,8 @@ import {
   MESSAGE_IDS_UNIQUE,
   MESSAGE_PASSWORD_FORMAT,
   MESSAGE_SESSION_USER_AGENT,
+  MESSAGE_SLUG,
+  MESSAGE_SLUGS_UNIQUE,
 } from "@config/errorMessages";
 import {
   NUMERIC_CODE_REGEX,
@@ -38,6 +40,13 @@ export const idSchema = z.number(MESSAGE_ID);
 export const idArraySchema = z.array(z.number(MESSAGE_ID)).refine((items) => {
   return new Set(items).size === items.length;
 }, MESSAGE_IDS_UNIQUE);
+
+export const slugArraySchema = z
+  .array(z.string(MESSAGE_SLUG))
+  .refine((items) => {
+    return new Set(items).size === items.length;
+  }, MESSAGE_SLUGS_UNIQUE);
+
 export const dateTimeSchema = z.iso.datetime();
 
 export const userAgentSchema = z.string(MESSAGE_SESSION_USER_AGENT);

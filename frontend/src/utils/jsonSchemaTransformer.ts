@@ -3,8 +3,8 @@ import { FormComponentProps } from "@/components/inputs/Input";
 import {
   convertIdArrayToNumbers,
   convertNumbersToIdArray,
-  convertStringsToTagnameArray,
-  convertTagnameArrayToStrings,
+  convertStringsToStringPropertyArray,
+  convertStringPropertyArrayToStrings,
 } from "@/utils/formToApiMapper";
 
 function getMaxItems(schema: JSONSchemaForArray): {
@@ -185,14 +185,15 @@ export const propertyValuesFromFormMapper = (values: {
   return {
     ...rest,
     ...(!!tagAllowList && {
-      tagAllowList: convertTagnameArrayToStrings(
+      tagAllowList: convertStringPropertyArrayToStrings(
+        "name",
         tagAllowList as { name: string }[],
       ),
     }),
     ...(!!itemAllowList && {
-      itemAllowList: convertIdArrayToNumbers(
-        "itemId",
-        itemAllowList as { itemId: number }[],
+      itemAllowList: convertStringPropertyArrayToStrings(
+        "slug",
+        itemAllowList as { slug: string }[],
       ),
     }),
     ...(!!referenceFeed && {
@@ -212,12 +213,15 @@ export const propertyValuesToFormMapper = (
   return {
     ...rest,
     ...(!!tagAllowList && {
-      tagAllowList: convertStringsToTagnameArray(tagAllowList as string[]),
+      tagAllowList: convertStringsToStringPropertyArray(
+        "name",
+        tagAllowList as string[],
+      ),
     }),
     ...(!!itemAllowList && {
-      itemAllowList: convertNumbersToIdArray(
-        "itemId",
-        itemAllowList as number[],
+      itemAllowList: convertStringsToStringPropertyArray(
+        "slug",
+        itemAllowList as string[],
       ),
     }),
     ...(!!referenceFeed && {

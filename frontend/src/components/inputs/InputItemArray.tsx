@@ -19,7 +19,7 @@ import { Plus } from "lucide-react";
 import ComponentSchemaArrayOrderable from "@/components/partials/ComponentSchemaArrayOrderable";
 import FieldSetWrapperWithMinMax from "@/components/partials/FieldSetWrapper";
 
-type ItemIdField = { id: string; itemId: TItem["id"]; name: TItem["name"] };
+type ItemIdField = { id: string; slug: TItem["slug"]; name: TItem["name"] };
 type ItemIdArrayFields = Array<ItemIdField>;
 
 function ItemArrayInput(
@@ -50,7 +50,7 @@ function ItemArrayInput(
   const items = (getItems.data as GetItemsResponse)?.items || [];
 
   const getExistingItemQuery = useGetItems({
-    ids: (fields as ItemIdArrayFields).map((field) => field.itemId),
+    slugs: (fields as ItemIdArrayFields).map((field) => field.slug),
   });
   const existingItems = (getExistingItemQuery.data as GetItemsResponse)?.items;
 
@@ -69,7 +69,7 @@ function ItemArrayInput(
                   key={field.id}
                   label={
                     field.name ||
-                    (existingItems?.find((item) => item.id === field.itemId)
+                    (existingItems?.find((item) => item.slug === field.slug)
                       ?.name as string)
                   }
                   fields={fields}
@@ -100,10 +100,10 @@ function ItemArrayInput(
             {items?.map((item) => (
               <ComboboxOption
                 className="flex items-center gap-2 cursor-pointer rounded px-4 py-3"
-                key={item.id}
+                key={item.slug}
                 value={{
                   id: crypto.randomUUID(),
-                  itemId: item.id,
+                  slug: item.slug,
                   name: item.name,
                 }}
               >

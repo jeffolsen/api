@@ -190,6 +190,7 @@ type AuthenticateWithApiKeyInput = {
 export const authenticateWithApiKey = async ({
   apiKey,
   apiSlug,
+  origin,
 }: AuthenticateWithApiKeyInput): Promise<AuthenticateWithApiKeyResult> => {
   if (!apiKey || !apiSlug) return null;
 
@@ -199,6 +200,13 @@ export const authenticateWithApiKey = async ({
       value: apiKey,
     },
   });
+
+  // maybe if the record has no origin then the provided origin is evaluated against an env value
+  throwError(
+    apiKeyRecord && (apiKeyRecord.origin === origin || !apiKeyRecord.origin),
+    BAD_REQUEST,
+    MESSAGE_INVALID_TOKEN,
+  );
 
   return apiKeyRecord;
 };

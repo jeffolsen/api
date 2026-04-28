@@ -1,6 +1,7 @@
 import e from "express";
 
 export const MESSAGE_ID = "Invalid id";
+export const MESSAGE_SLUG = "Invalid slug";
 export const MESSAGE_CODE_TYPE = "Invalid code type";
 export const MESSAGE_CODE_VALUE = "Invalid code value";
 export const MESSAGE_CODE_USED_AT_FORMAT = "Invalid usedAt date";
@@ -39,6 +40,7 @@ export const MESSAGE_DATE_TIME_FORMAT = "Invalid date time format";
 export const MESSAGE_START_END_DATE = "Start date must be before end date";
 export const MESSAGE_TAGS_UNIQUE = "Tags must be unique";
 export const MESSAGE_IDS_UNIQUE = "IDs must be unique";
+export const MESSAGE_SLUGS_UNIQUE = "SLugs must be unique";
 export const MESSAGE_DATE_RANGES_NOT_FOUND = "Date range(s) not found";
 export const MESSAGE_IMAGES_NOT_FOUND = "Image(s) not found";
 export const MESSAGE_TAGS_NOT_FOUND = "Tag(s) not found";

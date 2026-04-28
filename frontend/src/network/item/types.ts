@@ -6,6 +6,7 @@ import { TTagInput, TTagName } from "@/network/tag/types";
 export type TItem = {
   id: number;
   name: string;
+  slug: string;
   description?: string;
   sortName: string;
   overrideLink?: string;
@@ -23,7 +24,7 @@ export type TItemRelations = {
 
 export type TItemInput = Omit<
   TItem,
-  "id" | "createdAt" | "updatedAt" | "sortName"
+  "id" | "slug" | "createdAt" | "updatedAt" | "sortName"
 >;
 
 export type TItemSort =
@@ -44,6 +45,7 @@ export type TItemQueryParams = {
   sort?: TItemSort[];
   tags?: TTagName[];
   ids?: TItem["id"][];
+  slugs?: TItem["slug"][];
 } & PaginationParams;
 
 export type GetItemsResponse = {

@@ -41,7 +41,7 @@ function useHeroCarouselBlockData({
   const items = useGetAppItems(
     {
       pageSize,
-      ids: itemAllowList,
+      slugs: itemAllowList,
     },
     { placeholderData: keepPreviousData },
   );
@@ -85,7 +85,7 @@ type VariantNames = keyof typeof variants;
 type PropertyValues = {
   variant: VariantNames;
   isPrimaryContent: boolean;
-  itemAllowList: number[];
+  itemAllowList: string[];
   referenceFeed?: number[];
 };
 

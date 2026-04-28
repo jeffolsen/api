@@ -1,13 +1,15 @@
-export function convertTagnameArrayToStrings(
-  tagArray: Array<{ name: string }>,
+export function convertStringPropertyArrayToStrings(
+  key: string,
+  stringPropertyArray: Array<{ [key: string]: string }>,
 ): string[] {
-  return tagArray.map((tag) => tag.name);
+  return stringPropertyArray.map((item) => item[key]);
 }
 
-export function convertStringsToTagnameArray(
-  tagNames: string[],
-): Array<{ name: string }> {
-  return tagNames.map((name) => ({ name }));
+export function convertStringsToStringPropertyArray(
+  key: string,
+  strings: string[],
+): Array<{ [key: string]: string }> {
+  return strings.map((str) => ({ [key]: str }));
 }
 
 export function convertIdArrayToNumbers(

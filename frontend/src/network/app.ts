@@ -105,6 +105,7 @@ export const useGetAppItems = (
         params: {
           ...queryParams,
           ids: queryParams?.ids?.join(","),
+          slugs: queryParams?.slugs?.join(","),
           tags: queryParams?.tags?.join(","),
           sort: queryParams?.sort?.join(","),
         },
