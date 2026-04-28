@@ -10,7 +10,7 @@ import { useGetAppItems, useGetAppFeedById } from "@/network/app";
 const variants = {
   alpha: {
     variant: "alpha",
-    width: "lg",
+    width: "xl",
     pageSize: 5,
   },
   beta: {
@@ -20,7 +20,7 @@ const variants = {
   },
   gamma: {
     variant: "gamma",
-    width: "md",
+    width: "lg",
     pageSize: 10,
   },
 } as const;

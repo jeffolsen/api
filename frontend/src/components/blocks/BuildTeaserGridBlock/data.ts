@@ -15,11 +15,11 @@ const variants = {
   },
   beta: {
     variant: "beta",
-    width: "xl",
+    width: "lg",
   },
   gamma: {
     variant: "gamma",
-    width: "xl",
+    width: "lg",
   },
 } as const;
 
