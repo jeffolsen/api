@@ -22,6 +22,12 @@ router.get(
   itemImageApi.getItemImageById,
 );
 
+router.post(
+  ITEM_ID_PARAM + IMAGE_ROUTES,
+  authorizeScope([READ_ITEM_SCOPE, READ_IMAGE_SCOPE, UPDATE_ITEM_SCOPE]),
+  itemImageApi.addItemImage,
+);
+
 router.delete(
   ITEM_ID_PARAM + IMAGE_ROUTES + ID_PARAM,
   authorizeScope([READ_ITEM_SCOPE, READ_IMAGE_SCOPE, UPDATE_ITEM_SCOPE]),

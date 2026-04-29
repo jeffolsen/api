@@ -22,6 +22,12 @@ router.get(
   itemTagApi.getItemTagById,
 );
 
+router.post(
+  ITEM_ID_PARAM + TAG_ROUTES,
+  authorizeScope([READ_ITEM_SCOPE, READ_TAG_SCOPE, UPDATE_ITEM_SCOPE]),
+  itemTagApi.addItemTag,
+);
+
 router.delete(
   ITEM_ID_PARAM + TAG_ROUTES + ID_PARAM,
   authorizeScope([READ_ITEM_SCOPE, READ_TAG_SCOPE, UPDATE_ITEM_SCOPE]),

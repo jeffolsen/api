@@ -5,6 +5,7 @@ import {
   DELETE_DATE_RANGE_SCOPE,
   READ_ITEM_SCOPE,
   READ_DATE_RANGE_SCOPE,
+  CREATE_DATE_RANGE_SCOPE,
 } from "@config/scopes";
 import { DATE_RANGE_ROUTES, ID_PARAM, ITEM_ID_PARAM } from "@config/routes";
 import itemDateRangeApi from "@controllers/itemDateRange";
@@ -21,6 +22,17 @@ router.get(
   ITEM_ID_PARAM + DATE_RANGE_ROUTES + ID_PARAM,
   authorizeScope([READ_ITEM_SCOPE, READ_DATE_RANGE_SCOPE]),
   itemDateRangeApi.getItemDateRangeById,
+);
+
+router.post(
+  ITEM_ID_PARAM + DATE_RANGE_ROUTES,
+  authorizeScope([
+    READ_ITEM_SCOPE,
+    READ_DATE_RANGE_SCOPE,
+    UPDATE_ITEM_SCOPE,
+    CREATE_DATE_RANGE_SCOPE,
+  ]),
+  itemDateRangeApi.addItemDateRange,
 );
 
 router.delete(

@@ -8,7 +8,8 @@ import {
   slugArraySchema,
 } from "./properties";
 import { tagNameArraySchema } from "./tag";
-import { dateRangeArraySchema } from "./dateRange";
+import { dateRangeArraySchema, dateRangeSchema } from "./dateRange";
+import { MESSAGE_START_END_DATE } from "@config/errorMessages";
 import sortWord from "@util/sortWord";
 
 const validItemSortValues = [
@@ -159,3 +160,22 @@ export const GetItemResourceByIdSchema = z.object({
   itemId: idStringSchema,
   id: idStringSchema,
 });
+
+export const AddItemImageByIdSchema = z.object({
+  itemId: idStringSchema,
+  id: idStringSchema.optional(),
+  url: z.string().optional(),
+});
+
+export const AddItemTagByIdSchema = z.object({
+  itemId: idStringSchema,
+  id: idStringSchema.optional(),
+  name: z.string().optional(),
+});
+
+export const AddItemDateRangeByIdSchema = z
+  .object({ itemId: idStringSchema })
+  .extend(dateRangeSchema.shape)
+  .refine((data) => new Date(data.startAt) <= new Date(data.endAt), {
+    message: MESSAGE_START_END_DATE,
+  });

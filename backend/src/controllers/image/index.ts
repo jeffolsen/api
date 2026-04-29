@@ -23,17 +23,22 @@ export const getAllImages: RequestHandler<
     req.query,
   );
 
-  const images = await prismaClient.image.findMany({
-    where: type
-      ? {
-          type: type,
-        }
-      : undefined,
-    ...getSortOrders(sort),
-    ...getPagination(page, pageSize),
-  });
+  const where = type && {
+    type: type,
+  };
 
-  res.status(OK).json({ images });
+  const [images, totalCount] = await prismaClient.$transaction([
+    prismaClient.image.findMany({
+      ...(where && { where }),
+      ...getSortOrders(sort),
+      ...getPagination(page, pageSize),
+    }),
+    prismaClient.image.count({
+      ...(where && { where }),
+    }),
+  ]);
+
+  res.status(OK).json({ images, totalCount });
 });
 
 export const getImageById: RequestHandler = catchErrors(

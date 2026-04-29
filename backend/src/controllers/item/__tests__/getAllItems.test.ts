@@ -110,17 +110,21 @@ describe("GET /api/items", () => {
     expect(prismaMock.item.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
-          publishedAt: { lte: expect.any(Date) },
-          OR: [
+          AND: [
             {
-              expiredAt: {
-                equals: null,
-              },
-            },
-            {
-              expiredAt: {
-                gt: expect.any(Date),
-              },
+              publishedAt: { lte: expect.any(Date) },
+              OR: [
+                {
+                  expiredAt: {
+                    equals: null,
+                  },
+                },
+                {
+                  expiredAt: {
+                    gt: expect.any(Date),
+                  },
+                },
+              ],
             },
           ],
         }),
