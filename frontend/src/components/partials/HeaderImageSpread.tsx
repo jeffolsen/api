@@ -11,7 +11,7 @@ export default function HeaderImageSpread() {
     return shuffleArray<TImage>(getImages.data?.images || []).slice(0, 3);
   }, [getImages.data?.images]);
   return (
-    <div className={clsx("flex justify-center")}>
+    <div className={clsx("flex justify-center bg-base-300")}>
       <div
         className={clsx([
           "w-full max-w-screen-2xl h-32 sm:h-36 flex items-stretch relative",

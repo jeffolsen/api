@@ -97,12 +97,12 @@ function FormScheduleSubmit({ control, triggerSubmit }: FormSubmitProps) {
       )}
       <div className="flex gap-2 justify-between w-full">
         {showSchedule && (
-          <Button color={"error"} onClick={handleScheduleCancel}>
+          <Button color={"accent"} onClick={handleScheduleCancel}>
             Cancel
           </Button>
         )}
         <Button
-          color={showSchedule ? "primary" : undefined}
+          color={showSchedule ? "primary" : "secondary"}
           onClick={handleSchedule}
         >
           Schedule

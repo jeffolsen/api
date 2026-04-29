@@ -1,14 +1,10 @@
 import { HeadingLevelProvider } from "@/components/common/Heading";
 import Button from "@/components/common/Button";
 import { TComponent } from "@/network/component";
-import BreadCrumbs from "@/components/layout/BreadCrumbs";
 import { useLoaderData } from "react-router";
-import { Suspense } from "react";
-import Blocks from "@/components/blocks/Blocks";
 import ThemeToggle from "@/components/partials/ThemeToggle";
 import clsx from "clsx";
 import Logo from "@/components/partials/Logo";
-import HeaderImageSpread from "@/components/partials/HeaderImageSpread";
 import {
   Popover,
   PopoverBackdrop,
@@ -16,6 +12,8 @@ import {
   PopoverPanel,
 } from "@headlessui/react";
 import LogoutButton from "@/components/partials/LogoutButton";
+import StickySubHeader from "../partials/StickySubHeader";
+import HeaderHero from "../partials/HeaderHero";
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -55,32 +53,8 @@ function Header() {
           </div>
         </div>
       </header>
-      <div
-        className={clsx([
-          "flex flex-col bg-neutral",
-          "max-h-lvh md:max-h-auto",
-          hero &&
-            "h-[calc(100lvh-64px)] sm:h-[calc(100lvh-82px)] md:h-[calc(100lvh-86px)] z-20 relative",
-        ])}
-      >
-        {hero && (
-          <div className="flex-grow">
-            <Suspense
-              fallback={<div className="skeleton w-full h-full bg-base-100" />}
-            >
-              <Blocks.HeroCarousel
-                component={{ ...hero, name: "" }}
-                params={{}}
-                path=""
-              />
-            </Suspense>
-          </div>
-        )}
-        <HeaderImageSpread />
-      </div>
-      <div className="bg-secondary text-secondary-content top-[64px] sm:top-[82px] mdtop-[86px] sticky z-20 shadow-lg">
-        <BreadCrumbs />
-      </div>
+      <HeaderHero hero={hero} />
+      <StickySubHeader />
     </HeadingLevelProvider>
   );
 }
