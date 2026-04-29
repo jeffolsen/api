@@ -15,6 +15,7 @@ import { validateItemExists, validateOverridLink } from "@/services/item";
 
 type GetItemsQuery = {
   privateOnly?: boolean;
+  liveOnly?: boolean;
   searchName?: string;
   tags?: string;
   ids?: string;
@@ -31,8 +32,17 @@ export const getAllItems: RequestHandler<
   GetItemsQuery
 > = catchErrors(async (req: Request, res: Response) => {
   const { profileId } = req;
-  const { ids, slugs, tags, sort, page, pageSize, searchName, privateOnly } =
-    GetAllItemsQuerySchema.parse(req.query);
+  const {
+    ids,
+    slugs,
+    tags,
+    sort,
+    page,
+    pageSize,
+    searchName,
+    privateOnly,
+    liveOnly,
+  } = GetAllItemsQuerySchema.parse(req.query);
 
   const where = {
     ...(privateOnly
@@ -40,6 +50,25 @@ export const getAllItems: RequestHandler<
           authorId: profileId,
         }
       : { OR: [{ isPrivate: false }, { authorId: profileId }] }),
+    ...(liveOnly && {
+      AND: [
+        {
+          publishedAt: { lte: new Date() },
+          OR: [
+            {
+              expiredAt: {
+                equals: null,
+              },
+            },
+            {
+              expiredAt: {
+                gt: new Date(),
+              },
+            },
+          ],
+        },
+      ],
+    }),
     ...(slugs.length && {
       slug: { in: slugs },
     }),
@@ -132,7 +161,7 @@ export const createItem: RequestHandler<
 
   const item = await prismaClient.$transaction(async (tx) => {
     const tags = tagNames.length
-      ? await prismaClient.tag.findMany({
+      ? await tx.tag.findMany({
           where: { name: { in: tagNames } },
         })
       : [];
@@ -191,8 +220,8 @@ export const updateItem: RequestHandler<
     expiredAt,
   } = CreateItemSchema.parse(req.body);
 
-  await validateOverridLink({ profileId, overrideLink });
   await validateItemExists({ profileId, itemId: id });
+  await validateOverridLink({ profileId, overrideLink });
 
   const updatedItem = await prismaClient.$transaction(async (tx) => {
     const tags = tagNames.length
@@ -256,8 +285,8 @@ export const modifyItem: RequestHandler<
     "Need to update something",
   );
 
-  await validateOverridLink({ profileId, overrideLink });
   await validateItemExists({ profileId, itemId: id });
+  await validateOverridLink({ profileId, overrideLink });
 
   const updatedItem = await prismaClient.item.update({
     where: { id: Number(id), authorId: profileId },

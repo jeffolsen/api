@@ -40,6 +40,8 @@ export const getItemTagById: RequestHandler = catchErrors(
   },
 );
 
+// addItemTag ?
+
 export const deleteItemTag: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {
     const { profileId } = req;

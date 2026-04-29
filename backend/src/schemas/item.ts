@@ -89,6 +89,7 @@ export type ModifyItemInput = z.infer<typeof ModifyItemSchema>;
 
 export const GetAllItemsQuerySchema = z.object({
   privateOnly: z.coerce.boolean().default(false),
+  liveOnly: z.coerce.boolean().default(false),
   ids: z
     .preprocess((val) => {
       if (typeof val === "string") {
