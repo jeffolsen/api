@@ -127,6 +127,7 @@ interface CreateItemBody {
   description?: string;
   tagNames?: string[];
   images?: number[];
+  richContent?: Record<string, unknown>;
   overrideLink?: string;
   publishedAt?: string;
   expiredAt?: string;
@@ -143,12 +144,14 @@ export const createItem: RequestHandler<
   CreateItemBody,
   unknown
 > = catchErrors(async (req: Request, res: Response) => {
+  console.log("createItem", req.body);
   const { profileId } = req;
   const {
     name,
     description,
     sortName,
     overrideLink,
+    richContent,
     tagNames,
     imageIds,
     dateRanges,
@@ -157,6 +160,7 @@ export const createItem: RequestHandler<
   } = CreateItemSchema.parse({
     ...req.body,
   });
+
   await validateOverridLink({ profileId, overrideLink });
 
   const item = await prismaClient.$transaction(async (tx) => {
@@ -181,6 +185,7 @@ export const createItem: RequestHandler<
         publishedAt,
         overrideLink,
         expiredAt,
+        richContent: richContent as Prisma.InputJsonValue,
         tags: {
           create: tags.map(({ id }) => ({ tagId: id })),
         },
@@ -206,6 +211,7 @@ export const updateItem: RequestHandler<
   CreateItemBody,
   unknown
 > = catchErrors(async (req: Request, res: Response) => {
+  console.log("createItem", req.body);
   const { profileId } = req;
   const { id } = req.params || {};
   const {
@@ -213,6 +219,7 @@ export const updateItem: RequestHandler<
     description,
     sortName,
     overrideLink,
+    richContent,
     tagNames,
     imageIds,
     dateRanges,
@@ -237,6 +244,7 @@ export const updateItem: RequestHandler<
         description,
         sortName,
         overrideLink,
+        richContent: richContent as Prisma.InputJsonValue,
         publishedAt,
         expiredAt,
         tags: {

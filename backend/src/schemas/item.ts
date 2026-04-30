@@ -9,6 +9,7 @@ import {
 } from "./properties";
 import { tagNameArraySchema } from "./tag";
 import { dateRangeArraySchema, dateRangeSchema } from "./dateRange";
+import { richContentSchema } from "./richContent";
 import { MESSAGE_START_END_DATE } from "@config/errorMessages";
 import sortWord from "@util/sortWord";
 
@@ -43,6 +44,7 @@ export const CreateItemSchema = z
     name: nameSchema,
     description: descriptionSchema.optional(),
     overrideLink: z.string().optional(),
+    richContent: richContentSchema,
     tagNames: tagNameArraySchema.default([]),
     imageIds: idArraySchema.default([]),
     dateRanges: dateRangeArraySchema.default([]),

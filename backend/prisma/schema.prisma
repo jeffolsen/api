@@ -142,6 +142,7 @@ model Item {
   updatedAt    DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
   publishedAt  DateTime?   @map("published_at") @db.Timestamptz(6)
   expiredAt    DateTime?   @map("expired_at") @db.Timestamptz(6)
+  richContent  Json        @default("{}") @map("rich_content")
   author       Profile?    @relation("ProfileItems", fields: [authorId], references: [id], onDelete: SetNull)
   authorId     Int?        @map("author_id")
   dateRanges   DateRange[] @relation("ItemDateRanges")
