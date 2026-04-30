@@ -35,6 +35,7 @@ export type DecorativeFormComponentName = "Subheading";
 export type AtomicFormComponentName =
   | "TextInput"
   | "TextAreaInput"
+  | "InputTextRichContent"
   | "DateTimeInput"
   | "ToggleInput"
   | "RadioInput"
@@ -113,6 +114,13 @@ export const FormInput = (props: FormComponentProps & FromFormProps) => {
   ) : props.componentName === "TextAreaInput" ? (
     <Suspense fallback={<FallBackInput />}>
       <Inputs.TextArea
+        {...props}
+        errors={get(props.errors || {}, props.dataName)}
+      />
+    </Suspense>
+  ) : props.componentName === "InputTextRichContent" ? (
+    <Suspense fallback={<FallBackInput />}>
+      <Inputs.TextRichContent
         {...props}
         errors={get(props.errors || {}, props.dataName)}
       />

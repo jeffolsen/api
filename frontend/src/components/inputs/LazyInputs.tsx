@@ -34,6 +34,10 @@ const LazyLoadedInputTextArea = lazy(
   () => import("@/components/inputs/InputTextArea"),
 );
 
+const LazyLoadedInputTextRichContent = lazy(
+  () => import("@/components/inputs/InputTextRichContent"),
+);
+
 const LazyLoadedInputToggle = lazy(
   () => import("@/components/inputs/InputToggle"),
 );
@@ -48,6 +52,7 @@ const Inputs = {
   TagArray: LazyLoadedInputTagArray,
   Text: LazyLoadedInputText,
   TextArea: LazyLoadedInputTextArea,
+  TextRichContent: LazyLoadedInputTextRichContent,
   Toggle: LazyLoadedInputToggle,
 };
 

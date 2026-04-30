@@ -8,6 +8,7 @@ export type TItem = {
   name: string;
   slug: string;
   description?: string;
+  richContent?: Record<string, unknown>;
   sortName: string;
   overrideLink?: string;
   publishedAt?: string | null;

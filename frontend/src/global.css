@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.tiptap.ProseMirror:focus-visible {
+  outline: none !important;
+}
+.tiptap.ProseMirror p,
+.tiptap.ProseMirror ul,
+.tiptap.ProseMirror ol,
+.tiptap.ProseMirror li {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.tiptap.ProseMirror .fake-h3-style {
+  font-size: 1.25rem; /* Size of an h3 */
+  /* font-weight: 700; */
+  display: block;
+  /* margin-top: 1rem; */
+  margin-bottom: 0.5rem;
+}

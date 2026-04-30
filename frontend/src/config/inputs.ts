@@ -163,6 +163,13 @@ export const DESCRIPTION_INPUT = {
 } as FormComponentProps;
 export const DESCRIPTION_DEFAULT = { description: "" };
 
+export const RICH_CONTENT_INPUT = {
+  dataName: "richContent",
+  displayName: "Content",
+  componentName: "InputTextRichContent",
+} as FormComponentProps;
+export const RICH_CONTENT_DEFAULT = { richContent: {} };
+
 export const PATH_INPUT = {
   dataName: "path",
   displayName: "Path",
@@ -205,7 +212,7 @@ export const TAGNAMES_INPUT = {
   displayName: "Tags",
   componentName: "TagArrayInput",
   input: {
-    rules: { maxLength: { value: 3, message: "You can select up to 3 tags" } },
+    rules: { maxLength: { value: 7, message: "You can select up to 7 tags" } },
   },
 } as FormComponentProps;
 export const TAGNAMES_DEFAULT = { tagNames: [] as { tagname: string }[] };
