@@ -1,5 +1,6 @@
 import { PropsWithChildren } from "react";
 import clsx from "clsx";
+import { widestWidth } from "./helpers/layoutStyles";
 
 export type WrapperProps = {
   width?: keyof typeof widths;
@@ -13,6 +14,7 @@ const widths = {
   md: "max-w-4xl",
   lg: "max-w-6xl",
   xl: "max-w-screen-2xl",
+  xxl: widestWidth,
 } as const;
 
 const Wrapper = ({

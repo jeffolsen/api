@@ -6,3 +6,5 @@ export const smSpacing = "gap-8 sm:gap-10 md:gap-12";
 export const smVerticalPadding = "pt-8 sm:pt-10 md:pt-12";
 export const xsSpacing = "gap-4";
 export const xsVerticalPadding = "pt-4 sm:pt-5 md:pt-6";
+
+export const widestWidth = "max-w-[1920px]";
