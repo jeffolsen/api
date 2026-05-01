@@ -4,6 +4,7 @@ import { TImage } from "@/network/image";
 import Image from "@/components/common/Image";
 import { useGetAppImages } from "@/network/app";
 import { clsx } from "clsx";
+import { widestWidth } from "@/components/common/helpers/layoutStyles";
 
 export default function HeaderImageSpread() {
   const getImages = useGetAppImages({ type: "LANDSCAPE" });
@@ -11,10 +12,11 @@ export default function HeaderImageSpread() {
     return shuffleArray<TImage>(getImages.data?.images || []).slice(0, 3);
   }, [getImages.data?.images]);
   return (
-    <div className={clsx("flex justify-center bg-base-300")}>
+    <div className={clsx("flex justify-center")}>
       <div
         className={clsx([
-          "w-full max-w-screen-2xl h-32 sm:h-36 flex items-stretch relative",
+          "w-full h-32 sm:h-36 flex items-stretch relative",
+          widestWidth,
         ])}
       >
         {getImages.isLoading || images.length === 0 ? (

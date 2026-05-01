@@ -5,6 +5,7 @@ import Heading, { HeadingProps } from "@/components/common/Heading";
 import { LocalFeedComponent } from "@/config/routes";
 import { TComponent } from "@/network/component";
 import ScrollInFade from "@/components/common/ScrollInFade";
+import clsx, { ClassValue } from "clsx";
 
 export type BlockWrapperProps<T> = {
   name?: string;
@@ -14,6 +15,7 @@ export type BlockWrapperProps<T> = {
     width?: WrapperProps["width"];
     padded?: WrapperProps["padded"];
     isPrimaryContent: boolean;
+    themeCss?: ClassValue;
   } & T;
 };
 
@@ -24,12 +26,14 @@ function BlockWrapper<T extends Record<string, unknown>>({
   className,
   children,
 }: PropsWithChildren<BlockWrapperProps<T>>) {
+  console.log(settings);
   if (settings.isPrimaryContent) {
     return (
       <InnerBlockWrapper
         name={name}
         headingProps={headingProps}
         settings={settings}
+        className={className}
       >
         {children}
       </InnerBlockWrapper>
@@ -57,25 +61,33 @@ function InnerBlockWrapper<T extends Record<string, unknown>>({
   children,
 }: PropsWithChildren<BlockWrapperProps<T>>) {
   return (
-    <Wrapper
-      width={settings.width || "md"}
-      padded={settings.padded}
-      className={className}
+    <div
+      className={clsx([
+        "w-full h-full",
+        settings?.themeCss
+          ? settings.themeCss
+          : "text-base-content/80 pb-16 pt-8",
+      ])}
     >
       {name && (
-        <ScrollInFade>
+        <ScrollInFade className="mx-auto max-w-screen-lg w-full">
           <Heading
             headingSize="lg"
-            headingStyles={"uppercase font-bold text-base/80 text-center"}
-            headingDecorator={settings.isPrimaryContent ? "strike" : "none"}
+            headingStyles={clsx(["uppercase font-bold text-center"])}
             {...headingProps}
           >
             {name}
           </Heading>
         </ScrollInFade>
       )}
-      {children}
-    </Wrapper>
+      <Wrapper
+        width={settings.width || "md"}
+        padded={settings.padded}
+        className={className}
+      >
+        {children}
+      </Wrapper>
+    </div>
   );
 }
 

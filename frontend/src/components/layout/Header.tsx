@@ -1,7 +1,7 @@
 import { HeadingLevelProvider } from "@/components/common/Heading";
 import Button from "@/components/common/Button";
 import { TComponent } from "@/network/component";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useLocation } from "react-router";
 import ThemeToggle from "@/components/partials/ThemeToggle";
 import clsx from "clsx";
 import Logo from "@/components/partials/Logo";
@@ -14,6 +14,7 @@ import {
 import LogoutButton from "@/components/partials/LogoutButton";
 import StickySubHeader from "../partials/StickySubHeader";
 import HeaderHero from "../partials/HeaderHero";
+import BreadCrumbs from "./BreadCrumbs";
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -23,11 +24,14 @@ const navItems = [
 ];
 
 function Header() {
+  const location = useLocation();
   const data = useLoaderData();
   const hero = data.pageLayout.components.find(
     (c: TComponent) =>
       c.typeName === "HeroCarousel" && c.propertyValues.location === "header",
   );
+
+  console.log("location", location);
 
   return (
     <HeadingLevelProvider>
@@ -54,7 +58,9 @@ function Header() {
         </div>
       </header>
       <HeaderHero hero={hero} />
-      <StickySubHeader />
+      <StickySubHeader>
+        {location.pathname !== "/" ? <BreadCrumbs /> : <div className="h-4" />}
+      </StickySubHeader>
     </HeadingLevelProvider>
   );
 }

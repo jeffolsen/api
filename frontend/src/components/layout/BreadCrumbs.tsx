@@ -22,8 +22,6 @@ function BreadCrumbs() {
     crumbs.push(accumulatedPath);
   });
 
-  if (crumbs.length <= 1) return null;
-
   return (
     <Wrapper width="md">
       <div className="breadcrumbs text-sm w-full">

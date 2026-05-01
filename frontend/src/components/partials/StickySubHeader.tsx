@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import BreadCrumbs from "../layout/BreadCrumbs";
-import { useEffect, useRef, useState } from "react";
+import { PropsWithChildren, useEffect, useRef, useState } from "react";
+import { widestWidth } from "@/components/common/helpers/layoutStyles";
 
-function StickySubHeader() {
+function StickySubHeader({ children }: PropsWithChildren) {
   const [isAtTop, setIsAtTop] = useState<boolean>(true);
   const sentinelRef = useRef(null);
 
@@ -27,7 +27,7 @@ function StickySubHeader() {
       <div ref={sentinelRef} style={{ height: "1px", marginBottom: "-1px" }} />
       <div
         className={clsx([
-          "bg-base-300",
+          "bg-black/10",
           "top-[64px] sm:top-[82px] mdtop-[86px] sticky z-20",
           !isAtTop && "shadow-xl",
         ])}
@@ -35,13 +35,12 @@ function StickySubHeader() {
         <div
           className={clsx([
             "bg-secondary text-secondary-content w-full transition-all duration-200",
-            isAtTop ? "mx-auto max-w-screen-2xl" : "max-w-full",
+            isAtTop ? ["mx-auto", widestWidth] : "max-w-full",
           ])}
         >
-          <BreadCrumbs />
+          {children}
         </div>
       </div>
-      {/* Rest of your page */}
     </>
   );
 }
