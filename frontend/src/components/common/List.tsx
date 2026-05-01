@@ -1,10 +1,10 @@
 import clsx, { ClassValue } from "clsx";
 import { sizeClasses } from "@/components/common/helpers/contentStyles";
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 
 type Size = keyof typeof sizeClasses;
+
 type ListProps = {
-  items: ReactNode[];
   textSize?: Size;
   as?: "ul" | "ol";
   listDecorator?: boolean;
@@ -12,12 +12,12 @@ type ListProps = {
 };
 
 function List({
-  items,
   textSize = "none",
   listDecorator = true,
   as: Component = "ul",
   className,
-}: ListProps) {
+  children,
+}: PropsWithChildren<ListProps>) {
   const decoratorClasses =
     listDecorator && Component === "ul"
       ? "list-disc"
@@ -30,17 +30,19 @@ function List({
   return (
     <Component
       className={clsx(
-        "whitespace-pre-line list-inside",
+        "list-inside",
         decoratorClasses,
         sizeClasses[actualSize],
         className,
       )}
     >
-      {items.map((item, index) => (
-        <li key={index}>{item}</li>
-      ))}
+      {children}
     </Component>
   );
+}
+
+export function ListItem({ children }: PropsWithChildren) {
+  return <li>{children}</li>;
 }
 
 export default List;

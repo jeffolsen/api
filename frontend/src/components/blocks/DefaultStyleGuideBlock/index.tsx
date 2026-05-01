@@ -1,6 +1,5 @@
 import Button from "@/components/common/Button";
 import Heading, { HeadingLevelProvider } from "@/components/common/Heading";
-import List from "@/components/common/List";
 import Text from "@/components/common/Text";
 import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
 import Modal from "@/components/layout/Modal";
@@ -45,63 +44,6 @@ function StyleGuideBlock(config: BlockComponentStandardProps) {
         <Text textSize="md">Content for Heading md</Text>
         <Text textSize="sm">Content for Heading sm</Text>
         <Text textSize="xs">Content for Heading xs</Text>
-        <hr />
-        <List
-          textSize="lg"
-          listDecorator={false}
-          items={["undecorated List item 1", "undecorated List item 2"]}
-        />
-        <List
-          textSize="lg"
-          items={["unordered List item 1", "unordered List item 2"]}
-        />
-        <List
-          textSize="lg"
-          as="ol"
-          items={["ordered List item 1", "ordered List item 2"]}
-        />
-        <List
-          textSize="md"
-          listDecorator={false}
-          items={["undecorated List item 1", "undecorated List item 2"]}
-        />
-        <List
-          textSize="md"
-          items={["unordered List item 1", "unordered List item 2"]}
-        />
-        <List
-          textSize="md"
-          as="ol"
-          items={["ordered List item 1", "ordered List item 2"]}
-        />
-        <List
-          textSize="sm"
-          listDecorator={false}
-          items={["undecorated List item 1", "undecorated List item 2"]}
-        />
-        <List
-          textSize="sm"
-          items={["unordered List item 1", "unordered List item 2"]}
-        />
-        <List
-          textSize="sm"
-          as="ol"
-          items={["ordered List item 1", "ordered List item 2"]}
-        />
-        <List
-          textSize="xs"
-          listDecorator={false}
-          items={["undecorated List item 1", "undecorated List item 2"]}
-        />
-        <List
-          textSize="xs"
-          items={["unordered List item 1", "unordered List item 2"]}
-        />
-        <List
-          textSize="xs"
-          as="ol"
-          items={["ordered List item 1", "ordered List item 2"]}
-        />
         <hr />
         <Button onClick={() => setOpenModal(true)}>Default Button</Button>
         <Button color="primary">Primary Button</Button>

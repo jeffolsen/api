@@ -45,7 +45,7 @@ function Grid({
   return (
     <div
       className={clsx([
-        "w-full grid grid-flow-row auto-rows-fr gap-4",
+        "w-full grid grid-flow-row gap-4",
         ...columnClasses(mergedColumns),
         className,
       ])}
