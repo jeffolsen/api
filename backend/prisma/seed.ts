@@ -4,6 +4,7 @@ import { PrismaClient, Prisma } from "../src/generated/prisma/client";
 import { hashValue } from "../src/util/bcrypt";
 import content from "content";
 import sortWord from "../src/util/sortWord";
+import { richContentSchema } from "@/schemas/richContent";
 
 const prismaClient = new PrismaClient();
 
@@ -100,10 +101,14 @@ async function main() {
         const {
           tags: tagNames,
           images: imageUrls,
+          dateRanges,
+          richContent,
           name,
           description,
           slug,
         } = item;
+
+        const validatedContent = richContentSchema.parse(richContent);
 
         await prismaClient.$transaction(async (tx) => {
           const newTagsIds = (
@@ -116,6 +121,13 @@ async function main() {
               where: { url: { in: imageUrls } },
             })
           ).map((image: { id: number }) => image.id);
+          const newDateRanges = dateRanges?.map((dr) => {
+            return {
+              ...dr,
+              startAt: new Date(dr.startAt),
+              endAt: new Date(dr.endAt),
+            };
+          });
 
           // maybe diff the new ids with existing ones before update
           await prismaClient.item.upsert({
@@ -124,6 +136,7 @@ async function main() {
               name,
               sortName: sortWord(name),
               description,
+              richContent: validatedContent as Prisma.InputJsonValue,
               authorId: profile.id,
               isPrivate: !!item.isPrivate,
               publishedAt: new Date(),
@@ -137,11 +150,16 @@ async function main() {
                   imageId: id,
                 })),
               },
+              dateRanges: {
+                deleteMany: {},
+                create: newDateRanges,
+              },
             },
             create: {
               name,
               sortName: sortWord(name),
               description,
+              richContent: validatedContent as Prisma.InputJsonValue,
               authorId: profile.id,
               isPrivate: !!item.isPrivate,
               slug: slug,
@@ -153,6 +171,9 @@ async function main() {
                 create: newImagesIds.map((id: number) => ({
                   imageId: id,
                 })),
+              },
+              dateRanges: {
+                create: newDateRanges,
               },
             },
           });
