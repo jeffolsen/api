@@ -19,3 +19,10 @@
   /* margin-top: 1rem; */
   margin-bottom: 0.5rem;
 }
+
+main#main-content > div:first-child {
+  @apply !pt-16;
+}
+main#main-content > div:last-child {
+  @apply !pb-24;
+}

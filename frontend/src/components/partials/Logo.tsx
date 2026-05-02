@@ -6,7 +6,7 @@ function Logo() {
     <div
       className={clsx([
         "flex items-center relative",
-        "text-xl sm:text-2xl italic md:text-3xl p-4 sm:p-6 tracking-tight font-black whitespace-nowrap uppercase",
+        "text-2xl italic lg:text-3xl px-4 py-6 lg:px-6 tracking-tight font-black whitespace-nowrap uppercase",
         "text-neutral-content",
         // "text-transparent bg-clip-text bg-cover bg-center",
         // "bg-gradient-to-r from-primary to-accent via-secondary",

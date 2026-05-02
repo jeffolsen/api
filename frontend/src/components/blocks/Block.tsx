@@ -26,7 +26,6 @@ function BlockWrapper<T extends Record<string, unknown>>({
   className,
   children,
 }: PropsWithChildren<BlockWrapperProps<T>>) {
-  console.log(settings);
   if (settings.isPrimaryContent) {
     return (
       <InnerBlockWrapper
@@ -64,15 +63,14 @@ function InnerBlockWrapper<T extends Record<string, unknown>>({
     <div
       className={clsx([
         "w-full h-full",
-        settings?.themeCss
-          ? settings.themeCss
-          : "text-base-content/80 pb-16 pt-8",
+        settings?.location !== "header" && "pb-14 pt-8 gap-6 flex flex-col",
+        settings?.themeCss ? settings.themeCss : "text-base-content",
       ])}
     >
       {name && (
         <ScrollInFade className="mx-auto max-w-screen-lg w-full">
           <Heading
-            headingSize="lg"
+            headingSize="xl"
             headingStyles={clsx(["uppercase font-bold text-center"])}
             {...headingProps}
           >
