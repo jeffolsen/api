@@ -16,7 +16,7 @@ function LogoutAllModalContent() {
         logout of all sessions
       </Text>
       <LogoutAllSessionsWithSessionForm
-        submitInputConfig={{ text: "Logout", color: "error" }}
+        submitInputConfig={{ text: "Logout", color: "accent" }}
       />
     </>
   );
@@ -37,7 +37,7 @@ function LoggedInSessionSection() {
           <div className="grid gap-1 md:gap-4 grid-cols-2 w-full">
             <LogoutButton />
             <Button
-              color="error"
+              color="accent"
               onClick={() => {
                 setOpenLogoutAllModal(true);
               }}

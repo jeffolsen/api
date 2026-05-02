@@ -94,7 +94,7 @@ const FormSubheading = ({ displayName }: { displayName: string }) => {
       <Text textSize="md" className="sm:flex-none uppercase text-left ">
         {displayName}
       </Text>
-      <hr className="border border-gray-400/50 flex-1 hidden sm:block" />
+      <hr className="border-gray-400/50 flex-1 hidden sm:block border-[1.5px]" />
     </div>
   );
 };

@@ -17,12 +17,12 @@ export type HeadingProps = {
 const levels = ["h1", "h2", "h3", "h4", "h5", "h6", "p"] as const;
 
 const sizes = {
-  xs: "text-base/80 tracking-widest font-extrabold",
-  sm: "text-lg tracking-widest font-extrabold",
-  md: "text-2xl tracking-widest font-extrabold",
-  lg: "text-3xl md:text-4xl tracking-wider font-black",
-  xl: "text-4xl md:text-5xl xl:text-6xl tracking-wider font-black",
-  xxl: "text-5xl md:text-6xl lg:text-7xl xl:text-8xl tracking-noraml font-black",
+  xs: "text-sm sm:text-md tracking-widest font-extrabold",
+  sm: "text-md sm:text-lg tracking-widest font-extrabold",
+  md: "text-xl sm:text-2xl tracking-widest font-extrabold",
+  lg: "text-2xl sm:text-3xl tracking-wider font-black",
+  xl: "text-3xl sm:text-4xl tracking-wider font-black",
+  xxl: "text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-noraml font-black",
 };
 
 function Heading({
@@ -49,7 +49,7 @@ function Heading({
       {(strike || leftStrike) && (
         <hr
           className={clsx(
-            "flex-1 sm:inline border-current",
+            "flex-1 sm:inline border-current border-[1.5px]",
             strike && "hidden",
             leftStrike && "hidden",
             rightStrike && "hidden",
@@ -60,7 +60,7 @@ function Heading({
       {(underline || strike || rightStrike) && (
         <hr
           className={clsx(
-            "flex-1 sm:inline border-current",
+            "flex-1 sm:inline border-current border-[1.5px]",
             strike && "hidden",
             leftStrike && "hidden",
             rightStrike && "hidden",

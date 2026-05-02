@@ -4,7 +4,7 @@ import {
   useMotionTemplate,
   motion,
 } from "motion/react";
-import bgPattern from "@/assets/cubes.png";
+import bgPattern from "@/assets/images/cubes.png";
 
 function ContentBackground() {
   // scrollY is a MotionValue — a live number that updates on scroll without
@@ -18,6 +18,7 @@ function ContentBackground() {
   // Adjust the -300 to control intensity — smaller = subtler effect.
   const backgroundPositionY = useTransform(scrollY, [0, 2000], [0, -500]);
   const backgroundSizeX = useTransform(scrollY, [0, 2000], [300, 280]);
+  const blur = useTransform(scrollY, [0, 2000], [1, 2]);
 
   // useMotionTemplate builds a reactive CSS string from MotionValues.
   // Whenever backgroundPositionY changes, this string updates automatically.
@@ -25,6 +26,7 @@ function ContentBackground() {
   // sliding to `backgroundPosition: "center -300px"` after 2000px of scroll.
   const backgroundPosition = useMotionTemplate`center ${backgroundPositionY}px`;
   const backgroundSize = useMotionTemplate`${backgroundSizeX}px`;
+  const filter = useMotionTemplate`brightness(0.4) blur(${blur}px)`;
 
   return (
     <>
@@ -36,8 +38,9 @@ function ContentBackground() {
           backgroundImage: `url(${bgPattern})`,
           backgroundSize,
           backgroundPosition,
+          filter,
         }}
-        className="bg-repeat fixed inset-0 -z-10 brightness-[0.4] blur-[2px]"
+        className="bg-repeat fixed inset-0 -z-10"
       />
       <div className="fixed inset-0 -z-10 h-screen w-screen bg-gradient-to-t from-base-100/50 via-base-300 to-base-300" />
     </>

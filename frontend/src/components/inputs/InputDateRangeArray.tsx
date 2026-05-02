@@ -76,7 +76,7 @@ function DateRangeSelectInput(
                   dataName={dataName}
                 />
                 {index !== fields.length - 1 && (
-                  <hr className="border border-gray-400/50 w-full" />
+                  <hr className="border-[1.5px] border-gray-400/50 w-full" />
                 )}
               </Fragment>
             ))}
