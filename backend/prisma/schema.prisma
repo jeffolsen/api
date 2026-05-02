@@ -201,6 +201,7 @@ model ItemImage {
 
 model DateRange {
   id          Int      @id @default(autoincrement())
+  slug        String   @unique
   description String?
   startAt     DateTime @map("start_at") @db.Timestamptz(6)
   endAt       DateTime @map("end_at") @db.Timestamptz(6)

@@ -11,7 +11,11 @@ import {
   GetItemByIdSchema,
   ModifyItemSchema,
 } from "@schemas/item";
-import { validateItemExists, validateOverridLink } from "@/services/item";
+import {
+  getDateRangeSlug,
+  validateItemExists,
+  validateOverridLink,
+} from "@/services/item";
 
 type GetItemsQuery = {
   privateOnly?: boolean;
@@ -144,7 +148,6 @@ export const createItem: RequestHandler<
   CreateItemBody,
   unknown
 > = catchErrors(async (req: Request, res: Response) => {
-  console.log("createItem", req.body);
   const { profileId } = req;
   const {
     name,
@@ -193,7 +196,14 @@ export const createItem: RequestHandler<
           create: imageIds.map((imageId) => ({ imageId })),
         },
         dateRanges: {
-          create: dateRanges,
+          create: dateRanges.map((d, i) => {
+            return {
+              description: d.description,
+              startAt: d.startAt,
+              endAt: d.endAt,
+              slug: getDateRangeSlug(sortName, i),
+            };
+          }),
         },
         authorId: profileId,
         isPrivate: true,
@@ -211,7 +221,6 @@ export const updateItem: RequestHandler<
   CreateItemBody,
   unknown
 > = catchErrors(async (req: Request, res: Response) => {
-  console.log("createItem", req.body);
   const { profileId } = req;
   const { id } = req.params || {};
   const {
@@ -257,7 +266,14 @@ export const updateItem: RequestHandler<
         },
         dateRanges: {
           deleteMany: {},
-          create: dateRanges,
+          create: dateRanges.map((d, i) => {
+            return {
+              description: d.description,
+              startAt: d.startAt,
+              endAt: d.endAt,
+              slug: getDateRangeSlug(sortName, i),
+            };
+          }),
         },
         // authorId is immutable
         // isPrivate is immutable

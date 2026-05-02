@@ -35,3 +35,6 @@ export const validateItemExists = async ({
   });
   throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
 };
+
+export const getDateRangeSlug = (itemSortName: string, index: number) =>
+  `${itemSortName}-daterange-${index}`;

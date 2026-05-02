@@ -111,23 +111,26 @@ async function main() {
         const validatedContent = richContentSchema.parse(richContent);
 
         await prismaClient.$transaction(async (tx) => {
-          const newTagsIds = (
-            await prismaClient.tag.findMany({
-              where: { name: { in: tagNames } },
-            })
-          ).map((tag: { id: number }) => tag.id);
-          const newImagesIds = (
-            await prismaClient.image.findMany({
-              where: { url: { in: imageUrls } },
-            })
-          ).map((image: { id: number }) => image.id);
-          const newDateRanges = dateRanges?.map((dr) => {
-            return {
-              ...dr,
-              startAt: new Date(dr.startAt),
-              endAt: new Date(dr.endAt),
-            };
-          });
+          const newTagsIds =
+            (
+              await prismaClient.tag.findMany({
+                where: { name: { in: tagNames } },
+              })
+            ).map((tag: { id: number }) => tag.id) || [];
+          const newImagesIds =
+            (
+              await prismaClient.image.findMany({
+                where: { url: { in: imageUrls } },
+              })
+            ).map((image: { id: number }) => image.id) || [];
+          const newDateRanges =
+            dateRanges?.map((dr) => {
+              return {
+                ...dr,
+                startAt: new Date(dr.startAt),
+                endAt: new Date(dr.endAt),
+              };
+            }) || [];
 
           // maybe diff the new ids with existing ones before update
           await prismaClient.item.upsert({

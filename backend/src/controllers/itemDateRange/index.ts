@@ -12,6 +12,7 @@ import {
   MESSAGE_ITEM_NOT_FOUND,
   MESSAGE_DATE_RANGES_NOT_FOUND,
 } from "@config/errorMessages";
+import { getDateRangeSlug } from "@/services/item";
 
 export const getItemDateRanges: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {
@@ -75,12 +76,22 @@ export const addItemDateRange: RequestHandler = catchErrors(
     await prismaClient.$transaction(async (tx) => {
       const item = await tx.item.findUnique({
         where: { id: itemId, authorId: profileId }, // cannot edit non-private items
+        include: { dateRanges: true },
       });
       throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
 
       await tx.item.update({
         where: { id: item.id },
-        data: { dateRanges: { create: { description, startAt, endAt } } },
+        data: {
+          dateRanges: {
+            create: {
+              description,
+              startAt,
+              endAt,
+              slug: getDateRangeSlug(item.sortName, item.dateRanges.length),
+            },
+          },
+        },
       });
     });
 
