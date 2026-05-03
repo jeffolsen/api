@@ -210,7 +210,7 @@ function FeedDeleteButton({
 
   return (
     <Button
-      color="error"
+      color="accent"
       onClick={() =>
         confirm("Are you sure you want to delete this feed?") &&
         withFormHandling(async () => {

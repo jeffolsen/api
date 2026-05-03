@@ -60,7 +60,7 @@ const ApiKeyCard = ({
   return (
     <RevealCard
       buttonLabel="Destroy API Key"
-      buttonColor="error"
+      buttonColor="accent"
       title={slug}
       description={origin}
     >
@@ -72,7 +72,7 @@ const ApiKeyCard = ({
           </Text>
           <DestroyApiKeyWithOTPForm
             submitInputConfig={{
-              color: "error",
+              color: "accent",
               text: "Destroy API Key",
             }}
             defaultValues={{
@@ -84,7 +84,7 @@ const ApiKeyCard = ({
       ) : (
         <RequestDestroyApiKeyForm
           submitInputConfig={{
-            color: "error",
+            color: "accent",
             text: "Destroy API Key",
           }}
         />
@@ -97,7 +97,7 @@ const ApiKeyInstructionCard = ({ otpStatus }: { otpStatus: string }) => {
   return (
     <RevealCard
       buttonLabel="Generate API Key"
-      buttonColor="success"
+      buttonColor="primary"
       title="No API Keys"
       description={
         otpStatus === OTP_STATUS_CREATE_API_KEY
@@ -108,14 +108,14 @@ const ApiKeyInstructionCard = ({ otpStatus }: { otpStatus: string }) => {
       {otpStatus === OTP_STATUS_CREATE_API_KEY ? (
         <GenerateApiKeyWithOTPForm
           submitInputConfig={{
-            color: "success",
+            color: "primary",
             text: "Generate API Key",
           }}
         />
       ) : (
         <RequestGenerateApiKeyForm
           submitInputConfig={{
-            color: "success",
+            color: "primary",
             text: "Generate API Key",
           }}
         />

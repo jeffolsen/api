@@ -15,12 +15,14 @@ import LogoutButton from "@/components/partials/LogoutButton";
 import StickySubHeader from "../partials/StickySubHeader";
 import HeaderHero from "../partials/HeaderHero";
 import BreadCrumbs from "./BreadCrumbs";
+import { isAuthenticated } from "@/network/api";
+import { paths } from "@/config/routes";
 
 const navItems = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
-  { label: "CMS", to: "/cms" },
   { label: "CV", to: "/cv" },
+  { label: "CMS", to: "/cms" },
 ];
 
 function Header() {
@@ -59,7 +61,13 @@ function Header() {
       </header>
       <HeaderHero hero={hero} />
       <StickySubHeader>
-        {location.pathname !== "/" ? <BreadCrumbs /> : <div className="h-4" />}
+        <div className="mx-auto max-w-screen-2xl w-full flex justify-start pl-8">
+          {location.pathname !== "/" ? (
+            <BreadCrumbs />
+          ) : (
+            <div className="h-4" />
+          )}
+        </div>
       </StickySubHeader>
     </HeadingLevelProvider>
   );
@@ -70,7 +78,13 @@ function DesktopNav() {
     <ul className="navbar md:flex hidden">
       {navItems.map((item) => (
         <li key={item.to}>
-          <Button to={item.to} as="Link" color="ghost" size="lg">
+          <Button
+            to={item.to}
+            as="Link"
+            color="ghost"
+            size="lg"
+            className={"text-xl"}
+          >
             {item.label}
           </Button>
         </li>
@@ -80,6 +94,7 @@ function DesktopNav() {
 }
 
 function MobileNav() {
+  const isLoggedIn = isAuthenticated();
   return (
     <Popover>
       <PopoverButton className="btn btn-ghost btn-lg md:hidden">
@@ -109,11 +124,34 @@ function MobileNav() {
                 as="Link"
                 color="ghost"
                 size="lg"
+                className={"text-xl"}
               >
                 {item.label}
               </Button>
             ))}
-            <LogoutButton />
+            {isLoggedIn && (
+              <>
+                <Button
+                  to={paths.cmsItemsList}
+                  as="Link"
+                  color="ghost"
+                  size="lg"
+                  className={"text-xl"}
+                >
+                  Your Items
+                </Button>
+                <Button
+                  to={paths.cmsFeedsList}
+                  as="Link"
+                  color="ghost"
+                  size="lg"
+                  className={"text-xl"}
+                >
+                  Your Feeds
+                </Button>
+                <LogoutButton size="lg" />
+              </>
+            )}
           </div>
         )}
       </PopoverPanel>

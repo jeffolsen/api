@@ -28,7 +28,7 @@ function LoggedInDeleteProfileSection() {
       <RevealCard
         title="Delete Profile"
         buttonLabel="Delete Profile"
-        buttonColor="error"
+        buttonColor="accent"
         description={
           otpStatus === OTP_STATUS_DELETE_PROFILE
             ? "Enter the OTP sent to your email to confirm profile deletion."
@@ -38,14 +38,14 @@ function LoggedInDeleteProfileSection() {
         {otpStatus === OTP_STATUS_DELETE_PROFILE ? (
           <UnregisterWithOTPForm
             submitInputConfig={{
-              color: "error",
+              color: "accent",
               text: "Delete Profile",
             }}
           />
         ) : (
           <RequestUnregisterForm
             submitInputConfig={{
-              color: "error",
+              color: "accent",
               text: "Delete Profile",
             }}
           />

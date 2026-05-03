@@ -1,20 +1,86 @@
 import { HeadingLevelProvider } from "@/components/common/Heading";
 import Link from "@/components/common/Link";
+import Text from "../common/Text";
+import clsx from "clsx";
+import resume from "@/assets/pdfs/Resume.pdf";
+import { Download } from "lucide-react";
 
 function Footer() {
   return (
     <HeadingLevelProvider>
-      <footer className="flex justify-center bg-base-300 min-h-36 p-8 text-base-content">
-        <div className="footer w-full max-w-screen-xl">
-          <ul className="menu menu-vertical md:menu-horizontal w-full">
-            <Link as="a" href="">
-              Github
-            </Link>
-            <Link as="a" href="">
-              LinkedIn
-            </Link>
-            <Link to="/contact">Contact</Link>
+      <footer
+        className={clsx([
+          "flex flex-col lg:flex-row justify-center bg-base-300 min-h-36 p-8 text-base-content gap-16",
+        ])}
+      >
+        <div
+          className={clsx([
+            "footer w-full max-w-screen-xl flex justify-center md:justify-start md:gap-8 divide-x-2 divide-base-content",
+          ])}
+        >
+          <ul className="flex flex-col gap-4 md:gap-8 md:flex-row md:flex-none flex-1">
+            <li>
+              <Link
+                as="a"
+                href="https://github.com/jeffolsen"
+                size="lg"
+                linkColor="base"
+                target="_blank"
+              >
+                Github
+              </Link>
+            </li>
+            <li>
+              <Link
+                as="a"
+                href="https://www.linkedin.com/in/jeff-olsen-ba409b27/"
+                size="lg"
+                linkColor="base"
+                target="_blank"
+              >
+                LinkedIn
+              </Link>
+            </li>
+            <li>
+              <Link
+                size="lg"
+                as="a"
+                linkColor="base"
+                href={resume}
+                className={"flex gap-2"}
+                target="_blank"
+              >
+                Resume <Download />
+              </Link>
+            </li>
           </ul>
+          <ul className="flex flex-col gap-4 md:gap-8 md:flex-row md:flex-none flex-1 pl-8">
+            <li>
+              <Link to="/privacy" size="lg" linkColor="base">
+                Privacy
+              </Link>
+            </li>
+            <li>
+              <Link to="/privacy" size="lg" linkColor="base">
+                Terms
+              </Link>
+            </li>
+            <li>
+              <Link to="/privacy" size="lg" linkColor="base">
+                Cookies
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <div
+          className={clsx([
+            "flex-none flex flex-col gap-4 justify-between text-left lg:text-right w-full lg:w-auto pb-8",
+          ])}
+        >
+          <Link as="a" href="" size="md" linkColor="base">
+            contact@mysite.com
+          </Link>
+          <Text textSize="md">© 2026 [Your Name]. All Rights Reserved.</Text>
         </div>
       </footer>
     </HeadingLevelProvider>
