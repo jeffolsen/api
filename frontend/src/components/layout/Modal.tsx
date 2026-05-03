@@ -44,7 +44,7 @@ export default function Modal({
         >
           <DialogPanel
             className={clsx(
-              "modal-box flex flex-col gap-6 w-full max-w-2xl max-h-screen",
+              "modal-box flex flex-col gap-6 w-full max-w-4xl max-h-screen",
               "bg-base-100 border-t border-t-gray-400/30 text-base-content",
               modalStyles,
             )}

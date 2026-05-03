@@ -52,7 +52,7 @@ function Grid({
     >
       {items.map((item, index) =>
         isGridItem(item) ? (
-          <motion.div layout key={item.id}>
+          <motion.div layout key={item.id} className="relative">
             {item.content}
           </motion.div>
         ) : (

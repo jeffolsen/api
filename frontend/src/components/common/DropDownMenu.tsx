@@ -27,9 +27,9 @@ export type DropDownMenuProps = {
 
 const DropDownMenu = ({
   items,
-  buttonColor = "primary",
-  optionsColor = "secondary",
-  selectedOptionColor = "neutral",
+  buttonColor = "secondary",
+  optionsColor = "neutral",
+  selectedOptionColor = "secondary",
   value,
   onChange,
   className,

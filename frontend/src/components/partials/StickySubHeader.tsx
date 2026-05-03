@@ -28,7 +28,7 @@ function StickySubHeader({ children }: PropsWithChildren) {
       <div
         className={clsx([
           "bg-black/10",
-          "top-[64px] sm:top-[82px] mdtop-[86px] sticky z-20",
+          "top-[82px] sm:top-[82px] mdtop-[86px] sticky z-20",
           !isAtTop && "shadow-xl",
         ])}
       >

@@ -1,10 +1,9 @@
-import Button from "@/components/common/Button";
 import Heading from "@/components/common/Heading";
 import Text from "@/components/common/Text";
 import dayjs, { longDatetime, techDatetime } from "@/utils/dayjs";
 import { TProfile } from "@/network/profile";
 import { PropsWithChildren } from "react";
-import { paths } from "@/config/routes";
+import CmsSubNav from "./CmsSubNav";
 
 type DashBoardLayoutProps = PropsWithChildren<{
   profile: TProfile;
@@ -28,32 +27,7 @@ function DashBoardLayout({ profile, children }: DashBoardLayoutProps) {
           Last updated: {dayjs(profile?.updatedAt).format(techDatetime)}
         </Text>
       </div>
-      <div className="flex justify-center gap-1 md:gap-4 mx-auto mt-8 w-full max-w-3xl">
-        <Button
-          as="Link"
-          color="primary"
-          className="flex-1 md:w-auto"
-          to={paths.cmsItemsList}
-        >
-          Items
-        </Button>
-        <Button
-          as="Link"
-          color="primary"
-          className="flex-1 md:w-auto"
-          to={paths.cmsFeedsList}
-        >
-          Feeds
-        </Button>
-        <Button
-          as="Link"
-          color="primary"
-          className="flex-1 md:w-auto"
-          to={paths.cmsHome}
-        >
-          Home
-        </Button>
-      </div>
+      <CmsSubNav />
       {children}
     </>
   );

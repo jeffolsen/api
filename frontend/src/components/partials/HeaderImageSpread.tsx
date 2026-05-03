@@ -32,7 +32,7 @@ export default function HeaderImageSpread() {
                 <Image
                   src={image.url}
                   alt={image.alt}
-                  className="h-full w-full scale-110"
+                  className="h-full w-full scale-110 grayscale hue-rotate-60"
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/60" />
               </div>

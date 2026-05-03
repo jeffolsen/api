@@ -36,7 +36,7 @@ export const PaginateItemBar = ({
     <div className="join items-center">
       {numericPage > 1 && (
         <Button
-          color="primary"
+          color="secondary"
           onClick={() => handlePageChange(1)}
           className={"join-item"}
         >
@@ -46,7 +46,7 @@ export const PaginateItemBar = ({
       {numericPage > 3 &&
         Math.floor((1 + numericPage) / 2) !== numericPage - 1 && (
           <Button
-            color="primary"
+            color="secondary"
             onClick={() => handlePageChange(Math.floor((1 + numericPage) / 2))}
             className={"hidden sm:flex join-item"}
           >
@@ -55,7 +55,7 @@ export const PaginateItemBar = ({
         )}
       {numericPage > 2 && (
         <Button
-          color="primary"
+          color="secondary"
           onClick={() => handlePageChange(numericPage - 1)}
           className={"join-item"}
         >
@@ -67,7 +67,7 @@ export const PaginateItemBar = ({
       </Button>
       {numericPage + 1 < totalPages && (
         <Button
-          color="primary"
+          color="secondary"
           onClick={() => handlePageChange(numericPage + 1)}
           className={"join-item"}
         >
@@ -77,7 +77,7 @@ export const PaginateItemBar = ({
       {numericPage + 2 < totalPages &&
         Math.floor((numericPage + totalPages) / 2) !== numericPage + 1 && (
           <Button
-            color="primary"
+            color="secondary"
             onClick={() =>
               handlePageChange(Math.floor((numericPage + totalPages) / 2))
             }
@@ -88,7 +88,7 @@ export const PaginateItemBar = ({
         )}
       {numericPage < totalPages && (
         <Button
-          color="primary"
+          color="secondary"
           onClick={() => handlePageChange(totalPages)}
           className={"join-item"}
         >

@@ -14,6 +14,7 @@ function Layout({
       <div className="min-h-screen flex flex-col justify-between relative">
         <Header />
         <main
+          id="main-content"
           className={clsx([
             "flex-grow flex flex-col items-center justify-start z-0",
           ])}
