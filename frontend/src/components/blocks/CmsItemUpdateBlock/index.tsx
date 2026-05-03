@@ -18,6 +18,7 @@ import useItemUpdateBlockData, {
   UseItemUpdateBlockProps,
 } from "@/components/blocks/CmsItemUpdateBlock/data";
 import { paths } from "@/config/routes";
+import CmsSubNav from "@/components/layout/CmsSubNav";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useItemUpdateBlockData(config);
@@ -71,6 +72,7 @@ function CmsItemUpdateBlock({
 
   return (
     <Block {...blockProps}>
+      <CmsSubNav />
       <EmptyCard>
         <div className="card-body md:flex-row gap-4 justify-between w-full text-base/80">
           <div className="flex flex-col flex-grow justify-between gap-3">

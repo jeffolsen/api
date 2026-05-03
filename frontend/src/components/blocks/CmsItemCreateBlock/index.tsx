@@ -8,6 +8,7 @@ import useItemCreateBlockData, {
   UseItemCreateBlockProps,
 } from "@/components/blocks/CmsItemCreateBlock/data";
 import { paths } from "@/config/routes";
+import CmsSubNav from "@/components/layout/CmsSubNav";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useItemCreateBlockData(config);
@@ -29,6 +30,7 @@ function CmsItemCreateBlock({
 
   return (
     <Block {...blockProps}>
+      <CmsSubNav />
       <EmptyCard>
         <div className="card-body">
           <ItemCreateForm

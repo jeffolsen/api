@@ -45,6 +45,7 @@ import useFeedUpdateBlockData, {
 } from "@/components/blocks/CmsFeedUpdateBlock/data";
 import { paths } from "@/config/routes";
 import EmptyCard from "@/components/cards/EmptyCard";
+import CmsSubNav from "@/components/layout/CmsSubNav";
 
 type ComponentWithType = TComponent & { type?: TComponentType };
 
@@ -111,6 +112,7 @@ function CmsFeedUpdateBlock({
 
   return (
     <Block {...blockProps} settings={settings}>
+      <CmsSubNav />
       <EmptyCard>
         <div className="card-body gap-3">
           <div className="flex flex-col md:flex-row gap-4 justify-between w-full text-base/80">

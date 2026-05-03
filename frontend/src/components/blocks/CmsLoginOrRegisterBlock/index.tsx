@@ -176,7 +176,7 @@ function RequestLogoutAllModalContent({
           </Text>
           <RequestLogoutAllSessionsForm
             submitInputConfig={{
-              color: "error",
+              color: "accent",
               text: "Logout of all sessions",
             }}
           />

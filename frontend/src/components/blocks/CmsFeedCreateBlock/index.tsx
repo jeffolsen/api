@@ -8,6 +8,7 @@ import useFeedCreateBlockData, {
   UseFeedCreateBlockProps,
 } from "@/components/blocks/CmsFeedCreateBlock/data";
 import { paths } from "@/config/routes";
+import CmsSubNav from "@/components/layout/CmsSubNav";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useFeedCreateBlockData(config);
@@ -26,6 +27,7 @@ function CmsFeedCreateBlock({
 
   return (
     <Block {...blockProps}>
+      <CmsSubNav />
       <EmptyCard>
         <div className="card-body">
           <FeedCreateForm

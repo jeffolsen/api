@@ -49,7 +49,6 @@ function StyleGuideBlock(config: BlockComponentStandardProps) {
         <Button color="primary">Primary Button</Button>
         <Button color="secondary">Secondary Button</Button>
         <Button color="accent">Accent Button</Button>
-        <Button color="error">Error Button</Button>
       </HeadingLevelProvider>
       <Modal
         onClose={() => setOpenModal(false)}
