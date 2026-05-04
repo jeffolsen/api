@@ -24,5 +24,6 @@ export default function sortWord(word: string) {
     .replace(/&/g, "and")
     .replace(/\s+/g, "-")
     .replace(/[^\w-]+/g, "-")
-    .replace(/--+/g, "-");
+    .replace(/--+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }

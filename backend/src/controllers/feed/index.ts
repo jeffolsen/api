@@ -18,6 +18,7 @@ type GetFeedsQuery = {
   searchPath?: string;
   subjectTypes?: string;
   ids?: string;
+  paths?: string;
   sort?: string;
   page?: number;
   pageSize?: number;
@@ -30,7 +31,7 @@ export const getAllFeeds: RequestHandler<
   GetFeedsQuery
 > = catchErrors(async (req: Request, res: Response) => {
   const { profileId } = req;
-  const { ids, subjectTypes, sort, page, pageSize, searchPath } =
+  const { ids, paths, subjectTypes, sort, page, pageSize, searchPath } =
     GetAllFeedsQuerySchema.parse(req.query);
 
   const where = {
@@ -40,6 +41,9 @@ export const getAllFeeds: RequestHandler<
     }),
     ...(ids.length && {
       id: { in: ids },
+    }),
+    ...(paths.length && {
+      path: { in: paths },
     }),
     ...(subjectTypes.length && {
       subjectType: { in: subjectTypes },

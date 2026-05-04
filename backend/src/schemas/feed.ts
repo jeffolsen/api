@@ -3,6 +3,7 @@ import { RELATIVE_PATH_REGEX } from "@config/constants";
 import {
   idArraySchema,
   idStringSchema,
+  pathArraySchema,
   publishedAtAndExpiredAtSchema,
   subjectTypesArraySchema,
   subjectTypeSchema,
@@ -45,6 +46,16 @@ export const GetAllFeedsQuerySchema = z.object({
       return [];
     }, idArraySchema)
     .default([]),
+  paths: z.preprocess((val) => {
+    if (typeof val === "string") {
+      const slugArray = val
+        .split(",")
+        .map((slug) => slug.trim())
+        .filter(Boolean);
+      return slugArray;
+    }
+    return [];
+  }, pathArraySchema),
   searchPath: z.string().optional(),
   sort: z.preprocess((val) => {
     if (typeof val === "string") {

@@ -9,6 +9,8 @@ import {
   MESSAGE_ID,
   MESSAGE_IDS_UNIQUE,
   MESSAGE_PASSWORD_FORMAT,
+  MESSAGE_PATH,
+  MESSAGE_PATHS_UNIQUE,
   MESSAGE_SESSION_USER_AGENT,
   MESSAGE_SLUG,
   MESSAGE_SLUGS_UNIQUE,
@@ -46,6 +48,12 @@ export const slugArraySchema = z
   .refine((items) => {
     return new Set(items).size === items.length;
   }, MESSAGE_SLUGS_UNIQUE);
+
+export const pathArraySchema = z
+  .array(z.string(MESSAGE_PATH))
+  .refine((items) => {
+    return new Set(items).size === items.length;
+  }, MESSAGE_PATHS_UNIQUE);
 
 export const dateTimeSchema = z.iso.datetime();
 
