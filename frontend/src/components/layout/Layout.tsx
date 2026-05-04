@@ -5,18 +5,20 @@ import { HeadingLevelProvider } from "@/components/common/Heading";
 import { TComponent } from "@/network/component";
 import clsx from "clsx";
 import ContentBackground from "../partials/ContentBackground";
+import { widestWidth } from "../common/helpers/layoutStyles";
 
 function Layout({
   children,
 }: PropsWithChildren & { headerHero?: TComponent | null }) {
   return (
     <HeadingLevelProvider>
-      <div className="min-h-screen flex flex-col justify-between relative">
+      <div className="min-h-screen flex flex-col justify-between relative z-0 bg-base-100">
         <Header />
         <main
           id="main-content"
           className={clsx([
-            "flex-grow flex flex-col items-center justify-start z-0",
+            "flex-grow flex flex-col items-center justify-start mx-auto w-full relative z-10",
+            widestWidth,
           ])}
         >
           {children}
@@ -29,9 +31,3 @@ function Layout({
 }
 
 export default Layout;
-
-// style={{
-//   backgroundImage: `linear-gradient(to top, oklch(var(--b1)), oklch(var(--b3))), url(${myImage})`,
-//   backgroundSize: "100% 100%, 1000px 1000px",
-//   backgroundRepeat: "no-repeat, repeat",
-// }}

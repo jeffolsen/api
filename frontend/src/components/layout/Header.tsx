@@ -51,9 +51,9 @@ function Header() {
           ])}
         >
           <Logo />
-          <div className="flex-grow flex items-center justify-end md:justify-between md:flex-row-reverse">
+          <div className="flex-grow flex items-center justify-end lg:justify-between lg:flex-row-reverse">
             <ThemeToggle />
-            <div className="divider bg-neutral-content md:hidden w-px my-0 h-auto" />
+            <div className="divider bg-neutral-content lg:hidden w-px my-0 h-auto" />
             <DesktopNav />
             <MobileNav />
           </div>
@@ -61,7 +61,7 @@ function Header() {
       </header>
       <HeaderHero hero={hero} />
       <StickySubHeader>
-        <div className="mx-auto max-w-screen-2xl w-full flex justify-start pl-8">
+        <div className="mx-auto max-w-screen-2xl w-full flex justify-start pl-4 md:pl-8">
           {location.pathname !== "/" ? (
             <BreadCrumbs />
           ) : (
@@ -75,7 +75,7 @@ function Header() {
 
 function DesktopNav() {
   return (
-    <ul className="navbar md:flex hidden">
+    <ul className="navbar lg:flex hidden">
       {navItems.map((item) => (
         <li key={item.to}>
           <Button
@@ -97,7 +97,7 @@ function MobileNav() {
   const isLoggedIn = isAuthenticated();
   return (
     <Popover>
-      <PopoverButton className="btn btn-ghost btn-lg md:hidden">
+      <PopoverButton className="btn btn-ghost btn-lg lg:hidden">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5"

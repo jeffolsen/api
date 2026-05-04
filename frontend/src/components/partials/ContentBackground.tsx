@@ -5,6 +5,8 @@ import {
   motion,
 } from "motion/react";
 import bgPattern from "@/assets/images/cubes.png";
+import clsx from "clsx";
+import { widestWidth } from "../common/helpers/layoutStyles";
 
 function ContentBackground() {
   // scrollY is a MotionValue — a live number that updates on scroll without
@@ -16,8 +18,8 @@ function ContentBackground() {
   // The negative direction moves the pattern upward while the page scrolls down,
   // which creates the sense that the background is further away (parallax depth).
   // Adjust the -300 to control intensity — smaller = subtler effect.
-  const backgroundPositionY = useTransform(scrollY, [0, 2000], [0, -500]);
-  const backgroundSizeX = useTransform(scrollY, [0, 2000], [300, 280]);
+  const backgroundPositionY = useTransform(scrollY, [0, 4000], [0, -800]);
+  const backgroundSizeX = useTransform(scrollY, [0, 2000], [280, 240]);
   const blur = useTransform(scrollY, [0, 2000], [1, 2]);
 
   // useMotionTemplate builds a reactive CSS string from MotionValues.
@@ -40,9 +42,15 @@ function ContentBackground() {
           backgroundPosition,
           filter,
         }}
-        className="bg-repeat fixed inset-0 -z-10"
+        className={clsx(["bg-repeat fixed inset-0 -z-10 mx-auto", widestWidth])}
       />
-      <div className="fixed inset-0 -z-10 h-screen w-screen bg-gradient-to-t from-base-100/50 via-base-300 to-base-300" />
+      <div
+        className={clsx([
+          "fixed inset-0 -z-10 h-screen w-screen",
+          widestWidth,
+          "bg-gradient-to-t from-base-100/50 via-base-300 to-base-300 mx-auto",
+        ])}
+      />
     </>
   );
 }

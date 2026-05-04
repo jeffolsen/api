@@ -10,15 +10,15 @@ function Footer() {
     <HeadingLevelProvider>
       <footer
         className={clsx([
-          "flex flex-col lg:flex-row justify-center bg-base-300 min-h-36 p-8 text-base-content gap-16",
+          "flex flex-col xl:flex-row justify-center bg-base-300 min-h-36 p-8 text-base-content gap-16",
         ])}
       >
         <div
           className={clsx([
-            "footer w-full max-w-screen-xl flex justify-center md:justify-start md:gap-8 divide-x-2 divide-base-content",
+            "footer w-full max-w-screen-xl flex justify-center lg:justify-start lg:gap-8 divide-x-2 divide-base-content",
           ])}
         >
-          <ul className="flex flex-col gap-4 md:gap-8 md:flex-row md:flex-none flex-1">
+          <ul className="flex flex-col gap-4 lg:gap-8 lg:flex-row lg:flex-none flex-1">
             <li>
               <Link
                 as="a"
@@ -54,7 +54,7 @@ function Footer() {
               </Link>
             </li>
           </ul>
-          <ul className="flex flex-col gap-4 md:gap-8 md:flex-row md:flex-none flex-1 pl-8">
+          <ul className="flex flex-col gap-4 lg:gap-8 lg:flex-row lg:flex-none flex-1 pl-8">
             <li>
               <Link to="/privacy" size="lg" linkColor="base">
                 Privacy

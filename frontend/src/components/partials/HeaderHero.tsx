@@ -8,7 +8,7 @@ function HeaderHero({ hero }: { hero: TComponent }) {
   return (
     <div
       className={clsx([
-        "flex flex-col bg-black/10",
+        "flex flex-col bg-base-300",
         "max-h-lvh md:max-h-auto",
         hero &&
           "h-[calc(100lvh-64px)] sm:h-[calc(100lvh-82px)] md:h-[calc(100lvh-86px)] z-20 relative !max-h-[920px]", //don't like this magic number but it maintains proportion above widestWidth (1920px)
@@ -16,9 +16,7 @@ function HeaderHero({ hero }: { hero: TComponent }) {
     >
       {hero && (
         <div className="flex-grow">
-          <Suspense
-            fallback={<div className="skeleton w-full h-full bg-black/10" />}
-          >
+          <Suspense fallback={<div className="skeleton w-full h-full" />}>
             <Blocks.HeroCarousel
               component={{ ...hero, name: "" }}
               params={{}}

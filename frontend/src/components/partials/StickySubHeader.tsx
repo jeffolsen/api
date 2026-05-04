@@ -27,7 +27,6 @@ function StickySubHeader({ children }: PropsWithChildren) {
       <div ref={sentinelRef} style={{ height: "1px", marginBottom: "-1px" }} />
       <div
         className={clsx([
-          "bg-black/10",
           "top-[82px] sm:top-[82px] mdtop-[86px] sticky z-20",
           !isAtTop && "shadow-xl",
         ])}
