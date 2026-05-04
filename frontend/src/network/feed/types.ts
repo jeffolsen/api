@@ -17,6 +17,7 @@ export type TFeedsParams = {
   sort?: TFeedSort[];
   subjectTypes?: TSubjectType[];
   ids?: number[];
+  paths?: string[];
 } & PaginationParams;
 
 export type TFeed = {

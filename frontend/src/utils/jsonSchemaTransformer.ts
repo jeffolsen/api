@@ -1,8 +1,6 @@
 import { EmptyObject } from "react-hook-form";
 import { FormComponentProps } from "@/components/inputs/Input";
 import {
-  convertIdArrayToNumbers,
-  convertNumbersToIdArray,
   convertStringsToStringPropertyArray,
   convertStringPropertyArrayToStrings,
 } from "@/utils/formToApiMapper";
@@ -197,9 +195,9 @@ export const propertyValuesFromFormMapper = (values: {
       ),
     }),
     ...(!!referenceFeed && {
-      referenceFeed: convertIdArrayToNumbers(
-        "feedId",
-        referenceFeed as { feedId: number }[],
+      referenceFeed: convertStringPropertyArrayToStrings(
+        "path",
+        referenceFeed as { path: string }[],
       ),
     }),
   };
@@ -225,9 +223,9 @@ export const propertyValuesToFormMapper = (
       ),
     }),
     ...(!!referenceFeed && {
-      referenceFeed: convertNumbersToIdArray(
-        "feedId",
-        referenceFeed as number[],
+      referenceFeed: convertStringsToStringPropertyArray(
+        "path",
+        referenceFeed as string[],
       ),
     }),
   };

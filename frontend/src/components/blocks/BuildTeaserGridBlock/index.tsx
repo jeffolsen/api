@@ -1,4 +1,3 @@
-import { TFeed } from "@/network/feed";
 import { TItem } from "@/network/item";
 import Text from "@/components/common/Text";
 import BlockWrapper, {
@@ -10,11 +9,7 @@ import useTeaserGridBlockData, {
 } from "@/components/blocks/BuildTeaserGridBlock/data";
 import Grid from "@/components/common/Grid";
 import clsx from "clsx";
-import {
-  smSpacing,
-  smVerticalPadding,
-  xsSpacing,
-} from "@/components/common/helpers/layoutStyles";
+import { smSpacing, xsSpacing } from "@/components/common/helpers/layoutStyles";
 import Image from "@/components/common/Image";
 import Heading from "@/components/common/Heading";
 import { InsetLink } from "@/components/common/Link";
@@ -71,23 +66,21 @@ function VariantAlpha({
   blockData: UseTeaserGridBlockData;
   blockProps: UseTeaserGridBlockProps;
 }) {
-  const { itemsData, referenceFeedData } = blockData;
-  if (itemsData.isLoading || referenceFeedData?.isLoading) {
+  const { itemsData, referenceFeedPath } = blockData;
+  if (itemsData.isLoading) {
     return null;
   }
-  const feed = referenceFeedData?.data?.feed;
 
   return (
-    <BlockWrapper
-      name={blockProps.name + " - Alpha Variant"}
-      settings={{ ...blockProps.settings }}
-    >
+    <BlockWrapper name={blockProps.name} settings={{ ...blockProps.settings }}>
       <Grid
-        className={clsx([smSpacing, smVerticalPadding])}
+        className={clsx([smSpacing])}
         columns={{ lg: "2" }}
         items={(itemsData.data?.items ?? []).map((item, index) => ({
           id: item.id,
-          content: <AlphaCard index={index} item={item} feed={feed} />,
+          content: (
+            <AlphaCard index={index} item={item} feed={referenceFeedPath} />
+          ),
         }))}
       />
     </BlockWrapper>
@@ -100,10 +93,10 @@ function AlphaCard({
 }: {
   index: number;
   item: TItem;
-  feed: TFeed | undefined;
+  feed: string | undefined;
 }) {
   const getImages = useGetAppItemImages(item.id);
-  const link = getItemLink(feed, item.id);
+  const link = getItemLink(feed, item);
 
   if (getImages.isLoading) {
     return <div className="skeleton w-full h-full" />;
@@ -142,7 +135,7 @@ function AlphaCard({
       )}
       <figure
         className={clsx([
-          "relative md:flex-none w-full sm:w-2/5 before:content-[''] before:mt-[70%] sm:before:mt-[170%] before:w-full",
+          "relative md:flex-none w-full sm:w-2/5 before:content-[''] before:mt-[80%] sm:before:mt-[80%] before:w-full",
           "overflow-hidden z-10",
         ])}
       >
@@ -167,7 +160,7 @@ function AlphaCard({
             ])}
           >
             <Text
-              textSize="sm"
+              textSize="md"
               className={clsx([
                 "line-clamp-2 text-center uppercase",
                 "transition-all duration-1000 scale-100 group-hover:scale-110",
@@ -204,23 +197,21 @@ function VariantBeta({
   blockData: UseTeaserGridBlockData;
   blockProps: UseTeaserGridBlockProps;
 }) {
-  const { itemsData, referenceFeedData } = blockData;
-  if (itemsData.isLoading || referenceFeedData?.isLoading) {
+  const { itemsData, referenceFeedPath } = blockData;
+  if (itemsData.isLoading) {
     return null;
   }
-  const feed = referenceFeedData?.data?.feed;
 
   return (
-    <BlockWrapper
-      name={blockProps.name + " - Beta Variant"}
-      settings={{ ...blockProps.settings }}
-    >
+    <BlockWrapper name={blockProps.name} settings={{ ...blockProps.settings }}>
       <Grid
-        className={clsx([smSpacing, smVerticalPadding])}
+        className={clsx([smSpacing])}
         columns={{ sm: "2", lg: "3" }}
         items={(itemsData.data?.items ?? []).map((item, index) => ({
           id: item.id,
-          content: <BetaCard index={index} item={item} feed={feed} />,
+          content: (
+            <BetaCard index={index} item={item} feed={referenceFeedPath} />
+          ),
         }))}
       />
     </BlockWrapper>
@@ -233,10 +224,10 @@ function BetaCard({
 }: {
   index: number;
   item: TItem;
-  feed: TFeed | undefined;
+  feed: string | undefined;
 }) {
   const getImages = useGetAppItemImages(item.id);
-  const link = getItemLink(feed, item.id);
+  const link = getItemLink(feed, item);
 
   if (getImages.isLoading) {
     return <div className="skeleton w-full h-full" />;
@@ -278,7 +269,7 @@ function BetaCard({
             ])}
           >
             <Text
-              textSize="sm"
+              textSize="md"
               className={clsx([
                 "line-clamp-2 text-center uppercase",
                 "transition-all duration-1000 scale-100 group-hover:scale-110",
@@ -292,7 +283,7 @@ function BetaCard({
       </figure>
       <div className="card-body text-left gap-8">
         <Heading
-          headingSize="sm"
+          headingSize="md"
           headingStyles={clsx([
             "line-clamp-2 uppercase",
             "transition-all duration-1000 scale-100 group-hover:scale-110",
@@ -301,7 +292,7 @@ function BetaCard({
           {item.name}
         </Heading>
         <Text
-          textSize="sm"
+          textSize="md"
           className={clsx([
             "line-clamp-3 uppercase",
             "transition-all duration-1000 scale-100 group-hover:scale-110",
@@ -322,23 +313,21 @@ function VariantGamma({
   blockData: UseTeaserGridBlockData;
   blockProps: UseTeaserGridBlockProps;
 }) {
-  const { itemsData, referenceFeedData } = blockData;
-  if (itemsData.isLoading || referenceFeedData?.isLoading) {
+  const { itemsData, referenceFeedPath } = blockData;
+  if (itemsData.isLoading) {
     return null;
   }
-  const feed = referenceFeedData?.data?.feed;
 
   return (
-    <BlockWrapper
-      name={blockProps.name + " - Gamma Variant"}
-      settings={{ ...blockProps.settings }}
-    >
+    <BlockWrapper name={blockProps.name} settings={{ ...blockProps.settings }}>
       <Grid
-        className={clsx([xsSpacing, smVerticalPadding])}
-        columns={{ sm: "2", md: "3", lg: "4", xl: "5" }}
+        className={clsx([xsSpacing])}
+        columns={{ base: "2", sm: "3", md: "4", lg: "6" }}
         items={(itemsData.data?.items ?? []).map((item, index) => ({
           id: item.id,
-          content: <GammaCard index={index} item={item} feed={feed} />,
+          content: (
+            <GammaCard index={index} item={item} feed={referenceFeedPath} />
+          ),
         }))}
       />
     </BlockWrapper>
@@ -351,10 +340,10 @@ function GammaCard({
 }: {
   index: number;
   item: TItem;
-  feed: TFeed | undefined;
+  feed: string | undefined;
 }) {
   const getImages = useGetAppItemImages(item.id);
-  const link = getItemLink(feed, item.id);
+  const link = getItemLink(feed, item);
 
   if (getImages.isLoading) {
     return <div className="skeleton w-full h-full" />;

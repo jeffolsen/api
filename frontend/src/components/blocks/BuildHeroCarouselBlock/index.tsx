@@ -1,6 +1,4 @@
 import { TItem } from "@/network/item";
-import { TFeed } from "@/network/feed";
-import { TImage } from "@/network/image";
 import Text from "@/components/common/Text";
 import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
 import useHeroCarouselBlockData, {
@@ -18,9 +16,12 @@ import "swiper/css/effect-fade";
 import { useGetAppItemImages } from "@/network/app";
 import Image from "@/components/common/Image";
 import { InsetLink } from "@/components/common/Link";
-import { CircleArrowLeft, CircleArrowRight } from "lucide-react";
+import { CircleArrowLeft, CircleArrowRight, MoveRight } from "lucide-react";
 import { clsx } from "clsx";
 import ScrollInFade from "@/components/common/ScrollInFade";
+import { WrapperProps } from "@/components/common/Wrapper";
+import sortItemALlowList from "@/utils/sortItemAllowList";
+import getImageByPriority from "@/utils/getImageByPriority";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useHeroCarouselBlockData(config);
@@ -70,17 +71,37 @@ function VariantAlpha({
   blockProps: UseHeroCarouselBlockProps;
   blockData: UseHeroCarouselBlockData;
 }) {
-  const { itemsData, referenceFeedData } = blockData;
+  const { itemsData, referenceFeedPath } = blockData;
   const critical = blockProps.settings;
-  if (itemsData.isLoading || referenceFeedData?.isLoading) {
+
+  if (itemsData.isLoading) {
     return null;
   }
-  const feed = referenceFeedData?.data?.feed;
+
+  const sortedItems = sortItemALlowList({
+    items: itemsData.data?.items ?? [],
+    itemSlugs: blockData.itemOrder,
+  });
+
+  const finalBlockSettings = {
+    ...blockProps.settings,
+    padded: false,
+    ...(blockProps.settings.location === "header" && {
+      width: "xxl" as UseHeroCarouselBlockProps["settings"]["width"],
+      themeCss: "py-0",
+    }),
+  };
+
+  const finalBlockProps = {
+    ...blockProps,
+    ...((!blockProps.settings.isPrimaryContent ||
+      blockProps.settings.location === "header") && { name: undefined }),
+  };
 
   return (
     <Block
-      {...blockProps}
-      settings={{ ...blockProps.settings, padded: false }}
+      {...finalBlockProps}
+      settings={finalBlockSettings}
       className="h-full"
     >
       <ScrollInFade className="h-full" critical={!!critical}>
@@ -92,18 +113,18 @@ function VariantAlpha({
           }}
           spaceBetween={50}
           slidesPerView={1}
-          className="max-h-full h-full w-full max-w-screen-2xl shadow-xl"
+          className="max-h-full h-full w-full max-w-full shadow-xl"
           autoplay={{
-            delay: 4000, // Time in ms
+            delay: 6000, // Time in ms
             disableOnInteraction: false, // Keep playing after interaction
             pauseOnMouseEnter: true, // Pause on hover
           }}
           loop={true}
         >
-          {(itemsData.data?.items ?? []).map((item: TItem) => {
+          {sortedItems.map((item: TItem) => {
             return (
               <SwiperSlide key={item.id} className="max-h-full h-full w-full">
-                <AlphaSlide item={item} feed={feed} />
+                <AlphaSlide item={item} feed={referenceFeedPath} />
               </SwiperSlide>
             );
           })}
@@ -115,38 +136,52 @@ function VariantAlpha({
   );
 }
 
-function AlphaSlide({ item, feed }: { item: TItem; feed: TFeed | undefined }) {
+function AlphaSlide({ item, feed }: { item: TItem; feed: string | undefined }) {
   const getImages = useGetAppItemImages(item.id);
-  const link = getItemLink(feed, item.id);
-  const image = getImages?.data?.images?.find(
-    (img: TImage) => img.type === "LANDSCAPE",
-  );
+  const link = getItemLink(feed, item);
+  const image = getImageByPriority({
+    images: getImages?.data?.images || [],
+    priority: { ICON: 0, PORTRAIT: 3, LANDSCAPE: 2 },
+  });
 
   if (getImages.isLoading || getImages.data.images.length === 0) {
     return <div className="skeleton w-full h-full" />;
   }
 
   return (
-    <div className="relative w-full h-full text-neutral-content">
+    <div className="relative w-full h-full text-neutral-content group">
       <Image
         src={image?.url || ""}
         alt={item.name}
         className="absolute inset-0 w-full h-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-transparent via-black/60" />
-      <div className="absolute inset-0 flex flex-col items-start justify-center p-6 md:pl-24 pb-18 md:max-w-[70%] text-left">
+      <div className="absolute gap-4 inset-0 flex flex-col items-start justify-center px-6 py-18 md:px-24 lg:px-40 xl:max-w-[75%] text-left">
         <Heading
           headingSize="xxl"
-          headingStyles="px-4 line-clamp-2 md:line-clamp-1 drop-shadow-lg shadow-black"
+          headingStyles={clsx([
+            "px-4 line-clamp-2 md:line-clamp-1 drop-shadow-lg shadow-black",
+            "origin-left transition-all duration-1000 scale-100 group-hover:scale-110",
+          ])}
         >
           {item.name}
         </Heading>
         <Text
           textSize="xxl"
-          className="mt-4 px-4 line-clamp-2 md:line-clamp-3 drop-shadow-lg shadow-black"
+          className={clsx([
+            "mt-4 px-4 line-clamp-2 md:line-clamp-3 drop-shadow-lg shadow-black",
+            "origin-top-left transition-all duration-1000 scale-100 group-hover:scale-110",
+          ])}
         >
           {item.description}
         </Text>
+        <MoveRight
+          className={clsx([
+            "h-16 w-16 mt-12 mx-4",
+            "origin-top-left transition-all duration-1000 scale-x-100 group-hover:scale-x-150",
+            "drop-shadow-lg shadow-black",
+          ])}
+        />
       </div>
       {link && <InsetLink to={link} aria-label={item.name} />}
     </div>
@@ -160,16 +195,44 @@ function VariantBeta({
   blockData: UseHeroCarouselBlockData;
   blockProps: UseHeroCarouselBlockProps;
 }) {
-  const { itemsData, referenceFeedData } = blockData;
+  const { itemsData, referenceFeedPath } = blockData;
   const critical = blockProps.settings.critical;
-  if (itemsData.isLoading || referenceFeedData?.isLoading) {
+  if (itemsData.isLoading) {
     return null;
   }
-  const feed = referenceFeedData?.data?.feed;
+
+  // const theme = blockProps.settings.theme;
+
+  const sortedItems = sortItemALlowList({
+    items: itemsData.data?.items ?? [],
+    itemSlugs: blockData.itemOrder,
+  });
+
+  const finalBlockSettings = {
+    ...blockProps.settings,
+    padded: false,
+    ...(blockProps.settings.location === "header" && {
+      width: "xxl" as UseHeroCarouselBlockProps["settings"]["width"],
+      themeCss: "py-0",
+    }),
+  };
+
+  const finalBlockProps = {
+    ...blockProps,
+    ...((!blockProps.settings.isPrimaryContent ||
+      blockProps.settings.location === "header") && { name: undefined }),
+  };
 
   return (
-    <Block {...blockProps} settings={{ ...blockProps.settings, padded: false }}>
-      <ScrollInFade className="h-full w-full" critical={!!critical}>
+    <Block
+      {...finalBlockProps}
+      settings={finalBlockSettings}
+      className={clsx(["h-full"])}
+    >
+      <ScrollInFade
+        className={clsx(["h-full w-full relative"])}
+        critical={!!critical}
+      >
         <PrevButton />
         <Swiper
           modules={[Navigation, Autoplay, EffectFade]}
@@ -179,7 +242,12 @@ function VariantBeta({
           }}
           spaceBetween={50}
           slidesPerView={1}
-          className="max-h-full h-[30rem] w-full max-w-screen-xl shadow-xl"
+          className={clsx([
+            "max-h-full w-full shadow-xl",
+            blockProps.settings.location === "header"
+              ? "!h-full lg:max-w-[calc(100%-12rem)]"
+              : "h-[50rem] md:h-[30rem] max-w-screen-xl",
+          ])}
           autoplay={{
             delay: 12000, // Time in ms
             disableOnInteraction: false, // Keep playing after interaction
@@ -187,10 +255,13 @@ function VariantBeta({
           }}
           loop={true}
         >
-          {(itemsData.data?.items ?? []).map((item: TItem) => {
+          {sortedItems.map((item: TItem) => {
             return (
-              <SwiperSlide key={item.id} className="max-h-full h-full w-full">
-                <BetaSlide item={item} feed={feed} />
+              <SwiperSlide
+                key={item.id}
+                className={clsx(["max-h-full h-full w-full"])}
+              >
+                <BetaSlide item={item} feed={referenceFeedPath} />
               </SwiperSlide>
             );
           })}
@@ -201,29 +272,62 @@ function VariantBeta({
   );
 }
 
-function BetaSlide({ item, feed }: { item: TItem; feed: TFeed | undefined }) {
+function BetaSlide({ item, feed }: { item: TItem; feed: string | undefined }) {
   const getImages = useGetAppItemImages(item.id);
-  const link = getItemLink(feed, item.id);
-  const image = getImages?.data?.images?.find(
-    (img: TImage) => img.type === "LANDSCAPE",
-  );
+  const link = getItemLink(feed, item);
+  const image = getImageByPriority({
+    images: getImages?.data?.images || [],
+    priority: { ICON: 0, PORTRAIT: 2, LANDSCAPE: 3 },
+  });
 
   if (getImages.isLoading || getImages.data.images.length === 0) {
     return <div className="skeleton w-full h-full" />;
   }
 
   return (
-    <div className="relative w-full h-full text-neutral-content">
-      <Image
-        src={image?.url || ""}
-        alt={item.name}
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-      <div className="absolute inset-0 bg-black/30" />
-      <div className="absolute inset-0 flex flex-col items-start justify-center p-6 px-24 pb-18 text-left">
-        <Heading headingSize="xl" headingStyles="text-neutral-content">
+    <div
+      className={clsx([
+        "relative w-full h-full flex flex-col md:flex-row group",
+      ])}
+    >
+      <figure className="flex-1 relative overflow-clip">
+        <Image
+          src={image?.url || ""}
+          alt={item.name}
+          className={clsx([
+            "absolute inset-0 w-full h-full object-cover",
+            "transition-all duration-1000 scale-100 group-hover:scale-110",
+          ])}
+        />
+        <div className="absolute inset-0 bg-black/30" />
+      </figure>
+      <div
+        className={clsx([
+          "flex-1 flex flex-col gap-8 items-start justify-center p-6 text-left",
+          "bg-base-100 text-base-content",
+        ])}
+      >
+        <Heading
+          headingSize="xxl"
+          headingStyles="line-clamp-2 shadow-black drop-shadow-sm"
+        >
           {item.name}
         </Heading>
+        {item.description && (
+          <Text
+            textSize="xl"
+            className="line-clamp-2 shadow-black drop-shadow-sm"
+          >
+            {item.description}
+          </Text>
+        )}
+        <MoveRight
+          className={clsx([
+            "h-12 w-12",
+            "origin-left transition-all duration-1000 scale-x-100 group-hover:scale-x-150",
+          ])}
+        />
+
         {link && <InsetLink to={link} aria-label={item.name} />}
       </div>
     </div>
@@ -237,17 +341,37 @@ function VariantGamma({
   blockData: UseHeroCarouselBlockData;
   blockProps: UseHeroCarouselBlockProps;
 }) {
-  const { itemsData, referenceFeedData } = blockData;
+  const { itemsData, referenceFeedPath } = blockData;
   const critical = blockProps.settings.critical;
-  if (itemsData.isLoading || referenceFeedData?.isLoading) {
+  if (itemsData.isLoading) {
     return null;
   }
-  const feed = referenceFeedData?.data?.feed;
+
+  const sortedItems = sortItemALlowList({
+    items: itemsData.data?.items ?? [],
+    itemSlugs: blockData.itemOrder,
+  });
+
+  const finalBlockSettings = {
+    ...blockProps.settings,
+    padded: "tablet" as WrapperProps["padded"],
+    ...(blockProps.settings.location === "header" && {
+      width: "xxl" as UseHeroCarouselBlockProps["settings"]["width"],
+      themeCss: "py-0",
+    }),
+  };
+
+  const finalBlockProps = {
+    ...blockProps,
+    ...((!blockProps.settings.isPrimaryContent ||
+      blockProps.settings.location === "header") && { name: undefined }),
+  };
 
   return (
     <Block
-      {...blockProps}
-      settings={{ ...blockProps.settings, padded: "tablet" }}
+      {...finalBlockProps}
+      settings={finalBlockSettings}
+      className="h-full"
     >
       <ScrollInFade className="h-full w-full" critical={!!critical}>
         <Swiper
@@ -266,7 +390,12 @@ function VariantGamma({
               slidesPerView: 3,
             },
           }}
-          className="max-h-full h-96 w-full max-w-screen-2xl"
+          className={clsx([
+            "max-h-full w-full shadow-xl",
+            blockProps.settings.location === "header"
+              ? "!h-full max-w-none"
+              : "h-96 max-w-screen-2xl",
+          ])}
           autoplay={{
             delay: 4000, // Time in ms
             disableOnInteraction: false, // Keep playing after interaction
@@ -274,13 +403,13 @@ function VariantGamma({
           }}
           loop={true}
         >
-          {(itemsData.data?.items ?? []).map((item: TItem) => {
+          {sortedItems.map((item: TItem) => {
             return (
               <SwiperSlide
                 key={item.id}
                 className="max-h-full h-full w-full shadow-xl"
               >
-                <GammaSlide item={item} feed={feed} />
+                <GammaSlide item={item} feed={referenceFeedPath} />
               </SwiperSlide>
             );
           })}
@@ -292,12 +421,13 @@ function VariantGamma({
   );
 }
 
-function GammaSlide({ item, feed }: { item: TItem; feed: TFeed | undefined }) {
+function GammaSlide({ item, feed }: { item: TItem; feed: string | undefined }) {
   const getImages = useGetAppItemImages(item.id);
-  const link = getItemLink(feed, item.id);
-  const image = getImages?.data?.images?.find(
-    (img: TImage) => img.type === "LANDSCAPE",
-  );
+  const link = getItemLink(feed, item);
+  const image = getImageByPriority({
+    images: getImages?.data?.images || [],
+    priority: { ICON: 0, PORTRAIT: 2, LANDSCAPE: 3 },
+  });
 
   if (getImages.isLoading || getImages.data.images.length === 0) {
     return <div className="skeleton w-full h-full" />;

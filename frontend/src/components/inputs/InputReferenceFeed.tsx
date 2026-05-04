@@ -19,8 +19,8 @@ import { Plus } from "lucide-react";
 import ComponentSchemaArrayOrderable from "@/components/partials/ComponentSchemaArrayOrderable";
 import FieldSetWrapperWithMinMax from "@/components/partials/FieldSetWrapper";
 
-type FeedIdField = { id: string; feedId: TFeed["id"]; path: TFeed["path"] };
-type FeedIdArrayFields = Array<FeedIdField>;
+type FeedPathField = { id: string; path: TFeed["path"] };
+type FeedPathArrayFields = Array<FeedPathField>;
 
 function ReferenceFeedInput(
   props: Omit<
@@ -51,7 +51,7 @@ function ReferenceFeedInput(
   const feeds = (geTFeeds.data as GetFeedsResponse)?.feeds || [];
 
   const getExistingFeedQuery = useGetFeeds({
-    ids: (fields as FeedIdArrayFields).map((field) => field.feedId),
+    paths: (fields as FeedPathArrayFields).map((field) => field.path),
   });
   const existingFeeds = (getExistingFeedQuery.data as GetFeedsResponse)?.feeds;
 
@@ -69,12 +69,12 @@ function ReferenceFeedInput(
         rules={rules as FieldArrayMinMaxRule}
       >
         <Grid
-          items={(fields as FeedIdArrayFields).map((field, index) => (
+          items={(fields as FeedPathArrayFields).map((field, index) => (
             <ComponentSchemaArrayOrderable
               key={field.id}
               label={`/${
                 field.path ||
-                existingFeeds?.find((f) => f.id === field.feedId)?.path
+                existingFeeds?.find((f) => f.path === field.path)?.path
               }/:id`}
               fields={fields}
               index={index}
@@ -84,7 +84,7 @@ function ReferenceFeedInput(
           ))}
         />
         <Combobox
-          onChange={(e: FeedIdField | null) => {
+          onChange={(e: FeedPathField | null) => {
             if (e) {
               append(e);
               setSearchTerm("");
@@ -106,7 +106,7 @@ function ReferenceFeedInput(
                 key={feed.id}
                 value={{
                   id: crypto.randomUUID(),
-                  feedId: feed.id,
+                  path: feed.path,
                   name: feed.path,
                 }}
               >

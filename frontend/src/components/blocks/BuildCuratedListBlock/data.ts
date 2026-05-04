@@ -5,7 +5,7 @@ import {
   BlockComponentDataReturnType,
 } from "@/components/blocks/Block";
 import { keepPreviousData } from "@tanstack/react-query";
-import { useGetAppItems, useGetAppFeedById } from "@/network/app";
+import { useGetAppItems } from "@/network/app";
 
 const variants = {
   alpha: {
@@ -20,7 +20,7 @@ const variants = {
   },
   gamma: {
     variant: "gamma",
-    width: "lg",
+    width: "md",
     pageSize: 10,
   },
 } as const;
@@ -33,7 +33,7 @@ function useCuratedListBlockData({
 }: BlockComponentStandardProps): UseCuratedListBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, itemAllowList, referenceFeed, isPrimaryContent } =
+  const { variant, theme, itemAllowList, referenceFeed, isPrimaryContent } =
     propertyValues as PropertyValues;
 
   const { pageSize, ...blockSettings } = variants[variant] || variants["alpha"];
@@ -45,8 +45,6 @@ function useCuratedListBlockData({
     },
     { placeholderData: keepPreviousData },
   );
-
-  const referenceFeedRecord = useGetAppFeedById(referenceFeed?.[0]);
 
   if (items.error) {
     return {
@@ -62,6 +60,7 @@ function useCuratedListBlockData({
     blockProps: {
       settings: {
         ...blockSettings,
+        theme,
         critical,
         isPrimaryContent,
       },
@@ -69,30 +68,35 @@ function useCuratedListBlockData({
     },
     blockData: {
       id,
+      itemOrder: itemAllowList,
       itemsData: items,
-      ...(referenceFeedRecord &&
-        !referenceFeedRecord.error && {
-          referenceFeedData: referenceFeedRecord,
-        }),
+      referenceFeedPath: referenceFeed?.[0],
     },
   };
 }
 
 export default useCuratedListBlockData;
 
+type ThemeNames = "alpha" | "beta" | "gamma";
+type Theme = {
+  theme: ThemeNames;
+};
 type VariantNames = keyof typeof variants;
+type Variant = (typeof variants)[VariantNames];
 
 type PropertyValues = {
   variant: VariantNames;
+  theme: ThemeNames;
   isPrimaryContent: boolean;
   itemAllowList: string[];
-  referenceFeed?: number[];
+  referenceFeed?: string[];
 };
 
-type BlockSettings = Omit<(typeof variants)[VariantNames], "pageSize">;
+type BlockSettings = Omit<Variant & Theme, "pageSize">;
 type LocalBlockData = {
+  itemOrder: string[];
   itemsData: ReturnType<typeof useGetAppItems>;
-  referenceFeedData?: ReturnType<typeof useGetAppFeedById>;
+  referenceFeedPath?: string;
 };
 
 export type UseCuratedListBlockProps = BlockProps<BlockSettings>;

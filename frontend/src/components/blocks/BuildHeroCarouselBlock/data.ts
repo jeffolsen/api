@@ -5,7 +5,7 @@ import {
   BlockComponentDataReturnType,
 } from "@/components/blocks/Block";
 import { keepPreviousData } from "@tanstack/react-query";
-import { useGetAppItems, useGetAppFeedById } from "@/network/app";
+import { useGetAppItems } from "@/network/app";
 
 const variants = {
   alpha: {
@@ -33,8 +33,14 @@ function useHeroCarouselBlockData({
 }: BlockComponentStandardProps): UseHeroCarouselBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, itemAllowList, referenceFeed, isPrimaryContent } =
-    propertyValues as PropertyValues;
+  const {
+    variant,
+    location,
+    theme,
+    itemAllowList,
+    referenceFeed,
+    isPrimaryContent,
+  } = propertyValues as PropertyValues;
 
   const { pageSize, ...blockSettings } = variants[variant] || variants["alpha"];
 
@@ -45,8 +51,6 @@ function useHeroCarouselBlockData({
     },
     { placeholderData: keepPreviousData },
   );
-
-  const referenceFeedRecord = useGetAppFeedById(referenceFeed?.[0]);
 
   if (items.error) {
     return {
@@ -62,6 +66,8 @@ function useHeroCarouselBlockData({
     blockProps: {
       settings: {
         ...blockSettings,
+        location,
+        theme,
         critical,
         isPrimaryContent,
       },
@@ -69,30 +75,37 @@ function useHeroCarouselBlockData({
     },
     blockData: {
       id,
+      itemOrder: itemAllowList,
       itemsData: items,
-      ...(referenceFeedRecord &&
-        !referenceFeedRecord.error && {
-          referenceFeedData: referenceFeedRecord,
-        }),
+      referenceFeedPath: referenceFeed?.[0],
     },
   };
 }
 
 export default useHeroCarouselBlockData;
 
+type ThemeNames = "alpha" | "beta" | "gamma";
+type Theme = {
+  theme: ThemeNames;
+};
 type VariantNames = keyof typeof variants;
+type Variant = (typeof variants)[VariantNames];
+
+type Location = { location: "header" | "body" };
 
 type PropertyValues = {
   variant: VariantNames;
+  theme: ThemeNames;
   isPrimaryContent: boolean;
   itemAllowList: string[];
-  referenceFeed?: number[];
-};
+  referenceFeed?: string[];
+} & Location;
 
-type BlockSettings = Omit<(typeof variants)[VariantNames], "pageSize">;
+type BlockSettings = Omit<Variant & Theme & Location, "pageSize">;
 type LocalBlockData = {
   itemsData: ReturnType<typeof useGetAppItems>;
-  referenceFeedData?: ReturnType<typeof useGetAppFeedById>;
+  referenceFeedPath?: string;
+  itemOrder: string[];
 };
 
 export type UseHeroCarouselBlockProps = BlockProps<BlockSettings>;

@@ -1,27 +1,25 @@
-import { TFeed } from "@/network/feed";
 import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
 import useCuratedListBlockData, {
   UseCuratedListBlockData,
   UseCuratedListBlockProps,
 } from "@/components/blocks/BuildCuratedListBlock/data";
 import Text from "@/components/common/Text";
-import Heading from "@/components/common/Heading";
+import Heading, { HeadingLevelProvider } from "@/components/common/Heading";
 import Grid from "@/components/common/Grid";
-import getItemLink from "@/utils/getItemLink";
+import getItemLink, { getLinkLabel } from "@/utils/getItemLink";
 import { TItem } from "@/network/item";
 import Link from "@/components/common/Link";
 import { clsx } from "clsx";
-import {
-  mainSpacing,
-  smSpacing,
-  smVerticalPadding,
-  xsSpacing,
-  xsVerticalPadding,
-} from "@/components/common/helpers/layoutStyles";
-import { useGetAppItemImages } from "@/network/app";
+import { smSpacing, xsSpacing } from "@/components/common/helpers/layoutStyles";
+import { useGetAppItemDateRanges, useGetAppItemImages } from "@/network/app";
 import { TImage } from "@/network/image";
 import Image from "@/components/common/Image";
 import ScrollInFade from "@/components/common/ScrollInFade";
+import dayjs, { mediumDate } from "@/utils/dayjs";
+import RichContent from "@/components/common/RichContent";
+import { JSONContent } from "@tiptap/react";
+import sortItemALlowList from "@/utils/sortItemAllowList";
+import { MoveRight } from "lucide-react";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useCuratedListBlockData(config);
@@ -71,25 +69,37 @@ function VariantAlpha({
   blockProps: UseCuratedListBlockProps;
   blockData: UseCuratedListBlockData;
 }) {
-  const { itemsData, referenceFeedData } = blockData;
+  const { itemsData, referenceFeedPath } = blockData;
 
-  if (itemsData.isLoading || referenceFeedData?.isLoading) {
+  if (itemsData.isLoading) {
     return null;
   }
-  const feed = referenceFeedData?.data?.feed;
+
+  const sortedItems = sortItemALlowList({
+    items: itemsData.data?.items ?? [],
+    itemSlugs: blockData.itemOrder,
+  });
+
+  const theme = blockProps.settings.theme;
 
   return (
-    <Block
-      name={blockProps.name + " - Alpha Variant"}
-      settings={{ ...blockProps.settings }}
-    >
-      <Grid
-        className={clsx([mainSpacing, smVerticalPadding])}
-        items={(itemsData.data?.items ?? []).map((item, index) => ({
-          id: item.id,
-          content: <AlphaCard index={index} item={item} feed={feed} />,
-        }))}
-      />
+    <Block name={blockProps.name} settings={{ ...blockProps.settings }}>
+      <HeadingLevelProvider>
+        <Grid
+          className={clsx(["gap-8 sm:gap-10 md:gap-14"])}
+          items={sortedItems.map((item, index) => ({
+            id: item.id,
+            content: (
+              <AlphaCard
+                index={index}
+                item={item}
+                feed={referenceFeedPath}
+                theme={theme}
+              />
+            ),
+          }))}
+        />
+      </HeadingLevelProvider>
     </Block>
   );
 }
@@ -98,14 +108,18 @@ const AlphaCard = ({
   item,
   feed,
   index,
+  theme,
 }: {
   item: TItem;
-  feed?: TFeed;
+  feed?: string;
   index: number;
+  theme: UseCuratedListBlockProps["settings"]["theme"];
 }) => {
   const maxImages = 3;
   const getImages = useGetAppItemImages(item.id);
-  const link = getItemLink(feed, item.id);
+  const link = getItemLink(feed, item);
+  const linkLabel = getLinkLabel(link);
+
   const images = getImages?.data?.images
     ?.filter(
       (img: TImage) => img.type === "LANDSCAPE" || img.type === "PORTRAIT",
@@ -119,17 +133,44 @@ const AlphaCard = ({
   return (
     <ScrollInFade
       className={clsx([
-        "flex",
+        "flex relative overflow-x-clip",
         index % 2 === 0 ? "justify-end" : "justify-start",
       ])}
     >
       <div
         className={clsx([
-          "card md:card-side h-[30rem] w-full max-w-5xl flex-none justify-center",
+          "card md:card-side md:h-[30rem] w-full max-w-5xl flex-none justify-center",
           "bg-base-100 shadow-xl",
-          index % 2 === 0 ? "md:flex-row-reverse text-right" : "text-left",
+          index % 2 === 0 ? "text-right" : "text-left md:flex-row-reverse",
         ])}
       >
+        <div className="h-full p-6">
+          <div
+            className={clsx([
+              "flex flex-col md:justify-center gap-4 h-full flex-none",
+              index % 2 === 0 ? "items-end" : "items-start",
+            ])}
+          >
+            <Heading headingSize="lg" headingStyles="prose line-clamp-2">
+              {item.name}
+            </Heading>
+            <Text textSize="lg" className="prose line-clamp-3">
+              {item.description}
+            </Text>
+            {link && (
+              <Link
+                as="Link"
+                to={link}
+                linkColor="accent"
+                size="xl"
+                className={"flex gap-2 items-center uppercase bold flex-none"}
+              >
+                {!linkLabel ? "Go there" : `${linkLabel}`} <MoveRight />
+              </Link>
+            )}
+          </div>
+        </div>
+
         <figure
           className={clsx([
             "w-full md:w-1/2 flex flex-none",
@@ -155,17 +196,17 @@ const AlphaCard = ({
             );
           })}
         </figure>
-        <div className="card-body md:justify-center">
-          <Heading headingSize="md">{item.name}</Heading>
-          <Text textSize="md" className="line-clamp-2">
-            {item.description}
-          </Text>
-          {link && (
-            <Link as="Link" to={link}>
-              Goto Item
-            </Link>
-          )}
-        </div>
+
+        {theme === "beta" && (
+          <div
+            className={clsx([
+              "absolute inset-0 top-24 -z-10 bg-primary/90",
+              index % 2 === 0
+                ? "right-1/3 md:right-32 -translate-x-20 translate-y-14 md:translate-y-14"
+                : "left-1/3 md:left-32 translate-x-20 translate-y-14 md:translate-y-14",
+            ])}
+          />
+        )}
       </div>
     </ScrollInFade>
   );
@@ -178,23 +219,26 @@ function VariantBeta({
   blockProps: UseCuratedListBlockProps;
   blockData: UseCuratedListBlockData;
 }) {
-  const { itemsData, referenceFeedData } = blockData;
-  if (itemsData.isLoading || referenceFeedData?.isLoading) {
+  const { itemsData, referenceFeedPath } = blockData;
+  if (itemsData.isLoading) {
     return null;
   }
-  const feed = referenceFeedData?.data?.feed;
   return (
     <Block
-      name={blockProps.name + " - Beta Variant"}
+      name={blockProps.name}
       settings={{ ...blockProps.settings, padded: false }}
     >
-      <Grid
-        className={clsx([smSpacing, smVerticalPadding])}
-        items={(itemsData.data?.items ?? []).map((item, index) => ({
-          id: item.id,
-          content: <BetaCard index={index} item={item} feed={feed} />,
-        }))}
-      />
+      <HeadingLevelProvider>
+        <Grid
+          className={clsx([smSpacing])}
+          items={(itemsData.data?.items ?? []).map((item, index) => ({
+            id: item.id,
+            content: (
+              <BetaCard index={index} item={item} feed={referenceFeedPath} />
+            ),
+          }))}
+        />
+      </HeadingLevelProvider>
     </Block>
   );
 }
@@ -204,12 +248,12 @@ const BetaCard = ({
   feed,
 }: {
   item: TItem;
-  feed?: TFeed;
+  feed?: string;
   index: number;
 }) => {
   const maxImages = 1;
   const getImages = useGetAppItemImages(item.id);
-  const link = getItemLink(feed, item.id);
+  const link = getItemLink(feed, item);
   const images = getImages?.data?.images
     ?.filter(
       (img: TImage) => img.type === "LANDSCAPE" || img.type === "PORTRAIT",
@@ -241,8 +285,14 @@ const BetaCard = ({
           {item.description}
         </Text>
         {link && (
-          <Link as="Link" to={link}>
-            Goto Item
+          <Link
+            as="Link"
+            to={link}
+            linkColor="accent"
+            size="xl"
+            className={"flex gap-2"}
+          >
+            Go <MoveRight />
           </Link>
         )}
       </div>
@@ -257,24 +307,53 @@ function VariantGamma({
   blockProps: UseCuratedListBlockProps;
   blockData: UseCuratedListBlockData;
 }) {
-  const { itemsData, referenceFeedData } = blockData;
-  if (itemsData.isLoading || referenceFeedData?.isLoading) {
+  const { itemsData, referenceFeedPath } = blockData;
+  if (itemsData.isLoading) {
     return null;
   }
-  const feed = referenceFeedData?.data?.feed;
+
+  const sortedItems = sortItemALlowList({
+    items: itemsData.data?.items ?? [],
+    itemSlugs: blockData.itemOrder,
+  });
+
+  const theme = blockProps.settings.theme;
+
+  const finalBlockSettings = {
+    ...blockProps.settings,
+  };
+
+  const finalBlockProps = {
+    ...blockProps,
+  };
 
   return (
-    <Block
-      name={blockProps.name + " - Gamma Variant"}
-      settings={{ ...blockProps.settings }}
-    >
-      <Grid
-        className={clsx([xsSpacing, xsVerticalPadding, "auto-rows-auto"])}
-        items={(itemsData.data?.items ?? []).map((item, index) => ({
-          id: item.id,
-          content: <GammaCard index={index} item={item} feed={feed} />,
-        }))}
-      />
+    <Block {...finalBlockProps} settings={finalBlockSettings}>
+      <HeadingLevelProvider>
+        <Grid
+          className={clsx([
+            "grid-rows-auto",
+            theme === "alpha" && xsSpacing,
+            theme === "beta" && "bg-base-100 shadow-lg",
+          ])}
+          items={sortedItems.map((item, index) => ({
+            id: item.id,
+            content: (
+              <>
+                <GammaCard
+                  index={index}
+                  item={item}
+                  feed={referenceFeedPath}
+                  theme={theme}
+                />
+                {theme === "beta" && index < sortedItems.length - 1 && (
+                  <div className="absolute bottom-0 left-12 right-12 border-b border-base-content" />
+                )}
+              </>
+            ),
+          }))}
+        />
+      </HeadingLevelProvider>
     </Block>
   );
 }
@@ -282,26 +361,67 @@ function VariantGamma({
 const GammaCard = ({
   item,
   feed,
+  theme,
 }: {
   item: TItem;
-  feed?: TFeed;
+  feed?: string;
   index: number;
+  theme: UseCuratedListBlockProps["settings"]["theme"];
 }) => {
-  const link = getItemLink(feed, item.id);
+  const link = getItemLink(feed, item);
+  const getDates = useGetAppItemDateRanges(item.id);
+
+  if (getDates.isLoading) return null;
+
+  const date = getDates?.data?.dateRanges?.[0] || null;
 
   return (
     <ScrollInFade
       className={clsx([
-        "card w-full flex-none justify-center h-full",
-        "bg-base-100 shadow-xl",
+        "card card-compact sm:card-normal w-full flex-none justify-center h-full",
+        theme === "alpha" && "bg-base-100 shadow-xl text-base-content",
+        theme === "beta" && "bg-base-100 text-base-content py-8",
       ])}
     >
-      <div className="card-body">
-        <Heading headingSize="sm">{item.name}</Heading>
-        <Text textSize="sm">{item.description}</Text>
+      <div className={clsx(["card-body gap-5"])}>
+        <div className="flex flex-col gap-3">
+          <Heading
+            headingSize="md"
+            headingStyles="font-bold"
+            headingDecorator={theme === "alpha" ? "right-strike" : "none"}
+          >
+            {item.name}
+          </Heading>
+          {date && (
+            <div className="flex flex-col gap-2 md:flex-row md:items-center justify-between flex-wrap">
+              <Text
+                textSize="md"
+                className="text-left text-accent uppercase font-semibold prose"
+              >
+                {date.description}
+              </Text>
+              {date.startAt && date.endAt && (
+                <Text
+                  textSize="md"
+                  className="md:text-right font-bold bg-secondary text-secondary-content py-1 px-3 flex-none"
+                >
+                  {dayjs(date.startAt).format(mediumDate)} ---{" "}
+                  {dayjs(date.endAt).format(mediumDate)}
+                </Text>
+              )}
+            </div>
+          )}
+        </div>
+        {(item.richContent?.content as unknown as JSONContent) ? (
+          <RichContent
+            richContent={item.richContent as Record<string, unknown>}
+          />
+        ) : (
+          item.description && <Text textSize="md">{item.description}</Text>
+        )}
         {link && (
-          <Link as="Link" to={link}>
-            Goto Item
+          <Link as="Link" to={link} linkColor="accent" className={"flex gap-2"}>
+            Go <MoveRight />
           </Link>
         )}
       </div>

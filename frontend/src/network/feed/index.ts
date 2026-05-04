@@ -34,6 +34,7 @@ export const useGetFeeds = (
           ...queryParams,
           sort: queryParams?.sort?.join(","),
           ids: queryParams?.ids?.join(","),
+          paths: queryParams?.ids?.join(","),
           subjectTypes: queryParams?.subjectTypes?.join(","),
         },
       });
