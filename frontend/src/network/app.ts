@@ -11,7 +11,7 @@ import {
   TAGS_ENDPOINT,
 } from "@/network/api";
 import { ITEMS_KEY } from "@/network/item";
-import { FEEDS_KEY } from "@/network/feed";
+import { FEEDS_KEY, GetFeedsResponse, TFeedsParams } from "@/network/feed";
 import { TAGS_KEY } from "@/network/tag";
 import { IMAGES_KEY } from "@/network/image";
 import { DATE_RANGES_KEY } from "@/network/dateRange/types";
@@ -173,15 +173,19 @@ export const useGetAppItemDateRanges = (id: number) => {
   });
 };
 
-export const useGetAppFeeds = () => {
+export const useGetAppFeeds = (queryParams?: TFeedsParams) => {
   return useQuery({
-    queryKey: [APP_KEY, FEEDS_KEY],
-    queryFn: async () => {
+    queryKey: [APP_KEY, FEEDS_KEY, queryParams],
+    queryFn: async (): Promise<GetFeedsResponse> => {
       const response = await app.get(FEEDS_ENDPOINT, {
         headers,
         params: {
-          subjectTypes: "SINGLE",
           pageSize: 100,
+          ...queryParams,
+          sort: queryParams?.sort?.join(","),
+          ids: queryParams?.ids?.join(","),
+          paths: queryParams?.ids?.join(","),
+          subjectTypes: queryParams?.subjectTypes?.join(","),
         },
       });
       return response.data;
