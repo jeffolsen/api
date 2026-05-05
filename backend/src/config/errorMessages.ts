@@ -49,3 +49,10 @@ export const MESSAGE_TAGS_NOT_FOUND = "Tag(s) not found";
 export const MESSAGE_COMPONENTS_NOT_FOUND = "Component(s) not found";
 
 export const MESSAGE_HEALTHY = "Service is healthy";
+
+export const MESSAGE_CONSENT_TO_TERMS =
+  "You must read and consent to the Terms of Service to register";
+export const MESSAGE_CONSENT_TO_PRIVACY =
+  "You must read and consent to the Privacy Policy to register";
+export const MESSAGE_ASSERT_LEGAL_AGE =
+  "You must be 18 years or older to register";

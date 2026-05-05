@@ -17,10 +17,29 @@ async function main() {
     where: { email: process.env.ADMIN_USER },
     update: {
       password: await hashValue(process.env.ADMIN_PASSWORD as string),
+      profileReceipt: {
+        upsert: {
+          update: {},
+          create: {
+            consentToTermsAt: new Date(),
+            consentToPrivacyAt: new Date(),
+            verifiedAgeAt: new Date(),
+            verifiedEmailAt: new Date(),
+          },
+        },
+      },
     },
     create: {
       email: process.env.ADMIN_USER as string,
       password: await hashValue(process.env.ADMIN_PASSWORD as string),
+      profileReceipt: {
+        create: {
+          consentToTermsAt: new Date(),
+          consentToPrivacyAt: new Date(),
+          verifiedAgeAt: new Date(),
+          verifiedEmailAt: new Date(),
+        },
+      },
     },
     include: {
       items: true,
