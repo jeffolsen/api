@@ -33,6 +33,9 @@ const LazyLoadedFourOhFourBlock = lazy(
 const LazyLoadedFourOhOneBlock = lazy(
   () => import("@/components/blocks/DefaultFourOhOneBlock/index"),
 );
+const LazyLoadedPolicyBlock = lazy(
+  () => import("@/components/blocks/DefaultPolicyBlock"),
+);
 const LazyLoadedStyleGuideBlock = lazy(
   () => import("@/components/blocks/DefaultStyleGuideBlock"),
 );
@@ -71,6 +74,7 @@ const Blocks = {
   Generic: LazyLoadedGenericBlock,
   FourOhFour: LazyLoadedFourOhFourBlock,
   FourOhOne: LazyLoadedFourOhOneBlock,
+  Policy: LazyLoadedPolicyBlock,
   StyleGuide: LazyLoadedStyleGuideBlock,
   LoginRegister: LazyLoadedLoginRegisterBlock,
   ProfileDashboard: LazyLoadedProfileDashboardBlock,
