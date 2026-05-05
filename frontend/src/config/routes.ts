@@ -15,6 +15,7 @@ export const cmsPaths = {
 export const defaultPaths = {
   notFound: "/404",
   unauthorized: "/401",
+  privacy: "/privacy",
   // contact: "/contact",
   // styleGuide: "/style-guide",
   // siteMap: "/sitemap",
@@ -39,6 +40,7 @@ type DefaultComponentTypeName =
   | "FourOhFour"
   | "FourOhOne"
   | "Generic"
+  | "Policy"
   | "StyleGuide";
 
 export type LocalFeedComponent = Omit<TComponent, "typeName"> & {
@@ -125,9 +127,38 @@ export const fourOhOneFeed = {
   components: [fourOhOneComponent],
 } as LocalFeedWithComponents;
 
+export const privacy = {
+  id: 10000,
+  path: paths.privacy.slice(1), // remove leading slash for matching
+  subjectType: "COLLECTION",
+  publishedAt: "2024-01-01T00:00:00Z",
+  expiredAt: null,
+  createdAt: "2024-01-01T00:00:00Z",
+  updatedAt: "2024-01-01T00:00:00Z",
+  components: [
+    {
+      id: 10001,
+      typeId: 10001,
+      typeName: "Policy",
+      feedId: 10000,
+      order: 1,
+      name: "Privacy Policy",
+      propertyValues: {
+        variant: "privacy",
+        isPrimaryContent: true,
+      },
+      publishedAt: "2024-01-01T00:00:00Z",
+      expiredAt: null,
+      createdAt: "2024-01-01T00:00:00Z",
+      updatedAt: "2024-01-01T00:00:00Z",
+    } as LocalFeedComponent,
+  ],
+} as LocalFeedWithComponents;
+
 const routes: LocalFeedWithComponents[] = [
   fourOhFourFeed,
   fourOhOneFeed,
+  privacy,
   {
     id: 1000,
     path: paths.cmsHome.slice(1), // remove leading slash for matching
