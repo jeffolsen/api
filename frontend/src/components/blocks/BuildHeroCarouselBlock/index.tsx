@@ -201,7 +201,7 @@ function VariantBeta({
     return null;
   }
 
-  // const theme = blockProps.settings.theme;
+  const theme = blockProps.settings.theme;
 
   const sortedItems = sortItemALlowList({
     items: itemsData.data?.items ?? [],
@@ -230,7 +230,7 @@ function VariantBeta({
       className={clsx(["h-full"])}
     >
       <ScrollInFade
-        className={clsx(["h-full w-full relative"])}
+        className={clsx(["h-full w-full relative overflow-x-clip"])}
         critical={!!critical}
       >
         <PrevButton />
@@ -259,9 +259,9 @@ function VariantBeta({
             return (
               <SwiperSlide
                 key={item.id}
-                className={clsx(["max-h-full h-full w-full"])}
+                className={clsx(["max-h-full h-full w-full shadow-md"])}
               >
-                <BetaSlide item={item} feed={referenceFeedPath} />
+                <BetaSlide item={item} feed={referenceFeedPath} theme={theme} />
               </SwiperSlide>
             );
           })}
@@ -272,7 +272,15 @@ function VariantBeta({
   );
 }
 
-function BetaSlide({ item, feed }: { item: TItem; feed: string | undefined }) {
+function BetaSlide({
+  item,
+  feed,
+  theme,
+}: {
+  item: TItem;
+  feed: string | undefined;
+  theme: UseHeroCarouselBlockProps["settings"]["theme"];
+}) {
   const getImages = useGetAppItemImages(item.id);
   const link = getItemLink(feed, item);
   const image = getImageByPriority({
@@ -290,7 +298,14 @@ function BetaSlide({ item, feed }: { item: TItem; feed: string | undefined }) {
         "relative w-full h-full flex flex-col md:flex-row group",
       ])}
     >
-      <figure className="flex-1 relative overflow-clip">
+      <figure
+        className={clsx([
+          "flex-1 relative overflow-clip",
+
+          // theme === "alpha" && "border-r-0 border-[48px] border-primary",
+          // theme === "beta" && "border-r-0 border-[48px] border-base-content",
+        ])}
+      >
         <Image
           src={image?.url || ""}
           alt={item.name}
@@ -305,6 +320,8 @@ function BetaSlide({ item, feed }: { item: TItem; feed: string | undefined }) {
         className={clsx([
           "flex-1 flex flex-col gap-8 items-start justify-center p-6 text-left",
           "bg-base-100 text-base-content",
+          theme === "alpha" && "border-l-0 border-[48px] border-primary",
+          theme === "beta" && "border-l-0 border-[48px] border-accent",
         ])}
       >
         <Heading

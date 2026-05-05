@@ -205,8 +205,8 @@ function VariantBeta({
   return (
     <BlockWrapper name={blockProps.name} settings={{ ...blockProps.settings }}>
       <Grid
-        className={clsx([smSpacing])}
-        columns={{ sm: "2", lg: "3" }}
+        className={clsx(["gap-0 sm:gap-4 md:gap-12"])}
+        columns={{ base: "2", sm: "3", lg: "4" }}
         items={(itemsData.data?.items ?? []).map((item, index) => ({
           id: item.id,
           content: (
@@ -241,13 +241,13 @@ function BetaCard({
   return (
     <ScrollInFade
       className={clsx([
-        "relative card card-compact md:card-normal group w-full h-full",
+        "relative card card-compact group w-full h-full",
         "bg-base-100 shadow-xl items-stretch",
       ])}
     >
       <figure
         className={clsx([
-          "relative flex-none w-full before:content-[''] before:mt-[50%] before:w-full",
+          "relative flex-none w-full before:content-[''] before:mt-[133%] before:w-full",
           "overflow-hidden",
         ])}
       >
@@ -265,36 +265,37 @@ function BetaCard({
         ) : (
           <div
             className={clsx([
-              "absolute inset-0 flex justify-center items-center p-3 bg-base-300",
+              "absolute inset-0 flex justify-center items-center bg-neutral",
             ])}
+            style={{ containerType: "inline-size" }}
           >
-            <Text
-              textSize="md"
+            <span
               className={clsx([
-                "line-clamp-2 text-center uppercase",
-                "transition-all duration-1000 scale-100 group-hover:scale-110",
-                "text-base-content",
+                "line-clamp-5 text-justify uppercase break-all font-black",
+                "transition-all duration-1000 scale-110 group-hover:scale-125",
+                "text-[15cqi]",
+                "text-secondary mx-6 !leading-snug !tracking-tighter",
               ])}
             >
               {item.name}
-            </Text>
+            </span>
           </div>
         )}
       </figure>
-      <div className="card-body text-left gap-8">
+      <div className="card-body text-left gap-4">
         <Heading
-          headingSize="md"
+          headingSize="sm"
           headingStyles={clsx([
-            "line-clamp-2 uppercase",
+            "line-clamp-1 uppercase",
             "transition-all duration-1000 scale-100 group-hover:scale-110",
           ])}
         >
           {item.name}
         </Heading>
         <Text
-          textSize="md"
+          textSize="sm"
           className={clsx([
-            "line-clamp-3 uppercase",
+            "line-clamp-2 uppercase",
             "transition-all duration-1000 scale-100 group-hover:scale-110",
           ])}
         >
