@@ -116,15 +116,20 @@ export const useGetAppItems = (
   });
 };
 
-export const useGetAppItemById = (id: number) => {
+export const useGetAppItemById = (
+  id: number | undefined,
+  options?: Omit<UseQueryOptions<GetItemsResponse>, "queryKey" | "queryFn">,
+) => {
   return useQuery({
     queryKey: [APP_KEY, ITEMS_KEY, id],
     queryFn: async () => {
+      if (id === undefined) return { error: true };
       const response = await app.get(`${ITEMS_ENDPOINT}/${id}`, {
         headers,
       });
       return response.data;
     },
+    ...options,
   });
 };
 

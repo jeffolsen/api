@@ -1,36 +1,27 @@
-import {
-  VERIFICATION_CODE_LOGIN_ENDPOINT,
-  VERIFICATION_CODE_SESSION_RESET_ENDPOINT,
-  VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
-  VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT,
-  VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT,
-} from "@config/routes";
-import {
-  MESSAGE_ENDPOINT_NOT_FOUND,
-  MESSAGE_CREDENTIALS,
-  MESSAGE_MALFORMED,
-  MESSAGE_SESSION_TOO_MANY,
-} from "@config/errorMessages";
-import {
-  NOT_FOUND,
-  OK,
-  BAD_REQUEST,
-  TOO_MANY_REQUESTS,
-} from "@config/errorCodes";
+import { OK } from "@config/errorCodes";
 import { RequestHandler } from "express";
 import catchErrors from "@util/catchErrors";
-import prismaClient, { CodeType } from "@db/client";
+import prismaClient from "@db/client";
 import { sendVerificationCode } from "@services/auth";
-import { isSessionLimitReached } from "@services/session";
-import throwError from "@util/throwError";
 import { requestVerificationCodeSchema } from "@schemas/verificationCode";
-import { compareValue } from "@util/bcrypt";
+import {
+  requestDeleteProfileCode,
+  requestManageApiKeyCode,
+  requestLoginCode,
+  requestSessionResetCode,
+  requestPasswordResetCode,
+} from "@services/verificationCode";
 import { Request, Response } from "express";
+
+const parseBody = (req: Request) =>
+  requestVerificationCodeSchema.parse({
+    ...req.body,
+    userAgent: req.headers["user-agent"],
+  });
 
 export const getProfileVerificationCodes: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {
     const { profileId } = req;
-
     const codes = await prismaClient.verificationCode.findMany({
       where: { profileId },
       orderBy: { createdAt: "desc" },
@@ -40,103 +31,69 @@ export const getProfileVerificationCodes: RequestHandler = catchErrors(
   },
 );
 
-interface RequestCodeForProfileBody {
-  email: string;
-  password: string;
-}
-export const requestVerificationCode: RequestHandler<
-  unknown,
-  unknown,
-  RequestCodeForProfileBody,
-  unknown
-> = catchErrors(async (req: Request, res: Response) => {
-  const { profileId } = req;
-  const { email, password, userAgent } = requestVerificationCodeSchema.parse({
-    ...req.body,
-    userAgent: req.headers["user-agent"],
-  });
+export const requestDeleteProfileVerificationCode: RequestHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const { profileId } = req;
+    const { password, userAgent } = parseBody(req);
+    const { profile, codeType } = await requestDeleteProfileCode(
+      profileId,
+      password,
+    );
+    await sendVerificationCode({ profile, codeType, userAgent });
+    res.sendStatus(OK);
+  },
+);
 
-  let codeType;
-  let profile;
-  switch (req.path) {
-    // requires password + session
-    case VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT:
-      throwError(profileId && password, NOT_FOUND, MESSAGE_CREDENTIALS);
-      profile = await prismaClient.profile.findUnique({
-        where: { id: profileId },
-      });
-      throwError(
-        profile && (await compareValue(password, profile.password)),
-        NOT_FOUND,
-        MESSAGE_CREDENTIALS,
-      );
-      codeType = CodeType.DELETE_PROFILE;
-      break;
-    // requires password + session
-    case VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT:
-      throwError(profileId && password, NOT_FOUND, MESSAGE_CREDENTIALS);
-      profile = await prismaClient.profile.findUnique({
-        where: { id: profileId },
-      });
-      throwError(
-        profile && (await compareValue(password, profile.password)),
-        NOT_FOUND,
-        MESSAGE_CREDENTIALS,
-      );
-      codeType = CodeType.CREATE_API_KEY;
-      break;
-    // requires email + password
-    case VERIFICATION_CODE_LOGIN_ENDPOINT:
-      throwError(email && password, NOT_FOUND, MESSAGE_CREDENTIALS);
-      profile = await prismaClient.profile.findUnique({ where: { email } });
-      throwError(
-        profile && (await compareValue(password, profile.password)),
-        NOT_FOUND,
-        MESSAGE_CREDENTIALS,
-      );
-      throwError(
-        !(await isSessionLimitReached(profile.id)),
-        TOO_MANY_REQUESTS,
-        MESSAGE_SESSION_TOO_MANY,
-      );
-      codeType = CodeType.LOGIN;
-      break;
-    // requires email + password
-    case VERIFICATION_CODE_SESSION_RESET_ENDPOINT:
-      throwError(email && password, NOT_FOUND, MESSAGE_CREDENTIALS);
-      profile = await prismaClient.profile.findUnique({ where: { email } });
-      throwError(
-        profile && (await compareValue(password, profile.password)),
-        NOT_FOUND,
-        MESSAGE_CREDENTIALS,
-      );
-      codeType = CodeType.LOGOUT_ALL;
-      break;
-    // requires email only
-    case VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT:
-      throwError(email, NOT_FOUND, MESSAGE_CREDENTIALS);
-      profile = await prismaClient.profile.findUnique({ where: { email } });
-      throwError(profile, NOT_FOUND, MESSAGE_CREDENTIALS);
-      codeType = CodeType.PASSWORD_RESET;
-      break;
-    // bad url fragment
-    default:
-      throwError(false, NOT_FOUND, MESSAGE_ENDPOINT_NOT_FOUND);
-  }
-  throwError(profile && codeType, BAD_REQUEST, MESSAGE_MALFORMED);
+export const requestManageApiKeyVerificationCode: RequestHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const { profileId } = req;
+    const { password, userAgent } = parseBody(req);
+    const { profile, codeType } = await requestManageApiKeyCode(
+      profileId,
+      password,
+    );
+    await sendVerificationCode({ profile, codeType, userAgent });
+    res.sendStatus(OK);
+  },
+);
 
-  await sendVerificationCode({
-    profile,
-    codeType,
-    userAgent,
-  });
+export const requestLoginVerificationCode: RequestHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const { email, password, userAgent } = parseBody(req);
+    const { profile, codeType } = await requestLoginCode(email, password);
+    await sendVerificationCode({ profile, codeType, userAgent });
+    res.sendStatus(OK);
+  },
+);
 
-  res.sendStatus(OK);
-});
+export const requestSessionResetVerificationCode: RequestHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const { email, password, userAgent } = parseBody(req);
+    const { profile, codeType } = await requestSessionResetCode(
+      email,
+      password,
+    );
+    await sendVerificationCode({ profile, codeType, userAgent });
+    res.sendStatus(OK);
+  },
+);
+
+export const requestPasswordResetVerificationCode: RequestHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const { email, userAgent } = parseBody(req);
+    const { profile, codeType } = await requestPasswordResetCode(email);
+    await sendVerificationCode({ profile, codeType, userAgent });
+    res.sendStatus(OK);
+  },
+);
 
 const verificationCodeApi = {
   getProfileVerificationCodes,
-  requestVerificationCode,
+  requestDeleteProfileVerificationCode,
+  requestManageApiKeyVerificationCode,
+  requestLoginVerificationCode,
+  requestSessionResetVerificationCode,
+  requestPasswordResetVerificationCode,
 };
 
 export default verificationCodeApi;

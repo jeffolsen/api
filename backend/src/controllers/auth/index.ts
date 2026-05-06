@@ -12,26 +12,47 @@ import prismaClient from "@db/client";
 import { loginSchema, RegisterSchema } from "@schemas/auth";
 import { ProfileCreateTransform } from "@schemas/profile";
 import { Request, Response } from "express";
+import { findProfileWithReceipt } from "@/services/profile";
 
 interface RegisterBody {
   email: string;
   password: string;
   confirmPassword: string;
+  consentToTerms: boolean;
+  consentToPrivacy: boolean;
+  assertEighteenYearsOrOlder: boolean;
 }
 
 export const register: RequestHandler<unknown, unknown, RegisterBody, unknown> =
   catchErrors(async (req: Request, res: Response) => {
-    const { email, password } = RegisterSchema.parse({
+    const {
+      email,
+      password,
+      consentToTerms,
+      consentToPrivacy,
+      assertEighteenYearsOrOlder,
+    } = RegisterSchema.parse({
       ...req.body,
     });
 
-    const emailFound = await prismaClient.profile.findUnique({
-      where: { email },
-    });
-    throwError(!emailFound, CONFLICT, MESSAGE_EMAIL_TAKEN);
+    await prismaClient.$transaction(async (tx) => {
+      const emailFound = await tx.profile.findUnique({
+        where: { email },
+      });
+      throwError(!emailFound, CONFLICT, MESSAGE_EMAIL_TAKEN);
 
-    await prismaClient.profile.create({
-      data: await ProfileCreateTransform.parseAsync({ email, password }),
+      await tx.profile.create({
+        data: {
+          ...(await ProfileCreateTransform.parseAsync({ email, password })),
+          profileReceipt: {
+            create: {
+              consentToTermsAt: consentToTerms && new Date(),
+              consentToPrivacyAt: consentToPrivacy && new Date(),
+              verifiedAgeAt: assertEighteenYearsOrOlder && new Date(),
+            },
+          },
+        },
+      });
     });
 
     res.sendStatus(CREATED);
@@ -58,8 +79,17 @@ export const login: RequestHandler<
     verificationCode: code || "",
   });
 
-  const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, NOT_FOUND, MESSAGE_CREDENTIALS);
+  const profile = await findProfileWithReceipt({ email });
+
+  // if the profile has not met the requirements for registration it can't login
+
+  throwError(
+    profile?.profileReceipt?.consentToTermsAt &&
+      profile?.profileReceipt?.consentToPrivacyAt &&
+      profile?.profileReceipt?.verifiedAgeAt,
+    NOT_FOUND,
+    MESSAGE_CREDENTIALS,
+  );
 
   const { session, ...tokens } = await initProfileSession({
     profile,

@@ -12,6 +12,7 @@ import {
 } from "@/components/forms/Form";
 import { RegisterFormInput, useRegister } from "@/network/auth";
 import { useEmail, withFormHandling } from "@/network/api";
+import FormSubmitAndConsent from "@/components/inputs/FormSubmitAndConsent";
 
 function RegisterForm({
   handleSuccess,
@@ -43,6 +44,7 @@ function RegisterForm({
           },
         )
       }
+      SubmitInput={FormSubmitAndConsent}
       {...props}
     />
   );

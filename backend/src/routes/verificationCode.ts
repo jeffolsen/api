@@ -28,25 +28,25 @@ router.post(
   VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT,
   authenticate,
   authorizeScope([CREATE_API_KEY_SCOPE]),
-  verificationCodeApi.requestVerificationCode,
+  verificationCodeApi.requestManageApiKeyVerificationCode,
 );
 router.post(
   VERIFICATION_CODE_DELETE_PROFILE_ENDPOINT,
   authenticate,
   authorizeScope([DELETE_PROFILE_SCOPE]),
-  verificationCodeApi.requestVerificationCode,
+  verificationCodeApi.requestDeleteProfileVerificationCode,
 );
 router.post(
   VERIFICATION_CODE_LOGIN_ENDPOINT,
-  verificationCodeApi.requestVerificationCode,
+  verificationCodeApi.requestLoginVerificationCode,
 );
 router.post(
   VERIFICATION_CODE_SESSION_RESET_ENDPOINT,
-  verificationCodeApi.requestVerificationCode,
+  verificationCodeApi.requestSessionResetVerificationCode,
 );
 router.post(
   VERIFICATION_CODE_PASSWORD_RESET_ENDPOINT,
-  verificationCodeApi.requestVerificationCode,
+  verificationCodeApi.requestPasswordResetVerificationCode,
 );
 
 export default router;

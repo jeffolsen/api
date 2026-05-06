@@ -32,13 +32,13 @@ import {
   isSessionLimitReached,
 } from "./session";
 import {
-  useVerificationCode,
   isVerificationCodeLimitReached,
   isDailyEmailLimitReached,
 } from "./verificationCode";
+import { ProfileGetPayload } from "@/generated/prisma/models";
 
 interface LogInProfileParams {
-  profile: Profile;
+  profile: ProfileGetPayload<{ include: { profileReceipt: true } }>;
   userAgent: string;
   verificationCode: string;
 }
@@ -60,10 +60,22 @@ export const initProfileSession = async ({
     userAgent,
   });
 
-  const session = await startSession({
-    profileId,
-    scope: PROFILE_SESSION,
-    userAgent,
+  const session = await prismaClient.$transaction(async (tx) => {
+    if (!profile.profileReceipt?.verifiedEmailAt) {
+      await tx.profileReceipt.update({
+        where: { profileId },
+        data: {
+          verifiedEmailAt: new Date(),
+        },
+      });
+    }
+    return await tx.session.create({
+      data: await startSession({
+        profileId,
+        scope: PROFILE_SESSION,
+        userAgent,
+      }),
+    });
   });
 
   const refreshToken = signRefreshToken(session.id);
@@ -106,7 +118,7 @@ export const refreshAccessToken = async ({
 };
 
 interface SendVerificationCode {
-  profile: Profile;
+  profile: ProfileGetPayload<{ include: { profileReceipt: true } }>;
   codeType: CodeType;
   userAgent: string;
 }
@@ -160,23 +172,29 @@ export const processVerificationCode = async ({
   codeType,
   userAgent,
 }: ProcessVerificationCodeParams) => {
-  const verificationCode = await prismaClient.verificationCode.findFirst({
-    where: {
-      profileId,
-      usedAt: null,
-      type: codeType,
-      expiredAt: { gt: new Date() },
-      userAgent,
-    },
-    orderBy: { createdAt: "desc" },
-  });
-  throwError(
-    verificationCode && (await compareValue(value, verificationCode.value)),
-    NOT_FOUND,
-    MESSAGE_CREDENTIALS,
-  );
+  return await prismaClient.$transaction(async (tx) => {
+    const verificationCode = await tx.verificationCode.findFirst({
+      where: {
+        profileId: profileId,
+        usedAt: null,
+        type: codeType,
+        expiredAt: { gt: new Date() },
+        userAgent,
+      },
+      orderBy: { createdAt: "desc" },
+    });
 
-  return await useVerificationCode(verificationCode.id);
+    throwError(
+      verificationCode && (await compareValue(value, verificationCode.value)),
+      NOT_FOUND,
+      MESSAGE_CREDENTIALS,
+    );
+
+    return await tx.verificationCode.update({
+      where: { id: verificationCode.id },
+      data: { usedAt: new Date() },
+    });
+  });
 };
 
 type AuthenticateWithApiKeyResult = ApiKey | null;

@@ -57,8 +57,12 @@ export const deleteProfile: RequestHandler = catchErrors(
       userAgent,
     });
 
-    await prismaClient.profile.delete({
-      where: { id: profile.id },
+    await prismaClient.$transaction(async (tx) => {
+      await tx.profileReceipt.updateMany({
+        where: { profileId: profile.id },
+        data: { deletedAt: new Date() },
+      });
+      await tx.profile.delete({ where: { id: profile.id } });
     });
 
     clearAuthCookies(res).sendStatus(NO_CONTENT);

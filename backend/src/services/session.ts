@@ -17,12 +17,10 @@ export const isSessionCurrent = (session: {
 };
 
 export const startSession = async (data: SessionCreateTransformType) => {
-  return await prismaClient.session.create({
-    data: {
-      ...(await SessionCreateTransform.parseAsync(data)),
-      expiredAt: getNewRefreshTokenExpirationDate(),
-    },
-  });
+  return {
+    ...(await SessionCreateTransform.parseAsync(data)),
+    expiredAt: getNewRefreshTokenExpirationDate(),
+  };
 };
 
 export const logOutSession = async (id: number) => {
