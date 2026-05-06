@@ -24,6 +24,7 @@ import {
   ApiKeyGenerateSchema,
 } from "@schemas/apikey";
 import { Request, Response } from "express";
+import { hasConfirmedEmail, hasLegalRequirements } from "@/services/profile";
 
 export const getProfilesApiKeys: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {
@@ -66,11 +67,18 @@ export const generate: RequestHandler<
 
   const profile = await prismaClient.profile.findUnique({
     where: { id: profileId },
+    include: { profileReceipt: true, apiKeys: true },
   });
-  throwError(profile, NOT_FOUND, MESSAGE_CREDENTIALS);
-
-  const tooManyApiKeys = await isApiKeyLimitReached(profile.id);
-  throwError(!tooManyApiKeys, FORBIDDEN, MESSAGE_API_KEY_LIMIT_REACHED);
+  throwError(
+    profile && hasLegalRequirements(profile) && hasConfirmedEmail(profile),
+    NOT_FOUND,
+    MESSAGE_CREDENTIALS,
+  );
+  throwError(
+    !isApiKeyLimitReached(profile),
+    FORBIDDEN,
+    MESSAGE_API_KEY_LIMIT_REACHED,
+  );
 
   const slugExists = await prismaClient.apiKey.findUnique({
     where: { slug },
@@ -123,14 +131,16 @@ export const destroy: RequestHandler<
 
   const profile = await prismaClient.profile.findUnique({
     where: { id: profileId },
+    include: { profileReceipt: true, apiKeys: true },
   });
-  throwError(profile, NOT_FOUND, MESSAGE_CREDENTIALS);
+  throwError(
+    profile && hasLegalRequirements(profile) && hasConfirmedEmail(profile),
+    NOT_FOUND,
+    MESSAGE_CREDENTIALS,
+  );
 
-  const apiKey = await prismaClient.apiKey.findUnique({
-    where: { slug },
-  });
+  const apiKey = profile.apiKeys.find((apiKey) => apiKey.slug === slug);
   throwError(apiKey, NOT_FOUND, MESSAGE_API_KEY_SLUG_NOT_FOUND);
-  throwError(apiKey?.profileId === profileId, FORBIDDEN, MESSAGE_NO_ACCESS);
 
   await processVerificationCode({
     profileId,

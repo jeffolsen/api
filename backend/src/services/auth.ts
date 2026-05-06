@@ -1,4 +1,5 @@
 import prismaClient, { ApiKey, CodeType, Profile } from "@db/client";
+import type { Prisma } from "@/generated/prisma/client";
 import {
   signAccessToken,
   signRefreshToken,
@@ -53,22 +54,24 @@ export const initProfileSession = async ({
   const tooManySessions = await isSessionLimitReached(profileId);
   throwError(!tooManySessions, TOO_MANY_REQUESTS, MESSAGE_SESSION_TOO_MANY);
 
-  await processVerificationCode({
-    profileId,
-    value: verificationCode,
-    codeType: CodeType.LOGIN,
-    userAgent,
-  });
-
   const session = await prismaClient.$transaction(async (tx) => {
+    await processVerificationCode(
+      {
+        profileId,
+        value: verificationCode,
+        codeType: CodeType.LOGIN,
+        userAgent,
+      },
+      tx,
+    );
+
     if (!profile.profileReceipt?.verifiedEmailAt) {
       await tx.profileReceipt.update({
         where: { profileId },
-        data: {
-          verifiedEmailAt: new Date(),
-        },
+        data: { verifiedEmailAt: new Date() },
       });
     }
+
     return await tx.session.create({
       data: await startSession({
         profileId,
@@ -166,16 +169,14 @@ interface ProcessVerificationCodeParams {
   userAgent: string;
 }
 
-export const processVerificationCode = async ({
-  profileId,
-  value,
-  codeType,
-  userAgent,
-}: ProcessVerificationCodeParams) => {
-  return await prismaClient.$transaction(async (tx) => {
-    const verificationCode = await tx.verificationCode.findFirst({
+export const processVerificationCode = async (
+  { profileId, value, codeType, userAgent }: ProcessVerificationCodeParams,
+  tx?: Prisma.TransactionClient,
+) => {
+  const run = async (client: Prisma.TransactionClient) => {
+    const verificationCode = await client.verificationCode.findFirst({
       where: {
-        profileId: profileId,
+        profileId,
         usedAt: null,
         type: codeType,
         expiredAt: { gt: new Date() },
@@ -190,11 +191,13 @@ export const processVerificationCode = async ({
       MESSAGE_CREDENTIALS,
     );
 
-    return await tx.verificationCode.update({
+    return await client.verificationCode.update({
       where: { id: verificationCode.id },
       data: { usedAt: new Date() },
     });
-  });
+  };
+
+  return tx ? run(tx) : prismaClient.$transaction(run);
 };
 
 type AuthenticateWithApiKeyResult = ApiKey | null;

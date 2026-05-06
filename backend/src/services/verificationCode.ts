@@ -10,7 +10,11 @@ import {
   MESSAGE_CREDENTIALS,
   MESSAGE_SESSION_TOO_MANY,
 } from "@config/errorMessages";
-import { findProfileWithReceipt } from "@/services/profile";
+import {
+  findProfileWithReceipt,
+  hasConfirmedEmail,
+  hasLegalRequirements,
+} from "@/services/profile";
 
 export const useVerificationCode = async (id: number) => {
   return await prismaClient.verificationCode.update({
@@ -50,9 +54,8 @@ export const requestDeleteProfileCode = async (
   throwError(password, NOT_FOUND, MESSAGE_CREDENTIALS);
   const profile = await findProfileWithReceipt({ id: profileId });
   throwError(
-    profile?.profileReceipt?.consentToTermsAt &&
-      profile?.profileReceipt?.consentToPrivacyAt &&
-      profile?.profileReceipt?.verifiedAgeAt &&
+    profile &&
+      hasLegalRequirements(profile) &&
       (await compareValue(password, profile.password)),
     NOT_FOUND,
     MESSAGE_CREDENTIALS,
@@ -67,10 +70,9 @@ export const requestManageApiKeyCode = async (
   throwError(password, NOT_FOUND, MESSAGE_CREDENTIALS);
   const profile = await findProfileWithReceipt({ id: profileId });
   throwError(
-    profile?.profileReceipt?.consentToTermsAt &&
-      profile?.profileReceipt?.consentToPrivacyAt &&
-      profile?.profileReceipt?.verifiedAgeAt &&
-      profile?.profileReceipt?.verifiedEmailAt &&
+    profile &&
+      hasLegalRequirements(profile) &&
+      hasConfirmedEmail(profile) &&
       (await compareValue(password, profile.password)),
     NOT_FOUND,
     MESSAGE_CREDENTIALS,
@@ -84,10 +86,10 @@ export const requestLoginCode = async (
 ) => {
   throwError(email && password, NOT_FOUND, MESSAGE_CREDENTIALS);
   const profile = await findProfileWithReceipt({ email });
+
   throwError(
-    profile?.profileReceipt?.consentToTermsAt &&
-      profile?.profileReceipt?.consentToPrivacyAt &&
-      profile?.profileReceipt?.verifiedAgeAt &&
+    profile &&
+      hasLegalRequirements(profile) &&
       (await compareValue(password, profile.password)),
     NOT_FOUND,
     MESSAGE_CREDENTIALS,
@@ -107,9 +109,8 @@ export const requestSessionResetCode = async (
   throwError(email && password, NOT_FOUND, MESSAGE_CREDENTIALS);
   const profile = await findProfileWithReceipt({ email });
   throwError(
-    profile?.profileReceipt?.consentToTermsAt &&
-      profile?.profileReceipt?.consentToPrivacyAt &&
-      profile?.profileReceipt?.verifiedAgeAt &&
+    profile &&
+      hasLegalRequirements(profile) &&
       (await compareValue(password, profile.password)),
     NOT_FOUND,
     MESSAGE_CREDENTIALS,
@@ -121,9 +122,7 @@ export const requestPasswordResetCode = async (email: string | undefined) => {
   throwError(email, NOT_FOUND, MESSAGE_CREDENTIALS);
   const profile = await findProfileWithReceipt({ email });
   throwError(
-    profile?.profileReceipt?.consentToTermsAt &&
-      profile?.profileReceipt?.consentToPrivacyAt &&
-      profile?.profileReceipt?.verifiedAgeAt,
+    profile && hasLegalRequirements(profile),
     NOT_FOUND,
     MESSAGE_CREDENTIALS,
   );

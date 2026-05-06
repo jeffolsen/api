@@ -12,7 +12,10 @@ import prismaClient from "@db/client";
 import { loginSchema, RegisterSchema } from "@schemas/auth";
 import { ProfileCreateTransform } from "@schemas/profile";
 import { Request, Response } from "express";
-import { findProfileWithReceipt } from "@/services/profile";
+import {
+  findProfileWithReceipt,
+  hasLegalRequirements,
+} from "@/services/profile";
 
 interface RegisterBody {
   email: string;
@@ -81,12 +84,8 @@ export const login: RequestHandler<
 
   const profile = await findProfileWithReceipt({ email });
 
-  // if the profile has not met the requirements for registration it can't login
-
   throwError(
-    profile?.profileReceipt?.consentToTermsAt &&
-      profile?.profileReceipt?.consentToPrivacyAt &&
-      profile?.profileReceipt?.verifiedAgeAt,
+    profile && hasLegalRequirements(profile),
     NOT_FOUND,
     MESSAGE_CREDENTIALS,
   );
