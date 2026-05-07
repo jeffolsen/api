@@ -10,9 +10,13 @@ import {
   PaginationParams,
   TAGS_ENDPOINT,
 } from "@/network/api";
-import { ITEMS_KEY } from "@/network/item";
-import { FEEDS_KEY, GetFeedsResponse, TFeedsParams } from "@/network/feed";
-import { TAGS_KEY } from "@/network/tag";
+import { ITEMS_KEY } from "@/network/item/types";
+import {
+  FEEDS_KEY,
+  GetFeedsResponse,
+  TFeedsParams,
+} from "@/network/feed/types";
+import { TAGS_KEY } from "@/network/tag/types";
 import { IMAGES_KEY } from "@/network/image";
 import { DATE_RANGES_KEY } from "@/network/dateRange/types";
 import { COMPONENTS_KEY } from "@/network/component";

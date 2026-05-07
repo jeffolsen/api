@@ -1,5 +1,5 @@
 import { useFieldArray } from "react-hook-form";
-import { TTagName, useGetTags } from "@/network/tag";
+import { useGetTags } from "@/network/tag/useGetTags";
 import Grid from "@/components/common/Grid";
 import { useCallback } from "react";
 import {
@@ -10,7 +10,7 @@ import {
 } from "@/components/inputs/Input";
 import clsx from "clsx";
 import Loading from "@/components/common/Loading";
-import { TTagInput } from "@/network/tag";
+import { TTagInput, TTagName } from "@/network/tag/types";
 import FieldSetWrapperWithMinMax from "@/components/partials/FieldSetWrapper";
 
 type TagnameArrayFields = Array<TTagInput & { id: string }>;

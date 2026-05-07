@@ -1,11 +1,8 @@
-// import { TComponentInput } from "@/network/component";
-import {
-  useCreateFeed,
-  useUpdateFeed,
-  useModifyFeed,
-  useDeleteFeed,
-  TFeedInput,
-} from "@/network/feed";
+import { useCreateFeed } from "@/network/feed/useCreateFeed";
+import { useUpdateFeed } from "@/network/feed/useUpdateFeed";
+import { useModifyFeed } from "@/network/feed/useModifyFeed";
+import { useDeleteFeed } from "@/network/feed/useDeleteFeed";
+import { TFeedInput } from "@/network/feed/types";
 import {
   convertLocalDateTimeToZulu,
   convertZuluToLocalDateTime,

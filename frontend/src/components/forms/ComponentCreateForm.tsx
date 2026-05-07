@@ -17,7 +17,8 @@ import {
   TComponentType,
   useGetComponentTypeById,
 } from "@/network/componentType";
-import { TFeed, useGetFeedComponents } from "@/network/feed";
+import { TFeed } from "@/network/feed/types";
+import { useGetFeedComponents } from "@/network/feed/useGetFeedComponents";
 import {
   convertLocalDateTimeToZulu,
   convertZuluToLocalDateTime,

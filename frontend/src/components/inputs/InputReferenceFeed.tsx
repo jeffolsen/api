@@ -11,7 +11,8 @@ import {
   FieldArrayMinMaxRule,
   FormError,
 } from "@/components/inputs/Input";
-import { TFeed, GetFeedsResponse, useGetFeeds } from "@/network/feed";
+import { TFeed, GetFeedsResponse } from "@/network/feed/types";
+import { useGetFeeds } from "@/network/feed/useGetFeeds";
 import { useFieldArray } from "react-hook-form";
 import Grid from "@/components/common/Grid";
 import useDebounce from "@/hooks/useDebounce";

@@ -2,7 +2,7 @@ import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
 import { ItemCreateForm } from "@/components/forms/ItemCreateForm";
 import EmptyCard from "@/components/cards/EmptyCard";
 import { useNavigate } from "react-router";
-import { TItem } from "@/network/item";
+import { TItem } from "@/network/item/types";
 import useItemCreateBlockData, {
   UseItemCreateBlockData,
   UseItemCreateBlockProps,

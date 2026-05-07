@@ -1,4 +1,6 @@
 import { PaginationParams } from "@/network/api";
+
+export const ITEMS_KEY = "items" as const;
 import { TDateRangeInput } from "@/network/dateRange/types";
 import { TImage } from "@/network/image/types";
 import { TTagInput, TTagName } from "@/network/tag/types";

@@ -1,9 +1,7 @@
 import { useGetComponentTypes } from "@/network/componentType";
-import {
-  TSubjectType,
-  useGetFeedById,
-  useGetFeedComponents,
-} from "@/network/feed";
+import { TSubjectType } from "@/network/feed/types";
+import { useGetFeedById } from "@/network/feed/useGetFeedById";
+import { useGetFeedComponents } from "@/network/feed/useGetFeedComponents";
 import {
   BlockProps,
   BlockData,

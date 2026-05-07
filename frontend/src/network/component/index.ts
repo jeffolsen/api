@@ -1,9 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FEEDS_KEY } from "@/network/feed";
+import { FEEDS_KEY, TFeed } from "@/network/feed/types";
 import { useAuthState } from "@/contexts/AuthContext";
 import { COMPONENTS_ENDPOINT, withErrorHandling } from "@/network/api";
 import { TComponent, TComponentInput } from "@/network/component/types";
-import { TFeed } from "@/network/feed/types";
 
 export const COMPONENTS_KEY = "components" as const;
 

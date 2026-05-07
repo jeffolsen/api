@@ -1,9 +1,7 @@
-import {
-  useGetItemById,
-  useGetItemDateRanges,
-  useGetItemImages,
-  useGetItemsTags,
-} from "@/network/item";
+import { useGetItemById } from "@/network/item/useGetItemById";
+import { useGetItemDateRanges } from "@/network/item/useGetItemDateRanges";
+import { useGetItemImages } from "@/network/item/useGetItemImages";
+import { useGetItemsTags } from "@/network/item/useGetItemsTags";
 import {
   BlockProps,
   BlockData,

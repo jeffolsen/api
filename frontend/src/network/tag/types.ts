@@ -1,3 +1,5 @@
+export const TAGS_KEY = "tags" as const;
+
 export type TTagName =
   | "PERSON"
   | "PLACE"

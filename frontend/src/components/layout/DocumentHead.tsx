@@ -3,7 +3,7 @@ import {
   LocalFeedWithComponents,
   LocalFeedComponent,
 } from "@/config/routes";
-import { TItemRelations, TItem } from "@/network/item";
+import { TItemRelations, TItem } from "@/network/item/types";
 import { useMemo } from "react";
 // import { siteJsonLd } from "@/config/site";
 // import { useHead } from "@unhead/react";

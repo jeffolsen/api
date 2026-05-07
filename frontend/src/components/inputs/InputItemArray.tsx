@@ -11,7 +11,8 @@ import {
   FieldArrayMinMaxRule,
   FormError,
 } from "@/components/inputs/Input";
-import { TItem, GetItemsResponse, useGetItems } from "@/network/item";
+import { TItem, GetItemsResponse } from "@/network/item/types";
+import { useGetItems } from "@/network/item/useGetItems";
 import { useFieldArray } from "react-hook-form";
 import Grid from "@/components/common/Grid";
 import useDebounce from "@/hooks/useDebounce";

@@ -17,18 +17,14 @@ import {
   RICH_CONTENT_DEFAULT,
 } from "@/config/inputs";
 import { withFormHandling } from "@/network/api";
-import { TDateRangeInput } from "@/network/dateRange";
-import { TTagInput } from "@/network/tag";
+import { TDateRangeInput } from "@/network/dateRange/types";
+import { TTagInput } from "@/network/tag/types";
 import { TImage } from "@/network/image";
-import {
-  useCreateItem,
-  useModifyItem,
-  useUpdateItem,
-  useDeleteItem,
-  TItemRelations,
-  TItemInput,
-  TItem,
-} from "@/network/item";
+import { TItemRelations, TItemInput, TItem } from "@/network/item/types";
+import { useCreateItem } from "@/network/item/useCreateItem";
+import { useModifyItem } from "@/network/item/useModifyItem";
+import { useUpdateItem } from "@/network/item/useUpdateItem";
+import { useDeleteItem } from "@/network/item/useDeleteItem";
 import FormScheduleSubmit from "@/components/inputs/FormSubmitAndSchedule";
 import Form, {
   FormWithHeading,

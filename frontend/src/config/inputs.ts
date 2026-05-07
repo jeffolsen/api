@@ -221,7 +221,7 @@ export const tagnamesDefaultFromStrings = (tagnames: string[]) => ({
   tagNames: tagnames.map((tagname) => ({ tagname })),
 });
 
-import { TDateRangeInput } from "@/network/dateRange";
+import { TDateRangeInput } from "@/network/dateRange/types";
 export const DATE_RANGES_INPUT = {
   dataName: "dateRanges",
   displayName: "Date Ranges",

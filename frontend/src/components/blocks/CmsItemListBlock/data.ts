@@ -1,7 +1,8 @@
 import { keepPreviousData } from "@tanstack/react-query";
 import { useGetAuthenticatedProfile } from "@/network/profile";
-import { useGetItems, TItemSort } from "@/network/item";
-import { TTagName } from "@/network/tag";
+import { TItemSort } from "@/network/item/types";
+import { useGetItems } from "@/network/item/useGetItems";
+import { TTagName } from "@/network/tag/types";
 import {
   BlockProps,
   BlockComponentStandardProps,

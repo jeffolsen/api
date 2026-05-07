@@ -6,12 +6,12 @@ import useContentHeaderBlockData, {
 import Text from "@/components/common/Text";
 import Heading from "@/components/common/Heading";
 import getItemLink, { getLinkLabel } from "@/utils/getItemLink";
-import { TItem } from "@/network/item";
+import { TItem } from "@/network/item/types";
 import Link from "@/components/common/Link";
 import { clsx } from "clsx";
 import ScrollInFade from "@/components/common/ScrollInFade";
 import RichContent from "@/components/common/RichContent";
-import { TTag } from "@/network/tag";
+import { TTag } from "@/network/tag/types";
 import { useGetAppItemTags } from "@/network/app";
 import { JSONContent } from "@tiptap/react";
 import Button from "@/components/common/Button";

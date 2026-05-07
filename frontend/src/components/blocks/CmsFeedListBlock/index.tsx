@@ -5,7 +5,8 @@ import Loading from "@/components/common/Loading";
 import DashBoardLayout from "@/components/layout/DashBoardLayout";
 import { useGetAuthenticatedProfile } from "@/network/profile";
 import SectionHeading from "@/components/partials/SectionHeading";
-import { TFeed, GetFeedsResponse, useGetFeeds } from "@/network/feed";
+import { useGetFeeds } from "@/network/feed/useGetFeeds";
+import { TFeed, GetFeedsResponse } from "@/network/feed/types";
 import Grid from "@/components/common/Grid";
 import BasicCard from "@/components/cards/BasicCard";
 import EmptyCard from "@/components/cards/EmptyCard";
@@ -33,7 +34,8 @@ import useFeedListBlockData, {
   UseFeedUpdateBlockProps,
 } from "@/components/blocks/CmsFeedListBlock/data";
 import { paths } from "@/config/routes";
-import { useGetItems, GetItemsResponse } from "@/network/item";
+import { GetItemsResponse } from "@/network/item/types";
+import { useGetItems } from "@/network/item/useGetItems";
 import FetchTransition from "@/components/common/FetchTransition";
 
 export default function Component(config: BlockComponentStandardProps) {

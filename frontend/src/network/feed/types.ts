@@ -1,6 +1,8 @@
 import { PaginationParams } from "@/network/api";
 import { TComponent, TComponentWithType } from "@/network/component/types";
 
+export const FEEDS_KEY = "feeds" as const;
+
 export type TSubjectType = "COLLECTION" | "SINGLE";
 
 export type TFeedSort =

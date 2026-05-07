@@ -10,7 +10,8 @@ import {
   ChildFromFormProps,
   FormError,
 } from "@/components/inputs/Input";
-import { TFeed, GetFeedsResponse, useGetFeeds } from "@/network/feed";
+import { TFeed, GetFeedsResponse } from "@/network/feed/types";
+import { useGetFeeds } from "@/network/feed/useGetFeeds";
 import useDebounce from "@/hooks/useDebounce";
 import { Plus } from "lucide-react";
 import FieldSetWrapperWithMinMax from "@/components/partials/FieldSetWrapper";

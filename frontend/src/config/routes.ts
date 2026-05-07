@@ -1,4 +1,4 @@
-import { TFeed } from "@/network/feed";
+import { TFeed } from "@/network/feed/types";
 import { TComponent } from "@/network/component";
 
 export const cmsPaths = {

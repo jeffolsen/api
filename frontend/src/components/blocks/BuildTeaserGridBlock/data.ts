@@ -6,7 +6,7 @@ import {
 } from "@/components/blocks/Block";
 import { keepPreviousData } from "@tanstack/react-query";
 import { useGetAppItems } from "@/network/app";
-import { TTagName } from "@/network/tag";
+import { TTagName } from "@/network/tag/types";
 
 const variants = {
   alpha: {

@@ -7,7 +7,7 @@ import Text from "@/components/common/Text";
 import Heading, { HeadingLevelProvider } from "@/components/common/Heading";
 import Grid from "@/components/common/Grid";
 import getItemLink, { getLinkLabel } from "@/utils/getItemLink";
-import { TItem } from "@/network/item";
+import { TItem } from "@/network/item/types";
 import Link from "@/components/common/Link";
 import { clsx } from "clsx";
 import { smSpacing, xsSpacing } from "@/components/common/helpers/layoutStyles";

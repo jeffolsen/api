@@ -7,7 +7,8 @@ import {
   BlockData,
 } from "@/components/blocks/Block";
 import { useSearchParam } from "@/hooks/useSearchParam";
-import { TFeedSort, TSubjectType, useGetFeeds } from "@/network/feed";
+import { TFeedSort, TSubjectType } from "@/network/feed/types";
+import { useGetFeeds } from "@/network/feed/useGetFeeds";
 
 const variants = {
   default: {

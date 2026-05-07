@@ -1,4 +1,4 @@
-import { TItem } from "@/network/item";
+import { TItem } from "@/network/item/types";
 import Text from "@/components/common/Text";
 import BlockWrapper, {
   BlockComponentStandardProps,

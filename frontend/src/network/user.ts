@@ -4,8 +4,8 @@ import api, {
   ITEMS_ENDPOINT,
   REFRESH_ENDPOINT,
 } from "@/network/api";
-import { ITEMS_KEY } from "@/network/item";
-import { FEEDS_KEY } from "@/network/feed";
+import { ITEMS_KEY } from "@/network/item/types";
+import { FEEDS_KEY } from "@/network/feed/types";
 import { COMPONENTS_KEY } from "@/network/component";
 
 export const userFeedsQueryKey = (queryParams?: unknown) =>

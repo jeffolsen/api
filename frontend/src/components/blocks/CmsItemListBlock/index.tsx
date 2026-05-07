@@ -1,6 +1,7 @@
 import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
 import Grid from "@/components/common/Grid";
-import { TItem, useGetItemsTags, GetItemsResponse } from "@/network/item";
+import { TItem, GetItemsResponse } from "@/network/item/types";
+import { useGetItemsTags } from "@/network/item/useGetItemsTags";
 import EmptyCard from "@/components/cards/EmptyCard";
 import Heading, { HeadingLevelProvider } from "@/components/common/Heading";
 import Text from "@/components/common/Text";
@@ -21,7 +22,8 @@ import {
   useSearchParamWithDefault,
   useSearchParam,
 } from "@/hooks/useSearchParam";
-import { TTag, useGetTags } from "@/network/tag";
+import { useGetTags } from "@/network/tag/useGetTags";
+import { TTag } from "@/network/tag/types";
 import { useMemo } from "react";
 import {
   ListNavigation,

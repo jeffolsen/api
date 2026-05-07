@@ -20,7 +20,7 @@ import {
   userFeedComponentsQueryKey,
 } from "@/network/user";
 import { QueryClient } from "@tanstack/react-query";
-import { TFeed } from "@/network/feed";
+import { TFeed } from "@/network/feed/types";
 
 // we only have a handful of types of pages we need to handle in the router loader:
 // 1. COLLECTION Pages owned by the app's api-key. They have arbitrary paths with no dynamic segments.

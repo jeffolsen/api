@@ -1,4 +1,4 @@
-import { TItem } from "@/network/item";
+import { TItem } from "@/network/item/types";
 
 const getItemLink = (feed: string | undefined, item: TItem) => {
   if (item.overrideLink) return `/${item.overrideLink}`;

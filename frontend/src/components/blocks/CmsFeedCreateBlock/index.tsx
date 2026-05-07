@@ -2,7 +2,7 @@ import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
 import { FeedCreateForm } from "@/components/forms/FeedCreateForm";
 import EmptyCard from "@/components/cards/EmptyCard";
 import { useNavigate } from "react-router";
-import { TFeed } from "@/network/feed";
+import { TFeed } from "@/network/feed/types";
 import useFeedCreateBlockData, {
   UseFeedCreateBlockData,
   UseFeedCreateBlockProps,

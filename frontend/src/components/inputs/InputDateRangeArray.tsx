@@ -10,7 +10,7 @@ import {
 import { XButton, PlusButton } from "@/components/common/Button";
 import TextInput, { TextInputProps } from "@/components/inputs/InputText";
 import { Fragment } from "react";
-import { TDateRangeInput } from "@/network/dateRange";
+import { TDateRangeInput } from "@/network/dateRange/types";
 import FieldSetWrapperWithMinMax from "@/components/partials/FieldSetWrapper";
 
 function DateRangeSelectInput(
