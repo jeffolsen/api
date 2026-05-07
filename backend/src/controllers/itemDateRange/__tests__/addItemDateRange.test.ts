@@ -91,6 +91,7 @@ describe("POST /api/items/:itemId/date-ranges", () => {
         data: {
           dateRanges: {
             create: {
+              slug: expect.anything(),
               startAt: VALID_START,
               endAt: VALID_END,
               description: mockDateRange.description,

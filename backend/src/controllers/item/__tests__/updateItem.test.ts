@@ -170,6 +170,7 @@ describe("PUT /api/items/:id", () => {
             deleteMany: {},
             create: [
               {
+                slug: expect.anything(),
                 description: "event description",
                 startAt: start.toISOString(),
                 endAt: end.toISOString(),

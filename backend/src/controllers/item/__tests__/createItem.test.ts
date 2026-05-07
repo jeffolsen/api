@@ -226,6 +226,7 @@ describe("POST /api/items", () => {
           dateRanges: {
             create: [
               {
+                slug: expect.anything(),
                 description: "event description",
                 startAt: start.toISOString(),
                 endAt: end.toISOString(),

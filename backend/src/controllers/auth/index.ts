@@ -72,9 +72,6 @@ export const login: RequestHandler<
   unknown
 > = catchErrors(async (req: Request, res: Response) => {
   const code = req.get("X-Verification-Code");
-  const { profileId } = req;
-  const loggedIn = !!profileId;
-  throwError(!loggedIn, CONFLICT, "Already logged in");
 
   const { email, verificationCode, userAgent } = loginSchema.parse({
     ...req.body,
