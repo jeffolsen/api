@@ -80,19 +80,11 @@ export const defaultApiKeyScope = () =>
     READ_DATE_RANGE_SCOPE,
   ]);
 
-export const API_KEY_SESSION = "API_KEY_SESSION";
 export const PROFILE_SESSION = "PROFILE_SESSION";
-export type ScopeType = typeof API_KEY_SESSION | typeof PROFILE_SESSION;
+export type ScopeType = typeof PROFILE_SESSION;
 
-export const getScope = (scopeCode: ScopeType) => {
-  const authScope =
-    scopeCode === API_KEY_SESSION
-      ? defaultApiKeyScope()
-      : scopeCode === PROFILE_SESSION
-        ? defaultProfileScope()
-        : "";
-  return authScope ? createScopeString([authScope]) : authScope;
-};
+export const getScope = (_scopeCode: ScopeType) =>
+  createScopeString([defaultProfileScope()]);
 
 const DELIMITER = " ";
 export type JoinScopesArgs = string[];

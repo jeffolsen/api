@@ -20,7 +20,7 @@ import {
   PASSWORD_REGEX,
   SLUG_REGEX,
 } from "@config/constants";
-import { API_KEY_SESSION, PROFILE_SESSION } from "@util/scope";
+import { PROFILE_SESSION } from "@util/scope";
 import { CodeType, ImageType, SubjectType } from "@/generated/prisma/client";
 
 export const verificationCodeTypeSchema = z.enum(CodeType, MESSAGE_CODE_TYPE);
@@ -81,10 +81,7 @@ export const verificationCodeValueSchema = z
   .string(MESSAGE_CODE_VALUE)
   .regex(NUMERIC_CODE_REGEX, MESSAGE_CODE_VALUE);
 
-export const scopeSchema = z.union([
-  z.literal(API_KEY_SESSION),
-  z.literal(PROFILE_SESSION),
-]);
+export const scopeSchema = z.literal(PROFILE_SESSION);
 
 export const nameSchema = z.string();
 export const descriptionSchema = z.string();

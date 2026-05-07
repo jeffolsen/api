@@ -20,7 +20,6 @@ export const SessionCreateTransform = z.object({
   scope: scopeSchema.pipe(z.transform((val) => getScope(val))),
   userAgent: userAgentSchema,
   profileId: z.number(MESSAGE_PROFILE_ID),
-  apiKeyId: z.number(MESSAGE_PROFILE_ID).nullish(),
 });
 
 export type SessionCreateTransformType = z.infer<typeof SessionCreateTransform>;
