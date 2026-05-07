@@ -6,7 +6,11 @@ import Button from "@/components/common/Button";
 import Text from "@/components/common/Text";
 import toast from "react-hot-toast";
 
-function FormScheduleSubmit({ control, triggerSubmit }: FormSubmitProps) {
+function FormScheduleSubmit({
+  control,
+  triggerSubmit,
+  isSubmitting,
+}: FormSubmitProps) {
   const [showSchedule, setShowSchedule] = useState(false);
 
   const now = new Date();
@@ -102,23 +106,38 @@ function FormScheduleSubmit({ control, triggerSubmit }: FormSubmitProps) {
           </Button>
         )}
         <Button
-          color={showSchedule ? "primary" : "secondary"}
+          color={
+            isSubmitting ? "disabled" : showSchedule ? "primary" : "secondary"
+          }
           onClick={handleSchedule}
+          disabled={isSubmitting}
         >
           Schedule
         </Button>
         {!showSchedule && (
           <div className="flex gap-1">
             {!!publishedAtField.value && (
-              <Button color={"primary"} onClick={handleUnpublish}>
+              <Button
+                color={isSubmitting ? "disabled" : "primary"}
+                onClick={handleUnpublish}
+                disabled={isSubmitting}
+              >
                 Unpublish
               </Button>
             )}
-            <Button color={"primary"} onClick={handleDraft}>
+            <Button
+              color={isSubmitting ? "disabled" : "primary"}
+              onClick={handleDraft}
+              disabled={isSubmitting}
+            >
               Save
             </Button>
             {!publishedAtField.value && (
-              <Button color={"primary"} onClick={handlePublishNow}>
+              <Button
+                color={isSubmitting ? "disabled" : "primary"}
+                onClick={handlePublishNow}
+                disabled={isSubmitting}
+              >
                 Publish Now
               </Button>
             )}

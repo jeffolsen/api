@@ -9,8 +9,8 @@ type ScopeParams = string[];
 const authorizeScope = (requiredScopes: ScopeParams) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const requestScope = parseScopeString(req.scope);
-    const hasScope = requestScope.some((s: string) =>
-      requiredScopes.includes(s),
+    const hasScope = requiredScopes.every((s: string) =>
+      requestScope.includes(s),
     );
     throwError(hasScope, FORBIDDEN, MESSAGE_NO_ACCESS);
 
