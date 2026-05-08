@@ -2,7 +2,6 @@ import {
   MESSAGE_API_KEY_LIMIT_REACHED,
   MESSAGE_API_KEY_SLUG_TAKEN,
   MESSAGE_API_KEY_SLUG_NOT_FOUND,
-  MESSAGE_NO_ACCESS,
   MESSAGE_CREDENTIALS,
 } from "@config/errorMessages";
 import {
@@ -80,30 +79,37 @@ export const generate: RequestHandler<
     MESSAGE_API_KEY_LIMIT_REACHED,
   );
 
-  const slugExists = await prismaClient.apiKey.findUnique({
-    where: { slug },
-  });
-  throwError(!slugExists, CONFLICT, MESSAGE_API_KEY_SLUG_TAKEN);
+  const rawApiKeyValue = await prismaClient.$transaction(async (tx) => {
+    const slugExists = await tx.apiKey.findUnique({
+      where: { slug },
+    });
+    throwError(!slugExists, CONFLICT, MESSAGE_API_KEY_SLUG_TAKEN);
 
-  await processVerificationCode({
-    profileId,
-    value: verificationCode,
-    codeType: CodeType.CREATE_API_KEY,
-    userAgent,
+    await processVerificationCode(
+      {
+        profileId,
+        value: verificationCode,
+        codeType: CodeType.CREATE_API_KEY,
+        userAgent,
+      },
+      tx,
+    );
+
+    const value = generateApiKeyValue();
+
+    await tx.apiKey.create({
+      data: await ApiKeyCreateTransform.parseAsync({
+        profileId,
+        slug,
+        origin,
+        value,
+      }),
+    });
+
+    return value;
   });
 
-  const value = generateApiKeyValue();
-  const apiKeyData = await ApiKeyCreateTransform.parseAsync({
-    profileId,
-    slug,
-    origin,
-    value,
-  });
-  await prismaClient.apiKey.create({
-    data: apiKeyData,
-  });
-
-  res.status(CREATED).json({ apiKey: value });
+  res.status(CREATED).json({ apiKey: rawApiKeyValue });
 });
 
 interface DestroyApiKeyBody {
@@ -131,26 +137,29 @@ export const destroy: RequestHandler<
 
   const profile = await prismaClient.profile.findUnique({
     where: { id: profileId },
-    include: { profileReceipt: true, apiKeys: true },
+    include: { profileReceipt: true, apiKeys: { where: { slug } } },
   });
   throwError(
     profile && hasLegalRequirements(profile) && hasConfirmedEmail(profile),
     NOT_FOUND,
     MESSAGE_CREDENTIALS,
   );
+  throwError(profile.apiKeys.length, NOT_FOUND, MESSAGE_API_KEY_SLUG_NOT_FOUND);
 
-  const apiKey = profile.apiKeys.find((apiKey) => apiKey.slug === slug);
-  throwError(apiKey, NOT_FOUND, MESSAGE_API_KEY_SLUG_NOT_FOUND);
+  await prismaClient.$transaction(async (tx) => {
+    await processVerificationCode(
+      {
+        profileId,
+        value: verificationCode,
+        codeType: CodeType.CREATE_API_KEY,
+        userAgent,
+      },
+      tx,
+    );
 
-  await processVerificationCode({
-    profileId,
-    value: verificationCode,
-    codeType: CodeType.CREATE_API_KEY,
-    userAgent,
-  });
-
-  await prismaClient.apiKey.delete({
-    where: { id: apiKey.id },
+    await tx.apiKey.delete({
+      where: { id: profile.apiKeys[0].id },
+    });
   });
 
   res.sendStatus(OK);

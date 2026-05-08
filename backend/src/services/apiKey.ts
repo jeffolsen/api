@@ -4,7 +4,7 @@ import { ProfileGetPayload } from "@/generated/prisma/models";
 
 export const generateApiKeyValue = () => randomUUID();
 
-export const isApiKeyLimitReached = async (
+export const isApiKeyLimitReached = (
   profile: ProfileGetPayload<{ include: { apiKeys: true } }>,
 ) => {
   return profile.apiKeys.length === MAX_PROFILE_API_KEYS;
