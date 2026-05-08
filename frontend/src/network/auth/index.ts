@@ -1,4 +1,3 @@
-import { OTP_STATUS_KEY } from "@/network/verificationCode";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   REGISTER_ENDPOINT,
@@ -7,7 +6,7 @@ import {
 } from "@/network/api";
 import { useAuthState } from "@/contexts/AuthContext";
 import { LoginWithOTPFormInput, RegisterFormInput } from "@/network/auth/types";
-import { OTP_STATUS_NONE } from "@/network/verificationCode/types";
+import { OTP_STATUS_KEY, OTP_STATUS_NONE } from "@/network/verificationCode/types";
 
 export const useRegister = () => {
   const { api } = useAuthState();

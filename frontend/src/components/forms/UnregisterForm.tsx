@@ -4,14 +4,10 @@ import {
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
 } from "@/config/inputs";
-import {
-  useDeleteProfileWithOTP,
-  DeleteProfileWithOTPFormInput,
-} from "@/network/profile";
-import {
-  useRequestDeleteProfile,
-  RequestDeleteProfileInput,
-} from "@/network/verificationCode";
+import { DeleteProfileWithOTPFormInput } from "@/network/profile/types";
+import { useDeleteProfileWithOTP } from "@/network/profile/useDeleteProfileWithOTP";
+import { RequestDeleteProfileInput } from "@/network/verificationCode/types";
+import { useRequestDeleteProfile } from "@/network/verificationCode/useRequestDeleteProfile";
 import {
   FormWithHeading,
   FormWithHeadingProps,

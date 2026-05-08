@@ -1,6 +1,6 @@
 import BasicCard from "@/components/cards/BasicCard";
 import SectionHeading from "@/components/partials/SectionHeading";
-import { useGetProfileVerificationCodes } from "@/network/verificationCode";
+import { useGetProfileVerificationCodes } from "@/network/verificationCode/useGetProfileVerificationCodes";
 import Grid from "@/components/common/Grid";
 import Loading from "@/components/common/Loading";
 import DropDownMenu, { DropDownItem } from "@/components/common/DropDownMenu";

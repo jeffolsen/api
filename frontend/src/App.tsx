@@ -1,7 +1,7 @@
 import { useLoaderData } from "react-router";
 import Layout from "@/components/layout/Layout.tsx";
 import PageResolver from "@/pages/PageResolver.tsx";
-import { TComponent } from "@/network/component/index.ts";
+import { TComponent } from "@/network/component/types";
 
 function App() {
   const data = useLoaderData();

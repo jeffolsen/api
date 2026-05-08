@@ -1,3 +1,6 @@
+export const OTP_STATUS_KEY = "pendingOtp" as const;
+export const VERIFICATION_CODES_KEY = "verificationCodes" as const;
+
 export const OTP_STATUS_NONE = "NONE";
 export const OTP_STATUS_LOGIN = "LOGIN";
 export const OTP_STATUS_LOGOUT_ALL = "LOGOUT_ALL";

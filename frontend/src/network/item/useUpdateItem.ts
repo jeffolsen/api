@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ITEMS_ENDPOINT, withErrorHandling } from "@/network/api";
 import { TAGS_KEY } from "@/network/tag/types";
-import { IMAGES_KEY } from "@/network/image";
+import { IMAGES_KEY } from "@/network/image/types";
 import { DATE_RANGES_KEY } from "@/network/dateRange/types";
 import { useAuthState } from "@/contexts/AuthContext";
 import { ITEMS_KEY, TItemInput, TItemRelations } from "./types";

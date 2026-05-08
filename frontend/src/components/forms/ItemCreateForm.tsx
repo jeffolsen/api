@@ -19,7 +19,7 @@ import {
 import { withFormHandling } from "@/network/api";
 import { TDateRangeInput } from "@/network/dateRange/types";
 import { TTagInput } from "@/network/tag/types";
-import { TImage } from "@/network/image";
+import { TImage } from "@/network/image/types";
 import { TItemRelations, TItemInput, TItem } from "@/network/item/types";
 import { useCreateItem } from "@/network/item/useCreateItem";
 import { useModifyItem } from "@/network/item/useModifyItem";

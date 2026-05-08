@@ -3,7 +3,7 @@ import Heading, { HeadingLevelProvider } from "@/components/common/Heading";
 import Button from "@/components/common/Button";
 import Loading from "@/components/common/Loading";
 import DashBoardLayout from "@/components/layout/DashBoardLayout";
-import { useGetAuthenticatedProfile } from "@/network/profile";
+import { useGetAuthenticatedProfile } from "@/network/profile/useGetAuthenticatedProfile";
 import SectionHeading from "@/components/partials/SectionHeading";
 import { useGetFeeds } from "@/network/feed/useGetFeeds";
 import { TFeed, GetFeedsResponse } from "@/network/feed/types";

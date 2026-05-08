@@ -2,8 +2,8 @@ import { useGetProfilesApiKeys } from "@/network/apiKey";
 import {
   OTP_STATUS_CREATE_API_KEY,
   OTP_STATUS_DESTROY_API_KEY,
-  useOtpStatus,
-} from "@/network/verificationCode";
+} from "@/network/verificationCode/types";
+import { useOtpStatus } from "@/network/verificationCode/useOtpStatus";
 import {
   GenerateApiKeyWithOTPForm,
   RequestGenerateApiKeyForm,

@@ -3,8 +3,8 @@ import {
   OTP_STATUS_LOGIN,
   OTP_STATUS_LOGOUT_ALL,
   OTP_STATUS_PASSWORD_RESET,
-  useOtpStatus,
-} from "@/network/verificationCode";
+} from "@/network/verificationCode/types";
+import { useOtpStatus } from "@/network/verificationCode/useOtpStatus";
 import {
   RequestLoginForm,
   LoginWithOTPForm,

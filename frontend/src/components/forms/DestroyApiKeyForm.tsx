@@ -11,10 +11,8 @@ import {
   FormWithHeadingProps,
   FormReponseHandlerProps,
 } from "@/components/forms/Form";
-import {
-  useRequestDestroyApiKey,
-  RequestDestroyApiKeyInput,
-} from "@/network/verificationCode";
+import { RequestDestroyApiKeyInput } from "@/network/verificationCode/types";
+import { useRequestDestroyApiKey } from "@/network/verificationCode/useRequestDestroyApiKey";
 import { useDestroyApiKey, DestroyApiKeyInput } from "@/network/apiKey";
 import { withFormHandling } from "@/network/api";
 

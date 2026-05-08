@@ -1,4 +1,4 @@
-import { TImage } from "@/network/image";
+import { TImage } from "@/network/image/types";
 
 type ImageTypes = "ICON" | "PORTRAIT" | "LANDSCAPE";
 type PriorityValues = 0 | 1 | 2 | 3;

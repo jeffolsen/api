@@ -1,5 +1,5 @@
 import { keepPreviousData } from "@tanstack/react-query";
-import { useGetAuthenticatedProfile } from "@/network/profile";
+import { useGetAuthenticatedProfile } from "@/network/profile/useGetAuthenticatedProfile";
 import {
   BlockProps,
   BlockComponentStandardProps,

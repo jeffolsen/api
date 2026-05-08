@@ -1,6 +1,6 @@
 import shuffleArray from "@/utils/shuffle";
 import { useMemo } from "react";
-import { TImage } from "@/network/image";
+import { TImage } from "@/network/image/types";
 import Image from "@/components/common/Image";
 import { useGetAppImages } from "@/network/app";
 import { clsx } from "clsx";

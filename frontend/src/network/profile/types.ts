@@ -1,5 +1,7 @@
 import { OtpInput } from "@/network/verificationCode/types";
 
+export const PROFILE_KEY = "profile" as const;
+
 export type PasswordResetWithOTPFormInput = OtpInput & {
   password: string;
   confirmPassword: string;

@@ -1,4 +1,4 @@
-import { useGetAuthenticatedProfile } from "@/network/profile";
+import { useGetAuthenticatedProfile } from "@/network/profile/useGetAuthenticatedProfile";
 import {
   BlockComponentStandardProps,
   BlockStandardFailedDataReturnType,

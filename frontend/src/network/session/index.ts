@@ -8,8 +8,7 @@ import {
   useEmail,
 } from "@/network/api";
 import { useAuthState } from "@/contexts/AuthContext";
-import { OTP_STATUS_KEY } from "@/network/verificationCode";
-import { OTP_STATUS_NONE } from "@/network/verificationCode/types";
+import { OTP_STATUS_KEY, OTP_STATUS_NONE } from "@/network/verificationCode/types";
 
 const SESSION_KEY = "sessions" as const;
 

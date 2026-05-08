@@ -13,10 +13,8 @@ import {
   FormWithHeadingProps,
   FormReponseHandlerProps,
 } from "@/components/forms/Form";
-import {
-  useRequestGenerateApiKey,
-  RequestGenerateApiKeyInput,
-} from "@/network/verificationCode";
+import { RequestGenerateApiKeyInput } from "@/network/verificationCode/types";
+import { useRequestGenerateApiKey } from "@/network/verificationCode/useRequestGenerateApiKey";
 import { useGenerateApiKey, GenerateApiKeyInput } from "@/network/apiKey";
 import { withFormHandling } from "@/network/api";
 

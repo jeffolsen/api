@@ -12,7 +12,7 @@ import Link from "@/components/common/Link";
 import { clsx } from "clsx";
 import { smSpacing, xsSpacing } from "@/components/common/helpers/layoutStyles";
 import { useGetAppItemDateRanges, useGetAppItemImages } from "@/network/app";
-import { TImage } from "@/network/image";
+import { TImage } from "@/network/image/types";
 import Image from "@/components/common/Image";
 import ScrollInFade from "@/components/common/ScrollInFade";
 import dayjs, { mediumDate } from "@/utils/dayjs";

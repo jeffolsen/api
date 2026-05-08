@@ -1,3 +1,5 @@
+export const IMAGES_KEY = "images" as const;
+
 export const imageTypes = [
   "ICON",
   "LANDSCAPE",

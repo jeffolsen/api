@@ -17,7 +17,7 @@ import {
   TFeedsParams,
 } from "@/network/feed/types";
 import { TAGS_KEY } from "@/network/tag/types";
-import { IMAGES_KEY } from "@/network/image";
+import { IMAGES_KEY } from "@/network/image/types";
 import { DATE_RANGES_KEY } from "@/network/dateRange/types";
 import { COMPONENTS_KEY } from "@/network/component/types";
 import { GetImagesResponse, TImageType } from "@/network/image/types";

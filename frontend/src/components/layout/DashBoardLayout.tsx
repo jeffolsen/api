@@ -1,7 +1,7 @@
 import Heading from "@/components/common/Heading";
 import Text from "@/components/common/Text";
 import dayjs, { longDatetime, techDatetime } from "@/utils/dayjs";
-import { TProfile } from "@/network/profile";
+import { TProfile } from "@/network/profile/types";
 import { PropsWithChildren } from "react";
 import CmsSubNav from "./CmsSubNav";
 

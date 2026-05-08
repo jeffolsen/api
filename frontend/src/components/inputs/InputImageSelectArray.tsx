@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { useFieldArray } from "react-hook-form";
-import { useGetImages } from "@/network/image";
+import { useGetImages } from "@/network/image/useGetImages";
 import {
   AtomicFormComponentProps,
   ChildFromFormProps,

@@ -5,10 +5,8 @@ import {
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
 } from "@/config/inputs";
-import {
-  RequestLogoutAllSessionsInput,
-  useRequestLogoutAllSessions,
-} from "@/network/verificationCode";
+import { RequestLogoutAllSessionsInput } from "@/network/verificationCode/types";
+import { useRequestLogoutAllSessions } from "@/network/verificationCode/useRequestLogoutAllSessions";
 import {
   useResetSessionsWithOTP,
   ResetSessionsWithOTPFormInput,

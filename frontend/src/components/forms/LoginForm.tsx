@@ -11,10 +11,8 @@ import {
   FormReponseHandlerProps,
 } from "@/components/forms/Form";
 import { useLoginWithOTP, LoginWithOTPFormInput } from "@/network/auth";
-import {
-  useRequestLogin,
-  RequestLoginFormInput,
-} from "@/network/verificationCode";
+import { RequestLoginFormInput } from "@/network/verificationCode/types";
+import { useRequestLogin } from "@/network/verificationCode/useRequestLogin";
 import { useEmail, withFormHandling } from "@/network/api";
 
 function RequestLoginForm({

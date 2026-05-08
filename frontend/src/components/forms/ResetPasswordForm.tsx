@@ -11,16 +11,14 @@ import {
   VERIFICATION_CODE_DEFAULT,
   VERIFICATION_CODE_INPUT,
 } from "@/config/inputs";
+import { RequestPasswordResetInput } from "@/network/verificationCode/types";
+import { useRequestPasswordReset } from "@/network/verificationCode/useRequestPasswordReset";
 import {
-  useRequestPasswordReset,
-  RequestPasswordResetInput,
-} from "@/network/verificationCode";
-import {
-  usePasswordResetWithOTP,
   PasswordResetWithOTPFormInput,
-  usePasswordResetWithSession,
   PasswordResetWithSessionFormInput,
-} from "@/network/profile";
+} from "@/network/profile/types";
+import { usePasswordResetWithOTP } from "@/network/profile/usePasswordResetWithOTP";
+import { usePasswordResetWithSession } from "@/network/profile/usePasswordResetWithSession";
 import {
   FormWithHeading,
   FormWithHeadingProps,

@@ -1,7 +1,5 @@
-import {
-  OTP_STATUS_DELETE_PROFILE,
-  useOtpStatus,
-} from "@/network/verificationCode";
+import { OTP_STATUS_DELETE_PROFILE } from "@/network/verificationCode/types";
+import { useOtpStatus } from "@/network/verificationCode/useOtpStatus";
 import {
   RequestUnregisterForm,
   UnregisterWithOTPForm,
