@@ -89,30 +89,35 @@ export const resetPasswordWithCode: RequestHandler<
       userAgent: req.headers["user-agent"],
     });
 
-  const profile = await prismaClient.profile.findUnique({ where: { email } });
-  throwError(profile, NOT_FOUND, MESSAGE_CREDENTIALS);
+  await prismaClient.$transaction(async (tx) => {
+    const profile = await tx.profile.findUnique({ where: { email } });
+    throwError(profile, NOT_FOUND, MESSAGE_CREDENTIALS);
 
-  await processVerificationCode({
-    profileId: profile.id,
-    value: verificationCode,
-    codeType: CodeType.PASSWORD_RESET,
-    userAgent,
-  });
+    await processVerificationCode(
+      {
+        profileId: profile.id,
+        value: verificationCode,
+        codeType: CodeType.PASSWORD_RESET,
+        userAgent,
+      },
+      tx,
+    );
 
-  const { password: newPassword } = await ProfileCreateTransform.parseAsync({
-    email,
-    password,
-  });
+    const { password: newPassword } = await ProfileCreateTransform.parseAsync({
+      email,
+      password,
+    });
 
-  await prismaClient.profile.update({
-    where: { id: profile.id },
-    data: {
-      password: newPassword,
-    },
-  });
+    await tx.profile.update({
+      where: { id: profile.id },
+      data: {
+        password: newPassword,
+      },
+    });
 
-  await prismaClient.session.deleteMany({
-    where: { profileId: profile.id },
+    await tx.session.deleteMany({
+      where: { profileId: profile.id },
+    });
   });
 
   res.sendStatus(OK);
@@ -134,25 +139,28 @@ export const changePasswordWithSession: RequestHandler<
   const { password, newPassword } = ChangePasswordWithSessionSchema.parse(
     req.body,
   );
-  const profile = await prismaClient.profile.findUnique({
-    where: { id: profileId },
-  });
-  throwError(
-    profile && (await compareValue(password, profile.password)),
-    NOT_FOUND,
-    MESSAGE_PROFILE_ID,
-  );
-  const hashedNewPassword = await passwordTransform.parseAsync(newPassword);
 
-  await prismaClient.profile.update({
-    where: { id: profile.id },
-    data: {
-      password: hashedNewPassword,
-    },
-  });
+  await prismaClient.$transaction(async (tx) => {
+    const profile = await tx.profile.findUnique({
+      where: { id: profileId },
+    });
+    throwError(
+      profile && (await compareValue(password, profile.password)),
+      NOT_FOUND,
+      MESSAGE_PROFILE_ID,
+    );
+    const hashedNewPassword = await passwordTransform.parseAsync(newPassword);
 
-  await prismaClient.session.deleteMany({
-    where: { profileId: profile.id, id: { not: sessionId } },
+    await tx.profile.update({
+      where: { id: profile.id },
+      data: {
+        password: hashedNewPassword,
+      },
+    });
+
+    await tx.session.deleteMany({
+      where: { profileId: profile.id, id: { not: sessionId } },
+    });
   });
 
   res.sendStatus(OK);
