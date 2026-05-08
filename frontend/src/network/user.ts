@@ -6,7 +6,7 @@ import api, {
 } from "@/network/api";
 import { ITEMS_KEY } from "@/network/item/types";
 import { FEEDS_KEY } from "@/network/feed/types";
-import { COMPONENTS_KEY } from "@/network/component";
+import { COMPONENTS_KEY } from "@/network/component/types";
 
 export const userFeedsQueryKey = (queryParams?: unknown) =>
   [FEEDS_KEY, queryParams] as const;

@@ -1,4 +1,4 @@
-import { TComponent } from "@/network/component";
+import { TComponent } from "@/network/component/types";
 import clsx from "clsx";
 import { Suspense } from "react";
 import Blocks from "../blocks/Blocks";

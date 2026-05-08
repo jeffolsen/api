@@ -1,4 +1,4 @@
-import { useGetComponentTypes } from "@/network/componentType";
+import { useGetComponentTypes } from "@/network/componentType/useGetComponentTypes";
 import { TSubjectType } from "@/network/feed/types";
 import { useGetFeedById } from "@/network/feed/useGetFeedById";
 import { useGetFeedComponents } from "@/network/feed/useGetFeedComponents";

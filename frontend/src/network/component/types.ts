@@ -1,6 +1,8 @@
 import { TComponentType } from "@/network/componentType/types";
 import { TFeed } from "@/network/feed/types";
 
+export const COMPONENTS_KEY = "components" as const;
+
 export type TComponent = {
   id: number;
   typeId: TComponentType["id"];

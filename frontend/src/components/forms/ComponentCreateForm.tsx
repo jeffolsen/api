@@ -5,18 +5,13 @@ import Form, {
   FormWithHeadingProps,
 } from "@/components/forms/Form";
 import { withFormHandling } from "@/network/api";
-import {
-  TComponent,
-  TComponentInput,
-  useCreateComponent,
-  useModifyComponent,
-  useUpdateComponent,
-  useDeleteComponent,
-} from "@/network/component";
-import {
-  TComponentType,
-  useGetComponentTypeById,
-} from "@/network/componentType";
+import { TComponent, TComponentInput } from "@/network/component/types";
+import { useCreateComponent } from "@/network/component/useCreateComponent";
+import { useModifyComponent } from "@/network/component/useModifyComponent";
+import { useUpdateComponent } from "@/network/component/useUpdateComponent";
+import { useDeleteComponent } from "@/network/component/useDeleteComponent";
+import { TComponentType } from "@/network/componentType/types";
+import { useGetComponentTypeById } from "@/network/componentType/useGetComponentTypeById";
 import { TFeed } from "@/network/feed/types";
 import { useGetFeedComponents } from "@/network/feed/useGetFeedComponents";
 import {

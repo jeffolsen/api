@@ -1,6 +1,6 @@
 import { useAuthState } from "@/contexts/AuthContext";
 import { FEEDS_KEY } from "./types";
-import { COMPONENTS_KEY, TComponent } from "../component";
+import { COMPONENTS_KEY, TComponent } from "../component/types";
 import { useQuery } from "@tanstack/react-query";
 import { COMPONENTS_ENDPOINT, FEEDS_ENDPOINT } from "../api";
 

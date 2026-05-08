@@ -3,7 +3,7 @@ import { HeadingLevelProvider } from "@/contexts/HeadingLevelProvider";
 import Wrapper, { WrapperProps } from "@/components/common/Wrapper";
 import Heading, { HeadingProps } from "@/components/common/Heading";
 import { LocalFeedComponent } from "@/config/routes";
-import { TComponent } from "@/network/component";
+import { TComponent } from "@/network/component/types";
 import ScrollInFade from "@/components/common/ScrollInFade";
 import clsx, { ClassValue } from "clsx";
 

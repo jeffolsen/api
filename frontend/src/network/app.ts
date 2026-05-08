@@ -19,7 +19,7 @@ import {
 import { TAGS_KEY } from "@/network/tag/types";
 import { IMAGES_KEY } from "@/network/image";
 import { DATE_RANGES_KEY } from "@/network/dateRange/types";
-import { COMPONENTS_KEY } from "@/network/component";
+import { COMPONENTS_KEY } from "@/network/component/types";
 import { GetImagesResponse, TImageType } from "@/network/image/types";
 import { GetItemsResponse, TItemQueryParams } from "@/network/item/types";
 

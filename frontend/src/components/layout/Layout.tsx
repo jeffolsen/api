@@ -2,7 +2,7 @@ import { PropsWithChildren } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { HeadingLevelProvider } from "@/components/common/Heading";
-import { TComponent } from "@/network/component";
+import { TComponent } from "@/network/component/types";
 import clsx from "clsx";
 import ContentBackground from "../partials/ContentBackground";
 import { widestWidth } from "../common/helpers/layoutStyles";

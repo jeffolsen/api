@@ -1,6 +1,8 @@
 import { JSONSchemaForArrayOrEnum } from "@/utils/jsonSchemaTransformer";
 import { TSubjectType } from "@/network/feed/types";
 
+export const COMPONENT_TYPES_KEY = "componentsTypes" as const;
+
 export type TComponentNames =
   | "TeaserGrid"
   | "HeroCarousel"

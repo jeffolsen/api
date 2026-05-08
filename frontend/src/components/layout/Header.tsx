@@ -1,6 +1,6 @@
 import { HeadingLevelProvider } from "@/components/common/Heading";
 import Button from "@/components/common/Button";
-import { TComponent } from "@/network/component";
+import { TComponent } from "@/network/component/types";
 import { useLoaderData, useLocation } from "react-router";
 import ThemeToggle from "@/components/partials/ThemeToggle";
 import clsx from "clsx";

@@ -13,11 +13,11 @@ import dayjs, { techDatetime } from "@/utils/dayjs";
 import SectionHeading from "@/components/partials/SectionHeading";
 import Grid from "@/components/common/Grid";
 import { ScheduleStatus } from "@/components/inputs/FormSubmitAndPublish";
-import { TComponent } from "@/network/component";
+import { TComponent } from "@/network/component/types";
 import {
   TComponentType,
   GetComponentTypesResponse,
-} from "@/network/componentType";
+} from "@/network/componentType/types";
 import { useMemo, useState } from "react";
 import Button from "@/components/common/Button";
 import {
