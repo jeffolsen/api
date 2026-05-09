@@ -15,6 +15,7 @@ import {
   VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT,
 } from "@config/routes";
 import authenticate from "@middleware/authenticate";
+import requireFeature from "@middleware/requireFeature";
 
 const router = express.Router();
 
@@ -26,6 +27,7 @@ router.get(
 );
 router.post(
   VERIFICATION_CODE_MANAGE_API_KEY_ENDPOINT,
+  requireFeature("FEATURE_API_KEYS"),
   authenticate,
   authorizeScope([CREATE_API_KEY_SCOPE]),
   verificationCodeApi.requestManageApiKeyVerificationCode,

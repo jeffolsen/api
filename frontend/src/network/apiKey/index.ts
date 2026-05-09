@@ -10,7 +10,10 @@ import {
   DestroyApiKeyInput,
   GenerateApiKeyInput,
 } from "@/network/apiKey/types";
-import { OTP_STATUS_KEY, OTP_STATUS_NONE } from "@/network/verificationCode/types";
+import {
+  OTP_STATUS_KEY,
+  OTP_STATUS_NONE,
+} from "@/network/verificationCode/types";
 
 const API_KEYS_KEY = "apiKeys" as const;
 
@@ -20,6 +23,7 @@ export const useGetProfilesApiKeys = () => {
   return useQuery({
     queryKey: [API_KEYS_KEY],
     queryFn: async () => {
+      return Promise.reject();
       const response = await api.get(GET_PROFILES_API_KEYS_ENDPOINT);
       return response.data;
     },
@@ -33,6 +37,7 @@ export const useGenerateApiKey = () => {
   return useMutation({
     mutationFn: async (data: GenerateApiKeyInput) =>
       withErrorHandling(async () => {
+        return Promise.reject();
         const { verificationCode, ...restData } = data;
         const headers = {
           "X-Verification-Code": verificationCode,
@@ -56,6 +61,7 @@ export const useDestroyApiKey = () => {
   return useMutation({
     mutationFn: async (data: DestroyApiKeyInput) =>
       withErrorHandling(async () => {
+        return Promise.reject();
         const { verificationCode, ...restData } = data;
         const headers = {
           "X-Verification-Code": verificationCode,

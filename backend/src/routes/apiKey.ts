@@ -8,6 +8,7 @@ import {
 } from "@config/routes";
 import { CREATE_API_KEY_SCOPE, READ_API_KEY_SCOPE } from "@config/scopes";
 import authenticate from "@middleware/authenticate";
+import requireFeature from "@middleware/requireFeature";
 
 const router = express.Router();
 
@@ -20,6 +21,7 @@ router.get(
 
 router.post(
   API_KEY_GENERATE_ENDPOINT,
+  requireFeature("FEATURE_API_KEYS"),
   authenticate,
   authorizeScope([CREATE_API_KEY_SCOPE]),
   apiKeyApi.generate,
@@ -27,6 +29,7 @@ router.post(
 
 router.post(
   API_KEY_DESTROY_ENDPOINT,
+  requireFeature("FEATURE_API_KEYS"),
   authenticate,
   authorizeScope([CREATE_API_KEY_SCOPE]),
   apiKeyApi.destroy,

@@ -9,7 +9,6 @@ import DashBoardLayout from "@/components/layout/DashBoardLayout";
 
 import LoggedInSessionSection from "@/components/partials/LoggedInSessionSection";
 import LoggedInCodesSection from "@/components/partials/LoggedInCodesSection";
-import LoggedInApiKeySection from "@/components/partials/LoggedInApiKeySection";
 import LoggedInProfileAdminSection from "@/components/partials/LoggedInProfileAdminSection";
 
 export default function Component(config: BlockComponentStandardProps) {
@@ -49,7 +48,7 @@ function CmsProfileDashboardBlock({
           <HeadingLevelProvider>
             <LoggedInSessionSection />
             <LoggedInCodesSection />
-            <LoggedInApiKeySection />
+            {/* no api keys -JO */}
             <LoggedInProfileAdminSection />
           </HeadingLevelProvider>
         </DashBoardLayout>

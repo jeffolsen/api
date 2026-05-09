@@ -37,7 +37,6 @@ jest.mock("@util/bcrypt", () => ({
   compareValue: jest.fn(),
   hashValue: jest.fn((val: string) => Promise.resolve(val)),
 }));
-
 import { compareValue } from "@util/bcrypt";
 
 const prismaMock = prisma as unknown as DeepMockProxy<PrismaClient>;
