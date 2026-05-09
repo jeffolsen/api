@@ -119,6 +119,7 @@ export const createFeed: RequestHandler<
   const { profileId } = req;
   const { path, subjectType, publishedAt, expiredAt } =
     CreateFeedBodySchema.parse(req.body);
+
   const feed = await prismaClient.feed.create({
     data: {
       path,
@@ -148,20 +149,23 @@ export const updateFeed: RequestHandler<
     ...(req.body as UpdateFeedBody),
     id: req.params.id,
   });
-  const feed = await prismaClient.feed.findFirst({
-    where: { id, profileId },
-  });
-  throwError(feed, NOT_FOUND, MESSAGE_FEED_NOT_FOUND);
 
-  const updatedFeed = await prismaClient.feed.update({
-    where: { id, profileId },
-    data: {
-      path,
-      publishedAt: publishedAt ? new Date(publishedAt) : null,
-      expiredAt: expiredAt ? new Date(expiredAt) : null,
-    },
+  const feed = await prismaClient.$transaction(async (tx) => {
+    const feed = await tx.feed.findFirst({
+      where: { id, profileId },
+    });
+    throwError(feed, NOT_FOUND, MESSAGE_FEED_NOT_FOUND);
+
+    return await tx.feed.update({
+      where: { id, profileId },
+      data: {
+        path,
+        publishedAt: publishedAt ? new Date(publishedAt) : null,
+        expiredAt: expiredAt ? new Date(expiredAt) : null,
+      },
+    });
   });
-  res.status(OK).json({ feed: updatedFeed });
+  res.status(OK).json({ feed });
 });
 
 type ModifFeedBody = {
@@ -181,42 +185,50 @@ export const modifyFeed: RequestHandler<
     ...req.body,
     id: req.params.id,
   });
-  const feed = await prismaClient.feed.findFirst({
-    where: { id, profileId },
-  });
-  throwError(feed, NOT_FOUND, MESSAGE_FEED_NOT_FOUND);
 
-  const updatedFeed = await prismaClient.feed.update({
-    where: { id, profileId },
-    data: {
-      ...(path && { path }),
-      ...(publishedAt === undefined
-        ? {}
-        : publishedAt === null
-          ? { publishedAt: null }
-          : { publishedAt: new Date(publishedAt) }),
-      ...(expiredAt === undefined
-        ? {}
-        : expiredAt === null
-          ? { expiredAt: null }
-          : { expiredAt: new Date(expiredAt) }),
-    },
+  const feed = await prismaClient.$transaction(async (tx) => {
+    const feed = await tx.feed.findFirst({
+      where: { id, profileId },
+    });
+    throwError(feed, NOT_FOUND, MESSAGE_FEED_NOT_FOUND);
+
+    return await tx.feed.update({
+      where: { id, profileId },
+      data: {
+        ...(path && { path }),
+        ...(publishedAt === undefined
+          ? {}
+          : publishedAt === null
+            ? { publishedAt: null }
+            : { publishedAt: new Date(publishedAt) }),
+        ...(expiredAt === undefined
+          ? {}
+          : expiredAt === null
+            ? { expiredAt: null }
+            : { expiredAt: new Date(expiredAt) }),
+      },
+    });
   });
-  res.status(OK).json({ feed: updatedFeed });
+
+  res.status(OK).json({ feed });
 });
 
 export const deleteFeed: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {
     const { profileId } = req;
     const { id } = DeleteFeedParamsSchema.parse(req.params);
-    const feed = await prismaClient.feed.findFirst({
-      where: { id, profileId },
-    });
-    throwError(feed, NOT_FOUND, MESSAGE_FEED_NOT_FOUND);
 
-    await prismaClient.feed.delete({
-      where: { id, profileId },
+    await prismaClient.$transaction(async (tx) => {
+      const feed = await tx.feed.findFirst({
+        where: { id, profileId },
+      });
+      throwError(feed, NOT_FOUND, MESSAGE_FEED_NOT_FOUND);
+
+      await tx.feed.delete({
+        where: { id, profileId },
+      });
     });
+
     res.sendStatus(OK);
   },
 );
