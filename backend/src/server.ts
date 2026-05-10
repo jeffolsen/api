@@ -5,7 +5,7 @@ import cors from "cors";
 import errorHandler from "@middleware/errorHandler";
 import path from "path";
 import apiRouter, { BASE_API_URL } from "@/api";
-// import rateLimiter from "@middleware/rateLimit";
+import { globalLimiter } from "@middleware/rateLimit";
 
 const app = express();
 const PORT = env.PORT || 5001;
@@ -19,7 +19,7 @@ if (env.NODE_ENV !== "production") {
   app.use(cors({ credentials: true }));
 }
 app.use(cookieParser());
-// app.use(rateLimiter);
+app.use(globalLimiter);
 app.use(BASE_API_URL, apiRouter);
 app.use(errorHandler);
 

@@ -1,4 +1,4 @@
-import { TItem } from "@/network/item/types";
+import { TItemWithIncludes } from "@/network/item/types";
 import Text from "@/components/common/Text";
 import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
 import useHeroCarouselBlockData, {
@@ -13,7 +13,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
-import { useGetAppItemImages } from "@/network/app";
+
 import Image from "@/components/common/Image";
 import { InsetLink } from "@/components/common/Link";
 import { CircleArrowLeft, CircleArrowRight, MoveRight } from "lucide-react";
@@ -121,7 +121,7 @@ function VariantAlpha({
           }}
           loop={true}
         >
-          {sortedItems.map((item: TItem) => {
+          {sortedItems.map((item: TItemWithIncludes) => {
             return (
               <SwiperSlide key={item.id} className="max-h-full h-full w-full">
                 <AlphaSlide item={item} feed={referenceFeedPath} />
@@ -136,15 +136,15 @@ function VariantAlpha({
   );
 }
 
-function AlphaSlide({ item, feed }: { item: TItem; feed: string | undefined }) {
-  const getImages = useGetAppItemImages(item.id);
+function AlphaSlide({ item, feed }: { item: TItemWithIncludes; feed: string | undefined }) {
   const link = getItemLink(feed, item);
+  const images = item.images.map(({ image }) => image);
   const image = getImageByPriority({
-    images: getImages?.data?.images || [],
+    images,
     priority: { ICON: 0, PORTRAIT: 3, LANDSCAPE: 2 },
   });
 
-  if (getImages.isLoading || getImages.data.images.length === 0) {
+  if (images.length === 0) {
     return <div className="skeleton w-full h-full" />;
   }
 
@@ -255,7 +255,7 @@ function VariantBeta({
           }}
           loop={true}
         >
-          {sortedItems.map((item: TItem) => {
+          {sortedItems.map((item: TItemWithIncludes) => {
             return (
               <SwiperSlide
                 key={item.id}
@@ -277,18 +277,18 @@ function BetaSlide({
   feed,
   theme,
 }: {
-  item: TItem;
+  item: TItemWithIncludes;
   feed: string | undefined;
   theme: UseHeroCarouselBlockProps["settings"]["theme"];
 }) {
-  const getImages = useGetAppItemImages(item.id);
   const link = getItemLink(feed, item);
+  const images = item.images.map(({ image }) => image);
   const image = getImageByPriority({
-    images: getImages?.data?.images || [],
+    images,
     priority: { ICON: 0, PORTRAIT: 2, LANDSCAPE: 3 },
   });
 
-  if (getImages.isLoading || getImages.data.images.length === 0) {
+  if (images.length === 0) {
     return <div className="skeleton w-full h-full" />;
   }
 
@@ -420,7 +420,7 @@ function VariantGamma({
           }}
           loop={true}
         >
-          {sortedItems.map((item: TItem) => {
+          {sortedItems.map((item: TItemWithIncludes) => {
             return (
               <SwiperSlide
                 key={item.id}
@@ -438,15 +438,15 @@ function VariantGamma({
   );
 }
 
-function GammaSlide({ item, feed }: { item: TItem; feed: string | undefined }) {
-  const getImages = useGetAppItemImages(item.id);
+function GammaSlide({ item, feed }: { item: TItemWithIncludes; feed: string | undefined }) {
   const link = getItemLink(feed, item);
+  const images = item.images.map(({ image }) => image);
   const image = getImageByPriority({
-    images: getImages?.data?.images || [],
+    images,
     priority: { ICON: 0, PORTRAIT: 2, LANDSCAPE: 3 },
   });
 
-  if (getImages.isLoading || getImages.data.images.length === 0) {
+  if (images.length === 0) {
     return <div className="skeleton w-full h-full" />;
   }
 

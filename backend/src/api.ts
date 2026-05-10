@@ -15,6 +15,7 @@ import apiKeyRoutes from "@/routes/apiKey";
 import imageRoutes from "@/routes/image";
 import componentTypeRoutes from "@/routes/componentType";
 import authenticate from "@middleware/authenticate";
+import { authLimiter, mutationLimiter } from "@middleware/rateLimit";
 import {
   API_KEY_ROUTES,
   AUTH_ROUTES,
@@ -36,25 +37,25 @@ const apiRouter = express.Router();
 apiRouter.get(HEALTH_ENDPOINT, (req, res) => {
   res.status(200).json({ message: MESSAGE_HEALTHY });
 });
-apiRouter.use(VERIFICATION_CODE_ROUTES, verificationCodeRoutes);
-apiRouter.use(AUTH_ROUTES, authRoutes);
+apiRouter.use(VERIFICATION_CODE_ROUTES, authLimiter, verificationCodeRoutes);
+apiRouter.use(AUTH_ROUTES, authLimiter, authRoutes);
 apiRouter.use(PROFILE_ROUTES, profileRoutes);
 apiRouter.use(API_KEY_ROUTES, apiKeyRoutes);
 apiRouter.use(SESSION_ROUTES, sessionRoutes);
 
-apiRouter.use(IMAGE_ROUTES, authenticate, imageRoutes);
-apiRouter.use(TAG_ROUTES, authenticate, tagRoutes);
+apiRouter.use(IMAGE_ROUTES, authenticate, mutationLimiter, imageRoutes);
+apiRouter.use(TAG_ROUTES, authenticate, mutationLimiter, tagRoutes);
 apiRouter.use(COMPONENT_TYPE_ROUTES, authenticate, componentTypeRoutes);
 
-apiRouter.use(ITEM_ROUTES, authenticate, itemRoutes);
-apiRouter.use(ITEM_ROUTES, authenticate, itemTagRoutes);
-apiRouter.use(ITEM_ROUTES, authenticate, itemImageRoutes);
-apiRouter.use(ITEM_ROUTES, authenticate, itemDateRangeRoutes);
+apiRouter.use(ITEM_ROUTES, authenticate, mutationLimiter, itemRoutes);
+apiRouter.use(ITEM_ROUTES, authenticate, mutationLimiter, itemTagRoutes);
+apiRouter.use(ITEM_ROUTES, authenticate, mutationLimiter, itemImageRoutes);
+apiRouter.use(ITEM_ROUTES, authenticate, mutationLimiter, itemDateRangeRoutes);
 
-apiRouter.use(COMPONENT_ROUTES, authenticate, componentRoutes);
+apiRouter.use(COMPONENT_ROUTES, authenticate, mutationLimiter, componentRoutes);
 
-apiRouter.use(FEED_ROUTES, authenticate, feedRoutes);
-apiRouter.use(FEED_ROUTES, authenticate, feedComponentRoutes);
+apiRouter.use(FEED_ROUTES, authenticate, mutationLimiter, feedRoutes);
+apiRouter.use(FEED_ROUTES, authenticate, mutationLimiter, feedComponentRoutes);
 
 export default apiRouter;
 export { BASE_API_URL } from "@config/routes";

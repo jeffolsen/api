@@ -6,8 +6,8 @@ import {
   appFeedsQueryKey,
   fetchAppFeedComponents,
   appFeedComponentsQueryKey,
-  fetchAppItemById,
-  appItemQueryKey,
+  fetchAppItemBySlug,
+  appItemBySlugQueryKey,
 } from "@/network/app";
 import {
   fetchUserFeeds,
@@ -156,10 +156,8 @@ const loader =
         // if it's an app dynamic path, check that the item is owned by the app
       } else if (isAppDynamicPath) {
         await queryClient.fetchQuery({
-          queryKey: appItemQueryKey(Number(params.id)),
-          queryFn: async () => {
-            return fetchAppItemById(Number(params.id));
-          },
+          queryKey: appItemBySlugQueryKey(params.id as string),
+          queryFn: () => fetchAppItemBySlug(params.id as string),
         });
       }
     } catch (error) {

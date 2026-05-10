@@ -6,13 +6,12 @@ import useContentHeaderBlockData, {
 import Text from "@/components/common/Text";
 import Heading from "@/components/common/Heading";
 import getItemLink, { getLinkLabel } from "@/utils/getItemLink";
-import { TItem } from "@/network/item/types";
+import { TItemWithIncludes } from "@/network/item/types";
 import Link from "@/components/common/Link";
 import { clsx } from "clsx";
 import ScrollInFade from "@/components/common/ScrollInFade";
 import RichContent from "@/components/common/RichContent";
 import { TTag } from "@/network/tag/types";
-import { useGetAppItemTags } from "@/network/app";
 import { JSONContent } from "@tiptap/react";
 import Button from "@/components/common/Button";
 import { MoveRight } from "lucide-react";
@@ -96,7 +95,7 @@ const AlphaCard = ({
   feed,
   theme,
 }: {
-  item: TItem;
+  item: TItemWithIncludes;
   feed?: string;
   theme: UseContentHeaderBlockProps["settings"]["theme"];
 }) => {
@@ -205,16 +204,12 @@ const GammaCard = ({
   feed,
   theme,
 }: {
-  item: TItem;
+  item: TItemWithIncludes;
   feed?: string;
   theme: UseContentHeaderBlockProps["settings"]["theme"];
 }) => {
   const link = getItemLink(feed, item);
-  const getTags = useGetAppItemTags(item.id);
-
-  if (getTags.isLoading) return null;
-
-  const tags = getTags?.data?.tags;
+  const tags = item?.tags.map(({ tag }) => tag) ?? [];
 
   return (
     <ScrollInFade

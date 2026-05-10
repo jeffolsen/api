@@ -7,11 +7,10 @@ import Text from "@/components/common/Text";
 import Heading, { HeadingLevelProvider } from "@/components/common/Heading";
 import Grid from "@/components/common/Grid";
 import getItemLink, { getLinkLabel } from "@/utils/getItemLink";
-import { TItem } from "@/network/item/types";
+import { TItemWithIncludes } from "@/network/item/types";
 import Link from "@/components/common/Link";
 import { clsx } from "clsx";
 import { smSpacing, xsSpacing } from "@/components/common/helpers/layoutStyles";
-import { useGetAppItemDateRanges, useGetAppItemImages } from "@/network/app";
 import { TImage } from "@/network/image/types";
 import Image from "@/components/common/Image";
 import ScrollInFade from "@/components/common/ScrollInFade";
@@ -110,23 +109,21 @@ const AlphaCard = ({
   index,
   theme,
 }: {
-  item: TItem;
+  item: TItemWithIncludes;
   feed?: string;
   index: number;
   theme: UseCuratedListBlockProps["settings"]["theme"];
 }) => {
   const maxImages = 3;
-  const getImages = useGetAppItemImages(item.id);
   const link = getItemLink(feed, item);
   const linkLabel = getLinkLabel(link);
 
-  const images = getImages?.data?.images
-    ?.filter(
-      (img: TImage) => img.type === "LANDSCAPE" || img.type === "PORTRAIT",
-    )
+  const images = item.images
+    .map(({ image }) => image)
+    .filter((img) => img.type === "LANDSCAPE" || img.type === "PORTRAIT")
     .slice(0, maxImages);
 
-  if (getImages.isLoading || getImages.data.images.length === 0) {
+  if (images.length === 0) {
     return <div className="skeleton w-full h-full" />;
   }
 
@@ -247,20 +244,18 @@ const BetaCard = ({
   item,
   feed,
 }: {
-  item: TItem;
+  item: TItemWithIncludes;
   feed?: string;
   index: number;
 }) => {
   const maxImages = 1;
-  const getImages = useGetAppItemImages(item.id);
   const link = getItemLink(feed, item);
-  const images = getImages?.data?.images
-    ?.filter(
-      (img: TImage) => img.type === "LANDSCAPE" || img.type === "PORTRAIT",
-    )
+  const images = item.images
+    .map(({ image }) => image)
+    .filter((img) => img.type === "LANDSCAPE" || img.type === "PORTRAIT")
     .slice(0, maxImages);
 
-  if (getImages.isLoading || getImages.data.images.length === 0) {
+  if (images.length === 0) {
     return <div className="skeleton w-full h-full" />;
   }
 
@@ -363,17 +358,13 @@ const GammaCard = ({
   feed,
   theme,
 }: {
-  item: TItem;
+  item: TItemWithIncludes;
   feed?: string;
   index: number;
   theme: UseCuratedListBlockProps["settings"]["theme"];
 }) => {
   const link = getItemLink(feed, item);
-  const getDates = useGetAppItemDateRanges(item.id);
-
-  if (getDates.isLoading) return null;
-
-  const date = getDates?.data?.dateRanges?.[0] || null;
+  const date = item.dateRanges?.[0] ?? null;
 
   return (
     <ScrollInFade

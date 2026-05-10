@@ -1,9 +1,9 @@
 import { PaginationParams } from "@/network/api";
 
 export const ITEMS_KEY = "items" as const;
-import { TDateRangeInput } from "@/network/dateRange/types";
+import { TDateRange, TDateRangeInput } from "@/network/dateRange/types";
 import { TImage } from "@/network/image/types";
-import { TTagInput, TTagName } from "@/network/tag/types";
+import { TTag, TTagInput, TTagName } from "@/network/tag/types";
 
 export type TItem = {
   id: number;
@@ -53,5 +53,28 @@ export type TItemQueryParams = {
 
 export type GetItemsResponse = {
   items: TItem[];
+  totalCount: number;
+};
+
+export type TItemTag = {
+  itemId: number;
+  tagId: number;
+  tag: TTag;
+};
+
+export type TItemImage = {
+  itemId: number;
+  imageId: number;
+  image: TImage;
+};
+
+export type TItemWithIncludes = TItem & {
+  tags: TItemTag[];
+  images: TItemImage[];
+  dateRanges: TDateRange[];
+};
+
+export type GetItemsWithIncludesResponse = {
+  items: TItemWithIncludes[];
   totalCount: number;
 };

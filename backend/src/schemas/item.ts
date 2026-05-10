@@ -90,9 +90,26 @@ export const ModifyItemSchema = z
 
 export type ModifyItemInput = z.infer<typeof ModifyItemSchema>;
 
+const itemIncludeFields = ["tags", "images", "dateRanges"] as const;
+export type ItemIncludeField = (typeof itemIncludeFields)[number];
+
 export const GetAllItemsQuerySchema = z.object({
   privateOnly: z.coerce.boolean().default(false),
   liveOnly: z.coerce.boolean().default(false),
+  includes: z
+    .preprocess(
+      (val) => {
+        if (typeof val === "string") {
+          return val
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean);
+        }
+        return [];
+      },
+      z.array(z.enum(itemIncludeFields)),
+    )
+    .default([]),
   ids: z
     .preprocess((val) => {
       if (typeof val === "string") {

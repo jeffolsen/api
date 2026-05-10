@@ -3,25 +3,25 @@ import { useQuery, QueryOptions, UseQueryOptions } from "@tanstack/react-query";
 import {
   BASE_URL,
   COMPONENTS_ENDPOINT,
-  DATE_RANGES_ENDPOINT,
   FEEDS_ENDPOINT,
   IMAGES_ENDPOINT,
   ITEMS_ENDPOINT,
   PaginationParams,
-  TAGS_ENDPOINT,
 } from "@/network/api";
-import { ITEMS_KEY } from "@/network/item/types";
+import {
+  ITEMS_KEY,
+  TItemQueryParams,
+  TItemWithIncludes,
+  GetItemsWithIncludesResponse,
+} from "@/network/item/types";
 import {
   FEEDS_KEY,
   GetFeedsResponse,
   TFeedsParams,
 } from "@/network/feed/types";
-import { TAGS_KEY } from "@/network/tag/types";
 import { IMAGES_KEY } from "@/network/image/types";
-import { DATE_RANGES_KEY } from "@/network/dateRange/types";
 import { COMPONENTS_KEY } from "@/network/component/types";
 import { GetImagesResponse, TImageType } from "@/network/image/types";
-import { GetItemsResponse, TItemQueryParams } from "@/network/item/types";
 
 const APP_KEY = "app" as const;
 const API_KEY_HEADER = "X-Api-Key" as const;
@@ -30,6 +30,8 @@ const headers = {
   [API_KEY_HEADER]: import.meta.env.VITE_API_KEY,
   [API_SLUG_HEADER]: import.meta.env.VITE_API_SLUG,
 };
+
+const ITEM_INCLUDES = "tags,images,dateRanges" as const;
 
 const app = axios.create({
   baseURL: BASE_URL,
@@ -42,16 +44,14 @@ export const appFeedByPathQueryKey = (path: string) =>
   [APP_KEY, FEEDS_KEY, path] as const;
 export const appFeedComponentsQueryKey = (feedId: number) =>
   [APP_KEY, FEEDS_KEY, feedId, COMPONENTS_KEY] as const;
-export const appItemQueryKey = (id: number) =>
-  [APP_KEY, ITEMS_KEY, id] as const;
+export const appItemBySlugQueryKey = (slug: string) =>
+  [APP_KEY, ITEMS_KEY, "slug", slug] as const;
 export const appImagesQueryKey = () => [APP_KEY, IMAGES_KEY] as const;
 
 export const fetchAppFeeds = async () => {
   const response = await app.get(FEEDS_ENDPOINT, {
     headers,
-    params: {
-      pageSize: 100,
-    },
+    params: { pageSize: 100 },
   });
   return response.data;
 };
@@ -61,19 +61,20 @@ export const fetchAppFeedComponents = async (feedId: number) => {
     `${FEEDS_ENDPOINT}/${feedId}${COMPONENTS_ENDPOINT}`,
     {
       headers,
-      params: {
-        published: true,
-      },
+      params: { published: true },
     },
   );
   return response.data;
 };
 
-export const fetchAppItemById = async (id: number) => {
-  const response = await app.get(`${ITEMS_ENDPOINT}/${id}`, {
+export const fetchAppItemBySlug = async (
+  slug: string,
+): Promise<TItemWithIncludes | null> => {
+  const response = await app.get(ITEMS_ENDPOINT, {
     headers,
+    params: { slugs: slug, includes: ITEM_INCLUDES },
   });
-  return response.data;
+  return response.data.items[0] ?? null;
 };
 
 type TImageQueryParams = {
@@ -99,11 +100,14 @@ export const useGetAppImages = (
 
 export const useGetAppItems = (
   queryParams?: TItemQueryParams,
-  options?: Omit<UseQueryOptions<GetItemsResponse>, "queryKey" | "queryFn">,
+  options?: Omit<
+    UseQueryOptions<GetItemsWithIncludesResponse>,
+    "queryKey" | "queryFn"
+  >,
 ) => {
   return useQuery({
     queryKey: [APP_KEY, ITEMS_KEY, queryParams],
-    queryFn: async (): Promise<GetItemsResponse> => {
+    queryFn: async (): Promise<GetItemsWithIncludesResponse> => {
       const response = await app.get(ITEMS_ENDPOINT, {
         headers,
         params: {
@@ -112,6 +116,7 @@ export const useGetAppItems = (
           slugs: queryParams?.slugs?.join(","),
           tags: queryParams?.tags?.join(","),
           sort: queryParams?.sort?.join(","),
+          includes: ITEM_INCLUDES,
         },
       });
       return response.data;
@@ -120,65 +125,21 @@ export const useGetAppItems = (
   });
 };
 
-export const useGetAppItemById = (
-  id: number | undefined,
-  options?: Omit<UseQueryOptions<GetItemsResponse>, "queryKey" | "queryFn">,
+export const useGetAppItemBySlug = (
+  slug: string | undefined,
+  options?: Omit<
+    UseQueryOptions<TItemWithIncludes | null>,
+    "queryKey" | "queryFn"
+  >,
 ) => {
   return useQuery({
-    queryKey: [APP_KEY, ITEMS_KEY, id],
-    queryFn: async () => {
-      if (id === undefined) return { error: true };
-      const response = await app.get(`${ITEMS_ENDPOINT}/${id}`, {
-        headers,
-      });
-      return response.data;
+    queryKey: appItemBySlugQueryKey(slug ?? ""),
+    queryFn: (): Promise<TItemWithIncludes | null> => {
+      if (!slug) return Promise.resolve(null);
+      return fetchAppItemBySlug(slug);
     },
+    enabled: !!slug,
     ...options,
-  });
-};
-
-export const useGetAppItemTags = (id: number) => {
-  return useQuery({
-    queryKey: [APP_KEY, ITEMS_KEY, id, TAGS_KEY],
-    queryFn: async () => {
-      const response = await app.get(
-        `${ITEMS_ENDPOINT}/${id}${TAGS_ENDPOINT}`,
-        {
-          headers,
-        },
-      );
-      return response.data;
-    },
-  });
-};
-
-export const useGetAppItemImages = (id: number) => {
-  return useQuery({
-    queryKey: [APP_KEY, ITEMS_KEY, id, IMAGES_KEY],
-    queryFn: async () => {
-      const response = await app.get(
-        `${ITEMS_ENDPOINT}/${id}${IMAGES_ENDPOINT}`,
-        {
-          headers,
-        },
-      );
-      return response.data;
-    },
-  });
-};
-
-export const useGetAppItemDateRanges = (id: number) => {
-  return useQuery({
-    queryKey: [APP_KEY, ITEMS_KEY, id, DATE_RANGES_KEY],
-    queryFn: async () => {
-      const response = await app.get(
-        `${ITEMS_ENDPOINT}/${id}${DATE_RANGES_ENDPOINT}`,
-        {
-          headers,
-        },
-      );
-      return response.data;
-    },
   });
 };
 
@@ -207,9 +168,7 @@ export const useGetAppFeedById = (id?: number) => {
     queryKey: [APP_KEY, FEEDS_KEY, id],
     queryFn: async () => {
       if (!id) return null;
-      const response = await app.get(`${FEEDS_ENDPOINT}/${id}`, {
-        headers,
-      });
+      const response = await app.get(`${FEEDS_ENDPOINT}/${id}`, { headers });
       return response.data;
     },
   });
@@ -221,9 +180,7 @@ export const useGetAppFeedComponents = (feedId: number) => {
     queryFn: async () => {
       const response = await app.get(
         `${FEEDS_ENDPOINT}/${feedId}${COMPONENTS_ENDPOINT}`,
-        {
-          headers,
-        },
+        { headers },
       );
       return response.data;
     },

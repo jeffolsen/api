@@ -10,6 +10,7 @@ import {
   GetAllItemsQuerySchema,
   GetItemByIdSchema,
   ModifyItemSchema,
+  type ItemIncludeField,
 } from "@schemas/item";
 import {
   getDateRangeSlug,
@@ -24,6 +25,7 @@ type GetItemsQuery = {
   tags?: string;
   ids?: string;
   slugs?: string;
+  includes?: string;
   sort?: string;
   page?: number;
   pageSize?: number;
@@ -46,7 +48,22 @@ export const getAllItems: RequestHandler<
     searchName,
     privateOnly,
     liveOnly,
+    includes,
   } = GetAllItemsQuerySchema.parse(req.query);
+
+  const include: Prisma.ItemInclude | undefined = includes.length
+    ? {
+        ...(includes.includes("tags" as ItemIncludeField) && {
+          tags: { include: { tag: true } },
+        }),
+        ...(includes.includes("images" as ItemIncludeField) && {
+          images: { include: { image: true } },
+        }),
+        ...(includes.includes("dateRanges" as ItemIncludeField) && {
+          dateRanges: true,
+        }),
+      }
+    : undefined;
 
   const where = {
     ...(privateOnly
@@ -99,6 +116,7 @@ export const getAllItems: RequestHandler<
   const [items, totalCount] = await prismaClient.$transaction([
     prismaClient.item.findMany({
       where,
+      include,
       ...getSortOrders(sort),
       ...getPagination(page, pageSize),
     }),

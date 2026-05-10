@@ -1,4 +1,4 @@
-import { TItem } from "@/network/item/types";
+import { TItemWithIncludes } from "@/network/item/types";
 import Text from "@/components/common/Text";
 import BlockWrapper, {
   BlockComponentStandardProps,
@@ -13,7 +13,7 @@ import { smSpacing, xsSpacing } from "@/components/common/helpers/layoutStyles";
 import Image from "@/components/common/Image";
 import Heading from "@/components/common/Heading";
 import { InsetLink } from "@/components/common/Link";
-import { useGetAppItemImages } from "@/network/app";
+
 import getItemLink from "@/utils/getItemLink";
 import getImageByPriority from "@/utils/getImageByPriority";
 import ScrollInFade from "@/components/common/ScrollInFade";
@@ -92,23 +92,19 @@ function AlphaCard({
   feed,
 }: {
   index: number;
-  item: TItem;
+  item: TItemWithIncludes;
   feed: string | undefined;
 }) {
-  const getImages = useGetAppItemImages(item.id);
   const link = getItemLink(feed, item);
-
-  if (getImages.isLoading) {
-    return <div className="skeleton w-full h-full" />;
-  }
+  const images = item.images.map(({ image }) => image);
 
   const image = getImageByPriority({
-    images: getImages?.data?.images || [],
+    images,
     priority: { ICON: 3, PORTRAIT: 1, LANDSCAPE: 2 },
   });
 
   const logo = getImageByPriority({
-    images: getImages?.data?.images || [],
+    images,
     priority: { ICON: 1, PORTRAIT: 0, LANDSCAPE: 0 },
   });
 
@@ -223,18 +219,14 @@ function BetaCard({
   feed,
 }: {
   index: number;
-  item: TItem;
+  item: TItemWithIncludes;
   feed: string | undefined;
 }) {
-  const getImages = useGetAppItemImages(item.id);
   const link = getItemLink(feed, item);
-
-  if (getImages.isLoading) {
-    return <div className="skeleton w-full h-full" />;
-  }
+  const images = item.images.map(({ image }) => image);
 
   const image = getImageByPriority({
-    images: getImages?.data?.images || [],
+    images,
     priority: { ICON: 3, PORTRAIT: 1, LANDSCAPE: 2 },
   });
 
@@ -340,18 +332,14 @@ function GammaCard({
   feed,
 }: {
   index: number;
-  item: TItem;
+  item: TItemWithIncludes;
   feed: string | undefined;
 }) {
-  const getImages = useGetAppItemImages(item.id);
   const link = getItemLink(feed, item);
-
-  if (getImages.isLoading) {
-    return <div className="skeleton w-full h-full" />;
-  }
+  const images = item.images.map(({ image }) => image);
 
   const image = getImageByPriority({
-    images: getImages?.data?.images || [],
+    images,
     priority: { ICON: 1, PORTRAIT: 2, LANDSCAPE: 3 },
   });
 

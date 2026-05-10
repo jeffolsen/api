@@ -1,4 +1,5 @@
 import axios, { isAxiosError } from "axios";
+import toast from "react-hot-toast";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import jsCookie from "js-cookie";
 import { EMAIL_DEFAULT } from "@/config/inputs";
@@ -62,6 +63,16 @@ const api = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (isAxiosError(error) && error.response?.status === TOO_MANY_REQUESTS) {
+      toast.error("Too many requests. Please slow down and try again.");
+    }
+    return Promise.reject(error);
+  },
+);
 
 export const isAuthenticated = () => {
   return jsCookie.get("authenticated") === "true";

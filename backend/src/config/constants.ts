@@ -15,7 +15,7 @@ export const SESSION_TOKEN_OPTIONS = {
 };
 // 15 minutes in ms
 // export const ACCESS_TOKEN_LIFESPAN = 15 * 60 * 1000;
-export const ACCESS_TOKEN_LIFESPAN = 1 * 60 * 1000;
+export const ACCESS_TOKEN_LIFESPAN = 10 * 60 * 1000;
 export const ACCESS_TOKEN_OPTIONS = {
   expiresIn: ACCESS_TOKEN_LIFESPAN,
 };

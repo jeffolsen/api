@@ -1,14 +1,14 @@
 import { TItem } from "@/network/item/types";
 
-const sortItemALlowList = ({
+const sortItemALlowList = <T extends TItem>({
   items,
   itemSlugs,
 }: {
-  items: TItem[];
+  items: T[];
   itemSlugs: string[];
-}) => {
+}): T[] => {
   return items.sort(
-    (a: TItem, b: TItem) =>
+    (a: T, b: T) =>
       itemSlugs.indexOf(a.slug) - itemSlugs.indexOf(b.slug),
   );
 };
