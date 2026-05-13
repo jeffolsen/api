@@ -8,7 +8,9 @@ import {
   subjectTypesArraySchema,
   subjectTypeSchema,
 } from "./properties";
-import { id } from "zod/v4/locales";
+
+export const feedIncludeFields = ["tags", "components"] as const;
+export type FeedIncludeField = (typeof feedIncludeFields)[number];
 
 const validFeedSortValues = [
   "publishedAt",
@@ -73,12 +75,51 @@ export const GetAllFeedsQuerySchema = z.object({
     .default([]),
   page: z.coerce.number().min(1).default(1),
   pageSize: z.coerce.number().min(1).max(100).default(10),
+  includes: z
+    .preprocess(
+      (val) => {
+        if (typeof val === "string") {
+          return val
+            .split(",")
+            .map((s) => s.trim())
+            .filter((s) => feedIncludeFields.includes(s as FeedIncludeField));
+        }
+        return [];
+      },
+      z.array(z.enum(feedIncludeFields)),
+    )
+    .default([]),
 });
+
+export const GetFeedIncludesQuerySchema = z.object({
+  includes: z
+    .preprocess(
+      (val) => {
+        if (typeof val === "string") {
+          return val
+            .split(",")
+            .map((s) => s.trim())
+            .filter((s) => feedIncludeFields.includes(s as FeedIncludeField));
+        }
+        return [];
+      },
+      z.array(z.enum(feedIncludeFields)),
+    )
+    .default([]),
+});
+
+const tagIdsSchema = z
+  .preprocess((val) => {
+    if (Array.isArray(val)) return val.map(Number).filter((n) => !isNaN(n));
+    return undefined;
+  }, z.array(z.number().int().positive()))
+  .optional();
 
 export const CreateFeedBodySchema = z
   .object({
     path: pathSchema,
     subjectType: subjectTypeSchema,
+    tagIds: tagIdsSchema,
   })
   .extend(publishedAtAndExpiredAtSchema.shape);
 
@@ -86,6 +127,7 @@ export const UpdateFeedBodySchema = z
   .object({
     id: idStringSchema,
     path: pathSchema.optional(),
+    tagIds: tagIdsSchema,
   })
   .extend(publishedAtAndExpiredAtSchema.shape);
 

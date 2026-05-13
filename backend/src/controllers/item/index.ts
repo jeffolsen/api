@@ -9,6 +9,7 @@ import {
   CreateItemSchema,
   GetAllItemsQuerySchema,
   GetItemByIdSchema,
+  GetItemBySlugSchema,
   ModifyItemSchema,
   type ItemIncludeField,
 } from "@schemas/item";
@@ -136,6 +137,24 @@ export const getItemById: RequestHandler = catchErrors(
 
     const item = await prismaClient.item.findUnique({
       where: { id, OR: [{ isPrivate: false }, { authorId: profileId }] },
+      include,
+    });
+    throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
+
+    res.status(OK).json({ item });
+  },
+);
+
+export const getItemBySlug: RequestHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const { profileId } = req;
+    const { include, slug } = GetItemBySlugSchema.parse({
+      ...req.query,
+      ...req.params,
+    });
+
+    const item = await prismaClient.item.findUnique({
+      where: { slug, OR: [{ isPrivate: false }, { authorId: profileId }] },
       include,
     });
     throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
@@ -363,6 +382,7 @@ export const deleteItem: RequestHandler = catchErrors(
 const itemApi = {
   getAllItems,
   getItemById,
+  getItemBySlug,
   createItem,
   updateItem,
   modifyItem,

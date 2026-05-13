@@ -111,6 +111,7 @@ model Feed {
   profileId   Int         @map("profile_id")
   profile     Profile     @relation("ProfileFeeds", fields: [profileId], references: [id], onDelete: Cascade)
   components  Component[] @relation("FeedComponents")
+  tags        FeedTag[]
 
   @@unique([profileId, path, subjectType])
   @@map("feeds")
@@ -171,6 +172,7 @@ model Tag {
   id    Int       @id @default(autoincrement())
   name  String    @unique
   items ItemTag[]
+  feeds FeedTag[]
 
   @@map("tags")
 }
@@ -183,6 +185,16 @@ model ItemTag {
 
   @@id([itemId, tagId])
   @@map("items_tags")
+}
+
+model FeedTag {
+  feed   Feed @relation(fields: [feedId], references: [id], onDelete: Cascade)
+  feedId Int  @map("feed_id")
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId  Int  @map("tag_id")
+
+  @@id([feedId, tagId])
+  @@map("feeds_tags")
 }
 
 enum ImageType {

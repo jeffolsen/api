@@ -6,7 +6,7 @@ import {
   READ_ITEM_SCOPE,
   UPDATE_ITEM_SCOPE,
 } from "@config/scopes";
-import { COLLECTION_ENDPOINT, ID_PARAM } from "@config/routes";
+import { COLLECTION_ENDPOINT, ID_PARAM, SLUG_PARAM } from "@config/routes";
 import itemApi from "@controllers/item";
 
 const router = express.Router();
@@ -17,6 +17,11 @@ router.get(
   itemApi.getAllItems,
 );
 router.get(ID_PARAM, authorizeScope([READ_ITEM_SCOPE]), itemApi.getItemById);
+router.get(
+  SLUG_PARAM,
+  authorizeScope([READ_ITEM_SCOPE]),
+  itemApi.getItemBySlug,
+);
 router.post(
   COLLECTION_ENDPOINT,
   authorizeScope([CREATE_ITEM_SCOPE]),

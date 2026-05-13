@@ -10,7 +10,7 @@ import {
 import { tagNameArraySchema } from "./tag";
 import { dateRangeArraySchema, dateRangeSchema } from "./dateRange";
 import { richContentSchema } from "./richContent";
-import { MESSAGE_START_END_DATE } from "@config/errorMessages";
+import { MESSAGE_SLUG, MESSAGE_START_END_DATE } from "@config/errorMessages";
 import sortWord from "@util/sortWord";
 
 const validItemSortValues = [
@@ -152,6 +152,27 @@ export const GetAllItemsQuerySchema = z.object({
 
 export const GetItemByIdSchema = z.object({
   id: idStringSchema,
+  include: z
+    .preprocess(
+      (val) => {
+        if (typeof val === "string") {
+          return val.split(",").map((field) => field.trim());
+        }
+        return [];
+      },
+      z.array(z.enum(["tags", "images", "dateRanges"])).transform((fields) => {
+        const includeObj: Record<string, boolean> = {};
+        fields.forEach((field) => {
+          includeObj[field] = true;
+        });
+        return includeObj;
+      }),
+    )
+    .default({}),
+});
+
+export const GetItemBySlugSchema = z.object({
+  slug: z.string(MESSAGE_SLUG),
   include: z
     .preprocess(
       (val) => {

@@ -8,6 +8,7 @@ export const SELF_ENDPOINT = "/me";
 export const ID_PARAM = "/:id";
 export const NAME_PARAM = "/by-name/:name";
 export const PATH_PARAM = "/by-path/:path";
+export const SLUG_PARAM = "/by-slug/:slug";
 
 export const AUTH_ROUTES = "/auth";
 export const AUTH_REGISTER_ENDPOINT = "/register";
