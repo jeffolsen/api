@@ -19,4 +19,8 @@ export type TTag = {
   name: TTagName;
 };
 
+export type GetTagsResponse = {
+  tags: TTag;
+};
+
 export type TTagInput = Omit<TTag, "id">;

@@ -74,6 +74,10 @@ export type TItemWithIncludes = TItem & {
   dateRanges: TDateRange[];
 };
 
+export type GetItemWithIncludesResponse = {
+  item: TItemWithIncludes;
+};
+
 export type GetItemsWithIncludesResponse = {
   items: TItemWithIncludes[];
   totalCount: number;
