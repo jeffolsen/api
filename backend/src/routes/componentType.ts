@@ -12,13 +12,14 @@ router.get(
   componentTypeApi.getAllComponentTypes,
 );
 router.get(
-  ID_PARAM,
-  authorizeScope([READ_COMPONENT_TYPE_SCOPE]),
-  componentTypeApi.getComponentTypeById,
-);
-router.get(
   NAME_PARAM,
   authorizeScope([READ_COMPONENT_TYPE_SCOPE]),
   componentTypeApi.getComponentTypeByName,
 );
+router.get(
+  ID_PARAM,
+  authorizeScope([READ_COMPONENT_TYPE_SCOPE]),
+  componentTypeApi.getComponentTypeById,
+);
+
 export default router;

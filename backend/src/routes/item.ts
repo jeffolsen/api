@@ -16,12 +16,12 @@ router.get(
   authorizeScope([READ_ITEM_SCOPE]),
   itemApi.getAllItems,
 );
-router.get(ID_PARAM, authorizeScope([READ_ITEM_SCOPE]), itemApi.getItemById);
 router.get(
   SLUG_PARAM,
   authorizeScope([READ_ITEM_SCOPE]),
   itemApi.getItemBySlug,
 );
+router.get(ID_PARAM, authorizeScope([READ_ITEM_SCOPE]), itemApi.getItemById);
 router.post(
   COLLECTION_ENDPOINT,
   authorizeScope([CREATE_ITEM_SCOPE]),

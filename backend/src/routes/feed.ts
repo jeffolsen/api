@@ -16,12 +16,12 @@ router.get(
   authorizeScope([READ_FEED_SCOPE]),
   feedApi.getAllFeeds,
 );
-router.get(ID_PARAM, authorizeScope([READ_FEED_SCOPE]), feedApi.getFeedById);
 router.get(
   PATH_PARAM,
   authorizeScope([READ_FEED_SCOPE]),
   feedApi.getFeedByPath,
 );
+router.get(ID_PARAM, authorizeScope([READ_FEED_SCOPE]), feedApi.getFeedById);
 router.post(
   COLLECTION_ENDPOINT,
   authorizeScope([CREATE_FEED_SCOPE]),

@@ -21,6 +21,7 @@ type GetFeedsQuery = {
   subjectTypes?: string;
   ids?: string;
   paths?: string;
+  tags?: string;
   sort?: string;
   includes?: string;
   page?: number;
@@ -41,19 +42,6 @@ const buildFeedInclude = (
   };
 };
 
-const setFeedTags = async (
-  tx: Prisma.TransactionClient,
-  feedId: number,
-  tagIds: number[],
-) => {
-  await tx.feedTag.deleteMany({ where: { feedId } });
-  if (tagIds.length) {
-    await tx.feedTag.createMany({
-      data: tagIds.map((tagId) => ({ feedId, tagId })),
-    });
-  }
-};
-
 export const getAllFeeds: RequestHandler<
   unknown,
   unknown,
@@ -65,6 +53,7 @@ export const getAllFeeds: RequestHandler<
     ids,
     paths,
     subjectTypes,
+    tags,
     sort,
     page,
     pageSize,
@@ -85,6 +74,9 @@ export const getAllFeeds: RequestHandler<
     }),
     ...(subjectTypes.length && {
       subjectType: { in: subjectTypes },
+    }),
+    ...(tags.length && {
+      tags: { some: { tag: { name: { in: tags } } } },
     }),
   };
 
@@ -118,30 +110,27 @@ export const getFeedById: RequestHandler = catchErrors(
   },
 );
 
-type GetFeedByPathParams = {
-  path: string;
-};
-
 type GetFeedByPathQuery = {
+  path?: string;
   subjectType?: string;
   includes?: string;
 };
 
 export const getFeedByPath: RequestHandler<
-  GetFeedByPathParams,
+  unknown,
   unknown,
   unknown,
   GetFeedByPathQuery
 > = catchErrors(async (req: Request, res: Response) => {
   const { profileId } = req;
-  const { path } = req.params;
-  const { subjectType: st } = req.query;
+  const { path, subjectType: st } = req.query;
   const { includes } = GetFeedIncludesQuerySchema.parse(req.query);
 
+  const feedPath = typeof path === "string" ? path : undefined;
   const subjectType = st === "SINGLE" ? "SINGLE" : "COLLECTION";
 
   const feed = await prismaClient.feed.findFirst({
-    where: { path, profileId, subjectType },
+    where: { path: feedPath, profileId, subjectType },
     include: buildFeedInclude(includes),
   });
 

@@ -74,6 +74,17 @@ export const GetAllFeedsQuerySchema = z.object({
       return [];
     }, subjectTypesArraySchema)
     .default([]),
+  tags: z
+    .preprocess((val) => {
+      if (typeof val === "string") {
+        return val
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean);
+      }
+      return [];
+    }, tagNameArraySchema)
+    .default([]),
   page: z.coerce.number().min(1).default(1),
   pageSize: z.coerce.number().min(1).max(100).default(10),
   includes: z

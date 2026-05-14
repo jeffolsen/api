@@ -150,46 +150,32 @@ export const GetAllItemsQuerySchema = z.object({
   pageSize: z.coerce.number().min(1).max(100).default(10),
 });
 
+const buildIncludeObject = z
+  .preprocess(
+    (val) => {
+      if (typeof val === "string") {
+        return val.split(",").map((field) => field.trim());
+      }
+      return [];
+    },
+    z.array(z.enum(["tags", "images", "dateRanges"])).transform((fields) => ({
+      ...(fields.includes("tags") && { tags: { include: { tag: true } } }),
+      ...(fields.includes("images") && {
+        images: { include: { image: true } },
+      }),
+      ...(fields.includes("dateRanges") && { dateRanges: true }),
+    })),
+  )
+  .default({});
+
 export const GetItemByIdSchema = z.object({
   id: idStringSchema,
-  include: z
-    .preprocess(
-      (val) => {
-        if (typeof val === "string") {
-          return val.split(",").map((field) => field.trim());
-        }
-        return [];
-      },
-      z.array(z.enum(["tags", "images", "dateRanges"])).transform((fields) => {
-        const includeObj: Record<string, boolean> = {};
-        fields.forEach((field) => {
-          includeObj[field] = true;
-        });
-        return includeObj;
-      }),
-    )
-    .default({}),
+  includes: buildIncludeObject,
 });
 
 export const GetItemBySlugSchema = z.object({
   slug: z.string(MESSAGE_SLUG),
-  include: z
-    .preprocess(
-      (val) => {
-        if (typeof val === "string") {
-          return val.split(",").map((field) => field.trim());
-        }
-        return [];
-      },
-      z.array(z.enum(["tags", "images", "dateRanges"])).transform((fields) => {
-        const includeObj: Record<string, boolean> = {};
-        fields.forEach((field) => {
-          includeObj[field] = true;
-        });
-        return includeObj;
-      }),
-    )
-    .default({}),
+  includes: buildIncludeObject,
 });
 
 export const GetItemsResourcesSchema = z.object({
