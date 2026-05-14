@@ -73,7 +73,7 @@ function TagArrayInput(
         rules={rules as FieldArrayMinMaxRule}
       >
         <Grid
-          columns={{ base: "2", sm: "3", md: "4" }}
+          columns={{ base: "2", md: "3", lg: "4" }}
           items={getTags().map((tag: TTagInput) => (
             <TagCheckbox
               key={tag.name}

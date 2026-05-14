@@ -212,7 +212,20 @@ export const TAGNAMES_INPUT = {
   displayName: "Tags",
   componentName: "TagArrayInput",
   input: {
-    rules: { maxLength: { value: 7, message: "You can select up to 7 tags" } },
+    rules: {
+      maxLength: { value: 12, message: "You can select up to 12 tags" },
+    },
+  },
+} as FormComponentProps;
+export const FEED_TAGNAMES_INPUT = {
+  dataName: "tagNames",
+  displayName: "Tags",
+  componentName: "TagArrayInput",
+  input: {
+    rules: {
+      maxLength: { value: 12, message: "You can select up to 12 tags" },
+      minLength: { value: 1, message: "You must select at least 1 tag" },
+    },
   },
 } as FormComponentProps;
 export const TAGNAMES_DEFAULT = { tagNames: [] as { tagname: string }[] };

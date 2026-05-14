@@ -2,7 +2,7 @@ import { useCreateFeed } from "@/network/feed/useCreateFeed";
 import { useUpdateFeed } from "@/network/feed/useUpdateFeed";
 import { useModifyFeed } from "@/network/feed/useModifyFeed";
 import { useDeleteFeed } from "@/network/feed/useDeleteFeed";
-import { TFeedInput } from "@/network/feed/types";
+import { TFeedInput, TFeedTags } from "@/network/feed/types";
 import {
   convertLocalDateTimeToZulu,
   convertZuluToLocalDateTime,
@@ -19,21 +19,28 @@ import {
   IS_SINGLE_SUBJECT_TYPE_INPUT,
   PATH_DEFAULT,
   PATH_INPUT,
+  TAGNAMES_DEFAULT,
+  FEED_TAGNAMES_INPUT,
 } from "@/config/inputs";
 import FormPublishSubmit from "@/components/inputs/FormSubmitAndPublish";
 import { Button } from "@/components/common/Button";
 import { Trash } from "lucide-react";
+import { TTagInput } from "@/network/tag/types";
 
 type FormValues = {
   path?: string;
   isSingleSubjectType?: boolean;
+  tagNames?: TTagInput[];
   publishedAt?: string | null;
   expiredAt?: string | null;
 };
 
-const mapFormValuesToCreateFeedRequest = (values: FormValues): TFeedInput => ({
+const mapFormValuesToCreateFeedRequest = (
+  values: FormValues,
+): TFeedInput & TFeedTags => ({
   path: values.path || "",
   subjectType: values.isSingleSubjectType ? "SINGLE" : "COLLECTION",
+  tagNames: values.tagNames?.map((tag: TTagInput) => tag.name) || [],
   publishedAt: values.publishedAt
     ? convertLocalDateTimeToZulu(values.publishedAt)
     : null,
@@ -65,11 +72,14 @@ const mapFormValuesToPatchFeedRequest = (
       : {}),
 });
 
-const mapGetFeedToFormValues = (feed: TFeedInput & { id: number }) => {
+const mapGetFeedToFormValues = (
+  feed: TFeedInput & { id: number; tags?: TTagInput[] },
+) => {
   return {
     id: feed.id,
     path: feed.path,
     isSingleSubjectType: feed.subjectType === "SINGLE",
+    tagNames: feed.tags?.map(({ name }) => ({ name })) || [],
     publishedAt: feed.publishedAt
       ? convertZuluToLocalDateTime(feed.publishedAt)
       : null,
@@ -91,9 +101,10 @@ function FeedCreateForm({
       defaultValues={{
         ...IS_SINGLE_SUBJECT_TYPE_DEFAULT,
         ...PATH_DEFAULT,
+        ...TAGNAMES_DEFAULT,
         ...defaultValues,
       }}
-      fields={[IS_SINGLE_SUBJECT_TYPE_INPUT, PATH_INPUT]}
+      fields={[IS_SINGLE_SUBJECT_TYPE_INPUT, PATH_INPUT, FEED_TAGNAMES_INPUT]}
       submitAction={async (args) => {
         withFormHandling(
           async () => {
@@ -127,9 +138,10 @@ function FeedUpdateForm({
     <FormWithHeading
       defaultValues={{
         ...PATH_DEFAULT,
+        ...TAGNAMES_DEFAULT,
         ...defaults,
       }}
-      fields={[PATH_INPUT]}
+      fields={[PATH_INPUT, FEED_TAGNAMES_INPUT]}
       submitAction={async (args) => {
         withFormHandling(
           async () => {
