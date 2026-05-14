@@ -69,9 +69,10 @@ async function main() {
 }
 
 async function handleDeletes(profileId: number) {
-  for (const path of content.deletes.feeds) {
+  for (const feed of content.deletes.feeds) {
+    const { path, subjectType } = feed;
     await prismaClient.feed.deleteMany({
-      where: { path, profileId },
+      where: { path, subjectType, profileId },
     });
   }
   for (const slug of content.deletes.items) {
@@ -235,6 +236,21 @@ async function handleAdminBaseContentUpserts(profile: Profile) {
 
   // then feeds
   for (const feed of content.upserts.feeds) {
+    const {
+      // relations
+      path,
+      subjectType,
+      tags: tagNames,
+    } = feed;
+    const newTagsIds =
+      (tagNames &&
+        (
+          await prismaClient.tag.findMany({
+            where: { name: { in: tagNames } },
+          })
+        ).map((tag: { id: number }) => tag.id)) ||
+      [];
+
     await prismaClient.$transaction(async (tx) => {
       const upsertedFeed = await tx.feed.upsert({
         where: {
@@ -244,11 +260,19 @@ async function handleAdminBaseContentUpserts(profile: Profile) {
             subjectType: feed.subjectType,
           },
         },
-        update: {},
+        update: {
+          tags: {
+            deleteMany: {},
+            create: newTagsIds.map((id: number) => ({ tagId: id })),
+          },
+        },
         create: {
           profileId: profile.id,
-          path: feed.path,
-          subjectType: feed.subjectType,
+          path,
+          subjectType,
+          tags: {
+            create: newTagsIds.map((id: number) => ({ tagId: id })),
+          },
         },
       });
 

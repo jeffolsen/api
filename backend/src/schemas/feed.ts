@@ -8,6 +8,7 @@ import {
   subjectTypesArraySchema,
   subjectTypeSchema,
 } from "./properties";
+import { tagNameArraySchema } from "./tag";
 
 export const feedIncludeFields = ["tags", "components"] as const;
 export type FeedIncludeField = (typeof feedIncludeFields)[number];
@@ -119,7 +120,7 @@ export const CreateFeedBodySchema = z
   .object({
     path: pathSchema,
     subjectType: subjectTypeSchema,
-    tagIds: tagIdsSchema,
+    tagNames: tagNameArraySchema.default([]),
   })
   .extend(publishedAtAndExpiredAtSchema.shape);
 
@@ -127,7 +128,7 @@ export const UpdateFeedBodySchema = z
   .object({
     id: idStringSchema,
     path: pathSchema.optional(),
-    tagIds: tagIdsSchema,
+    tagNames: tagNameArraySchema.default([]),
   })
   .extend(publishedAtAndExpiredAtSchema.shape);
 

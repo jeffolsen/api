@@ -1747,7 +1747,7 @@ content-type@^1.0.5:
 
 "content@git+ssh://git@github.com/jeffolsen/content.git":
   version "1.0.0"
-  resolved "git+ssh://git@github.com/jeffolsen/content.git#2f6e0d8d04ce4e714b9e1734f3abe69d308e4d9f"
+  resolved "git+ssh://git@github.com/jeffolsen/content.git#e42ad2396876c8fc9d60d24f772f610f58d71434"
 
 convert-source-map@^2.0.0:
   version "2.0.0"

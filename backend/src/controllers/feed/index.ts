@@ -154,7 +154,7 @@ type CreateFeedBody = {
   subjectType: SubjectType;
   publishedAt?: string;
   expiredAt?: string;
-  tagIds?: number[];
+  tagNames?: string[];
 };
 
 export const createFeed: RequestHandler<
@@ -164,10 +164,15 @@ export const createFeed: RequestHandler<
   unknown
 > = catchErrors(async (req: Request, res: Response) => {
   const { profileId } = req;
-  const { path, subjectType, publishedAt, expiredAt, tagIds } =
+  const { path, subjectType, publishedAt, expiredAt, tagNames } =
     CreateFeedBodySchema.parse(req.body);
 
   const feed = await prismaClient.$transaction(async (tx) => {
+    const tags = tagNames.length
+      ? await tx.tag.findMany({
+          where: { name: { in: tagNames } },
+        })
+      : [];
     const created = await tx.feed.create({
       data: {
         path,
@@ -175,11 +180,11 @@ export const createFeed: RequestHandler<
         publishedAt: publishedAt ? new Date(publishedAt) : null,
         expiredAt: expiredAt ? new Date(expiredAt) : null,
         profileId,
+        tags: {
+          create: tags.map(({ id }) => ({ tagId: id })),
+        },
       },
     });
-    if (tagIds?.length) {
-      await setFeedTags(tx, created.id, tagIds);
-    }
     return created;
   });
 
@@ -190,7 +195,7 @@ type UpdateFeedBody = {
   path?: string;
   publishedAt?: string;
   expiredAt?: string;
-  tagIds?: number[];
+  tagNames?: string[];
 };
 
 export const updateFeed: RequestHandler<
@@ -200,7 +205,7 @@ export const updateFeed: RequestHandler<
   unknown
 > = catchErrors(async (req: Request, res: Response) => {
   const { profileId } = req;
-  const { id, path, publishedAt, expiredAt, tagIds } =
+  const { id, path, publishedAt, expiredAt, tagNames } =
     UpdateFeedBodySchema.parse({
       ...(req.body as UpdateFeedBody),
       id: req.params.id,
@@ -210,18 +215,24 @@ export const updateFeed: RequestHandler<
     const existing = await tx.feed.findFirst({ where: { id, profileId } });
     throwError(existing, NOT_FOUND, MESSAGE_FEED_NOT_FOUND);
 
+    const tags = tagNames.length
+      ? await tx.tag.findMany({
+          where: { name: { in: tagNames } },
+        })
+      : [];
+
     const updated = await tx.feed.update({
       where: { id, profileId },
       data: {
         path,
         publishedAt: publishedAt ? new Date(publishedAt) : null,
         expiredAt: expiredAt ? new Date(expiredAt) : null,
+        tags: {
+          deleteMany: {},
+          create: tags.map(({ id }) => ({ tagId: id })),
+        },
       },
     });
-
-    if (tagIds !== undefined) {
-      await setFeedTags(tx, id, tagIds);
-    }
 
     return updated;
   });
@@ -233,7 +244,7 @@ type ModifyFeedBody = {
   path?: string;
   publishedAt?: string;
   expiredAt?: string;
-  tagIds?: number[];
+  tagNames?: string[];
 };
 
 export const modifyFeed: RequestHandler<
@@ -243,11 +254,10 @@ export const modifyFeed: RequestHandler<
   unknown
 > = catchErrors(async (req: Request, res: Response) => {
   const { profileId } = req;
-  const { id, path, publishedAt, expiredAt, tagIds } =
-    ModifyFeedBodySchema.parse({
-      ...req.body,
-      id: req.params.id,
-    });
+  const { id, path, publishedAt, expiredAt } = ModifyFeedBodySchema.parse({
+    ...req.body,
+    id: req.params.id,
+  });
 
   const feed = await prismaClient.$transaction(async (tx) => {
     const existing = await tx.feed.findFirst({ where: { id, profileId } });
@@ -269,10 +279,6 @@ export const modifyFeed: RequestHandler<
             : { expiredAt: new Date(expiredAt) }),
       },
     });
-
-    if (tagIds !== undefined) {
-      await setFeedTags(tx, id, tagIds);
-    }
 
     return updated;
   });

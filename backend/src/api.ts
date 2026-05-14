@@ -5,6 +5,7 @@ import sessionRoutes from "@/routes/session";
 import verificationCodeRoutes from "@/routes/verificationCode";
 import feedRoutes from "@/routes/feed";
 import feedComponentRoutes from "@/routes/feedComponent";
+import feedTagRoutes from "@/routes/feedTag";
 import tagRoutes from "@/routes/tag";
 import itemRoutes from "@/routes/item";
 import itemTagRoutes from "@/routes/itemTag";
@@ -56,6 +57,7 @@ apiRouter.use(COMPONENT_ROUTES, authenticate, mutationLimiter, componentRoutes);
 
 apiRouter.use(FEED_ROUTES, authenticate, mutationLimiter, feedRoutes);
 apiRouter.use(FEED_ROUTES, authenticate, mutationLimiter, feedComponentRoutes);
+apiRouter.use(FEED_ROUTES, authenticate, mutationLimiter, feedTagRoutes);
 
 export default apiRouter;
 export { BASE_API_URL } from "@config/routes";
