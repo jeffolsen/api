@@ -29,6 +29,7 @@ function useProfileDashboardBlockData({
 
   if (profile.error) {
     return {
+      type: "error" as const,
       error: "Failed to fetch profile data",
       params,
       path,

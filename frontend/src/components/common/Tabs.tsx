@@ -1,33 +1,17 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import clsx, { ClassValue } from "clsx";
-import { Fragment, useEffect } from "react";
-import { BlockUrlIdentifier } from "@/components/blocks/Block";
-import { useSearchParamWithDefault } from "@/hooks/useSearchParam";
-
-export type TabPanelProps = {
-  urlIdentifier: string;
-};
+import { Fragment, useState } from "react";
 
 export type TabsProps = {
   tabs: {
     name: string;
-    Component: React.ComponentType<TabPanelProps>;
+    Component: React.ComponentType;
     getTabClasses?: (selected?: boolean, hover?: boolean) => ClassValue;
   }[];
   tabListClassName?: ClassValue;
-} & BlockUrlIdentifier;
-
-function Tabs({ tabs, tabListClassName, urlIdentifier, ...props }: TabsProps) {
-  const componentSelectedQueryParam = `tabs${urlIdentifier}_selected`;
-  const [selectedTab, setSelectedTab] = useSearchParamWithDefault(
-    componentSelectedQueryParam,
-    tabs[0]?.name || "",
-  );
-  useEffect(() => {
-    return () => {
-      setSelectedTab(undefined);
-    };
-  }, []);
+};
+function Tabs({ tabs, tabListClassName, ...props }: TabsProps) {
+  const [selectedTab, setSelectedTab] = useState(tabs[0]?.name || "");
   return (
     <TabGroup
       selectedIndex={tabs.findIndex((tab) => tab.name === selectedTab)}
@@ -56,10 +40,7 @@ function Tabs({ tabs, tabListClassName, urlIdentifier, ...props }: TabsProps) {
         <TabPanels className="w-full">
           {tabs.map(({ name, Component }) => (
             <TabPanel key={name} className="flex flex-col gap-4">
-              <Component
-                key={name}
-                urlIdentifier={componentSelectedQueryParam}
-              />
+              <Component key={name} />
             </TabPanel>
           ))}
         </TabPanels>

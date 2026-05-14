@@ -97,17 +97,20 @@ function CmsFeedUpdateBlock({
 
   const settings = blockProps?.settings || {};
   const getFeed = blockData?.feedData;
+  const getFeedTags = blockData?.feedTags;
   const getFeedComponents = blockData?.feedComponentsData;
   const getComponentTypes = blockData?.componentTypesData;
 
   if (
     getFeed.isLoading ||
+    getFeedTags.isLoading ||
     getFeedComponents.isLoading ||
     getComponentTypes.isLoading
   ) {
     return <Loading />;
   }
   const feed = getFeed.data?.feed;
+  const feedTags = getFeedTags.data?.tags;
   const feedComponents = getFeedComponents.data?.components || [];
 
   return (
@@ -140,7 +143,12 @@ function CmsFeedUpdateBlock({
               />
             </div>
           </div>
-          <FeedUpdateForm defaultValues={feed} />
+          <FeedUpdateForm
+            defaultValues={{ ...feed, tags: feedTags }}
+            handleSuccess={() => {
+              toast.success("Feed updated successfully");
+            }}
+          />
         </div>
       </EmptyCard>
       <SectionHeading text="Components" />

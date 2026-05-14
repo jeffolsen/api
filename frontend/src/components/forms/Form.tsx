@@ -56,10 +56,15 @@ function Form({
     try {
       await submitAction(args);
     } catch (error) {
-      const errorData = JSON.parse((error as Error).message);
-      errorData?.errors?.forEach((err: { message: string }) => {
-        toast.error(err.message);
-      });
+      console.log("error", error);
+      try {
+        const errorData = JSON.parse((error as Error).message);
+        errorData?.errors?.forEach((err: { message: string }) => {
+          toast.error(err.message);
+        });
+      } catch {
+        toast.error((error as Error).message ?? "Something went wrong");
+      }
     }
   };
 

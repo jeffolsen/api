@@ -5,7 +5,7 @@ import {
   BlockComponentDataReturnType,
 } from "@/components/blocks/Block";
 import { keepPreviousData } from "@tanstack/react-query";
-import { useGetAppItems } from "@/network/app";
+import { useGetAppItems } from "@/network/app/item";
 
 const variants = {
   alpha: {

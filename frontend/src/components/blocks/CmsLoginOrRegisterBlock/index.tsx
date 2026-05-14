@@ -20,8 +20,7 @@ import {
 import RegisterForm from "@/components/forms/RegisterForm";
 import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
 import Text from "@/components/common/Text";
-import Tabs, { TabsProps, TabPanelProps } from "@/components/common/Tabs";
-import { useSearchParam } from "@/hooks/useSearchParam";
+import Tabs, { TabsProps } from "@/components/common/Tabs";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
 import Modal from "@/components/layout/Modal";
@@ -70,20 +69,12 @@ function CmsLoginOrRegisterBlock({
 }) {
   return (
     <Block {...blockProps}>
-      <Tabs
-        urlIdentifier={`${blockData.id}`}
-        tabs={tabs}
-        tabListClassName="flex flex-wrap justify-end gap-2"
-      />
+        <Tabs tabs={tabs} tabListClassName="flex flex-wrap justify-end gap-2" />
     </Block>
   );
 }
 
-function RegisterFormWithSuccessModal({
-  urlIdentifier,
-  ...props
-}: TabPanelProps) {
-  const [, setTabSelected] = useSearchParam(`${urlIdentifier}`);
+function RegisterFormWithSuccessModal({ ...props }) {
   return (
     <RegisterForm
       heading="Register"
@@ -92,14 +83,13 @@ function RegisterFormWithSuccessModal({
       headingDecorator="strike"
       handleSuccess={() => {
         toast.success("Registration Successful! You can now log in.");
-        setTabSelected("Login");
       }}
       {...props}
     />
   );
 }
 
-function RequestLoginOrLoginWithOtp({ ...props }: TabPanelProps) {
+function RequestLoginOrLoginWithOtp({ ...props }) {
   const otpStatus = useOtpStatus();
   const [openLogoutAllModal, setOpenLogoutAllModal] = useState(false);
 
@@ -145,11 +135,11 @@ function RequestLoginOrLoginWithOtp({ ...props }: TabPanelProps) {
 }
 
 function RequestLogoutAllModalContent({
-  urlIdentifier,
   setOpenLogoutAllModal,
-}: TabPanelProps & { setOpenLogoutAllModal: (open: boolean) => void }) {
+}: {
+  setOpenLogoutAllModal: (open: boolean) => void;
+}) {
   const otpStatus = useOtpStatus();
-  const [, setTabSelected] = useSearchParam(`${urlIdentifier}`);
 
   return (
     <div className="flex flex-col items-center justify-center gap-4">
@@ -162,7 +152,6 @@ function RequestLogoutAllModalContent({
             submitInputConfig={{ text: "Logout of all sessions" }}
             handleSuccess={() => {
               toast.success("You have been logged out of all sessions.");
-              setTabSelected("Login");
               setOpenLogoutAllModal(false);
             }}
           />
@@ -186,12 +175,8 @@ function RequestLogoutAllModalContent({
   );
 }
 
-function RequestResetPasswordOrResetWithOtp({
-  urlIdentifier,
-  ...props
-}: TabPanelProps) {
+function RequestResetPasswordOrResetWithOtp({ ...props }) {
   const otpStatus = useOtpStatus();
-  const [, setTabSelected] = useSearchParam(`${urlIdentifier}`);
 
   if (otpStatus === OTP_STATUS_PASSWORD_RESET) {
     return (
@@ -205,7 +190,6 @@ function RequestResetPasswordOrResetWithOtp({
         }}
         handleSuccess={() => {
           toast.success("Password reset successful! You can now log in.");
-          setTabSelected("Login");
         }}
         {...props}
       />

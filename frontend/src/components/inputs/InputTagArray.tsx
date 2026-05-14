@@ -1,5 +1,5 @@
 import { useFieldArray } from "react-hook-form";
-import { useGetTags } from "@/network/tag/useGetTags";
+import { useGetAppTags } from "@/network/app/tag";
 import Grid from "@/components/common/Grid";
 import { useCallback } from "react";
 import {
@@ -34,7 +34,7 @@ function TagArrayInput(
     name: dataName,
     rules,
   });
-  const tags = useGetTags();
+  const tags = useGetAppTags();
 
   const selectedTagnames = (fields as TagnameArrayFields).map((f) => f.name);
 

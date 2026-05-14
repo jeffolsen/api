@@ -20,7 +20,7 @@ export type TTag = {
 };
 
 export type GetTagsResponse = {
-  tags: TTag;
+  tags: TTag[];
 };
 
 export type TTagInput = Omit<TTag, "id">;

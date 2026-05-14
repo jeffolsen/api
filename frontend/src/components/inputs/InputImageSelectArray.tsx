@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { useFieldArray } from "react-hook-form";
-import { useGetImages } from "@/network/image/useGetImages";
+import { useGetAppImages } from "@/network/app/image";
 import {
   AtomicFormComponentProps,
   ChildFromFormProps,
@@ -81,7 +81,7 @@ function ImageSelectInput(
     name: dataName,
     rules: input?.rules,
   });
-  const images = useGetImages();
+  const images = useGetAppImages();
   const [showImageSelector, setShowImageSelector] = useState(false);
   const elementProps = {
     ...(input?.element || {}),

@@ -156,7 +156,6 @@ const AlphaCard = ({
             </Text>
             {link && (
               <Link
-                as="Link"
                 to={link}
                 linkColor="accent"
                 size="xl"

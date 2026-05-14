@@ -113,7 +113,9 @@ function CmsItemUpdateBlock({
         <div className="card-body">
           <ItemUpdateForm
             defaultValues={itemWithResources}
-            handleSuccess={() => toast.success("Item updated successfully")}
+            handleSuccess={() => {
+              toast.success("Item updated successfully");
+            }}
           />
         </div>
       </EmptyCard>

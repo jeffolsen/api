@@ -14,3 +14,8 @@ export class UnauthorizedError extends HttpError {}
  * Status code 404
  */
 export class NotFoundError extends HttpError {}
+
+/**
+ * Status code 429
+ */
+export class RateLimitError extends HttpError {}

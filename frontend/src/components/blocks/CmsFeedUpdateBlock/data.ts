@@ -8,6 +8,7 @@ import {
   BlockComponentStandardProps,
   BlockComponentDataReturnType,
 } from "@/components/blocks/Block";
+import { useGetFeedsTags } from "@/network/feed/useGetFeedsTags";
 
 const variants = {
   default: {
@@ -29,6 +30,7 @@ function useFeedUpdateBlockData({
 
   const feedId = parseInt(params?.id || "");
   const getFeed = useGetFeedById(feedId);
+  const getFeedTags = useGetFeedsTags(feedId);
   const getFeedComponents = useGetFeedComponents(feedId);
   const getComponentTypes = useGetComponentTypes({
     ...(getFeed.data?.feed?.subjectType === "COLLECTION" && {
@@ -40,6 +42,14 @@ function useFeedUpdateBlockData({
     return {
       type: "error" as const,
       error: "Failed to fetch feed data",
+      params,
+      path,
+    };
+  }
+  if (getFeedTags.error) {
+    return {
+      type: "error" as const,
+      error: "Failed to fetch feed tags data",
       params,
       path,
     };
@@ -74,6 +84,7 @@ function useFeedUpdateBlockData({
     blockData: {
       id,
       feedData: getFeed,
+      feedTags: getFeedTags,
       feedComponentsData: getFeedComponents,
       componentTypesData: getComponentTypes,
     },
@@ -92,6 +103,7 @@ type PropertyValues = {
 type BlockSettings = (typeof variants)[VariantNames];
 type LocalBlockData = {
   feedData: ReturnType<typeof useGetFeedById>;
+  feedTags: ReturnType<typeof useGetFeedsTags>;
   feedComponentsData: ReturnType<typeof useGetFeedComponents>;
   componentTypesData: ReturnType<typeof useGetComponentTypes>;
 };
