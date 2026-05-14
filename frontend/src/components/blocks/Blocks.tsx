@@ -27,6 +27,9 @@ const LazyLoadedBuildRedirectBlock = lazy(
 const LazyLoadedGenericBlock = lazy(
   () => import("@/components/blocks/DefaultGenericBlock/index"),
 );
+const LazyLoadedErrorBlock = lazy(
+  () => import("@/components/blocks/DefaultErrorBlock/index"),
+);
 const LazyLoadedFourOhFourBlock = lazy(
   () => import("@/components/blocks/DefaultFourOhFourBlock/index"),
 );
@@ -72,6 +75,7 @@ const Blocks = {
   RelatedContent: LazyLoadedRelatedContentBlock,
   TeaserGrid: LazyLoadedTeaserGridBlock,
   Generic: LazyLoadedGenericBlock,
+  Error: LazyLoadedErrorBlock,
   FourOhFour: LazyLoadedFourOhFourBlock,
   FourOhOne: LazyLoadedFourOhOneBlock,
   Policy: LazyLoadedPolicyBlock,

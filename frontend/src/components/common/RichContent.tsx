@@ -8,8 +8,6 @@ type RichContent = {
   parent?: "li" | "ul" | "ol" | "p";
 };
 function RichContent({ richContent, parent }: RichContent) {
-  console.log("richContent", richContent);
-
   if (!richContent) return null;
 
   // Handle the root document container
