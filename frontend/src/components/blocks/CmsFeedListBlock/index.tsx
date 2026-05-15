@@ -158,7 +158,7 @@ function FeedCard({ feed }: { feed: TFeed }) {
             )}
             <Button
               as="Link"
-              to={paths.cmsFeedUpdate.replace(":id", id.toString())}
+              to={paths.cmsFeedUpdate.replace("$id", id.toString())}
               size="md"
               color="primary"
             >

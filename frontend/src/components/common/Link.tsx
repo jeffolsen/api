@@ -1,4 +1,4 @@
-import { Link as RouterLink, LinkProps } from "react-router";
+import { Link as RouterLink, LinkProps } from "@tanstack/react-router";
 import { AnchorHTMLAttributes, forwardRef } from "react";
 import clsx, { ClassValue } from "clsx";
 import { Size, sizeClasses } from "./helpers/contentStyles";
@@ -11,12 +11,14 @@ const linkColors = {
   base: "link link-hover",
 };
 
+type LooseLinkProps = Omit<LinkProps, "to"> & { to?: string };
+
 type LinkAsRouterLink = {
   as?: "Link";
   className?: ClassValue;
   size?: Size;
   linkColor?: keyof typeof linkColors;
-} & LinkProps;
+} & LooseLinkProps;
 
 type LinkAsAnchor = {
   as: "a";
@@ -40,8 +42,9 @@ export const CustomLink = forwardRef<HTMLAnchorElement, CustomLinkProps>(
       return <a ref={ref} className={classes} {...anchorProps} />;
     }
 
-    const linkProps = props as LinkProps;
-    return <RouterLink ref={ref} className={classes} {...linkProps} />;
+    const linkProps = props as LooseLinkProps;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return <RouterLink ref={ref} className={classes} {...(linkProps as any)} />;
   },
 );
 

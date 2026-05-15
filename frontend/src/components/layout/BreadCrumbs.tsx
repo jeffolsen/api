@@ -1,4 +1,4 @@
-import { useLocation } from "react-router";
+import { useLocation } from "@tanstack/react-router";
 import Link from "@/components/common/Link";
 import Text from "../common/Text";
 import clsx from "clsx";
@@ -16,7 +16,7 @@ function BreadCrumbs() {
     if (accumulatedPath.startsWith(preview)) return;
     accumulatedPath = "";
     pathSegments.forEach((seg, segIndex) => {
-      console.log("accumulatedPath", accumulatedPath, "seg", seg);
+      // console.log("accumulatedPath", accumulatedPath, "seg", seg);
       if (accumulatedPath.startsWith(preview)) {
         accumulatedPath += `/${seg}`;
         return;

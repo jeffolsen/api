@@ -1,7 +1,6 @@
 import { HeadingLevelProvider } from "@/components/common/Heading";
 import Button from "@/components/common/Button";
-import { TComponent } from "@/network/component/types";
-import { useLoaderData, useLocation } from "react-router";
+import { useLocation } from "@tanstack/react-router";
 import ThemeToggle from "@/components/partials/ThemeToggle";
 import clsx from "clsx";
 import Logo from "@/components/partials/Logo";
@@ -27,13 +26,6 @@ const navItems = [
 
 function Header() {
   const location = useLocation();
-  const data = useLoaderData();
-  const hero = data.pageLayout.components.find(
-    (c: TComponent) =>
-      c.typeName === "HeroCarousel" && c.propertyValues.location === "header",
-  );
-
-  console.log("location", location);
 
   return (
     <HeadingLevelProvider>
@@ -59,7 +51,7 @@ function Header() {
           </div>
         </div>
       </header>
-      <HeaderHero hero={hero} />
+      <HeaderHero />
       <StickySubHeader>
         <div className="mx-auto max-w-screen-2xl w-full flex justify-start pl-4 md:pl-8">
           {location.pathname !== "/" ? (

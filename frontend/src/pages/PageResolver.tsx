@@ -1,42 +1,36 @@
 import { Suspense } from "react";
 import Loading from "@/components/common/Loading";
-import { LocalFeedWithComponents } from "@/config/routes";
 import Blocks from "@/components/blocks/Blocks";
-import { NotFoundError } from "@/utils/errors";
-import { isAuthenticated } from "@/network/api";
 import DocumentHead from "@/components/layout/DocumentHead";
+import ErrorBoundary from "@/components/common/ErrorBoundary";
+import { PageFallback } from "./ErrorPage";
+import { TFeedWithIncludes } from "@/network/feed/types";
+import { TItemWithIncludes } from "@/network/item/types";
 
-export default function PageResolver({
-  pageData,
-  params,
-  path,
-}: {
-  pageData: LocalFeedWithComponents;
+type PageResolverProps = {
+  pageData: { feed: TFeedWithIncludes; item?: TItemWithIncludes };
   params: Record<string, string>;
   path: string;
-}) {
-  // Filter components based on authentication status
-  const authenticated = isAuthenticated();
-  const filteredComponents = filterByAuthentication(
-    pageData.components,
-    authenticated,
+};
+
+export default function PageResolver(props: PageResolverProps) {
+  const { params, path } = props;
+  return (
+    <ErrorBoundary fallback={(error) => PageFallback(error, params, path)}>
+      <PageResolverContent {...props} />
+    </ErrorBoundary>
   );
+}
 
-  // If no component we should
-  if (filteredComponents.length === 0) {
-    throw new NotFoundError();
-  }
-
-  // Ensure only the first component with isPrimaryContent=true retains that property to respect H1 usage for SEO and accessibility
-  const h1RespectingComponents = ensureSinglePrimaryContent(filteredComponents);
-
-  const renderedComponents = h1RespectingComponents
+function PageResolverContent({ pageData, params, path }: PageResolverProps) {
+  const renderedComponents = pageData.feed.components
     .map((component, index) => {
       const Block = Blocks[component.typeName as keyof typeof Blocks];
       if (Block) {
         return (
           <Block
             component={component}
+            item={pageData.item}
             params={params}
             path={path}
             key={index}
@@ -47,67 +41,10 @@ export default function PageResolver({
     })
     .filter(Boolean);
 
-  if (renderedComponents.length === 0) {
-    throw new NotFoundError(`No renderable components found for path: ${path}`);
-  }
-
   return (
     <>
-      <DocumentHead
-        feed={{ ...pageData, components: h1RespectingComponents }}
-      />
+      <DocumentHead {...pageData} />
       <Suspense fallback={<Loading />}>{renderedComponents}</Suspense>
     </>
   );
 }
-
-const filterByAuthentication = (
-  components: LocalFeedWithComponents["components"],
-  isAuthenticated: boolean,
-) => {
-  return components.filter((component) => {
-    const hideFor = component.propertyValues.hideFor;
-    if (hideFor === "authenticated" && isAuthenticated) {
-      return false;
-    }
-    if (hideFor === "unauthenticated" && !isAuthenticated) {
-      return false;
-    }
-    return true;
-  });
-};
-
-const ensureSinglePrimaryContent = (
-  components: LocalFeedWithComponents["components"],
-) => {
-  const firstPrimaryContentIndex = components.findIndex(
-    (component) => component.propertyValues.isPrimaryContent,
-  );
-
-  if (firstPrimaryContentIndex === -1) {
-    // no primaryConent found, add a default one to the first component
-    components[0] = {
-      ...components[0],
-      propertyValues: {
-        ...components[0].propertyValues,
-        isPrimaryContent: true,
-      },
-    };
-    return components;
-  }
-  return components.map((component, index) => {
-    if (
-      index > firstPrimaryContentIndex &&
-      component.propertyValues.isPrimaryContent
-    ) {
-      return {
-        ...component,
-        propertyValues: {
-          ...component.propertyValues,
-          isPrimaryContent: false,
-        },
-      };
-    }
-    return component;
-  });
-};

@@ -1,16 +1,27 @@
-import { useSearchParams } from "react-router";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 
 export const useSearchParam = (key: string) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const value = searchParams.get(key) || undefined;
+  const value = useRouterState({
+    select: (s) =>
+      (s.location.search as Record<string, string>)[key] ?? undefined,
+  });
+
+  const navigate = useNavigate();
 
   const setValue = (newValue: string | undefined) => {
-    if (newValue === undefined || newValue === "") {
-      searchParams.delete(key);
-    } else {
-      searchParams.set(key, newValue);
-    }
-    setSearchParams(searchParams);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (navigate as any)({
+      resetScroll: false,
+      search: (prev: Record<string, string | undefined>) => {
+        const next = { ...prev };
+        if (newValue === undefined || newValue === "") {
+          delete next[key];
+        } else {
+          next[key] = newValue;
+        }
+        return next;
+      },
+    });
   };
 
   return [value, setValue] as const;
@@ -20,20 +31,31 @@ export const useSearchParamWithDefault = (
   key: string,
   defaultValue: string,
 ): [string, (newValue: string | undefined) => void] => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const value = searchParams.get(key) || defaultValue;
+  const value = useRouterState({
+    select: (s) =>
+      (s.location.search as Record<string, string>)[key] ?? defaultValue,
+  });
+
+  const navigate = useNavigate();
 
   const setValue = (newValue: string | undefined) => {
-    if (
-      newValue === undefined ||
-      newValue === defaultValue ||
-      newValue === ""
-    ) {
-      searchParams.delete(key);
-    } else {
-      searchParams.set(key, newValue);
-    }
-    setSearchParams(searchParams);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (navigate as any)({
+      resetScroll: false,
+      search: (prev: Record<string, string | undefined>) => {
+        const next = { ...prev };
+        if (
+          newValue === undefined ||
+          newValue === defaultValue ||
+          newValue === ""
+        ) {
+          delete next[key];
+        } else {
+          next[key] = newValue;
+        }
+        return next;
+      },
+    });
   };
 
   return [value, setValue];
@@ -45,26 +67,37 @@ export const useSearchParamsWithDefaults = (
   Record<string, string>,
   (key: string, newValue: string | undefined) => void,
 ] => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const values = useRouterState({
+    select: (s) => {
+      const search = s.location.search as Record<string, string>;
+      return Object.fromEntries(
+        Object.entries(defaults).map(([k, defaultValue]) => [
+          k,
+          search[k] ?? defaultValue,
+        ]),
+      );
+    },
+  });
 
-  const values = Object.fromEntries(
-    Object.entries(defaults).map(([key, defaultValue]) => [
-      key,
-      searchParams.get(key) || defaultValue,
-    ]),
-  );
+  const navigate = useNavigate();
 
   const setValue = (key: string, newValue: string | undefined) => {
-    if (
-      newValue === undefined ||
-      newValue === defaults[key] ||
-      newValue === ""
-    ) {
-      searchParams.delete(key);
-    } else {
-      searchParams.set(key, newValue);
-    }
-    setSearchParams(searchParams);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (navigate as any)({
+      search: (prev: Record<string, string | undefined>) => {
+        const next = { ...prev };
+        if (
+          newValue === undefined ||
+          newValue === defaults[key] ||
+          newValue === ""
+        ) {
+          delete next[key];
+        } else {
+          next[key] = newValue;
+        }
+        return next;
+      },
+    });
   };
 
   return [values, setValue];

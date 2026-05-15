@@ -30,12 +30,6 @@ const LazyLoadedGenericBlock = lazy(
 const LazyLoadedErrorBlock = lazy(
   () => import("@/components/blocks/DefaultErrorBlock/index"),
 );
-const LazyLoadedFourOhFourBlock = lazy(
-  () => import("@/components/blocks/DefaultFourOhFourBlock/index"),
-);
-const LazyLoadedFourOhOneBlock = lazy(
-  () => import("@/components/blocks/DefaultFourOhOneBlock/index"),
-);
 const LazyLoadedPolicyBlock = lazy(
   () => import("@/components/blocks/DefaultPolicyBlock"),
 );
@@ -76,8 +70,6 @@ const Blocks = {
   TeaserGrid: LazyLoadedTeaserGridBlock,
   Generic: LazyLoadedGenericBlock,
   Error: LazyLoadedErrorBlock,
-  FourOhFour: LazyLoadedFourOhFourBlock,
-  FourOhOne: LazyLoadedFourOhOneBlock,
   Policy: LazyLoadedPolicyBlock,
   StyleGuide: LazyLoadedStyleGuideBlock,
   LoginRegister: LazyLoadedLoginRegisterBlock,

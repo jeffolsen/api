@@ -10,7 +10,7 @@ import { convertZuluToLocalDateTime } from "@/utils/time";
 import Text from "@/components/common/Text";
 import dayjs, { techDatetime } from "@/utils/dayjs";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router";
+import { useNavigate } from "@tanstack/react-router";
 import Heading from "@/components/common/Heading";
 import { ScheduleStatus } from "@/components/inputs/FormSubmitAndPublish";
 import useItemUpdateBlockData, {
@@ -102,7 +102,7 @@ function CmsItemUpdateBlock({
                 defaultValues={{ id: item.id }}
                 handleSuccess={() => {
                   toast.success("Item deleted successfully");
-                  navigate(paths.cmsItemsList);
+                  navigate({ to: paths.cmsItemsList });
                 }}
               />
             </div>

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { BlockComponentStandardProps } from "@/components/blocks/Block";
 import useRedirectBlockData from "@/components/blocks/BuildRedirectBlock/data";
 import { toast } from "react-hot-toast";
@@ -16,7 +16,10 @@ function RedirectBlock(config: BlockComponentStandardProps) {
       toast(message);
     }
     if (destination) {
-      navigate(destination, { replace: true });
+      navigate({
+        to: destination,
+        replace: true,
+      });
     }
   }, [destination, navigate, message]);
 

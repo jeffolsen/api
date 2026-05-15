@@ -2,7 +2,7 @@ import { TItem } from "@/network/item/types";
 
 const getItemLink = (feed: string | undefined, item: TItem) => {
   if (item.overrideLink) return `/${item.overrideLink}`;
-  if (feed) return `/${feed}/${String(item.id)}`;
+  if (feed) return `/${feed}/${String(item.slug)}`;
   return null;
 };
 

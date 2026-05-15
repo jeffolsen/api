@@ -1,4 +1,4 @@
-import { useLocation } from "react-router";
+import { useLocation } from "@tanstack/react-router";
 import Button from "../common/Button";
 import { paths } from "@/config/routes";
 
@@ -14,6 +14,7 @@ export default function CmsSubNav() {
         className="flex-1 md:w-auto"
         size="lg"
         to={paths.cmsItemsList}
+        resetScroll={false}
       >
         Items
       </Button>
@@ -23,6 +24,7 @@ export default function CmsSubNav() {
         className="flex-1 md:w-auto"
         size="lg"
         to={paths.cmsFeedsList}
+        resetScroll={false}
       >
         Feeds
       </Button>
@@ -32,6 +34,7 @@ export default function CmsSubNav() {
         className="flex-1 md:w-auto"
         size="lg"
         to={paths.cmsHome}
+        resetScroll={false}
       >
         Settings
       </Button>

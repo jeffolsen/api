@@ -24,6 +24,10 @@ function ErrorBlock({
 }) {
   const { errorCode } = blockData;
 
+  if (errorCode === 204) {
+    return <TwoOhFourBlock blockProps={blockProps} />;
+  }
+
   if (errorCode === 404) {
     return <FourOhFourBlock blockData={blockData} blockProps={blockProps} />;
   }
@@ -41,6 +45,16 @@ function ErrorBlock({
   return (
     <Block {...blockProps}>
       <Text textSize="md">Not implemented</Text>
+    </Block>
+  );
+}
+
+function TwoOhFourBlock({ blockProps }: { blockProps: UseErrorBlockProps }) {
+  return (
+    <Block {...blockProps}>
+      <Text textSize="md" className="text-center">
+        This page is under construction.
+      </Text>
     </Block>
   );
 }

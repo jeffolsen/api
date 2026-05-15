@@ -1,10 +1,14 @@
-import { TComponent } from "@/network/component/types";
 import clsx from "clsx";
 import { Suspense } from "react";
 import Blocks from "../blocks/Blocks";
 import HeaderImageSpread from "./HeaderImageSpread";
+import { useRouterState } from "@tanstack/react-router";
 
-function HeaderHero({ hero }: { hero: TComponent }) {
+function HeaderHero() {
+  const hero = useRouterState({
+    select: (s) =>
+      s.matches.find((m) => m.routeId === "/$")?.loaderData?.headerHero,
+  });
   return (
     <div
       className={clsx([

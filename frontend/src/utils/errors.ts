@@ -19,3 +19,8 @@ export class NotFoundError extends HttpError {}
  * Status code 429
  */
 export class RateLimitError extends HttpError {}
+
+/**
+ * Status code 204 — feed exists but has no body components
+ */
+export class UnderConstructionError extends HttpError {}

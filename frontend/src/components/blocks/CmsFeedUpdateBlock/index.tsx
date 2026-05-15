@@ -3,7 +3,7 @@ import {
   FeedDeleteButton,
   FeedUpdateForm,
 } from "@/components/forms/FeedCreateForm";
-import { useNavigate } from "react-router";
+import { useNavigate } from "@tanstack/react-router";
 import Loading from "@/components/common/Loading";
 import { convertZuluToLocalDateTime } from "@/utils/time";
 import toast from "react-hot-toast";
@@ -138,7 +138,7 @@ function CmsFeedUpdateBlock({
                 defaultValues={{ id: feed.id }}
                 handleSuccess={() => {
                   toast.success("Feed deleted successfully");
-                  navigate(paths.cmsFeedsList);
+                  navigate({ to: paths.cmsFeedsList });
                 }}
               />
             </div>

@@ -1,33 +1,47 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "@/global.css";
-import App from "@/App.tsx";
-import { RouterProvider } from "react-router";
-import { QueryClientProvider } from "@tanstack/react-query";
+
+import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { routeTree } from "./routeTree.gen";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { AuthProvider } from "@/contexts/AuthProvider";
 import { Toaster } from "react-hot-toast";
-import ErrorPage from "@/pages/ErrorPage";
-import createPageRouter from "@/routers/pageRouter.tsx";
-import queryClient from "@/utils/queryClient";
+
+import queryClient, { persister } from "@/utils/queryClient";
 import { createHead } from "@unhead/react/client";
 import { UnheadProvider } from "@unhead/react/client";
 
 const head = createHead();
 
-const router = createPageRouter({
-  element: <App />,
-  errorElement: <ErrorPage />,
-});
+const router = createRouter({ routeTree });
+
+// 2. Register for type safety
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{
+        persister,
+        maxAge: 24 * 60 * 60 * 1000,
+        buster: "v1",
+        dehydrateOptions: {
+          shouldDehydrateQuery: (query) => query.queryKey[0] === "app",
+        },
+      }}
+    >
       <AuthProvider>
         <UnheadProvider head={head}>
           <RouterProvider router={router} />
           <Toaster />
         </UnheadProvider>
       </AuthProvider>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   </StrictMode>,
 );

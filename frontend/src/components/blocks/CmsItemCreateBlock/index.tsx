@@ -1,7 +1,7 @@
 import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
 import { ItemCreateForm } from "@/components/forms/ItemCreateForm";
 import EmptyCard from "@/components/cards/EmptyCard";
-import { useNavigate } from "react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { TItem } from "@/network/item/types";
 import useItemCreateBlockData, {
   UseItemCreateBlockData,
@@ -35,12 +35,10 @@ function CmsItemCreateBlock({
         <div className="card-body">
           <ItemCreateForm
             handleSuccess={(args) => {
-              navigate(
-                paths.cmsItemUpdate.replace(
-                  ":id",
-                  (args.item as TItem).id.toString(),
-                ),
-              );
+              navigate({
+                to: paths.cmsItemUpdate,
+                params: { id: (args.item as TItem).id.toString() },
+              });
             }}
           />
         </div>

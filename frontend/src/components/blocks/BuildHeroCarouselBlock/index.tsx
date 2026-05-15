@@ -136,7 +136,13 @@ function VariantAlpha({
   );
 }
 
-function AlphaSlide({ item, feed }: { item: TItemWithIncludes; feed: string | undefined }) {
+function AlphaSlide({
+  item,
+  feed,
+}: {
+  item: TItemWithIncludes;
+  feed: string | undefined;
+}) {
   const link = getItemLink(feed, item);
   const images = item.images.map(({ image }) => image);
   const image = getImageByPriority({
@@ -438,7 +444,13 @@ function VariantGamma({
   );
 }
 
-function GammaSlide({ item, feed }: { item: TItemWithIncludes; feed: string | undefined }) {
+function GammaSlide({
+  item,
+  feed,
+}: {
+  item: TItemWithIncludes;
+  feed: string | undefined;
+}) {
   const link = getItemLink(feed, item);
   const images = item.images.map(({ image }) => image);
   const image = getImageByPriority({

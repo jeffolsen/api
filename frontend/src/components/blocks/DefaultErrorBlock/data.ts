@@ -42,7 +42,7 @@ export default useErrorBlockData;
 
 type VariantNames = keyof typeof variants;
 
-type ErrorCodes = 401 | 404 | 429;
+type ErrorCodes = 204 | 401 | 404 | 429;
 
 type PropertyValues = {
   variant: VariantNames;

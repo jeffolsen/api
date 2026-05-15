@@ -12,8 +12,15 @@ import {
   ButtonSize,
 } from "@/components/common/helpers/contentStyles";
 import clsx, { ClassValue } from "clsx";
-import { LinkProps } from "react-router";
+import { LinkProps } from "@tanstack/react-router";
+import { ReactNode } from "react";
 import { CustomLink } from "@/components/common/Link";
+
+type LooseLinkProps = Omit<LinkProps, "to" | "children"> & {
+  to?: string;
+  resetScroll?: boolean;
+  children?: ReactNode;
+};
 
 type ButtonBaseProps = {
   color?: ButtonColor;
@@ -33,7 +40,7 @@ type ButtonAsSubmit = {
 
 type ButtonAsLink = {
   as: "Link";
-} & LinkProps;
+} & LooseLinkProps;
 
 type ButtonAsAnchor = {
   as: "a";
@@ -72,7 +79,6 @@ export const Button = forwardRef<
     return (
       <CustomLink
         ref={ref as Ref<HTMLAnchorElement>}
-        as="Link"
         className={classes}
         {...linkProps}
       />

@@ -146,7 +146,7 @@ function ItemCard({ item }: { item: TItem }) {
           <div className="flex gap-1">
             <Button
               as="Link"
-              to={paths.cmsItemUpdate.replace(":id", id.toString())}
+              to={paths.cmsItemUpdate.replace("$id", id.toString())}
               size="md"
               color="primary"
             >

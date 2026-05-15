@@ -1,10 +1,8 @@
-import { isAuthenticated } from "@/network/api";
 import {
   BlockProps,
   BlockData,
   BlockComponentDataReturnType,
   BlockComponentStandardProps,
-  BlockStandardFailedDataReturnType,
 } from "@/components/blocks/Block";
 
 const variants = {
@@ -15,25 +13,15 @@ const variants = {
 
 function useLoginOrRegisterBlockData({
   component,
-  params,
-  path,
   critical,
 }: BlockComponentStandardProps): UseLoginOrRegisterBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
+  console.log("useLoginOrRegisterBlockData", component);
+
   const { variant, isPrimaryContent } = propertyValues as PropertyValues;
 
   const blockSettings = variants[variant] || variants["default"];
-
-  const isLoggedIn = isAuthenticated();
-
-  if (isLoggedIn) {
-    return {
-      error: "User is already authenticated",
-      params,
-      path,
-    } as BlockStandardFailedDataReturnType;
-  }
 
   return {
     type: "success" as const,

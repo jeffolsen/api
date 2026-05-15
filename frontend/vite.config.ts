@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { Unhead } from "@unhead/react/vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import path from "path";
 
 // https://vite.dev/config/
@@ -10,12 +11,19 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  plugins: [react(), Unhead()],
+  plugins: [
+    tanstackRouter({
+      target: "react",
+      autoCodeSplitting: true,
+    }),
+    react(),
+    Unhead(),
+  ],
   build: {
     rollupOptions: {
       output: {
         manualChunks: {
-          "vendor-react": ["react", "react-dom", "react-router"],
+          "vendor-react": ["react", "react-dom", "@tanstack/react-router"],
           "vendor-motion": ["motion"],
           "vendor-swiper": ["swiper"],
           "vendor-query": ["@tanstack/react-query"],

@@ -3,7 +3,7 @@ import {
   LocalFeedWithComponents,
   LocalFeedComponent,
 } from "@/config/routes";
-import { TItemRelations, TItem } from "@/network/item/types";
+import { TItemWithIncludes } from "@/network/item/types";
 import { useMemo } from "react";
 // import { siteJsonLd } from "@/config/site";
 // import { useHead } from "@unhead/react";
@@ -13,12 +13,11 @@ const MAX_DESCRIPTION_LENGTH = 160;
 
 export default function DocumentHead({
   feed,
+  item,
 }: {
   feed: LocalFeedWithComponents;
+  item?: TItemWithIncludes;
 }) {
-  // TODO: get item from id in path
-  const item = undefined as TItem | undefined;
-  const itemTags = undefined as TItemRelations["tagNames"] | undefined;
   const mainComponent = feed.components.find(
     (comp: LocalFeedComponent) => comp.propertyValues?.isPrimaryContent,
   );
@@ -62,10 +61,10 @@ export default function DocumentHead({
         item.name.substring(0, MAX_TITLE_LENGHTH - websiteName.length) +
         websiteName;
       data.description = item.description?.substring(0, MAX_DESCRIPTION_LENGTH);
-      data.keywords = itemTags ? itemTags : [];
+      data.keywords = item.tags.map((t) => t.tag.name) || [];
     }
     return data;
-  }, [item, itemTags, mainComponent, isCms, isCmsPreview]);
+  }, [item, mainComponent, isCms, isCmsPreview]);
 
   // const pageSchema = useMemo(() => {
   //   return {};

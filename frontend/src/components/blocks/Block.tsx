@@ -4,6 +4,7 @@ import Wrapper, { WrapperProps } from "@/components/common/Wrapper";
 import Heading, { HeadingProps } from "@/components/common/Heading";
 import { LocalFeedComponent } from "@/config/routes";
 import { TComponent } from "@/network/component/types";
+import { TItemWithIncludes } from "@/network/item/types";
 import ScrollInFade from "@/components/common/ScrollInFade";
 import clsx, { ClassValue } from "clsx";
 
@@ -99,6 +100,7 @@ export type BlockComponentStandardProps = {
   component: LocalFeedComponent;
   params: Record<string, string>;
   path: string;
+  item?: TItemWithIncludes;
   critical?: boolean;
 };
 
