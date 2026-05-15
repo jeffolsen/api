@@ -14,7 +14,7 @@ import {
 import { RequestDestroyApiKeyInput } from "@/network/verificationCode/types";
 import { useRequestDestroyApiKey } from "@/network/verificationCode/useRequestDestroyApiKey";
 import { useDestroyApiKey, DestroyApiKeyInput } from "@/network/apiKey";
-import { withFormHandling } from "@/network/api";
+import { withFormHandling } from "@/network/clients/api";
 
 function RequestDestroyApiKeyForm({
   handleError,

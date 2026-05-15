@@ -1,5 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { PASSWORD_CHANGE_ENDPOINT, withErrorHandling } from "@/network/api";
+import {
+  PASSWORD_CHANGE_ENDPOINT,
+  withErrorHandling,
+} from "@/network/clients/api";
 import { useAuthState } from "@/contexts/AuthContext";
 import { PasswordResetWithSessionFormInput } from "./types";
 

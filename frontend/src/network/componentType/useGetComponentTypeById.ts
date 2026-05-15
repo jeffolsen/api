@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { COMPONENT_TYPES_ENDPOINT } from "@/network/api";
+import { COMPONENT_TYPES_ENDPOINT } from "@/network/clients/api";
 import { useAuthState } from "@/contexts/AuthContext";
 import {
   COMPONENT_TYPES_KEY,

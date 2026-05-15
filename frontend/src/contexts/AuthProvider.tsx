@@ -5,7 +5,7 @@ import api, {
   setIsAuthenticated,
   REFRESH_ENDPOINT,
   LOGOUT_ENDPOINT,
-} from "@/network/api";
+} from "@/network/clients/api";
 import createAuthRefreshInterceptor from "axios-auth-refresh";
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {

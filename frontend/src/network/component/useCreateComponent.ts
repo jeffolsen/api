@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FEEDS_KEY } from "@/network/feed/types";
 import { useAuthState } from "@/contexts/AuthContext";
-import { COMPONENTS_ENDPOINT, withErrorHandling } from "@/network/api";
+import { COMPONENTS_ENDPOINT, withErrorHandling } from "@/network/clients/api";
 import { COMPONENTS_KEY, TComponentInput } from "@/network/component/types";
 
 export const useCreateComponent = () => {

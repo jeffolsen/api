@@ -18,7 +18,7 @@ import {
   FormWithHeadingProps,
   FormReponseHandlerProps,
 } from "@/components/forms/Form";
-import { useEmail, withFormHandling } from "@/network/api";
+import { useEmail, withFormHandling } from "@/network/clients/api";
 
 function RequestLogoutAllSessionsForm({
   handleSuccess,

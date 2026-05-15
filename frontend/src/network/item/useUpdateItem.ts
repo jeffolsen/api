@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ITEMS_ENDPOINT, withErrorHandling } from "@/network/api";
+import { ITEMS_ENDPOINT, withErrorHandling } from "@/network/clients/api";
 import { TAGS_KEY } from "@/network/tag/types";
 import { IMAGES_KEY } from "@/network/image/types";
 import { DATE_RANGES_KEY } from "@/network/dateRange/types";

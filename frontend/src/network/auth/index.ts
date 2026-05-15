@@ -3,10 +3,13 @@ import {
   REGISTER_ENDPOINT,
   LOGIN_WITH_OTP_ENDPOINT,
   withErrorHandling,
-} from "@/network/api";
+} from "@/network/clients/api";
 import { useAuthState } from "@/contexts/AuthContext";
 import { LoginWithOTPFormInput, RegisterFormInput } from "@/network/auth/types";
-import { OTP_STATUS_KEY, OTP_STATUS_NONE } from "@/network/verificationCode/types";
+import {
+  OTP_STATUS_KEY,
+  OTP_STATUS_NONE,
+} from "@/network/verificationCode/types";
 
 export const useRegister = () => {
   const { api } = useAuthState();

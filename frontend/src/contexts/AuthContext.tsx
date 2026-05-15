@@ -1,6 +1,9 @@
 import { createContext, useContext } from "react";
 import { AxiosInstance } from "axios";
-import api, { setIsAuthenticated, isAuthenticated } from "@/network/api";
+import api, {
+  setIsAuthenticated,
+  isAuthenticated,
+} from "@/network/clients/api";
 
 type AuthContextType = {
   api: AxiosInstance;

@@ -1,4 +1,4 @@
-import { PaginationParams } from "@/network/api";
+import { PaginationParams } from "@/network/clients/api";
 
 export const ITEM_INCLUDES = "tags,images,dateRanges" as const;
 export const ITEMS_KEY = "items" as const;
@@ -53,7 +53,7 @@ export type TItemQueryParams = {
 } & PaginationParams;
 
 export type GetItemsResponse = {
-  items: TItemWithIncludes[];
+  items: TItem[];
   totalCount: number;
 };
 

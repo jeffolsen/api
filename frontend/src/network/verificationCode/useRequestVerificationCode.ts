@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { withErrorHandling } from "@/network/api";
+import { withErrorHandling } from "@/network/clients/api";
 import {
   OTP_STATUS_KEY,
   VERIFICATION_CODES_KEY,

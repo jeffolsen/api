@@ -1,4 +1,4 @@
-import { TOO_MANY_REQUESTS } from "@/network/api";
+import { TOO_MANY_REQUESTS } from "@/network/clients/api";
 import {
   OTP_STATUS_LOGIN,
   OTP_STATUS_LOGOUT_ALL,

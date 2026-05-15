@@ -8,7 +8,7 @@ import {
   convertZuluToLocalDateTime,
 } from "@/utils/time";
 import FormScheduleSubmit from "@/components/inputs/FormSubmitAndSchedule";
-import { withFormHandling } from "@/network/api";
+import { withFormHandling } from "@/network/clients/api";
 import Form, {
   FormWithHeading,
   FormReponseHandlerProps,

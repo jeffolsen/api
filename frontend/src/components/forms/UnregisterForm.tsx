@@ -13,7 +13,7 @@ import {
   FormWithHeadingProps,
   FormReponseHandlerProps,
 } from "@/components/forms/Form";
-import { withFormHandling } from "@/network/api";
+import { withFormHandling } from "@/network/clients/api";
 
 function RequestUnregisterForm({
   handleSuccess,

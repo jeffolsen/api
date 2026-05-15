@@ -1,15 +1,14 @@
 import { QueryClient, useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { FEED_PATH_ENDPOINT, FEEDS_ENDPOINT } from "@/network/api";
 import {
   GetFeedsWithIncludesResponse,
   GetFeedWithIncludesResponse,
   FEEDS_KEY,
-  FEED_INCLUDES,
   TFeedsParams,
   TSubjectType,
   TFeedParams,
 } from "@/network/feed/types";
-import client, { APP_KEY, DAY, MIN, headers, throwOnRateLimit } from "./client";
+import { fetchFeedByPath, fetchFeeds } from "@/network/feed/fetchers";
+import client, { APP_KEY, DAY, MIN, throwOnRateLimit } from "../clients/app";
 
 export const appFeedsQueryKey = (
   key?: TFeedParams | TFeedsParams | string | number,
@@ -25,23 +24,8 @@ export const appFeedsCacheOptions = {
  * get all feeds
  */
 
-export const fetchAppFeeds = async (
-  queryParams?: TFeedsParams,
-): Promise<GetFeedsWithIncludesResponse> => {
-  const response = await client.get(FEEDS_ENDPOINT, {
-    headers,
-    params: {
-      ...queryParams,
-      ids: queryParams?.ids?.join(","),
-      paths: queryParams?.paths?.join(","),
-      sort: queryParams?.sort?.join(","),
-      subjectTypes: queryParams?.subjectTypes?.join(","),
-      tags: queryParams?.tags?.join(","),
-      includes: FEED_INCLUDES,
-    },
-  });
-  return response.data;
-};
+export const fetchAppFeeds = (queryParams?: TFeedsParams) =>
+  fetchFeeds(client, queryParams);
 
 export const queryAppFeeds = (
   queryClient: QueryClient,
@@ -76,20 +60,8 @@ export const useGetAppFeeds = (
  * get feed by path
  */
 
-export const fetchAppFeedByPath = async (
-  path: string,
-  subjectType: TSubjectType,
-): Promise<GetFeedWithIncludesResponse> => {
-  const response = await client.get(FEED_PATH_ENDPOINT, {
-    headers,
-    params: {
-      path,
-      includes: FEED_INCLUDES,
-      subjectType,
-    },
-  });
-  return response.data;
-};
+export const fetchAppFeedByPath = (path: string, subjectType: TSubjectType) =>
+  fetchFeedByPath(client, path, subjectType);
 
 export const queryAppFeedByPath = (
   queryClient: QueryClient,
@@ -114,11 +86,10 @@ export const useGetAppFeedByPath = (
     UseQueryOptions<GetFeedWithIncludesResponse>,
     "queryKey" | "queryFn"
   >,
-) => {
-  return useQuery({
+) =>
+  useQuery({
     queryKey: appFeedsQueryKey({ path, subjectType }),
     queryFn: () => fetchAppFeedByPath(path, subjectType),
     ...appFeedsCacheOptions,
     ...options,
   });
-};

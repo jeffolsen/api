@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { FEEDS_ENDPOINT, TAGS_ENDPOINT } from "@/network/api";
+import { FEEDS_ENDPOINT, TAGS_ENDPOINT } from "@/network/clients/api";
 import { TAGS_KEY } from "@/network/tag/types";
 import { useAuthState } from "@/contexts/AuthContext";
 import { FEEDS_KEY } from "./types";

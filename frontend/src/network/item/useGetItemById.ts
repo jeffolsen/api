@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ITEMS_ENDPOINT } from "@/network/api";
+import { ITEMS_ENDPOINT } from "@/network/clients/api";
 import { useAuthState } from "@/contexts/AuthContext";
 import { ITEMS_KEY, ITEM_INCLUDES } from "./types";
 

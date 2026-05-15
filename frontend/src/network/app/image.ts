@@ -1,12 +1,12 @@
 import { QueryClient, QueryOptions, useQuery } from "@tanstack/react-query";
-import { IMAGES_ENDPOINT } from "@/network/api";
+import { IMAGES_ENDPOINT } from "@/network/clients/api";
 import {
   GetImagesResponse,
   IMAGES_KEY,
   TImageType,
 } from "@/network/image/types";
-import { PaginationParams } from "@/network/api";
-import client, { APP_KEY, DAY, MIN, headers } from "./client";
+import { PaginationParams } from "@/network/clients/api";
+import client, { APP_KEY, DAY, MIN } from "../clients/app";
 
 export type TImageQueryParams = {
   type?: TImageType;
@@ -24,7 +24,6 @@ export const fetchAppImages = async (
   queryParams?: TImageQueryParams,
 ): Promise<GetImagesResponse> => {
   const response = await client.get(IMAGES_ENDPOINT, {
-    headers,
     params: queryParams,
   });
   return response.data;

@@ -1,5 +1,5 @@
 import { useAuthState } from "@/contexts/AuthContext";
-import { REQUEST_MANAGE_API_KEY_ENDPOINT } from "@/network/api";
+import { REQUEST_MANAGE_API_KEY_ENDPOINT } from "@/network/clients/api";
 import { useRequestVerificationCode } from "./useRequestVerificationCode";
 import { OTP_STATUS_CREATE_API_KEY, RequestGenerateApiKeyInput } from "./types";
 

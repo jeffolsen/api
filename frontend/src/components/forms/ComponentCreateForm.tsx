@@ -4,7 +4,7 @@ import Form, {
   FormReponseHandlerProps,
   FormWithHeadingProps,
 } from "@/components/forms/Form";
-import { withFormHandling } from "@/network/api";
+import { withFormHandling } from "@/network/clients/api";
 import { TComponent, TComponentInput } from "@/network/component/types";
 import { useCreateComponent } from "@/network/component/useCreateComponent";
 import { useModifyComponent } from "@/network/component/useModifyComponent";

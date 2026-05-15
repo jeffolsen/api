@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { VERIFICATION_CODE_ENDPOINT } from "@/network/api";
+import { VERIFICATION_CODE_ENDPOINT } from "@/network/clients/api";
 import { useAuthState } from "@/contexts/AuthContext";
 import { VERIFICATION_CODES_KEY } from "./types";
 

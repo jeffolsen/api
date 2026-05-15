@@ -2,9 +2,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   PASSWORD_RESET_WITH_OTP_ENDPOINT,
   withErrorHandling,
-} from "@/network/api";
+} from "@/network/clients/api";
 import { useAuthState } from "@/contexts/AuthContext";
-import { OTP_STATUS_KEY, OTP_STATUS_NONE } from "@/network/verificationCode/types";
+import {
+  OTP_STATUS_KEY,
+  OTP_STATUS_NONE,
+} from "@/network/verificationCode/types";
 import { PasswordResetWithOTPFormInput } from "./types";
 
 export const usePasswordResetWithOTP = () => {

@@ -4,7 +4,7 @@ import {
   GET_PROFILES_API_KEYS_ENDPOINT,
   DESTROY_API_KEY_ENDPOINT,
   withErrorHandling,
-} from "@/network/api";
+} from "@/network/clients/api";
 import { useAuthState } from "@/contexts/AuthContext";
 import {
   DestroyApiKeyInput,

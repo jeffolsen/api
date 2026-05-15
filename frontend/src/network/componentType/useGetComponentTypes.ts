@@ -4,7 +4,7 @@ import {
   GetComponentTypesResponse,
   TComponentTypesQueryParams,
 } from "./types";
-import { COMPONENT_TYPES_ENDPOINT } from "../api";
+import { COMPONENT_TYPES_ENDPOINT } from "../clients/api";
 import { useAuthState } from "@/contexts/AuthContext";
 
 export const useGetComponentTypes = (

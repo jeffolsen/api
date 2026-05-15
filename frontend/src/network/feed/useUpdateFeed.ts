@@ -1,6 +1,6 @@
 import { useAuthState } from "@/contexts/AuthContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FEEDS_ENDPOINT, withErrorHandling } from "../api";
+import { FEEDS_ENDPOINT, withErrorHandling } from "../clients/api";
 import { FEEDS_KEY, TFeedInput } from "./types";
 
 export const useUpdateFeed = () => {

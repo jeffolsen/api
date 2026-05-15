@@ -1,4 +1,4 @@
-import { isAuthenticated } from "@/network/api";
+import { isAuthenticated } from "@/network/clients/api";
 import {
   BlockProps,
   BlockComponentStandardProps,

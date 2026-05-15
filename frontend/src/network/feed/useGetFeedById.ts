@@ -1,5 +1,5 @@
 import { useAuthState } from "@/contexts/AuthContext";
-import { FEEDS_ENDPOINT } from "../api";
+import { FEEDS_ENDPOINT } from "../clients/api";
 import { FEED_INCLUDES, FEEDS_KEY } from "./types";
 import { useQuery } from "@tanstack/react-query";
 

@@ -1,5 +1,5 @@
 import { useAuthState } from "@/contexts/AuthContext";
-import { REQUEST_PASSWORD_RESET_ENDPOINT } from "@/network/api";
+import { REQUEST_PASSWORD_RESET_ENDPOINT } from "@/network/clients/api";
 import { useRequestVerificationCode } from "./useRequestVerificationCode";
 import { OTP_STATUS_PASSWORD_RESET, RequestPasswordResetInput } from "./types";
 

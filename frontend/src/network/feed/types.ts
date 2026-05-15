@@ -1,4 +1,4 @@
-import { PaginationParams } from "@/network/api";
+import { PaginationParams } from "@/network/clients/api";
 import { TComponent, TComponentWithType } from "@/network/component/types";
 import { TTag, TTagInput } from "../tag/types";
 

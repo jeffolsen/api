@@ -16,7 +16,7 @@ import {
 import { RequestGenerateApiKeyInput } from "@/network/verificationCode/types";
 import { useRequestGenerateApiKey } from "@/network/verificationCode/useRequestGenerateApiKey";
 import { useGenerateApiKey, GenerateApiKeyInput } from "@/network/apiKey";
-import { withFormHandling } from "@/network/api";
+import { withFormHandling } from "@/network/clients/api";
 
 function RequestGenerateApiKeyForm({
   handleError,

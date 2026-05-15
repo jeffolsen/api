@@ -4,7 +4,7 @@ import {
   BlockComponentStandardProps,
   BlockComponentDataReturnType,
 } from "@/components/blocks/Block";
-import { isAuthenticated } from "@/network/api";
+import { isAuthenticated } from "@/network/clients/api";
 
 function useRedirectBlockData({
   component,

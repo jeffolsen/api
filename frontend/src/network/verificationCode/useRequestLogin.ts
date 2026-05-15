@@ -1,5 +1,5 @@
 import { useAuthState } from "@/contexts/AuthContext";
-import { REQUEST_LOGIN_ENDPOINT } from "@/network/api";
+import { REQUEST_LOGIN_ENDPOINT } from "@/network/clients/api";
 import { useRequestVerificationCode } from "./useRequestVerificationCode";
 import { OTP_STATUS_LOGIN, RequestLoginFormInput } from "./types";
 

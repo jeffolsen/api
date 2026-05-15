@@ -3,7 +3,7 @@ import api, {
   FEEDS_ENDPOINT,
   ITEMS_ENDPOINT,
   REFRESH_ENDPOINT,
-} from "@/network/api";
+} from "@/network/clients/api";
 import { ITEMS_KEY } from "@/network/item/types";
 import { FEEDS_KEY } from "@/network/feed/types";
 import { COMPONENTS_KEY } from "@/network/component/types";

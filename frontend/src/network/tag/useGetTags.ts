@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { TAGS_ENDPOINT } from "@/network/api";
+import { TAGS_ENDPOINT } from "@/network/clients/api";
 import { useAuthState } from "@/contexts/AuthContext";
 import { TAGS_KEY } from "@/network/tag/types";
 

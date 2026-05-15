@@ -14,7 +14,7 @@ import LogoutButton from "@/components/partials/LogoutButton";
 import StickySubHeader from "../partials/StickySubHeader";
 import HeaderHero from "../partials/HeaderHero";
 import BreadCrumbs from "./BreadCrumbs";
-import { isAuthenticated } from "@/network/api";
+import { isAuthenticated } from "@/network/clients/api";
 import { paths } from "@/config/routes";
 
 const navItems = [

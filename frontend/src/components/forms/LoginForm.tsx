@@ -13,7 +13,7 @@ import {
 import { useLoginWithOTP, LoginWithOTPFormInput } from "@/network/auth";
 import { RequestLoginFormInput } from "@/network/verificationCode/types";
 import { useRequestLogin } from "@/network/verificationCode/useRequestLogin";
-import { useEmail, withFormHandling } from "@/network/api";
+import { useEmail, withFormHandling } from "@/network/clients/api";
 
 function RequestLoginForm({
   handleError,

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ITEMS_ENDPOINT, IMAGES_ENDPOINT } from "@/network/api";
+import { ITEMS_ENDPOINT, IMAGES_ENDPOINT } from "@/network/clients/api";
 import { IMAGES_KEY } from "@/network/image/types";
 import { useAuthState } from "@/contexts/AuthContext";
 import { ITEMS_KEY } from "./types";

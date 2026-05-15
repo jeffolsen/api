@@ -16,7 +16,7 @@ import {
   RICH_CONTENT_INPUT,
   RICH_CONTENT_DEFAULT,
 } from "@/config/inputs";
-import { withFormHandling } from "@/network/api";
+import { withFormHandling } from "@/network/clients/api";
 import { TDateRangeInput } from "@/network/dateRange/types";
 import { TTagInput } from "@/network/tag/types";
 import { TImage } from "@/network/image/types";

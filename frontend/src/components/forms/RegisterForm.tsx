@@ -11,7 +11,7 @@ import {
   FormReponseHandlerProps,
 } from "@/components/forms/Form";
 import { RegisterFormInput, useRegister } from "@/network/auth";
-import { useEmail, withFormHandling } from "@/network/api";
+import { useEmail, withFormHandling } from "@/network/clients/api";
 import FormSubmitAndConsent from "@/components/inputs/FormSubmitAndConsent";
 
 function RegisterForm({

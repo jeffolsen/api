@@ -1,7 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { PROFILE_ENDPOINT, withErrorHandling, useEmail } from "@/network/api";
+import {
+  PROFILE_ENDPOINT,
+  withErrorHandling,
+  useEmail,
+} from "@/network/clients/api";
 import { useAuthState } from "@/contexts/AuthContext";
-import { OTP_STATUS_KEY, OTP_STATUS_NONE } from "@/network/verificationCode/types";
+import {
+  OTP_STATUS_KEY,
+  OTP_STATUS_NONE,
+} from "@/network/verificationCode/types";
 import { PROFILE_KEY, DeleteProfileWithOTPFormInput } from "./types";
 
 export const useDeleteProfileWithOTP = () => {

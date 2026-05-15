@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { PROFILE_ENDPOINT } from "@/network/api";
+import { PROFILE_ENDPOINT } from "@/network/clients/api";
 import { useAuthState } from "@/contexts/AuthContext";
 import { PROFILE_KEY } from "./types";
 
