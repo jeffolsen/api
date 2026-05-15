@@ -69,6 +69,8 @@ function CmsFeedsListBlock({
   const profile = profileData.data.profile;
   const { feeds = [], totalCount = 0 } = feedData.data as GetFeedsResponse;
 
+  console.log("feeds", feeds);
+
   return (
     <Block {...blockProps} settings={settings}>
       <HeadingLevelProvider>

@@ -1,5 +1,5 @@
 import { useAuthState } from "@/contexts/AuthContext";
-import { GetFeedsResponse, TFeedsParams } from "./types";
+import { FEED_INCLUDES, GetFeedsResponse, TFeedsParams } from "./types";
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { FEEDS_ENDPOINT } from "../api";
 import { FEEDS_KEY } from "./types";
@@ -20,6 +20,7 @@ export const useGetFeeds = (
           ids: queryParams?.ids?.join(","),
           paths: queryParams?.ids?.join(","),
           subjectTypes: queryParams?.subjectTypes?.join(","),
+          includes: FEED_INCLUDES,
         },
       });
       return response.data;

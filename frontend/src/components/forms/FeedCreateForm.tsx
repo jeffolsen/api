@@ -2,7 +2,7 @@ import { useCreateFeed } from "@/network/feed/useCreateFeed";
 import { useUpdateFeed } from "@/network/feed/useUpdateFeed";
 import { useModifyFeed } from "@/network/feed/useModifyFeed";
 import { useDeleteFeed } from "@/network/feed/useDeleteFeed";
-import { TFeedInput, TFeedTags } from "@/network/feed/types";
+import { TFeedInput, TFeedTags, TFeedWithIncludes } from "@/network/feed/types";
 import {
   convertLocalDateTimeToZulu,
   convertZuluToLocalDateTime,
@@ -72,14 +72,12 @@ const mapFormValuesToPatchFeedRequest = (
       : {}),
 });
 
-const mapGetFeedToFormValues = (
-  feed: TFeedInput & { id: number; tags?: TTagInput[] },
-) => {
+const mapGetFeedToFormValues = (feed: TFeedWithIncludes) => {
   return {
     id: feed.id,
     path: feed.path,
     isSingleSubjectType: feed.subjectType === "SINGLE",
-    tagNames: feed.tags?.map(({ name }) => ({ name })) || [],
+    tagNames: feed.tags?.map((t) => ({ name: t.tag.name })) || [],
     publishedAt: feed.publishedAt
       ? convertZuluToLocalDateTime(feed.publishedAt)
       : null,
@@ -131,9 +129,7 @@ function FeedUpdateForm({
   ...props
 }: FormWithHeadingProps & FormReponseHandlerProps) {
   const updateFeed = useUpdateFeed();
-  const defaults = mapGetFeedToFormValues(
-    defaultValues as TFeedInput & { id: number },
-  );
+  const defaults = mapGetFeedToFormValues(defaultValues as TFeedWithIncludes);
   return (
     <FormWithHeading
       defaultValues={{

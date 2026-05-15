@@ -3,6 +3,7 @@ import { TComponent, TComponentWithType } from "@/network/component/types";
 import { TTag, TTagInput } from "../tag/types";
 
 export const FEEDS_KEY = "feeds" as const;
+export const FEED_INCLUDES = "tags,components" as const;
 
 export type TSubjectType = "COLLECTION" | "SINGLE";
 

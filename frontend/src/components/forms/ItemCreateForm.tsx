@@ -20,7 +20,11 @@ import { withFormHandling } from "@/network/api";
 import { TDateRangeInput } from "@/network/dateRange/types";
 import { TTagInput } from "@/network/tag/types";
 import { TImage } from "@/network/image/types";
-import { TItemRelations, TItemInput, TItem } from "@/network/item/types";
+import {
+  TItemRelations,
+  TItemInput,
+  TItemWithIncludes,
+} from "@/network/item/types";
 import { useCreateItem } from "@/network/item/useCreateItem";
 import { useModifyItem } from "@/network/item/useModifyItem";
 import { useUpdateItem } from "@/network/item/useUpdateItem";
@@ -78,11 +82,7 @@ const mapFormValuesToCreateItemRequest = (
 });
 
 const mapGetItemToFormValues = (
-  item: TItem & {
-    tags?: TTagInput[];
-    images?: TImage[];
-    dateRanges?: TDateRangeInput[];
-  },
+  item: TItemWithIncludes,
 ): FormValues & { id: number } => ({
   id: item.id,
   name: item.name,
@@ -93,8 +93,8 @@ const mapGetItemToFormValues = (
     ? convertZuluToLocalDateTime(item.publishedAt)
     : null,
   expiredAt: item.expiredAt ? convertZuluToLocalDateTime(item.expiredAt) : null,
-  imageIds: item.images?.map(({ id }) => ({ imageId: id })) || [],
-  tagNames: item.tags?.map(({ name }) => ({ name })) || [],
+  imageIds: item.images?.map((i) => ({ imageId: i.image.id })) || [],
+  tagNames: item.tags?.map((t) => ({ name: t.tag.name })) || [],
   dateRanges:
     item.dateRanges?.map((dateRange) => ({
       startAt: convertZuluToLocalDateTime(dateRange.startAt),
@@ -162,13 +162,7 @@ function ItemUpdateForm({
 }: FormWithHeadingProps & FormReponseHandlerProps) {
   const updateItem = useUpdateItem();
 
-  const defaults = mapGetItemToFormValues(
-    defaultValues as TItem & {
-      tags?: TTagInput[];
-      images?: TImage[];
-      dateRanges?: TDateRangeInput[];
-    },
-  );
+  const defaults = mapGetItemToFormValues(defaultValues as TItemWithIncludes);
 
   return (
     <ItemCreateForm

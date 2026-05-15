@@ -28,6 +28,7 @@ import useCmsLoginOrRegisterBlockData, {
   UseLoginOrRegisterBlockData,
   UseLoginOrRegisterBlockProps,
 } from "@/components/blocks/CmsLoginOrRegisterBlock/data";
+import List, { ListItem } from "@/components/common/List";
 
 const tabs: TabsProps["tabs"] = [
   {
@@ -49,6 +50,7 @@ const tabs: TabsProps["tabs"] = [
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useCmsLoginOrRegisterBlockData(config);
+
   if (result.type === "error") {
     // Optionally, you could display an error message here
     return null;
@@ -62,15 +64,49 @@ export default function Component(config: BlockComponentStandardProps) {
 
 function CmsLoginOrRegisterBlock({
   blockProps,
-  blockData,
 }: {
   blockProps: UseLoginOrRegisterBlockProps;
   blockData: UseLoginOrRegisterBlockData;
 }) {
+  console.log("CmsLoginOrRegisterBlock", blockProps);
   return (
-    <Block {...blockProps}>
+    <>
+      <div className="prose">
+        <Text textSize="md">
+          The content, images, and designs displayed on this website are
+          showcased for demonstration and portfolio purposes only and are not
+          for commercial use.
+        </Text>
+        <List textSize="md">
+          <ListItem>
+            <strong>No Warranties</strong>: All information and features
+            (including authentication) are provided "AS IS" and "AS AVAILABLE"
+            without any guarantees of accuracy, completeness, or reliability.
+          </ListItem>
+          <ListItem>
+            <strong>Limitation of Liability</strong>: I am not liable for any
+            losses or damages arising from your use of this site.
+          </ListItem>
+          <ListItem>
+            <strong>Content Ownership</strong>: Unless otherwise stated, all
+            material is the property of [Your Name] and may not be reproduced
+            without explicit permission.
+          </ListItem>
+          <ListItem>
+            <strong>External Links</strong>: I am not responsible for the
+            content or privacy practices of any linked third-party websites.
+          </ListItem>
+        </List>
+        <Text textSize="md">
+          If you would like err on the side of caution or remain anonymous there
+          are disposable email account services that you can use to sign in so
+          that you can tour the CMS.
+        </Text>
+      </div>
+      <Block {...blockProps}>
         <Tabs tabs={tabs} tabListClassName="flex flex-wrap justify-end gap-2" />
-    </Block>
+      </Block>
+    </>
   );
 }
 

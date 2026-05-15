@@ -51,7 +51,6 @@ type ComponentWithType = TComponent & { type?: TComponentType };
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useFeedUpdateBlockData(config);
-  if (result.type === "error") return null;
   const { blockProps, blockData } = result;
   return <CmsFeedUpdateBlock blockProps={blockProps} blockData={blockData} />;
 }
@@ -97,20 +96,17 @@ function CmsFeedUpdateBlock({
 
   const settings = blockProps?.settings || {};
   const getFeed = blockData?.feedData;
-  const getFeedTags = blockData?.feedTags;
   const getFeedComponents = blockData?.feedComponentsData;
   const getComponentTypes = blockData?.componentTypesData;
 
   if (
     getFeed.isLoading ||
-    getFeedTags.isLoading ||
     getFeedComponents.isLoading ||
     getComponentTypes.isLoading
   ) {
     return <Loading />;
   }
   const feed = getFeed.data?.feed;
-  const feedTags = getFeedTags.data?.tags;
   const feedComponents = getFeedComponents.data?.components || [];
 
   return (
@@ -144,7 +140,7 @@ function CmsFeedUpdateBlock({
             </div>
           </div>
           <FeedUpdateForm
-            defaultValues={{ ...feed, tags: feedTags }}
+            defaultValues={feed}
             handleSuccess={() => {
               toast.success("Feed updated successfully");
             }}

@@ -36,38 +36,19 @@ function CmsItemUpdateBlock({
 }) {
   const navigate = useNavigate();
 
-  const {
-    itemData: getItem,
-    tagsData: getTags,
-    imagesData: getImages,
-    dateRangesData: getDateRanges,
-  } = blockData;
+  const { itemData: getItem } = blockData;
 
-  if (
-    getItem.isLoading ||
-    getTags.isLoading ||
-    getImages.isLoading ||
-    getDateRanges.isLoading
-  ) {
+  if (getItem.isLoading) {
     return <Loading />;
   }
 
-  const item = getItem.data.item;
-  const tags = getTags.data.tags;
-  const images = getImages.data.images;
-  const dateRanges = getDateRanges.data.dateRanges;
-  const itemWithResources = {
-    ...getItem.data.item,
-    tags,
-    images,
-    dateRanges,
-  };
+  const itemWithResources = getItem.data.item;
 
-  const publishedAt = item.publishedAt
-    ? convertZuluToLocalDateTime(item.publishedAt)
+  const publishedAt = itemWithResources.publishedAt
+    ? convertZuluToLocalDateTime(itemWithResources.publishedAt)
     : null;
-  const expiredAt = item.expiredAt
-    ? convertZuluToLocalDateTime(item.expiredAt)
+  const expiredAt = itemWithResources.expiredAt
+    ? convertZuluToLocalDateTime(itemWithResources.expiredAt)
     : null;
 
   return (
@@ -80,13 +61,13 @@ function CmsItemUpdateBlock({
               headingSize="xs"
               headingStyles="uppercase flex-none line-clamp-2"
             >
-              {item.sortName}
+              {itemWithResources.sortName}
             </Heading>
             <Text textSize="xs" className="italic flex-none">
               Last updated:{" "}
-              {dayjs(convertZuluToLocalDateTime(item.updatedAt)).format(
-                techDatetime,
-              )}
+              {dayjs(
+                convertZuluToLocalDateTime(itemWithResources.updatedAt),
+              ).format(techDatetime)}
             </Text>
           </div>
           <div className="flex flex-col gap-2 items-end">
@@ -96,10 +77,14 @@ function CmsItemUpdateBlock({
             <div className="flex gap-1">
               <ItemRepublishForm
                 formStyles="inline-flex"
-                defaultValues={{ id: item.id, publishedAt, expiredAt }}
+                defaultValues={{
+                  id: itemWithResources.id,
+                  publishedAt,
+                  expiredAt,
+                }}
               />
               <ItemDeleteButton
-                defaultValues={{ id: item.id }}
+                defaultValues={{ id: itemWithResources.id }}
                 handleSuccess={() => {
                   toast.success("Item deleted successfully");
                   navigate({ to: paths.cmsItemsList });

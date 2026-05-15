@@ -1,7 +1,4 @@
 import { useGetItemById } from "@/network/item/useGetItemById";
-import { useGetItemDateRanges } from "@/network/item/useGetItemDateRanges";
-import { useGetItemImages } from "@/network/item/useGetItemImages";
-import { useGetItemsTags } from "@/network/item/useGetItemsTags";
 import {
   BlockProps,
   BlockData,
@@ -29,20 +26,10 @@ function useItemUpdateBlockData({
 
   const itemId = parseInt(params?.id || "");
   const getItem = useGetItemById(itemId);
-  const getTags = useGetItemsTags(itemId);
-  const getImages = useGetItemImages(itemId);
-  const getDateRanges = useGetItemDateRanges(itemId);
+
+  console.log(getItem.data);
 
   if (getItem.error) {
-    throw new NotFoundError();
-  }
-  if (getTags.error) {
-    throw new NotFoundError();
-  }
-  if (getImages.error) {
-    throw new NotFoundError();
-  }
-  if (getDateRanges.error) {
     throw new NotFoundError();
   }
 
@@ -59,9 +46,6 @@ function useItemUpdateBlockData({
     blockData: {
       id,
       itemData: getItem,
-      tagsData: getTags,
-      imagesData: getImages,
-      dateRangesData: getDateRanges,
     },
   };
 }
@@ -78,9 +62,6 @@ type PropertyValues = {
 type BlockSettings = (typeof variants)[VariantNames];
 type LocalBlockData = {
   itemData: ReturnType<typeof useGetItemById>;
-  tagsData: ReturnType<typeof useGetItemsTags>;
-  imagesData: ReturnType<typeof useGetItemImages>;
-  dateRangesData: ReturnType<typeof useGetItemDateRanges>;
 };
 
 export type UseItemUpdateBlockProps = BlockProps<BlockSettings>;

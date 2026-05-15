@@ -4,11 +4,10 @@ import {
   GetItemsWithIncludesResponse,
   GetItemWithIncludesResponse,
   ITEMS_KEY,
+  ITEM_INCLUDES,
   TItemQueryParams,
 } from "@/network/item/types";
 import client, { APP_KEY, DAY, MIN, headers, throwOnRateLimit } from "./client";
-
-const ITEM_INCLUDES = "tags,images,dateRanges" as const;
 
 export const appItemsQueryKey = (key?: TItemQueryParams | string | number) =>
   [APP_KEY, ITEMS_KEY, key] as const;

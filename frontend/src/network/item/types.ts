@@ -1,5 +1,6 @@
 import { PaginationParams } from "@/network/api";
 
+export const ITEM_INCLUDES = "tags,images,dateRanges" as const;
 export const ITEMS_KEY = "items" as const;
 import { TDateRange, TDateRangeInput } from "@/network/dateRange/types";
 import { TImage } from "@/network/image/types";
@@ -52,7 +53,7 @@ export type TItemQueryParams = {
 } & PaginationParams;
 
 export type GetItemsResponse = {
-  items: TItem[];
+  items: TItemWithIncludes[];
   totalCount: number;
 };
 

@@ -10,6 +10,7 @@ import {
   BlockData,
 } from "@/components/blocks/Block";
 import { useSearchParam } from "@/hooks/useSearchParam";
+import { NotFoundError, UnauthorizedError } from "@/utils/errors";
 
 const variants = {
   default: {
@@ -20,8 +21,6 @@ const variants = {
 
 function useItemListBlockData({
   component,
-  params,
-  path,
   critical,
 }: BlockComponentStandardProps): UseItemListBlockDataReturnType {
   const { id, name, propertyValues } = component;
@@ -48,21 +47,11 @@ function useItemListBlockData({
   );
 
   if (profile.error) {
-    return {
-      type: "error" as const,
-      error: profile.error.message || "Failed to load profile",
-      params,
-      path,
-    };
+    throw new UnauthorizedError();
   }
 
   if (items.error) {
-    return {
-      type: "error" as const,
-      error: items.error.message || "Failed to load items",
-      params,
-      path,
-    };
+    throw new NotFoundError();
   }
 
   return {

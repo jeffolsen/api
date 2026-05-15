@@ -1,7 +1,9 @@
 import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
 import Grid from "@/components/common/Grid";
-import { TItem, GetItemsResponse } from "@/network/item/types";
-import { useGetItemsTags } from "@/network/item/useGetItemsTags";
+import {
+  GetItemsWithIncludesResponse,
+  TItemWithIncludes,
+} from "@/network/item/types";
 import EmptyCard from "@/components/cards/EmptyCard";
 import Heading, { HeadingLevelProvider } from "@/components/common/Heading";
 import Text from "@/components/common/Text";
@@ -64,7 +66,8 @@ function CmsItemsListBlock({
   }
 
   const profile = profileData.data.profile;
-  const { items = [], totalCount = 0 } = itemsData.data as GetItemsResponse;
+  const { items = [], totalCount = 0 } =
+    itemsData.data as GetItemsWithIncludesResponse;
 
   return (
     <Block {...blockProps} settings={settings}>
@@ -83,7 +86,7 @@ function CmsItemsListBlock({
           />
           <FetchTransition isFetching={itemsData.isFetching}>
             <Grid
-              items={items.map((item: TItem) => {
+              items={items.map((item) => {
                 return { content: <ItemCard item={item} />, id: item.id };
               })}
               onEmpty={() => (
@@ -104,14 +107,10 @@ function CmsItemsListBlock({
   );
 }
 
-function ItemCard({ item }: { item: TItem }) {
+function ItemCard({ item }: { item: TItemWithIncludes }) {
   const { id, sortName, publishedAt, expiredAt, updatedAt } = item;
-  const getTags = useGetItemsTags(id);
-  const tags = getTags.data?.tags || [];
+  const tags = item.tags || [];
 
-  if (getTags.isLoading) {
-    return <Loading />;
-  }
   return (
     <EmptyCard>
       <div className="card-body md:flex-row gap-4 justify-between w-full">
@@ -123,12 +122,12 @@ function ItemCard({ item }: { item: TItem }) {
             {sortName}
           </Heading>
           <div className="flex flex-wrap gap-x-1 gap-y-2">
-            {tags.map((tag: TTag) => (
+            {tags.map((t) => (
               <div
-                key={tag.id}
+                key={t.tag.id}
                 className="badge badge-secondary badge-md lowercase"
               >
-                {tag.name}
+                {t.tag.name}
               </div>
             ))}
             <Text textSize="xs" className="italic flex-none w-full">

@@ -9,6 +9,7 @@ import {
 import { useSearchParam } from "@/hooks/useSearchParam";
 import { TFeedSort, TSubjectType } from "@/network/feed/types";
 import { useGetFeeds } from "@/network/feed/useGetFeeds";
+import { NotFoundError, UnauthorizedError } from "@/utils/errors";
 
 const variants = {
   default: {
@@ -19,8 +20,6 @@ const variants = {
 
 function useFeedListBlockData({
   component,
-  params,
-  path,
   critical,
 }: BlockComponentStandardProps): UseFeedUpdateBlockDataReturnType {
   const { id, name, propertyValues } = component;
@@ -47,21 +46,11 @@ function useFeedListBlockData({
   );
 
   if (profile.error) {
-    return {
-      type: "error" as const,
-      error: "Failed to load profile data",
-      params,
-      path,
-    };
+    throw new UnauthorizedError();
   }
 
   if (feeds.error) {
-    return {
-      type: "error" as const,
-      error: "Failed to load feed data",
-      params,
-      path,
-    };
+    throw new NotFoundError();
   }
 
   return {

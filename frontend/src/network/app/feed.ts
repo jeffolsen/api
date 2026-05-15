@@ -4,13 +4,12 @@ import {
   GetFeedsWithIncludesResponse,
   GetFeedWithIncludesResponse,
   FEEDS_KEY,
+  FEED_INCLUDES,
   TFeedsParams,
   TSubjectType,
   TFeedParams,
 } from "@/network/feed/types";
 import client, { APP_KEY, DAY, MIN, headers, throwOnRateLimit } from "./client";
-
-const FEED_INCLUDES = "tags,components" as const;
 
 export const appFeedsQueryKey = (
   key?: TFeedParams | TFeedsParams | string | number,

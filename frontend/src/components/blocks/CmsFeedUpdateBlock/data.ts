@@ -8,7 +8,7 @@ import {
   BlockComponentStandardProps,
   BlockComponentDataReturnType,
 } from "@/components/blocks/Block";
-import { useGetFeedsTags } from "@/network/feed/useGetFeedsTags";
+import { NotFoundError } from "@/utils/errors";
 
 const variants = {
   default: {
@@ -19,7 +19,6 @@ const variants = {
 function useFeedUpdateBlockData({
   component,
   params,
-  path,
   critical,
 }: BlockComponentStandardProps) {
   const { id, name, propertyValues } = component;
@@ -30,7 +29,6 @@ function useFeedUpdateBlockData({
 
   const feedId = parseInt(params?.id || "");
   const getFeed = useGetFeedById(feedId);
-  const getFeedTags = useGetFeedsTags(feedId);
   const getFeedComponents = useGetFeedComponents(feedId);
   const getComponentTypes = useGetComponentTypes({
     ...(getFeed.data?.feed?.subjectType === "COLLECTION" && {
@@ -39,36 +37,13 @@ function useFeedUpdateBlockData({
   });
 
   if (getFeed.error) {
-    return {
-      type: "error" as const,
-      error: "Failed to fetch feed data",
-      params,
-      path,
-    };
-  }
-  if (getFeedTags.error) {
-    return {
-      type: "error" as const,
-      error: "Failed to fetch feed tags data",
-      params,
-      path,
-    };
+    throw new NotFoundError();
   }
   if (getFeedComponents.error) {
-    return {
-      type: "error" as const,
-      error: "Failed to fetch feed components data",
-      params,
-      path,
-    };
+    throw new NotFoundError();
   }
   if (getComponentTypes.error) {
-    return {
-      type: "error" as const,
-      error: "Failed to fetch component types data",
-      params,
-      path,
-    };
+    throw new NotFoundError();
   }
 
   return {
@@ -84,7 +59,6 @@ function useFeedUpdateBlockData({
     blockData: {
       id,
       feedData: getFeed,
-      feedTags: getFeedTags,
       feedComponentsData: getFeedComponents,
       componentTypesData: getComponentTypes,
     },
@@ -103,7 +77,6 @@ type PropertyValues = {
 type BlockSettings = (typeof variants)[VariantNames];
 type LocalBlockData = {
   feedData: ReturnType<typeof useGetFeedById>;
-  feedTags: ReturnType<typeof useGetFeedsTags>;
   feedComponentsData: ReturnType<typeof useGetFeedComponents>;
   componentTypesData: ReturnType<typeof useGetComponentTypes>;
 };

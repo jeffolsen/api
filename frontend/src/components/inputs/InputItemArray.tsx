@@ -11,7 +11,7 @@ import {
   FieldArrayMinMaxRule,
   FormError,
 } from "@/components/inputs/Input";
-import { TItem, GetItemsResponse } from "@/network/item/types";
+import { TItemWithIncludes } from "@/network/item/types";
 import { useGetItems } from "@/network/item/useGetItems";
 import { useFieldArray } from "react-hook-form";
 import Grid from "@/components/common/Grid";
@@ -20,7 +20,11 @@ import { Plus } from "lucide-react";
 import ComponentSchemaArrayOrderable from "@/components/partials/ComponentSchemaArrayOrderable";
 import FieldSetWrapperWithMinMax from "@/components/partials/FieldSetWrapper";
 
-type ItemIdField = { id: string; slug: TItem["slug"]; name: TItem["name"] };
+type ItemIdField = {
+  id: string;
+  slug: TItemWithIncludes["slug"];
+  name: TItemWithIncludes["name"];
+};
 type ItemIdArrayFields = Array<ItemIdField>;
 
 function ItemArrayInput(
@@ -48,12 +52,12 @@ function ItemArrayInput(
     ...(debouncedSearchTerm && { searchName: debouncedSearchTerm }),
     pageSize: 10,
   });
-  const items = (getItems.data as GetItemsResponse)?.items || [];
+  const items = getItems.data?.items || [];
 
   const getExistingItemQuery = useGetItems({
     slugs: (fields as ItemIdArrayFields).map((field) => field.slug),
   });
-  const existingItems = (getExistingItemQuery.data as GetItemsResponse)?.items;
+  const existingItems = getExistingItemQuery.data?.items;
 
   return (
     <>
