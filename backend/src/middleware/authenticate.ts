@@ -14,7 +14,7 @@ const authenticate: RequestHandler = async (
   _res: Response,
   next: NextFunction,
 ) => {
-  const origin = req.get("origin") || req.get("referer") || "";
+  const origin = req.get("origin") ?? "";
   const apiKey = req.get("X-Api-Key");
   const apiSlug = req.get("X-Api-Slug");
   const apiKeyRecord = await authenticateWithApiKey({

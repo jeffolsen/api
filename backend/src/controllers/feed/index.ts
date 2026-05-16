@@ -26,18 +26,35 @@ type GetFeedsQuery = {
   includes?: string;
   page?: number;
   pageSize?: number;
+  published?: boolean;
 };
 
 const buildFeedInclude = (
   includes: FeedIncludeField[],
+  published?: boolean,
 ): Prisma.FeedInclude | undefined => {
   if (!includes.length) return undefined;
   return {
+    ...(includes.includes("links") && {
+      links: { include: { link: true } },
+    }),
     ...(includes.includes("tags") && {
       tags: { include: { tag: true } },
     }),
     ...(includes.includes("components") && {
-      components: true,
+      components:
+        published === true
+          ? {
+              where: {
+                OR: [
+                  { publishedAt: { lte: new Date() } },
+                  { publishedAt: null },
+                  { expiredAt: { gt: new Date() } },
+                  { expiredAt: null },
+                ],
+              },
+            }
+          : true,
     }),
   };
 };
@@ -94,6 +111,12 @@ export const getAllFeeds: RequestHandler<
   res.status(OK).json({ feeds, totalCount });
 });
 
+type GetFeedByIdQuery = {
+  tags?: string;
+  published?: boolean;
+  includes?: string;
+};
+
 export const getFeedById: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {
     const { profileId } = req;
@@ -113,6 +136,8 @@ export const getFeedById: RequestHandler = catchErrors(
 type GetFeedByPathQuery = {
   path?: string;
   subjectType?: string;
+  tags?: string;
+  published?: boolean;
   includes?: string;
 };
 

@@ -34,6 +34,10 @@ const mockFeed: Feed = {
   createdAt: new Date(),
   updatedAt: new Date(),
   profileId: MOCK_PROFILE_ID,
+  seoTitle: null,
+  seoDescription: null,
+  seoImage: null,
+  schemaType: null,
 };
 
 beforeEach(() => {
@@ -88,7 +92,13 @@ describe("POST /api/feeds/", () => {
 
   it("should return 200 on success", async () => {
     mockAuth(prismaMock);
-    prismaMock.feed.create.mockResolvedValue(mockFeed);
+    const feedCreate = jest
+      .fn<(args: unknown) => Promise<Feed>>()
+      .mockResolvedValue(mockFeed);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    prismaMock.$transaction.mockImplementationOnce((callback: any) =>
+      callback({ tag: { findMany: jest.fn<() => Promise<[]>>().mockResolvedValue([]) }, feed: { create: feedCreate } }),
+    );
 
     const response = await request(app)
       .post(ENDPOINT)
@@ -102,7 +112,13 @@ describe("POST /api/feeds/", () => {
 
   it("should create the feed with the authenticated profileId", async () => {
     mockAuth(prismaMock);
-    prismaMock.feed.create.mockResolvedValue(mockFeed);
+    const feedCreate = jest
+      .fn<(args: unknown) => Promise<Feed>>()
+      .mockResolvedValue(mockFeed);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    prismaMock.$transaction.mockImplementationOnce((callback: any) =>
+      callback({ tag: { findMany: jest.fn<() => Promise<[]>>().mockResolvedValue([]) }, feed: { create: feedCreate } }),
+    );
 
     await request(app)
       .post(ENDPOINT)
@@ -110,7 +126,7 @@ describe("POST /api/feeds/", () => {
       .set("User-Agent", MOCK_USER_AGENT)
       .send(VALID_BODY);
 
-    expect(prismaMock.feed.create).toHaveBeenCalledWith(
+    expect(feedCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ profileId: MOCK_PROFILE_ID }),
       }),

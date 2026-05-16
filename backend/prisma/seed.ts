@@ -1,5 +1,4 @@
 import "dotenv/config";
-import { randomUUID } from "node:crypto";
 import { PrismaClient, Prisma } from "../src/generated/prisma/client";
 import { hashValue } from "../src/util/bcrypt";
 import content from "content";
@@ -10,8 +9,8 @@ import { Profile } from "@/generated/prisma/browser";
 const prismaClient = new PrismaClient();
 
 async function main() {
-  const { ADMIN_USER, ADMIN_PASSWORD, ADMIN_API_SLUG } = process.env;
-  if (!ADMIN_USER || !ADMIN_PASSWORD || !ADMIN_API_SLUG) return;
+  const { ADMIN_USER, ADMIN_PASSWORD } = process.env;
+  if (!ADMIN_USER || !ADMIN_PASSWORD) return;
 
   const profile = await prismaClient.profile.upsert({
     where: { email: process.env.ADMIN_USER },
@@ -47,25 +46,50 @@ async function main() {
       apiKeys: true,
     },
   });
-
-  if (!profile.apiKeys.length) {
-    const apiKeyValue = randomUUID();
-    await prismaClient.apiKey.upsert({
-      where: { profileId: profile.id, slug: ADMIN_API_SLUG },
-      update: {},
-      create: {
-        profileId: profile.id,
-        slug: ADMIN_API_SLUG,
-        value: apiKeyValue,
-      },
-    });
-    // how do I get this on remote server?
-    console.log(`Admin API key value: ${apiKeyValue}`);
-  }
-
+  await handleCreateApiKeys(profile.id);
   await handleDeletes(profile.id);
   await handleLibraryUpserts();
   await handleAdminBaseContentUpserts(profile);
+}
+
+async function handleCreateApiKeys(profileId: number) {
+  const {
+    PROD_API_KEY,
+    PROD_API_SLUG,
+    DEV_API_KEY,
+    DEV_API_SLUG,
+    DEV_API_ORIGIN,
+  } = process.env;
+
+  if (!!PROD_API_KEY && !!PROD_API_SLUG) {
+    await prismaClient.apiKey.upsert({
+      where: { profileId, slug: PROD_API_SLUG as string },
+      update: {
+        value: PROD_API_KEY as string,
+        origin: null, // see env
+      },
+      create: {
+        profileId,
+        slug: PROD_API_SLUG as string,
+        value: PROD_API_KEY as string,
+      },
+    });
+  }
+  if (!!DEV_API_KEY && !!DEV_API_SLUG && !!DEV_API_ORIGIN) {
+    await prismaClient.apiKey.upsert({
+      where: { profileId, slug: DEV_API_SLUG as string },
+      update: {
+        value: DEV_API_KEY as string,
+        origin: DEV_API_ORIGIN as string,
+      },
+      create: {
+        profileId,
+        slug: DEV_API_SLUG as string,
+        value: DEV_API_KEY as string,
+        origin: DEV_API_ORIGIN as string,
+      },
+    });
+  }
 }
 
 async function handleDeletes(profileId: number) {
@@ -240,6 +264,11 @@ async function handleAdminBaseContentUpserts(profile: Profile) {
       // relations
       path,
       subjectType,
+      seoTitle,
+      seoDescription,
+      seoImage,
+      schemaType,
+      links,
       tags: tagNames,
     } = feed;
     const newTagsIds =
@@ -250,6 +279,7 @@ async function handleAdminBaseContentUpserts(profile: Profile) {
           })
         ).map((tag: { id: number }) => tag.id)) ||
       [];
+    const newLinks = links || [];
 
     await prismaClient.$transaction(async (tx) => {
       const upsertedFeed = await tx.feed.upsert({
@@ -261,6 +291,10 @@ async function handleAdminBaseContentUpserts(profile: Profile) {
           },
         },
         update: {
+          ...(seoTitle && { seoTitle }),
+          ...(seoDescription && { seoDescription }),
+          ...(seoImage && { seoImage }),
+          ...(schemaType && { schemaType }),
           tags: {
             deleteMany: {},
             create: newTagsIds.map((id: number) => ({ tagId: id })),
@@ -270,11 +304,32 @@ async function handleAdminBaseContentUpserts(profile: Profile) {
           profileId: profile.id,
           path,
           subjectType,
+          ...(seoTitle && { seoTitle }),
+          ...(seoDescription && { seoDescription }),
+          ...(seoImage && { seoImage }),
+          ...(schemaType && { schemaType }),
           tags: {
             create: newTagsIds.map((id: number) => ({ tagId: id })),
           },
         },
       });
+
+      // Delete existing FeedLinks and their owned Links
+      const existingFeedLinks = await tx.feedLink.findMany({
+        where: { feedId: upsertedFeed.id },
+      });
+      const existingLinkIds = existingFeedLinks.map((fl) => fl.linkId);
+      await tx.feedLink.deleteMany({ where: { feedId: upsertedFeed.id } });
+      if (existingLinkIds.length) {
+        await tx.link.deleteMany({ where: { id: { in: existingLinkIds } } });
+      }
+      // then recreate
+      for (const linkData of newLinks) {
+        const link = await tx.link.create({ data: linkData });
+        await tx.feedLink.create({
+          data: { feedId: upsertedFeed.id, linkId: link.id },
+        });
+      }
 
       // Build a map of typeName -> typeId for all component types in this feed
       const typeNames = feed.components.map((c) => c.typeName);

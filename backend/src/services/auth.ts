@@ -216,18 +216,19 @@ export const authenticateWithApiKey = async ({
   if (!apiKey || !apiSlug) return null;
 
   const apiKeyRecord = await prismaClient.apiKey.findFirst({
-    where: {
-      slug: apiSlug,
-      value: apiKey,
-    },
+    where: { slug: apiSlug, value: apiKey },
   });
 
-  // maybe if the record has no origin then the provided origin is evaluated against an env value
-  throwError(
-    apiKeyRecord && (apiKeyRecord.origin === origin || !apiKeyRecord.origin),
-    BAD_REQUEST,
-    MESSAGE_INVALID_TOKEN,
-  );
+  if (!apiKeyRecord) return null;
+
+  // Only enforce origin restriction when a cross-origin request sends the Origin header
+  if (origin && apiKeyRecord.origin) {
+    throwError(
+      apiKeyRecord.origin === origin,
+      BAD_REQUEST,
+      MESSAGE_INVALID_TOKEN,
+    );
+  }
 
   return apiKeyRecord;
 };

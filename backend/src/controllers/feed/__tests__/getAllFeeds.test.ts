@@ -29,6 +29,10 @@ const mockFeed: Feed = {
   createdAt: new Date(),
   updatedAt: new Date(),
   profileId: MOCK_PROFILE_ID,
+  seoTitle: null,
+  seoDescription: null,
+  seoImage: null,
+  schemaType: null,
 };
 
 beforeEach(() => {

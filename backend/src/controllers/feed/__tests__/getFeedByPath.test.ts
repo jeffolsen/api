@@ -19,7 +19,7 @@ jest.mock("@db/client");
 const prismaMock = prisma as unknown as DeepMockProxy<PrismaClient>;
 
 const MOCK_PATH = "home";
-const ENDPOINT = `${BASE_API_URL}${FEED_ROUTES}/by-path/${MOCK_PATH}`;
+const ENDPOINT = `${BASE_API_URL}${FEED_ROUTES}/by-path`;
 
 const mockFeed: Feed = {
   id: 1,
@@ -30,16 +30,21 @@ const mockFeed: Feed = {
   createdAt: new Date(),
   updatedAt: new Date(),
   profileId: MOCK_PROFILE_ID,
+  seoTitle: null,
+  seoDescription: null,
+  seoImage: null,
+  schemaType: null,
 };
 
 beforeEach(() => {
   mockReset(prismaMock);
 });
 
-describe("GET /api/feeds/by-path/:path", () => {
+describe("GET /api/feeds/by-path", () => {
   it("should return 401 when not authenticated", async () => {
     const response = await request(app)
       .get(ENDPOINT)
+      .query({ path: MOCK_PATH })
       .set("User-Agent", MOCK_USER_AGENT);
 
     expect(response.statusCode).toBe(UNAUTHORIZED);
@@ -51,6 +56,7 @@ describe("GET /api/feeds/by-path/:path", () => {
 
     const response = await request(app)
       .get(ENDPOINT)
+      .query({ path: MOCK_PATH })
       .set("Cookie", getAuthCookie())
       .set("User-Agent", MOCK_USER_AGENT);
 
@@ -64,6 +70,7 @@ describe("GET /api/feeds/by-path/:path", () => {
 
     const response = await request(app)
       .get(ENDPOINT)
+      .query({ path: MOCK_PATH })
       .set("Cookie", getAuthCookie())
       .set("User-Agent", MOCK_USER_AGENT);
 
@@ -76,6 +83,7 @@ describe("GET /api/feeds/by-path/:path", () => {
 
     await request(app)
       .get(ENDPOINT)
+      .query({ path: MOCK_PATH })
       .set("Cookie", getAuthCookie())
       .set("User-Agent", MOCK_USER_AGENT);
 
@@ -95,7 +103,7 @@ describe("GET /api/feeds/by-path/:path", () => {
 
     await request(app)
       .get(ENDPOINT)
-      .query({ subjectType: "SINGLE" })
+      .query({ path: MOCK_PATH, subjectType: "SINGLE" })
       .set("Cookie", getAuthCookie())
       .set("User-Agent", MOCK_USER_AGENT);
 

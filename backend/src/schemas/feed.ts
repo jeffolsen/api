@@ -10,7 +10,7 @@ import {
 } from "./properties";
 import { tagNameArraySchema } from "./tag";
 
-export const feedIncludeFields = ["tags", "components"] as const;
+export const feedIncludeFields = ["tags", "components", "links"] as const;
 export type FeedIncludeField = (typeof feedIncludeFields)[number];
 
 const validFeedSortValues = [

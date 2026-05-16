@@ -99,22 +99,61 @@ enum SubjectType {
   COLLECTION
 }
 
+enum SchemaType {
+  WebPage
+  Person
+  Article
+  CreativeWork
+}
+
+enum LinkType {
+  internal
+  external
+}
+
 model Feed {
-  id          Int         @id @default(autoincrement())
-  path        String
+  id             Int         @id @default(autoincrement())
+  path           String
   // Use this field to determine how to interpret the "path" field. For example, if subject is SINGLE, then path would be the item ID. If subject is COLLECTION, then path could be any arbitrary string that the user can use to identify the feed.
-  subjectType SubjectType @default(COLLECTION) @map("subject_type")
-  publishedAt DateTime?   @map("published_at") @db.Timestamptz(6)
-  expiredAt   DateTime?   @map("expired_at") @db.Timestamptz(6)
-  createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
-  profileId   Int         @map("profile_id")
-  profile     Profile     @relation("ProfileFeeds", fields: [profileId], references: [id], onDelete: Cascade)
-  components  Component[] @relation("FeedComponents")
-  tags        FeedTag[]
+  subjectType    SubjectType @default(COLLECTION) @map("subject_type")
+  publishedAt    DateTime?   @map("published_at") @db.Timestamptz(6)
+  expiredAt      DateTime?   @map("expired_at") @db.Timestamptz(6)
+  createdAt      DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  seoTitle       String?     @map("seo_title")
+  seoDescription String?     @map("seo_description")
+  seoImage       String?     @map("seo_image")
+  schemaType     SchemaType? @map("schema_type")
+  profileId      Int         @map("profile_id")
+  profile        Profile     @relation("ProfileFeeds", fields: [profileId], references: [id], onDelete: Cascade)
+  components     Component[] @relation("FeedComponents")
+  tags           FeedTag[]
+  links          FeedLink[]
 
   @@unique([profileId, path, subjectType])
   @@map("feeds")
+}
+
+model Link {
+  id        Int        @id @default(autoincrement())
+  label     String
+  url       String
+  linkType  LinkType   @map("link_type")
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+  feeds     FeedLink[]
+
+  @@map("links")
+}
+
+model FeedLink {
+  feed   Feed @relation(fields: [feedId], references: [id], onDelete: Cascade)
+  feedId Int  @map("feed_id")
+  link   Link @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  linkId Int  @map("link_id")
+
+  @@id([feedId, linkId])
+  @@map("feeds_links")
 }
 
 model ComponentType {
@@ -205,13 +244,15 @@ enum ImageType {
 }
 
 model Image {
-  id        Int         @id @default(autoincrement())
-  url       String      @unique
-  alt       String?
-  type      ImageType   @default(OTHER)
-  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
-  items     ItemImage[]
+  id              Int         @id @default(autoincrement())
+  url             String      @unique
+  alt             String?
+  attribution     String?
+  attributionLink String?     @map("attribution_link")
+  type            ImageType   @default(OTHER)
+  createdAt       DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  items           ItemImage[]
 
   @@map("images")
 }
