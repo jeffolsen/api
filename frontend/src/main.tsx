@@ -9,10 +9,6 @@ import { AuthProvider } from "@/contexts/AuthProvider";
 import { Toaster } from "react-hot-toast";
 
 import queryClient, { persister } from "@/utils/queryClient";
-import { createHead } from "@unhead/react/client";
-import { UnheadProvider } from "@unhead/react/client";
-
-const head = createHead();
 
 const router = createRouter({ routeTree });
 
@@ -37,10 +33,8 @@ createRoot(document.getElementById("root")!).render(
       }}
     >
       <AuthProvider>
-        <UnheadProvider head={head}>
           <RouterProvider router={router} />
           <Toaster />
-        </UnheadProvider>
       </AuthProvider>
     </PersistQueryClientProvider>
   </StrictMode>,
