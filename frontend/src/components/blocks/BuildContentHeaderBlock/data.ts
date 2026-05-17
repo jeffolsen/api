@@ -5,7 +5,7 @@ import {
   BlockComponentDataReturnType,
 } from "@/components/blocks/Block";
 import { keepPreviousData } from "@tanstack/react-query";
-import { useGetAppItems } from "@/network/app/item";
+import { useGetItems } from "@/network/item/useGetItems";
 
 const variants = {
   alpha: {
@@ -27,6 +27,7 @@ function useContentHeaderBlockData({
   params,
   path,
   critical,
+  renderFor = "app",
 }: BlockComponentStandardProps): UseContentHeaderBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
@@ -35,12 +36,15 @@ function useContentHeaderBlockData({
 
   const blockSettings = variants[variant] || variants["alpha"];
 
-  const items = useGetAppItems(
-    {
+  console.log("gonna get something", renderFor, itemAllowList);
+
+  const items = useGetItems({
+    clientType: renderFor,
+    queryParams: {
       slugs: [itemAllowList?.[0]].filter(Boolean),
     },
-    { placeholderData: keepPreviousData },
-  );
+    options: { placeholderData: keepPreviousData },
+  });
 
   if (items.error) {
     return {
@@ -89,7 +93,7 @@ type PropertyValues = {
 
 type BlockSettings = Omit<Variant & Theme, "pageSize">;
 type LocalBlockData = {
-  itemsData: ReturnType<typeof useGetAppItems>;
+  itemsData: ReturnType<typeof useGetItems>;
   referenceFeedPath?: string;
 };
 

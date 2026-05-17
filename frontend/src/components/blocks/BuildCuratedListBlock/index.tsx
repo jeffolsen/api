@@ -136,12 +136,12 @@ const AlphaCard = ({
     >
       <div
         className={clsx([
-          "card md:card-side md:h-[30rem] w-full max-w-5xl flex-none justify-center",
+          "card md:card-side md:h-[30rem] w-full max-w-6xl flex-none justify-center",
           "bg-base-100 shadow-xl",
           index % 2 === 0 ? "text-right" : "text-left md:flex-row-reverse",
         ])}
       >
-        <div className="h-full p-6">
+        <div className="h-full p-6 md:p-12 flex-grow">
           <div
             className={clsx([
               "flex flex-col md:justify-center gap-4 h-full flex-none",

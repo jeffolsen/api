@@ -35,16 +35,17 @@ function useItemListBlockData({
   const [page] = useSearchParam("page");
   const [tags] = useSearchParam("tags");
   const [sort] = useSearchParam("sort");
-  const items = useGetItems(
-    {
+  const items = useGetItems({
+    clientType: "user",
+    queryParams: {
       pageSize,
       privateOnly: true,
       page: page ? parseInt(page) : 1,
       tags: tags?.split(",") as TTagName[],
       sort: sort?.split(",") as TItemSort[],
     },
-    { placeholderData: keepPreviousData },
-  );
+    options: { placeholderData: keepPreviousData },
+  });
 
   if (profile.error) {
     throw new UnauthorizedError();

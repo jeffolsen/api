@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import jsCookie from "js-cookie";
 import { EMAIL_DEFAULT } from "@/config/inputs";
 
+export const CMS_KEY = "cms" as const;
 // these should match the backend routes, may need website url in front of them in production
 export const BASE_URL =
   import.meta.env.MODE === "development"

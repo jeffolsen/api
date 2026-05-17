@@ -1,9 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
-import api from "@/network/clients/api";
+import api, { CMS_KEY } from "@/network/clients/api";
 import { FEEDS_KEY, TSubjectType } from "@/network/feed/types";
 import { fetchFeedByPath } from "@/network/feed/fetchers";
-
-export const CMS_KEY = "cms" as const;
 
 export const cmsFeedByPathQueryKey = (
   path: string,

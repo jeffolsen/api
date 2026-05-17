@@ -13,7 +13,9 @@ const processFeed = (feed: TFeedWithIncludes): ProcessedFeedAndHeaderHero => {
   // ie, ensureOnlyCurrentAuthStateComponents(feed.components)
   const firstHeaderComponent = ensureOnlyOneHeaderComponent(feed.components);
   const bodyComponents = ensureOnlyBodyComponents(feed.components);
-  const components = ensureSinglePrimaryContent(bodyComponents);
+  const components = ensureSinglePrimaryContent(bodyComponents).sort(
+    (a, b) => a.order - b.order,
+  );
 
   return {
     processedFeed: { ...feed, components },

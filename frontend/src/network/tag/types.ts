@@ -4,16 +4,27 @@ export type TTagName =
   | "PERSON"
   | "PLACE"
   | "THING"
-  | "PAST"
-  | "PRESENT"
-  | "FUTURE"
-  | "RED"
-  | "BLUE"
-  | "GREEN"
   | "FOO"
   | "BAR"
-  | "BAZ";
-
+  | "BAZ"
+  | "COMIC BOOKS"
+  | "VIDEO GAMES"
+  | "TABLETOP RPGS"
+  | "ART"
+  | "MOVIES"
+  | "MUSIC"
+  | "TYPESCRIPT"
+  | "REACT"
+  | "NODE"
+  | "EXPRESS"
+  | "NEXTJS"
+  | "TAILWIND"
+  | "UX"
+  | "COLLABORATION"
+  | "DEVELOPMENT"
+  | "SCRUM"
+  | "GIT"
+  | "FOOD";
 export type TTag = {
   id: number;
   name: TTagName;

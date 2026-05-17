@@ -1,4 +1,4 @@
-import { QueryClient, useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { QueryClient, UseQueryOptions } from "@tanstack/react-query";
 import {
   GetItemsWithIncludesResponse,
   GetItemWithIncludesResponse,
@@ -39,20 +39,6 @@ export const queryAppItems = (
     ...options,
   });
 
-export const useGetAppItems = (
-  queryParams?: TItemQueryParams,
-  options?: Omit<
-    UseQueryOptions<GetItemsWithIncludesResponse>,
-    "queryKey" | "queryFn"
-  >,
-) =>
-  useQuery({
-    queryKey: appItemsQueryKey(queryParams),
-    queryFn: () => fetchAppItems(queryParams),
-    ...appItemsCacheOptions,
-    ...options,
-  });
-
 /*
  * get item by slug
  */
@@ -69,20 +55,6 @@ export const queryAppItemBySlug = (
   >,
 ) =>
   queryClient.fetchQuery({
-    queryKey: appItemsQueryKey(slug),
-    queryFn: () => fetchAppItemBySlug(slug),
-    ...appItemsCacheOptions,
-    ...options,
-  });
-
-export const useGetAppItemBySlug = (
-  slug: string,
-  options?: Omit<
-    UseQueryOptions<GetItemWithIncludesResponse>,
-    "queryKey" | "queryFn"
-  >,
-) =>
-  useQuery({
     queryKey: appItemsQueryKey(slug),
     queryFn: () => fetchAppItemBySlug(slug),
     ...appItemsCacheOptions,

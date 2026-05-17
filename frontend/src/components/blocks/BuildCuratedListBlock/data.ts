@@ -5,7 +5,7 @@ import {
   BlockComponentDataReturnType,
 } from "@/components/blocks/Block";
 import { keepPreviousData } from "@tanstack/react-query";
-import { useGetAppItems } from "@/network/app/item";
+import { useGetItems } from "@/network/item/useGetItems";
 
 const variants = {
   alpha: {
@@ -30,6 +30,7 @@ function useCuratedListBlockData({
   params,
   path,
   critical,
+  renderFor = "app",
 }: BlockComponentStandardProps): UseCuratedListBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
@@ -38,13 +39,14 @@ function useCuratedListBlockData({
 
   const { pageSize, ...blockSettings } = variants[variant] || variants["alpha"];
 
-  const items = useGetAppItems(
-    {
+  const items = useGetItems({
+    clientType: renderFor,
+    queryParams: {
       pageSize,
       slugs: itemAllowList,
     },
-    { placeholderData: keepPreviousData },
-  );
+    options: { placeholderData: keepPreviousData },
+  });
 
   if (items.error) {
     return {
@@ -95,7 +97,7 @@ type PropertyValues = {
 type BlockSettings = Omit<Variant & Theme, "pageSize">;
 type LocalBlockData = {
   itemOrder: string[];
-  itemsData: ReturnType<typeof useGetAppItems>;
+  itemsData: ReturnType<typeof useGetItems>;
   referenceFeedPath?: string;
 };
 

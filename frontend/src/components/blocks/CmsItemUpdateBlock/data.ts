@@ -27,8 +27,6 @@ function useItemUpdateBlockData({
   const itemId = parseInt(params?.id || "");
   const getItem = useGetItemById(itemId);
 
-  console.log(getItem.data);
-
   if (getItem.error) {
     throw new NotFoundError();
   }

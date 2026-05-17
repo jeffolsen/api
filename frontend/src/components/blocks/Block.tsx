@@ -2,11 +2,11 @@ import { PropsWithChildren } from "react";
 import { HeadingLevelProvider } from "@/contexts/HeadingLevelProvider";
 import Wrapper, { WrapperProps } from "@/components/common/Wrapper";
 import Heading, { HeadingProps } from "@/components/common/Heading";
-import { LocalFeedComponent } from "@/config/routes";
 import { TComponent } from "@/network/component/types";
 import { TItemWithIncludes } from "@/network/item/types";
 import ScrollInFade from "@/components/common/ScrollInFade";
 import clsx, { ClassValue } from "clsx";
+import { ClientTypeName } from "@/network/clients/type";
 
 export type BlockWrapperProps<T> = {
   name?: string;
@@ -97,11 +97,12 @@ export type BlockUrlIdentifier = {
 
 // passed into top level block component default elements and associated data hooks.
 export type BlockComponentStandardProps = {
-  component: LocalFeedComponent;
+  component: TComponent;
   params: Record<string, string>;
   path: string;
   item?: TItemWithIncludes;
   critical?: boolean;
+  renderFor?: ClientTypeName;
 };
 
 // returned as the result of the data hook for a block component, passed into the block component for rendering.

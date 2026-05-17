@@ -49,13 +49,19 @@ function ItemArrayInput(
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce<string>(searchTerm, 3000);
   const getItems = useGetItems({
-    ...(debouncedSearchTerm && { searchName: debouncedSearchTerm }),
-    pageSize: 10,
+    clientType: "user",
+    queryParams: {
+      ...(debouncedSearchTerm && { searchName: debouncedSearchTerm }),
+      pageSize: 10,
+    },
   });
   const items = getItems.data?.items || [];
 
   const getExistingItemQuery = useGetItems({
-    slugs: (fields as ItemIdArrayFields).map((field) => field.slug),
+    clientType: "user",
+    queryParams: {
+      slugs: (fields as ItemIdArrayFields).map((field) => field.slug),
+    },
   });
   const existingItems = getExistingItemQuery.data?.items;
 

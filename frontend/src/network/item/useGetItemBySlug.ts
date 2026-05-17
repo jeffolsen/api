@@ -4,38 +4,36 @@ import {
   UseQueryResult,
 } from "@tanstack/react-query";
 import { useAuthState } from "@/contexts/AuthContext";
-import { GetItemsWithIncludesResponse, TItemQueryParams } from "./types";
-import { fetchItems } from "./fetchers";
+import { GetItemWithIncludesResponse } from "./types";
+import { fetchItemBySlug } from "./fetchers";
 import app from "@/network/clients/app";
 import { appItemsCacheOptions, appItemsQueryKey } from "../app/item";
 import { cmsItemsQueryKey, cmsItemsCacheOptions } from "../cms/item";
 
-interface UseGetItems {
-  queryParams?: TItemQueryParams;
+interface UseGetItemBySlug {
+  slug: string;
+  clientType?: "user" | "app";
   options?: Omit<
-    UseQueryOptions<GetItemsWithIncludesResponse>,
+    UseQueryOptions<GetItemWithIncludesResponse>,
     "queryKey" | "queryFn"
   >;
-  clientType?: "user" | "app";
 }
 
-export const useGetItems = ({
-  queryParams,
-  options,
+export const useGetItemBySlug = ({
+  slug,
   clientType = "app",
-}: UseGetItems): UseQueryResult<GetItemsWithIncludesResponse> => {
+  options,
+}: UseGetItemBySlug): UseQueryResult<GetItemWithIncludesResponse> => {
   const { api } = useAuthState();
   const client = clientType === "user" ? api : app;
   const queryKey =
-    clientType === "user"
-      ? cmsItemsQueryKey(queryParams)
-      : appItemsQueryKey(queryParams);
+    clientType === "user" ? cmsItemsQueryKey(slug) : appItemsQueryKey(slug);
   const cacheOptions =
     clientType === "user" ? cmsItemsCacheOptions : appItemsCacheOptions;
 
   return useQuery({
     queryKey,
-    queryFn: () => fetchItems(client, queryParams),
+    queryFn: () => fetchItemBySlug(client, slug),
     ...cacheOptions,
     ...options,
   });

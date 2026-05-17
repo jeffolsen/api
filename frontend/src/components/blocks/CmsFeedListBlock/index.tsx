@@ -6,7 +6,10 @@ import DashBoardLayout from "@/components/layout/DashBoardLayout";
 import { useGetAuthenticatedProfile } from "@/network/profile/useGetAuthenticatedProfile";
 import SectionHeading from "@/components/partials/SectionHeading";
 import { useGetFeeds } from "@/network/feed/useGetFeeds";
-import { TFeed, GetFeedsResponse } from "@/network/feed/types";
+import {
+  TFeedWithIncludes,
+  GetFeedsWithIncludesResponse,
+} from "@/network/feed/types";
 import Grid from "@/components/common/Grid";
 import BasicCard from "@/components/cards/BasicCard";
 import EmptyCard from "@/components/cards/EmptyCard";
@@ -37,6 +40,7 @@ import { paths } from "@/config/routes";
 import { GetItemsResponse } from "@/network/item/types";
 import { useGetItems } from "@/network/item/useGetItems";
 import FetchTransition from "@/components/common/FetchTransition";
+import Tooltip from "@/components/common/Tooltip";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useFeedListBlockData(config);
@@ -67,10 +71,8 @@ function CmsFeedsListBlock({
   }
 
   const profile = profileData.data.profile;
-  const { feeds = [], totalCount = 0 } = feedData.data as GetFeedsResponse;
-
-  console.log("feeds", feeds);
-
+  const { feeds = [], totalCount = 0 } =
+    feedData.data as GetFeedsWithIncludesResponse;
   return (
     <Block {...blockProps} settings={settings}>
       <HeadingLevelProvider>
@@ -95,7 +97,7 @@ function CmsFeedsListBlock({
           />
           <FetchTransition isFetching={feedData.isFetching}>
             <Grid
-              items={feeds.map((feed: TFeed) => {
+              items={feeds.map((feed: TFeedWithIncludes) => {
                 return { content: <FeedCard feed={feed} />, id: feed.id };
               })}
               onEmpty={() => <BasicCard title={"No feeds found"} />}
@@ -113,10 +115,15 @@ function CmsFeedsListBlock({
   );
 }
 
-function FeedCard({ feed }: { feed: TFeed }) {
+function FeedCard({ feed }: { feed: TFeedWithIncludes }) {
   const { id, path, subjectType, publishedAt, expiredAt } = feed;
+  // TODO move this into the data fetch
   const getTestItem = useGetItems({
-    pageSize: 1,
+    clientType: "user",
+    queryParams: {
+      tags: feed.tags.map((t) => t.tag.name),
+      pageSize: 1,
+    },
   });
 
   const testItem = (getTestItem.data as GetItemsResponse)?.items?.[0];
@@ -142,21 +149,26 @@ function FeedCard({ feed }: { feed: TFeed }) {
           <Text textSize="xs">
             <ScheduleStatus publishedAt={publishedAt} expiredAt={expiredAt} />
           </Text>
-          <div className="flex gap-1">
-            {(feed.subjectType === "COLLECTION" || testItem) && (
+          <div className="flex gap-1 items-center">
+            {feed.subjectType === "COLLECTION" || testItem ? (
               <Button
                 as="Link"
                 to={
                   paths.cmsPreview +
                   "/" +
                   feed.path +
-                  (feed.subjectType === "SINGLE" ? `/${testItem?.id}` : "")
+                  (feed.subjectType === "SINGLE" ? `/${testItem?.slug}` : "")
                 }
                 size="md"
                 color="secondary"
               >
                 Preview
               </Button>
+            ) : (
+              <Tooltip
+                className="pr-3"
+                text="You need an item with at least one matching tag as the single subject feed to preview it."
+              />
             )}
             <Button
               as="Link"

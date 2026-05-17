@@ -6,9 +6,14 @@ import ErrorBoundary from "@/components/common/ErrorBoundary";
 import { PageFallback } from "./ErrorPage";
 import { TFeedWithIncludes } from "@/network/feed/types";
 import { TItemWithIncludes } from "@/network/item/types";
+import { ClientTypeName } from "@/network/clients/type";
 
 type PageResolverProps = {
-  pageData: { feed: TFeedWithIncludes; item?: TItemWithIncludes };
+  pageData: {
+    feed: TFeedWithIncludes;
+    item?: TItemWithIncludes;
+    renderFor?: ClientTypeName;
+  };
   params: Record<string, string>;
   path: string;
 };
@@ -31,6 +36,7 @@ function PageResolverContent({ pageData, params, path }: PageResolverProps) {
           <Block
             component={component}
             item={pageData.item}
+            renderFor={pageData.renderFor}
             params={params}
             path={path}
             key={index}

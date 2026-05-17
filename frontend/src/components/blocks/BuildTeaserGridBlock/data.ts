@@ -5,7 +5,7 @@ import {
   BlockComponentDataReturnType,
 } from "@/components/blocks/Block";
 import { keepPreviousData } from "@tanstack/react-query";
-import { useGetAppItems } from "@/network/app/item";
+import { useGetItems } from "@/network/item/useGetItems";
 import { TTagName } from "@/network/tag/types";
 
 const variants = {
@@ -28,6 +28,7 @@ function useTeaserGridBlockData({
   params,
   path,
   critical,
+  renderFor = "app",
 }: BlockComponentStandardProps): UseTeaserGridBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
@@ -36,12 +37,13 @@ function useTeaserGridBlockData({
 
   const { ...blockSettings } = variants[variant] || variants["alpha"];
 
-  const items = useGetAppItems(
-    {
+  const items = useGetItems({
+    clientType: renderFor,
+    queryParams: {
       tags: tagAllowList,
     },
-    { placeholderData: keepPreviousData },
-  );
+    options: { placeholderData: keepPreviousData },
+  });
 
   if (items.error) {
     return {
@@ -83,7 +85,7 @@ type PropertyValues = {
 
 type BlockSettings = Omit<(typeof variants)[VariantNames], "pageSize">;
 type LocalBlockData = {
-  itemsData: ReturnType<typeof useGetAppItems>;
+  itemsData: ReturnType<typeof useGetItems>;
   referenceFeedPath?: string;
 };
 
