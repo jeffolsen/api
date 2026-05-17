@@ -1,4 +1,5 @@
 import env from "@config/env";
+import { initCronJobs } from "@util/cron";
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -29,6 +30,8 @@ if (env.NODE_ENV === "production") {
     res.sendFile(path.join(__dirname, "../../frontend", "dist", "index.html"));
   });
 }
+
+initCronJobs();
 
 app.listen(PORT, () => console.log("server running yo"));
 

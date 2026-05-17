@@ -1,4 +1,4 @@
-import { bool, cleanEnv, email, port, str, url } from "envalid";
+import { bool, cleanEnv, email, port, str } from "envalid";
 import "dotenv/config";
 
 const env = cleanEnv(process.env, {
@@ -10,8 +10,7 @@ const env = cleanEnv(process.env, {
   ALLOWED_ORIGIN: str(),
   EMAIL_SENDER: email(),
   RESEND_API_KEY: str(),
-  // UPSTASH_REDIS_REST_URL: url({ desc: "Upstash Redis REST URL" }),
-  // UPSTASH_REDIS_REST_TOKEN: str({ desc: "Upstash Redis REST Token" }),
+  ADMIN_USER: email(),
   FEATURE_API_KEYS: bool({ default: false }),
 });
 
