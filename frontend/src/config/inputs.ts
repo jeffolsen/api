@@ -221,6 +221,8 @@ export const FEED_TAGNAMES_INPUT = {
   dataName: "tagNames",
   displayName: "Tags",
   componentName: "TagArrayInput",
+  description:
+    "Feeds use tags to filter content. Example: An item with no matching tags with a signle subject feed will not display on it",
   input: {
     rules: {
       maxLength: { value: 12, message: "You can select up to 12 tags" },

@@ -4,35 +4,38 @@ import Loading from "@/components/common/Loading";
 import Blocks from "@/components/blocks/Blocks";
 import {
   twoOhFourComponent,
-  twoOhFourFeed,
   fourOhFourComponent,
-  fourOhFourFeed,
   fourOhOneComponent,
-  fourOhOneFeed,
   fourTwentyNineComponent,
-  fourTwentyNineFeed,
-  LocalFeedComponent,
-  LocalFeedWithComponents,
 } from "@/config/routes";
 import Layout from "@/components/layout/Layout";
-import DocumentHead from "@/components/layout/DocumentHead";
 import {
   RateLimitError,
   UnauthorizedError,
   UnderConstructionError,
 } from "@/utils/errors";
+import { TComponent } from "@/network/component/types";
 
 type ErrorConfig = {
-  feed: LocalFeedWithComponents;
-  component: LocalFeedComponent;
+  component: TComponent;
 };
 
 const errorConfigs: Record<number, ErrorConfig> = {
-  204: { feed: twoOhFourFeed, component: twoOhFourComponent },
-  401: { feed: fourOhOneFeed, component: fourOhOneComponent },
-  403: { feed: fourOhOneFeed, component: fourOhOneComponent },
-  404: { feed: fourOhFourFeed, component: fourOhFourComponent },
-  429: { feed: fourTwentyNineFeed, component: fourTwentyNineComponent },
+  204: {
+    component: twoOhFourComponent,
+  },
+  401: {
+    component: fourOhOneComponent,
+  },
+  403: {
+    component: fourOhOneComponent,
+  },
+  404: {
+    component: fourOhFourComponent,
+  },
+  429: {
+    component: fourTwentyNineComponent,
+  },
 };
 
 function getStatus(error: unknown): number {
@@ -61,11 +64,23 @@ export function PageFallback(
 ): ReactNode {
   const status = getStatus(error);
   const config = errorConfigs[status] ?? errorConfigs[404];
+
+  const settledErrorCode = config.component?.propertyValues?.errorCode;
+  const settledErrorMessage = config.component.name;
+  const title = settledErrorCode + " " + settledErrorMessage;
+
   return (
     <>
-      <DocumentHead feed={config.feed} />
+      <meta charSet="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta name="robots" content="noindex, nofollow" />
+      <title>{`${title} | Jeff Olsen`}</title>
       <Suspense fallback={<Loading />}>
-        <Blocks.Error component={config.component} params={params} path={path} />
+        <Blocks.Error
+          component={config.component}
+          params={params}
+          path={path}
+        />
       </Suspense>
     </>
   );

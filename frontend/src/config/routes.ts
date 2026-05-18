@@ -1,4 +1,4 @@
-import { TFeed } from "@/network/feed/types";
+import { TFeedLink, TFeedTag, TFeedWithIncludes } from "@/network/feed/types";
 import { TComponent } from "@/network/component/types";
 
 export const cmsPaths = {
@@ -17,9 +17,6 @@ export const defaultPaths = {
   unauthorized: "/401",
   underConstruction: "/204",
   privacy: "/privacy",
-  // contact: "/contact",
-  // styleGuide: "/style-guide",
-  // siteMap: "/sitemap",
 } as const;
 
 export const paths = {
@@ -27,116 +24,50 @@ export const paths = {
   ...cmsPaths,
 } as const;
 
-type CmsComponentTypeName =
-  | "FeedList"
-  | "FeedCreate"
-  | "FeedUpdate"
-  | "ItemList"
-  | "ItemCreate"
-  | "ItemUpdate"
-  | "LoginRegister"
-  | "ProfileDashboard";
-
-type DefaultComponentTypeName = "Error" | "Generic" | "Policy" | "StyleGuide";
-
-export type LocalFeedComponent = Omit<TComponent, "typeName"> & {
-  typeName:
-    | TComponent["typeName"]
-    | CmsComponentTypeName
-    | DefaultComponentTypeName;
-};
-
-export type LocalFeedWithComponents = TFeed & {
-  components: LocalFeedComponent[];
-};
-
-export const twoOhFourComponent = {
-  id: 7001,
-  typeId: 7001,
-  typeName: "Error",
-  feedId: 7000,
-  order: 1,
-  name: "Under Construction",
-  propertyValues: {
-    variant: "default",
-    isPrimaryContent: true,
-    errorCode: 204,
-  },
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-} as LocalFeedComponent;
-
-export const twoOhFourFeed = {
-  id: 7000,
-  path: paths.underConstruction.slice(1),
+// Feeds for local pages
+export const genericTemplate = {
+  id: 1000,
   subjectType: "COLLECTION",
-  publishedAt: "2024-01-01T00:00:00Z",
+  publishedAt: null,
+  path: "",
+  seoTitle: "",
+  seoDescription: "",
+  seoImage: null,
+  schemaType: "WebPage",
   expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-  components: [twoOhFourComponent],
-} as LocalFeedWithComponents;
+  createdAt: "",
+  updatedAt: "",
+  components: [] as TComponent[],
+  links: [] as TFeedLink[],
+  tags: [] as TFeedTag[],
+} as TFeedWithIncludes;
 
-export const fourOhFourComponent = {
-  id: 8001,
-  typeId: 8001,
-  typeName: "Error",
-  feedId: 8000,
-  order: 1,
-  name: "Not Found",
-  propertyValues: {
-    variant: "default",
-    isPrimaryContent: true,
-    errorCode: 404,
-  },
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-} as LocalFeedComponent;
+export const cmsTemplate = {
+  ...genericTemplate,
+  schemaType: "CreativeWork",
+  components: [] as TComponent[],
+  links: [] as TFeedLink[],
+  tags: [
+    { tagId: 1000, feedId: 1000, tag: { id: 1000, name: "NODE" } },
+    { tagId: 1000, feedId: 1000, tag: { id: 1000, name: "EXPRESS" } },
+    {
+      tagId: 1000,
+      feedId: 1000,
+      tag: { id: 1000, name: "TYPESCRIPT" },
+    },
+    { tagId: 1000, feedId: 1000, tag: { id: 1000, name: "TAILWIND" } },
+  ],
+} as TFeedWithIncludes;
 
-export const fourOhOneComponent = {
-  id: 9001,
-  typeId: 9001,
-  typeName: "Error",
-  feedId: 9000,
-  order: 1,
-  name: "Unauthorized",
-  propertyValues: {
-    variant: "default",
-    isPrimaryContent: true,
-    errorCode: 401,
-  },
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-} as LocalFeedComponent;
+export const policyTemplate = {
+  ...genericTemplate,
+};
 
-export const fourTwentyNineComponent = {
-  id: 9001,
-  typeId: 9001,
-  typeName: "Error",
-  feedId: 9000,
-  order: 1,
-  name: "Slow Down",
-  propertyValues: {
-    variant: "default",
-    isPrimaryContent: true,
-    errorCode: 429,
-  },
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-} as LocalFeedComponent;
-
+// components for local components
 export const genericComponent = {
   id: 10001,
   typeId: 10001,
-  typeName: "Generic",
+  typeName: "Generic" as TComponent["typeName"],
   feedId: 0,
   order: 1,
   name: "Generic Component",
@@ -148,283 +79,113 @@ export const genericComponent = {
   expiredAt: null,
   createdAt: "2024-01-01T00:00:00Z",
   updatedAt: "2024-01-01T00:00:00Z",
-} as LocalFeedComponent;
+} as TComponent;
+
+// Error components
+const genericStatusComponent = {
+  ...genericComponent,
+  typeName: "Error" as TComponent["typeName"],
+} as TComponent;
+
+export const twoOhFourComponent = {
+  ...genericStatusComponent,
+  name: "Under Construction",
+  propertyValues: {
+    ...genericStatusComponent.propertyValues,
+    errorCode: 204,
+  },
+} as TComponent;
+
+export const fourOhFourComponent = {
+  ...genericStatusComponent,
+  name: "Not Found",
+  propertyValues: {
+    ...genericStatusComponent.propertyValues,
+    errorCode: 404,
+  },
+} as TComponent;
+
+export const fourOhOneComponent = {
+  ...genericStatusComponent,
+  name: "Unauthorized",
+  propertyValues: {
+    ...genericStatusComponent.propertyValues,
+    errorCode: 401,
+  },
+} as TComponent;
+
+export const fourTwentyNineComponent = {
+  ...genericStatusComponent,
+  name: "Slow Down",
+  propertyValues: {
+    ...genericStatusComponent.propertyValues,
+    errorCode: 429,
+  },
+} as TComponent;
+
+// Policy components
+const genericPolicyComponent = {
+  ...genericComponent,
+  typeName: "Policy" as TComponent["typeName"],
+} as TComponent;
 
 export const privacyComponent = {
-  id: 10001,
-  typeId: 10001,
-  typeName: "Policy",
-  feedId: 10000,
-  order: 1,
+  ...genericPolicyComponent,
   name: "Privacy Policy",
   propertyValues: {
+    ...genericPolicyComponent.propertyValues,
     variant: "privacy",
-    isPrimaryContent: true,
   },
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-} as LocalFeedComponent;
+} as TComponent;
 
-export const fourOhFourFeed = {
-  id: 8000,
-  path: paths.notFound.slice(1), // remove leading slash for matching
-  subjectType: "COLLECTION",
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-  components: [fourOhFourComponent],
-} as LocalFeedWithComponents;
-
-export const fourOhOneFeed = {
-  id: 9000,
-  path: paths.unauthorized.slice(1), // remove leading slash for matching
-  subjectType: "COLLECTION",
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-  components: [fourOhOneComponent],
-} as LocalFeedWithComponents;
-
-export const fourTwentyNineFeed = {
-  id: 9000,
-  path: paths.unauthorized.slice(1), // remove leading slash for matching
-  subjectType: "COLLECTION",
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-  components: [fourTwentyNineComponent],
-} as LocalFeedWithComponents;
-
-export const privacyFeed = {
-  id: 10000,
-  path: paths.privacy.slice(1), // remove leading slash for matching
-  subjectType: "COLLECTION",
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-  components: [privacyComponent],
-} as LocalFeedWithComponents;
-
+// CMS components
+const genericCmsComponent = {
+  ...genericPolicyComponent,
+};
 export const loginOrRegisterComponent = {
-  id: 1001,
-  typeId: 1001,
-  typeName: "LoginRegister",
-  feedId: 1000,
-  order: 1,
+  ...genericCmsComponent,
+  typeName: "LoginRegister" as TComponent["typeName"],
   name: "Login or Register",
-  propertyValues: {
-    variant: "default",
-    isPrimaryContent: true,
-    hideFor: "authenticated",
-  },
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-} as LocalFeedComponent;
+} as TComponent;
 
 export const profileDashBoardComponent = {
-  id: 1002,
-  typeId: 1002,
-  typeName: "ProfileDashboard",
-  feedId: 1000,
-  order: 2,
+  ...genericCmsComponent,
+  typeName: "ProfileDashboard" as TComponent["typeName"],
   name: "Profile Dashboard",
-  propertyValues: {
-    variant: "default",
-    isPrimaryContent: true,
-    hideFor: "unauthenticated",
-  },
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-} as LocalFeedComponent;
-
-export const cmsIngressFeed = {
-  id: 1000,
-  path: paths.cmsHome.slice(1), // remove leading slash for matching
-  subjectType: "COLLECTION",
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-  components: [loginOrRegisterComponent, profileDashBoardComponent],
-} as LocalFeedWithComponents;
+} as TComponent;
 
 export const feedListComponent = {
-  id: 2001,
-  typeId: 2001,
-  typeName: "FeedList",
-  feedId: 2000,
-  order: 1,
+  ...genericCmsComponent,
+  typeName: "FeedList" as TComponent["typeName"],
   name: "Feed List",
-  propertyValues: {
-    variant: "default",
-    isPrimaryContent: true,
-  },
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-} as LocalFeedComponent;
+} as TComponent;
 
 export const feedCreateComponent = {
-  id: 3001,
-  typeId: 3001,
-  typeName: "FeedCreate",
-  feedId: 3000,
-  order: 1,
+  ...genericCmsComponent,
+  typeName: "FeedCreate" as TComponent["typeName"],
   name: "Feed Create",
-  propertyValues: {
-    variant: "default",
-    isPrimaryContent: true,
-  },
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-} as LocalFeedComponent;
+} as TComponent;
 
 export const feedUpdateComponent = {
-  id: 4001,
-  typeId: 4001,
-  typeName: "FeedUpdate",
-  feedId: 4000,
-  order: 1,
+  ...genericCmsComponent,
+  typeName: "FeedUpdate" as TComponent["typeName"],
   name: "Feed Update",
-  propertyValues: {
-    variant: "default",
-    isPrimaryContent: true,
-  },
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-} as LocalFeedComponent;
+} as TComponent;
 
 export const itemListComponent = {
-  id: 5001,
-  typeId: 5001,
-  typeName: "ItemList",
-  feedId: 5000,
-  order: 1,
+  ...genericCmsComponent,
+  typeName: "ItemList" as TComponent["typeName"],
   name: "Item List",
-  propertyValues: {
-    variant: "default",
-    isPrimaryContent: true,
-  },
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-} as LocalFeedComponent;
+} as TComponent;
 
 export const itemCreateComponent = {
-  id: 6001,
-  typeId: 6001,
-  typeName: "ItemCreate",
-  feedId: 6000,
-  order: 1,
+  ...genericCmsComponent,
+  typeName: "ItemCreate" as TComponent["typeName"],
   name: "Item Create",
-  propertyValues: {
-    variant: "default",
-    isPrimaryContent: true,
-  },
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-} as LocalFeedComponent;
+} as TComponent;
 
 export const itemUpdateComponent = {
-  id: 7001,
-  typeId: 7001,
-  typeName: "ItemUpdate",
-  feedId: 7000,
-  order: 1,
+  ...genericCmsComponent,
+  typeName: "ItemUpdate" as TComponent["typeName"],
   name: "Item Update",
-  propertyValues: {
-    variant: "default",
-    isPrimaryContent: true,
-  },
-  publishedAt: "2024-01-01T00:00:00Z",
-  expiredAt: null,
-  createdAt: "2024-01-01T00:00:00Z",
-  updatedAt: "2024-01-01T00:00:00Z",
-} as LocalFeedComponent;
-
-const routes: LocalFeedWithComponents[] = [
-  fourOhFourFeed,
-  fourOhOneFeed,
-  privacyFeed,
-  cmsIngressFeed,
-  {
-    id: 2000,
-    path: paths.cmsFeedsList.slice(1), // remove leading slash for matching
-    subjectType: "COLLECTION",
-    publishedAt: "2024-01-01T00:00:00Z",
-    expiredAt: null,
-    createdAt: "2024-01-01T00:00:00Z",
-    updatedAt: "2024-01-01T00:00:00Z",
-    components: [feedListComponent],
-  },
-  {
-    id: 3000,
-    path: paths.cmsFeedCreate.slice(1), // remove leading slash for matching
-    subjectType: "COLLECTION",
-    publishedAt: "2024-01-01T00:00:00Z",
-    expiredAt: null,
-    createdAt: "2024-01-01T00:00:00Z",
-    updatedAt: "2024-01-01T00:00:00Z",
-    components: [feedCreateComponent],
-  },
-  {
-    id: 4000,
-    path: paths.cmsFeedUpdate.slice(1), // remove leading slash for matching
-    subjectType: "SINGLE",
-    publishedAt: "2024-01-01T00:00:00Z",
-    expiredAt: null,
-    createdAt: "2024-01-01T00:00:00Z",
-    updatedAt: "2024-01-01T00:00:00Z",
-    components: [feedUpdateComponent],
-  },
-  {
-    id: 5000,
-    path: paths.cmsItemsList.slice(1), // remove leading slash for matching
-    subjectType: "COLLECTION",
-    publishedAt: "2024-01-01T00:00:00Z",
-    expiredAt: null,
-    createdAt: "2024-01-01T00:00:00Z",
-    updatedAt: "2024-01-01T00:00:00Z",
-    components: [itemListComponent],
-  },
-  {
-    id: 6000,
-    path: paths.cmsItemCreate.slice(1), // remove leading slash for matching
-    subjectType: "COLLECTION",
-    publishedAt: "2024-01-01T00:00:00Z",
-    expiredAt: null,
-    createdAt: "2024-01-01T00:00:00Z",
-    updatedAt: "2024-01-01T00:00:00Z",
-    components: [itemCreateComponent],
-  },
-  {
-    id: 7000,
-    path: paths.cmsItemUpdate.slice(1), // remove leading slash for matching
-    subjectType: "SINGLE",
-    publishedAt: "2024-01-01T00:00:00Z",
-    expiredAt: null,
-    createdAt: "2024-01-01T00:00:00Z",
-    updatedAt: "2024-01-01T00:00:00Z",
-    components: [itemUpdateComponent],
-  },
-];
-
-export default routes;
+} as TComponent;

@@ -8,6 +8,7 @@ import queryClient from "@/utils/queryClient";
 import { RateLimitError, UnderConstructionError } from "@/utils/errors";
 import { isAxiosError } from "axios";
 import processFeed from "@/utils/processFeed";
+import { ClientTypeName } from "@/network/clients/type";
 
 type FeedResult = GetFeedWithIncludesResponse | unknown;
 type ItemResult = GetItemWithIncludesResponse | unknown;
@@ -46,7 +47,11 @@ export const Route = createFileRoute("/$")({
         throw new UnderConstructionError();
       }
 
-      return { feed: processedFeed, headerHero };
+      return {
+        feed: processedFeed,
+        headerHero,
+        renderFor: "app" as ClientTypeName,
+      };
     }
 
     rejectIfNotFound(collectionResult);
@@ -95,6 +100,7 @@ export const Route = createFileRoute("/$")({
       feed: processedFeed,
       headerHero,
       item,
+      renderFor: "app" as ClientTypeName,
     };
   },
   component: RouteComponent,
