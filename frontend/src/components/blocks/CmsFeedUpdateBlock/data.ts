@@ -8,7 +8,7 @@ import {
   BlockComponentStandardProps,
   BlockComponentDataReturnType,
 } from "@/components/blocks/Block";
-import { NotFoundError } from "@/utils/errors";
+import handleBlockError from "@/utils/handleBlockError";
 
 const variants = {
   default: {
@@ -37,13 +37,13 @@ function useFeedUpdateBlockData({
   });
 
   if (getFeed.error) {
-    throw new NotFoundError();
+    handleBlockError(getFeed.error);
   }
   if (getFeedComponents.error) {
-    throw new NotFoundError();
+    handleBlockError(getFeedComponents.error);
   }
   if (getComponentTypes.error) {
-    throw new NotFoundError();
+    handleBlockError(getComponentTypes.error);
   }
 
   return {

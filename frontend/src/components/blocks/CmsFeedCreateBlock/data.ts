@@ -5,6 +5,7 @@ import {
   BlockComponentDataReturnType,
   BlockData,
 } from "@/components/blocks/Block";
+import { UnauthorizedError } from "@/utils/errors";
 
 const variants = {
   default: {
@@ -14,8 +15,6 @@ const variants = {
 
 function useFeedCreateBlockData({
   component,
-  params,
-  path,
   critical,
 }: BlockComponentStandardProps): UseFeedCreateBlockDataReturnType {
   const { id, name, propertyValues } = component;
@@ -27,12 +26,7 @@ function useFeedCreateBlockData({
   const isLoggedIn = isAuthenticated();
 
   if (!isLoggedIn) {
-    return {
-      type: "error" as const,
-      error: "User is not authenticated",
-      params,
-      path,
-    };
+    throw new UnauthorizedError();
   }
 
   return {

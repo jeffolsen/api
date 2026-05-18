@@ -6,6 +6,7 @@ import {
 } from "@/components/blocks/Block";
 import { keepPreviousData } from "@tanstack/react-query";
 import { useGetItems } from "@/network/item/useGetItems";
+import { NotFoundError } from "@/utils/errors";
 
 const variants = {
   alpha: {
@@ -27,8 +28,6 @@ const variants = {
 
 function useCuratedListBlockData({
   component,
-  params,
-  path,
   critical,
   renderFor = "app",
 }: BlockComponentStandardProps): UseCuratedListBlockDataReturnType {
@@ -49,12 +48,7 @@ function useCuratedListBlockData({
   });
 
   if (items.error) {
-    return {
-      type: "error" as const,
-      error: "Failed to load item data",
-      params,
-      path,
-    };
+    throw new NotFoundError();
   }
 
   return {

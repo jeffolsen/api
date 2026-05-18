@@ -7,6 +7,7 @@ import {
 import { keepPreviousData } from "@tanstack/react-query";
 import { useGetItems } from "@/network/item/useGetItems";
 import { TTagName } from "@/network/tag/types";
+import { NotFoundError } from "@/utils/errors";
 
 const variants = {
   alpha: {
@@ -25,8 +26,6 @@ const variants = {
 
 function useTeaserGridBlockData({
   component,
-  params,
-  path,
   critical,
   renderFor = "app",
 }: BlockComponentStandardProps): UseTeaserGridBlockDataReturnType {
@@ -46,12 +45,7 @@ function useTeaserGridBlockData({
   });
 
   if (items.error) {
-    return {
-      type: "error" as const,
-      error: "Failed to load item data",
-      params,
-      path,
-    };
+    throw new NotFoundError();
   }
 
   return {

@@ -20,22 +20,12 @@ const variants = {
 
 function usePolicyBlockData({
   component,
-  params,
-  path,
 }: BlockComponentStandardProps): UsePolicyBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
   const { variant, isPrimaryContent } = propertyValues as PropertyValues;
 
   const blockSettings = variants[variant] || variants["unimplemented"];
-
-  if (!blockSettings || !blockSettings.component)
-    return {
-      type: "error" as const,
-      error: "Failed to find policy",
-      params,
-      path,
-    };
 
   return {
     type: "success" as const,

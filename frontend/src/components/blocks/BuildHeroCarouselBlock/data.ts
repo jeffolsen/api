@@ -6,6 +6,7 @@ import {
 } from "@/components/blocks/Block";
 import { keepPreviousData } from "@tanstack/react-query";
 import { useGetItems } from "@/network/item/useGetItems";
+import handleBlockError from "@/utils/handleBlockError";
 
 const variants = {
   alpha: {
@@ -27,8 +28,6 @@ const variants = {
 
 function useHeroCarouselBlockData({
   component,
-  params,
-  path,
   critical,
   renderFor = "app",
 }: BlockComponentStandardProps): UseHeroCarouselBlockDataReturnType {
@@ -55,12 +54,7 @@ function useHeroCarouselBlockData({
   });
 
   if (items.error) {
-    return {
-      type: "error" as const,
-      error: "Failed to load item data",
-      params,
-      path,
-    };
+    handleBlockError(items.error);
   }
 
   return {

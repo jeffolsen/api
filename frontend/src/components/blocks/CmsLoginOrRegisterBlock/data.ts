@@ -17,8 +17,6 @@ function useLoginOrRegisterBlockData({
 }: BlockComponentStandardProps): UseLoginOrRegisterBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  console.log("useLoginOrRegisterBlockData", component);
-
   const { variant, isPrimaryContent } = propertyValues as PropertyValues;
 
   const blockSettings = variants[variant] || variants["default"];

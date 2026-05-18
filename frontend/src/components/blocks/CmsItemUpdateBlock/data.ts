@@ -5,7 +5,7 @@ import {
   BlockComponentStandardProps,
   BlockComponentDataReturnType,
 } from "@/components/blocks/Block";
-import { NotFoundError } from "@/utils/errors";
+import handleBlockError from "@/utils/handleBlockError";
 
 const variants = {
   default: {
@@ -28,7 +28,7 @@ function useItemUpdateBlockData({
   const getItem = useGetItemById(itemId);
 
   if (getItem.error) {
-    throw new NotFoundError();
+    handleBlockError(getItem.error);
   }
 
   return {

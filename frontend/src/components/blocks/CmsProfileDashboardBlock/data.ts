@@ -1,11 +1,13 @@
 import { useGetAuthenticatedProfile } from "@/network/profile/useGetAuthenticatedProfile";
 import {
   BlockComponentStandardProps,
-  BlockStandardFailedDataReturnType,
   BlockComponentDataReturnType,
   BlockProps,
   BlockData,
 } from "@/components/blocks/Block";
+import { useGetProfileVerificationCodes } from "@/network/verificationCode/useGetProfileVerificationCodes";
+import { useGetProfilesSessions } from "@/network/session";
+import handleBlockError from "@/utils/handleBlockError";
 
 const variants = {
   default: {
@@ -15,8 +17,6 @@ const variants = {
 
 function useProfileDashboardBlockData({
   component,
-  params,
-  path,
   critical,
 }: BlockComponentStandardProps): UseProfileDashboardBlockDataReturnType {
   const { id, name, propertyValues } = component;
@@ -26,14 +26,17 @@ function useProfileDashboardBlockData({
   const blockSettings = variants[variant] || variants["default"];
 
   const profile = useGetAuthenticatedProfile();
+  const verificationCodes = useGetProfileVerificationCodes();
+  const sessions = useGetProfilesSessions();
 
   if (profile.error) {
-    return {
-      type: "error" as const,
-      error: "Failed to fetch profile data",
-      params,
-      path,
-    } as BlockStandardFailedDataReturnType;
+    handleBlockError(profile.error);
+  }
+  if (verificationCodes.error) {
+    handleBlockError(verificationCodes.error);
+  }
+  if (sessions.error) {
+    handleBlockError(sessions.error);
   }
 
   return {
@@ -46,7 +49,12 @@ function useProfileDashboardBlockData({
       },
       name,
     },
-    blockData: { id, profileData: profile },
+    blockData: {
+      id,
+      profileData: profile,
+      sessionsData: sessions,
+      verificationCodeData: verificationCodes,
+    },
   };
 }
 
@@ -62,6 +70,8 @@ type PropertyValues = {
 type BlockSettings = (typeof variants)[VariantNames];
 type LocalBlockData = {
   profileData: ReturnType<typeof useGetAuthenticatedProfile>;
+  sessionsData: ReturnType<typeof useGetProfilesSessions>;
+  verificationCodeData: ReturnType<typeof useGetProfileVerificationCodes>;
 };
 
 export type UseProfileDashboardBlockProps = BlockProps<BlockSettings>;

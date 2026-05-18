@@ -210,6 +210,7 @@ const GammaCard = ({
 }) => {
   const link = getItemLink(feed, item);
   const tags = item?.tags.map(({ tag }) => tag) ?? [];
+  const linkLabel = getLinkLabel(link);
 
   return (
     <ScrollInFade
@@ -220,7 +221,7 @@ const GammaCard = ({
     >
       <div
         className={clsx([
-          "card-body  text-base-content",
+          "card-body text-base-content",
           theme === "alpha" && "gap-5",
           theme === "beta" && " gap-5",
         ])}
@@ -243,15 +244,15 @@ const GammaCard = ({
             {item.description}
           </Text>
         )}
-        {item.description &&
-          (item.richContent?.content as unknown as JSONContent) && (
-            <hr
-              className={clsx([
-                "border-t border-base-content border-[1.5px]",
-                theme === "beta" && "mt-4 mb-8",
-              ])}
-            />
-          )}
+        {(item.description ||
+          (item.richContent?.content as unknown as JSONContent)) && (
+          <hr
+            className={clsx([
+              "border-t border-base-content border-[1.5px]",
+              theme === "beta" && "mt-4 mb-8",
+            ])}
+          />
+        )}
         {(item.richContent?.content as unknown as JSONContent) && (
           <RichContent richContent={item.richContent} />
         )}
@@ -259,8 +260,7 @@ const GammaCard = ({
         <div
           className={clsx([
             "flex flex-wrap gap-3",
-            theme === "alpha" && "justify-start",
-            theme === "beta" && "justify-center",
+            (theme === "alpha" || theme === "beta") && "justify-start",
           ])}
         >
           {tags.map((tag: TTag) => (
@@ -272,10 +272,18 @@ const GammaCard = ({
             </div>
           ))}
         </div>
+
         {link && (
-          <Link as="Link" to={link}>
-            Go <MoveRight />
-          </Link>
+          <div className="card-actions">
+            <Link
+              to={link}
+              linkColor="accent"
+              size="xl"
+              className={"flex gap-2 items-center uppercase bold flex-none"}
+            >
+              {!linkLabel ? "Go there" : `${linkLabel}`} <MoveRight />
+            </Link>
+          </div>
         )}
       </div>
     </ScrollInFade>

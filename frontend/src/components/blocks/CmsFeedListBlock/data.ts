@@ -9,7 +9,7 @@ import {
 import { useSearchParam } from "@/hooks/useSearchParam";
 import { TFeedSort, TSubjectType } from "@/network/feed/types";
 import { useGetFeeds } from "@/network/feed/useGetFeeds";
-import { NotFoundError, UnauthorizedError } from "@/utils/errors";
+import handleBlockError from "@/utils/handleBlockError";
 
 const variants = {
   default: {
@@ -46,11 +46,11 @@ function useFeedListBlockData({
   );
 
   if (profile.error) {
-    throw new UnauthorizedError();
+    handleBlockError(profile.error);
   }
 
   if (feeds.error) {
-    throw new NotFoundError();
+    handleBlockError(feeds.error);
   }
 
   return {

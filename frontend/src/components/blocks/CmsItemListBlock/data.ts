@@ -10,7 +10,7 @@ import {
   BlockData,
 } from "@/components/blocks/Block";
 import { useSearchParam } from "@/hooks/useSearchParam";
-import { NotFoundError, UnauthorizedError } from "@/utils/errors";
+import handleBlockError from "@/utils/handleBlockError";
 
 const variants = {
   default: {
@@ -48,11 +48,11 @@ function useItemListBlockData({
   });
 
   if (profile.error) {
-    throw new UnauthorizedError();
+    handleBlockError(profile.error);
   }
 
   if (items.error) {
-    throw new NotFoundError();
+    handleBlockError(items.error);
   }
 
   return {

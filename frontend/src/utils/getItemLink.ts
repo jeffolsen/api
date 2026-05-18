@@ -11,20 +11,17 @@ export const getLinkLabel = (link: string | null) => {
 
   if (linkFragments.length < 1) return null;
 
-  const lastItem = linkFragments.pop();
+  let lastItem = linkFragments.pop();
 
-  // numbers are ids so this is a link to single subject
+  // numbers are ids
   if (!isNaN(parseFloat(lastItem as string))) {
     // there will be at least one more fragment
-    const lastItem = linkFragments.pop();
-
-    if (!lastItem) return null;
-
-    return lastItem;
+    lastItem = linkFragments.pop();
   }
 
   if (!lastItem) return null;
 
-  return lastItem;
+  return lastItem.replace(/[-\d]+/g, " ").trim();
 };
+
 export default getItemLink;

@@ -2,7 +2,6 @@ import BasicCard from "@/components/cards/BasicCard";
 import SectionHeading from "@/components/partials/SectionHeading";
 import { useGetProfileVerificationCodes } from "@/network/verificationCode/useGetProfileVerificationCodes";
 import Grid from "@/components/common/Grid";
-import Loading from "@/components/common/Loading";
 import DropDownMenu, { DropDownItem } from "@/components/common/DropDownMenu";
 import { useCallback, useMemo, useState } from "react";
 import dayjs, { longDate, techDatetime } from "@/utils/dayjs";
@@ -13,12 +12,14 @@ type VerificationCode = {
   createdAt: string;
 };
 
-function LoggedInCodesSection() {
-  const getVerificationCodes = useGetProfileVerificationCodes();
-
+function LoggedInCodesSection({
+  verificationCodeData,
+}: {
+  verificationCodeData: ReturnType<typeof useGetProfileVerificationCodes>;
+}) {
   const verificationCodes = useMemo(
-    () => getVerificationCodes?.data?.codes || [],
-    [getVerificationCodes.data],
+    () => verificationCodeData?.data?.codes || [],
+    [verificationCodeData.data],
   );
 
   const today = useMemo(
@@ -53,9 +54,7 @@ function LoggedInCodesSection() {
     return [];
   }, [verificationCodes, today]);
 
-  if (getVerificationCodes.isLoading) {
-    return <Loading />;
-  }
+  if (verificationCodeData.isLoading) return null;
 
   return (
     <div className="flex flex-col gap-4">

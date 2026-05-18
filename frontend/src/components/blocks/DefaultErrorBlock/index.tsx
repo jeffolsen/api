@@ -129,7 +129,7 @@ function FourTwentyNineBlock({
 }) {
   return (
     <Block {...blockProps}>
-      <div className="text-6xl">🐢</div>
+      <div className="text-6xl text-center">🐢</div>
       <Text textSize="md" className="text-center">
         You're making requests too quickly. Wait a moment and try again.
       </Text>

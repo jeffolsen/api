@@ -22,11 +22,16 @@ function LogoutAllModalContent() {
   );
 }
 
-function LoggedInSessionSection() {
-  const getSessions = useGetProfilesSessions();
-  const sessions = getSessions?.data?.sessions || [];
-
+function LoggedInSessionSection({
+  sessionsData,
+}: {
+  sessionsData: ReturnType<typeof useGetProfilesSessions>;
+}) {
   const [openLogoutAllModal, setOpenLogoutAllModal] = useState(false);
+
+  if (sessionsData.isLoading) return null;
+
+  const sessions = sessionsData?.data?.sessions || [];
 
   const description = "This lists all your active sessions across devices.";
 
