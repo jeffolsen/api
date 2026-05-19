@@ -6,7 +6,7 @@ import {
 } from "@/components/blocks/Block";
 import { keepPreviousData } from "@tanstack/react-query";
 import { useGetItems } from "@/network/item/useGetItems";
-import { NotFoundError } from "@/utils/errors";
+import handleBlockError from "@/utils/handleBlockError";
 
 const variants = {
   alpha: {
@@ -48,7 +48,7 @@ function useCuratedListBlockData({
   });
 
   if (items.error) {
-    throw new NotFoundError();
+    handleBlockError(items.error);
   }
 
   return {

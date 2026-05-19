@@ -7,7 +7,7 @@ import {
 import { keepPreviousData } from "@tanstack/react-query";
 import { useGetItems } from "@/network/item/useGetItems";
 import { TTagName } from "@/network/tag/types";
-import { NotFoundError } from "@/utils/errors";
+import handleBlockError from "@/utils/handleBlockError";
 
 const variants = {
   alpha: {
@@ -45,7 +45,7 @@ function useTeaserGridBlockData({
   });
 
   if (items.error) {
-    throw new NotFoundError();
+    handleBlockError(items.error);
   }
 
   return {
