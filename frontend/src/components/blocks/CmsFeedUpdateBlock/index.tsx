@@ -16,7 +16,7 @@ import { ScheduleStatus } from "@/components/inputs/FormSubmitAndPublish";
 import { TComponent } from "@/network/component/types";
 import {
   TComponentType,
-  GetComponentTypesResponse,
+  TGetComponentTypesResponse,
 } from "@/network/componentType/types";
 import { useMemo, useState } from "react";
 import Button from "@/components/common/Button";
@@ -184,7 +184,7 @@ function CmsFeedUpdateBlock({
               })
             }
             componentTypes={
-              (getComponentTypes.data as GetComponentTypesResponse)
+              (getComponentTypes.data as TGetComponentTypesResponse)
                 ?.componentTypes || []
             }
           />

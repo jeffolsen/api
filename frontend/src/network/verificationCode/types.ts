@@ -56,3 +56,8 @@ export type RequestDestroyApiKeyInput = {
   email: string;
   password: string;
 };
+
+export type TVerificationCode = {
+  type: string;
+  createdAt: string;
+};

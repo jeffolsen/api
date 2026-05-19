@@ -20,7 +20,7 @@ export type TComponentTypesQueryParams = {
   subjectType?: TSubjectType;
 };
 
-export type GetComponentTypesResponse = {
+export type TGetComponentTypesResponse = {
   componentTypes: TComponentType[];
 };
 

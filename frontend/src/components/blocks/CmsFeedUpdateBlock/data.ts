@@ -1,4 +1,4 @@
-import { useGetComponentTypes } from "@/network/componentType/useGetComponentTypes";
+import { useGetAppComponentTypes } from "@/network/app/componentType";
 import { TSubjectType } from "@/network/feed/types";
 import { useGetFeedById } from "@/network/feed/useGetFeedById";
 import { useGetFeedComponents } from "@/network/feed/useGetFeedComponents";
@@ -30,7 +30,7 @@ function useFeedUpdateBlockData({
   const feedId = parseInt(params?.id || "");
   const getFeed = useGetFeedById(feedId);
   const getFeedComponents = useGetFeedComponents(feedId);
-  const getComponentTypes = useGetComponentTypes({
+  const getComponentTypes = useGetAppComponentTypes({
     ...(getFeed.data?.feed?.subjectType === "COLLECTION" && {
       subjectType: getFeed.data?.feed?.subjectType as TSubjectType,
     }),
@@ -78,7 +78,7 @@ type BlockSettings = (typeof variants)[VariantNames];
 type LocalBlockData = {
   feedData: ReturnType<typeof useGetFeedById>;
   feedComponentsData: ReturnType<typeof useGetFeedComponents>;
-  componentTypesData: ReturnType<typeof useGetComponentTypes>;
+  componentTypesData: ReturnType<typeof useGetAppComponentTypes>;
 };
 
 export type UseFeedUpdateBlockProps = BlockProps<BlockSettings>;
