@@ -9,7 +9,7 @@ export const cmsPaths = {
   cmsItemsList: "/cms/items",
   cmsItemCreate: "/cms/items/new",
   cmsItemUpdate: "/cms/items/$id",
-  cmsPreview: "/cms/preview",
+  cmsPreview: "/cms/feeds/preview",
 } as const;
 
 export const defaultPaths = {

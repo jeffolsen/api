@@ -8,7 +8,7 @@ function HeaderHero() {
   const data = useRouterState({
     select: (s) =>
       s.matches.find(
-        (m) => m.routeId === "/$" || m.routeId === "/cms/_auth/preview/$",
+        (m) => m.routeId === "/$" || m.routeId === "/cms/_auth/feeds/preview/$",
       )?.loaderData,
   });
   const hero = data?.headerHero;

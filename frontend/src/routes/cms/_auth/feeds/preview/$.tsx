@@ -1,7 +1,7 @@
 import PageResolver from "@/pages/PageResolver";
 import { createFileRoute, useLocation } from "@tanstack/react-router";
 import { queryCmsFeedByPath } from "@/network/cms/feed";
-import { queryCmsItemBySlug } from "@/network/cms/item";
+import { queryCmsItemBySlug, queryCmsAnyItem, PREVIEW_ITEM_SENTINEL } from "@/network/cms/item";
 import { GetFeedWithIncludesResponse } from "@/network/feed/types";
 import { GetItemWithIncludesResponse } from "@/network/item/types";
 import queryClient from "@/utils/queryClient";
@@ -29,7 +29,7 @@ const rejectIfNotFound = (error: unknown): void => {
     });
 };
 
-export const Route = createFileRoute("/cms/_auth/preview/$")({
+export const Route = createFileRoute("/cms/_auth/feeds/preview/$")({
   loader: async ({ params }) => {
     const path = params._splat || "home";
 
@@ -62,12 +62,16 @@ export const Route = createFileRoute("/cms/_auth/preview/$")({
     const singleSubjectPath = path.substring(0, lastSlash);
     const itemSlug = path.substring(lastSlash + 1);
 
+    const isPreview = itemSlug === PREVIEW_ITEM_SENTINEL;
+
     const [feedResult, itemResult]: [FeedResult, ItemResult] =
       await Promise.all([
         queryCmsFeedByPath(queryClient, singleSubjectPath, "SINGLE").catch(
           (e) => e,
         ),
-        queryCmsItemBySlug(queryClient, itemSlug).catch((e) => e),
+        isPreview
+          ? queryCmsAnyItem(queryClient).catch((e) => e)
+          : queryCmsItemBySlug(queryClient, itemSlug).catch((e) => e),
       ]);
 
     rejectIfNotFound(feedResult);
@@ -82,12 +86,14 @@ export const Route = createFileRoute("/cms/_auth/preview/$")({
 
     const feed = feedResult.feed;
     const item = itemResult.item;
-    const feedTagNames = new Set(feed.tags.map((t) => t.tag.name));
 
-    if (
-      !item.tags.map((t) => t.tag.name).some((name) => feedTagNames.has(name))
-    ) {
-      throw new Response("Not found", { status: 404 });
+    if (!isPreview) {
+      const feedTagNames = new Set(feed.tags.map((t) => t.tag.name));
+      if (
+        !item.tags.map((t) => t.tag.name).some((name) => feedTagNames.has(name))
+      ) {
+        throw new Response("Not found", { status: 404 });
+      }
     }
 
     const { processedFeed, headerHero } = processFeed(feed);

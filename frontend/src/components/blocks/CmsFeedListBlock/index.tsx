@@ -37,10 +37,7 @@ import useFeedListBlockData, {
   UseFeedUpdateBlockProps,
 } from "@/components/blocks/CmsFeedListBlock/data";
 import { paths } from "@/config/routes";
-import { GetItemsResponse } from "@/network/item/types";
-import { useGetItems } from "@/network/item/useGetItems";
 import FetchTransition from "@/components/common/FetchTransition";
-import Tooltip from "@/components/common/Tooltip";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useFeedListBlockData(config);
@@ -117,16 +114,6 @@ function CmsFeedsListBlock({
 
 function FeedCard({ feed }: { feed: TFeedWithIncludes }) {
   const { id, path, subjectType, publishedAt, expiredAt } = feed;
-  // TODO move this into the data fetch
-  const getTestItem = useGetItems({
-    clientType: "user",
-    queryParams: {
-      tags: feed.tags.map((t) => t.tag.name),
-      pageSize: 1,
-    },
-  });
-
-  const testItem = (getTestItem.data as GetItemsResponse)?.items?.[0];
 
   return (
     <EmptyCard>
@@ -150,26 +137,19 @@ function FeedCard({ feed }: { feed: TFeedWithIncludes }) {
             <ScheduleStatus publishedAt={publishedAt} expiredAt={expiredAt} />
           </Text>
           <div className="flex gap-1 items-center">
-            {feed.subjectType === "COLLECTION" || testItem ? (
-              <Button
-                as="Link"
-                to={
-                  paths.cmsPreview +
-                  "/" +
-                  feed.path +
-                  (feed.subjectType === "SINGLE" ? `/${testItem?.slug}` : "")
-                }
-                size="md"
-                color="secondary"
-              >
-                Preview
-              </Button>
-            ) : (
-              <Tooltip
-                className="pr-3"
-                text="You need an item with at least one matching tag as the single subject feed to preview it."
-              />
-            )}
+            <Button
+              as="Link"
+              to={
+                paths.cmsPreview +
+                "/" +
+                feed.path +
+                (feed.subjectType === "SINGLE" ? "/item" : "")
+              }
+              size="md"
+              color="secondary"
+            >
+              Preview
+            </Button>
             <Button
               as="Link"
               to={paths.cmsFeedUpdate.replace("$id", id.toString())}

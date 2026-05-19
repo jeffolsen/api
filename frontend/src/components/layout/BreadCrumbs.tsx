@@ -9,7 +9,7 @@ function BreadCrumbs() {
   const path = location.pathname.replace(/^\/|\/$/g, "");
   const preview = paths.cmsPreview.replace(/^\/|\/$/g, "");
   const pathSegments = path.split("/").filter(Boolean);
-  const crumbs = ["home"];
+  const crumbs = [{ label: "home", path: "/" }];
   let accumulatedPath = "";
 
   pathSegments.forEach((_, index) => {
@@ -28,11 +28,16 @@ function BreadCrumbs() {
         accumulatedPath = seg;
       }
     });
-    crumbs.push(accumulatedPath);
+
+    const segments = accumulatedPath.split("/");
+    crumbs.push({
+      label: segments[segments.length - 1],
+      path: accumulatedPath,
+    });
   });
 
   return (
-    <div className="breadcrumbs text-sm">
+    <div className="breadcrumbs text-sm max-w-full">
       <ul className="flex md:gap-8 justify-center">
         {crumbs.map((crumb, index) => (
           <li
@@ -45,19 +50,25 @@ function BreadCrumbs() {
             <>
               {index < crumbs.length - 1 ? (
                 <Link
-                  to={`/${crumb === "home" ? "" : crumb}`}
-                  className={"font-extrabold"}
+                  to={`/${crumb.path}`}
+                  className={"font-extrabold whitespace-nowrap"}
                   size="md"
                 >
-                  {crumb.replaceAll("/", ` ${String.fromCharCode(8226)} `)}
+                  {crumb.label.replaceAll(
+                    "/",
+                    ` ${String.fromCharCode(8226)} `,
+                  )}
                 </Link>
               ) : (
                 <Text
                   as="span"
                   textSize="md"
-                  className="underline underline-offset-4 font-extrabold"
+                  className="underline underline-offset-4 font-extrabold whitespace-nowrap!"
                 >
-                  {crumb.replaceAll("/", ` ${String.fromCharCode(8226)} `)}
+                  {crumb.label.replaceAll(
+                    "/",
+                    ` ${String.fromCharCode(8226)} `,
+                  )}
                 </Text>
               )}
             </>
