@@ -1,8 +1,8 @@
 import { SignOptions } from "jsonwebtoken";
 
 // resource limits
-export const MAX_DAILY_SYSTEM_EMAILS = 2800;
-export const MAX_MONTHLY_SYSTEM_EMAILS = 90;
+export const MAX_DAILY_SYSTEM_EMAILS = 80;
+export const MAX_MONTHLY_SYSTEM_EMAILS = 25000;
 export const MAX_PROFILE_SESSIONS = 10;
 export const MAX_PROFILE_CODES = 30;
 export const MAX_PROFILE_API_KEYS = 2;
