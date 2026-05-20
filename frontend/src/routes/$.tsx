@@ -33,11 +33,10 @@ export const Route = createFileRoute("/$")({
   loader: async ({ params }) => {
     const path = params._splat || "home";
 
-    const collectionResult: FeedResult = await queryAppFeedByPath(
-      queryClient,
+    const collectionResult: FeedResult = await queryAppFeedByPath(queryClient, {
       path,
-      "COLLECTION",
-    ).catch((e) => e);
+      subjectType: "COLLECTION",
+    }).catch((e) => e);
 
     if (isSuccess<GetFeedWithIncludesResponse>(collectionResult)) {
       const feed = collectionResult.feed;
@@ -64,9 +63,10 @@ export const Route = createFileRoute("/$")({
 
     const [feedResult, itemResult]: [FeedResult, ItemResult] =
       await Promise.all([
-        queryAppFeedByPath(queryClient, singleSubjectPath, "SINGLE").catch(
-          (e) => e,
-        ),
+        queryAppFeedByPath(queryClient, {
+          path: singleSubjectPath,
+          subjectType: "SINGLE",
+        }).catch((e) => e),
         queryAppItemBySlug(queryClient, itemSlug).catch((e) => e),
       ]);
 

@@ -4,7 +4,6 @@ import {
   GetFeedWithIncludesResponse,
   FEEDS_KEY,
   TFeedsParams,
-  TSubjectType,
   TFeedParams,
 } from "@/network/feed/types";
 import { fetchFeedByPath, fetchFeeds } from "@/network/feed/fetchers";
@@ -60,36 +59,34 @@ export const useGetAppFeeds = (
  * get feed by path
  */
 
-export const fetchAppFeedByPath = (path: string, subjectType: TSubjectType) =>
-  fetchFeedByPath(client, path, subjectType);
+export const fetchAppFeedByPath = (queryParams: TFeedParams) =>
+  fetchFeedByPath(client, { ...queryParams, liveOnly: true });
 
 export const queryAppFeedByPath = (
   queryClient: QueryClient,
-  path: string,
-  subjectType: TSubjectType,
+  queryParams: TFeedParams,
   options?: Omit<
     UseQueryOptions<GetFeedWithIncludesResponse>,
     "queryKey" | "queryFn"
   >,
 ) =>
   queryClient.fetchQuery({
-    queryKey: appFeedsQueryKey({ path, subjectType }),
-    queryFn: () => fetchAppFeedByPath(path, subjectType),
+    queryKey: appFeedsQueryKey(queryParams),
+    queryFn: () => fetchAppFeedByPath(queryParams),
     ...appFeedsCacheOptions,
     ...options,
   });
 
 export const useGetAppFeedByPath = (
-  path: string,
-  subjectType: TSubjectType,
+  queryParams: TFeedParams,
   options?: Omit<
     UseQueryOptions<GetFeedWithIncludesResponse>,
     "queryKey" | "queryFn"
   >,
 ) =>
   useQuery({
-    queryKey: appFeedsQueryKey({ path, subjectType }),
-    queryFn: () => fetchAppFeedByPath(path, subjectType),
+    queryKey: appFeedsQueryKey(queryParams),
+    queryFn: () => fetchAppFeedByPath(queryParams),
     ...appFeedsCacheOptions,
     ...options,
   });

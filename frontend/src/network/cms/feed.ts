@@ -1,20 +1,17 @@
 import { QueryClient } from "@tanstack/react-query";
 import api, { CMS_KEY } from "@/network/clients/api";
-import { FEEDS_KEY, TSubjectType } from "@/network/feed/types";
+import { FEEDS_KEY, TFeedParams } from "@/network/feed/types";
 import { fetchFeedByPath } from "@/network/feed/fetchers";
 
-export const cmsFeedByPathQueryKey = (
-  path: string,
-  subjectType: TSubjectType,
-) => [CMS_KEY, FEEDS_KEY, path, subjectType] as const;
+export const cmsFeedByPathQueryKey = (queryParams: TFeedParams) =>
+  [CMS_KEY, FEEDS_KEY, queryParams] as const;
 
 export const queryCmsFeedByPath = (
   queryClient: QueryClient,
-  path: string,
-  subjectType: TSubjectType,
+  queryParams: TFeedParams,
 ) =>
   queryClient.fetchQuery({
-    queryKey: cmsFeedByPathQueryKey(path, subjectType),
-    queryFn: () => fetchFeedByPath(api, path, subjectType),
+    queryKey: cmsFeedByPathQueryKey(queryParams),
+    queryFn: () => fetchFeedByPath(api, queryParams),
     staleTime: 0,
   });

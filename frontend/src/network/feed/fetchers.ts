@@ -5,17 +5,16 @@ import {
   GetFeedWithIncludesResponse,
   FEED_INCLUDES,
   TFeedsParams,
-  TSubjectType,
+  TFeedParams,
 } from "./types";
 
 export const fetchFeedByPath = (
   client: AxiosInstance,
-  path: string,
-  subjectType: TSubjectType,
+  queryParams: TFeedParams,
 ): Promise<GetFeedWithIncludesResponse> =>
   client
     .get(FEED_PATH_ENDPOINT, {
-      params: { path, includes: FEED_INCLUDES, subjectType },
+      params: { ...queryParams, includes: FEED_INCLUDES },
     })
     .then((r) => r.data);
 

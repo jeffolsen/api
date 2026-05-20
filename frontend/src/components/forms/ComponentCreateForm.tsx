@@ -11,7 +11,7 @@ import { useModifyComponent } from "@/network/component/useModifyComponent";
 import { useUpdateComponent } from "@/network/component/useUpdateComponent";
 import { useDeleteComponent } from "@/network/component/useDeleteComponent";
 import { TComponentType } from "@/network/componentType/types";
-import { useGetComponentTypeById } from "@/network/componentType/useGetComponentTypeById";
+import { useGetAppComponentTypeById } from "@/network/app/componentType";
 import { TFeed } from "@/network/feed/types";
 import { useGetFeedComponents } from "@/network/feed/useGetFeedComponents";
 import {
@@ -115,7 +115,7 @@ function ComponentCreateForm({
   }) {
   const { typeId } = defaultValues;
   const createComponent = useCreateComponent();
-  const componentTypesQuery = useGetComponentTypeById(typeId);
+  const componentTypesQuery = useGetAppComponentTypeById(typeId);
 
   const { inputs: schemaInputs, defaults: schemaDefaults } = useMemo(
     () =>

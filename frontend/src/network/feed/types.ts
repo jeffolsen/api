@@ -29,11 +29,13 @@ export type TFeedsParams = {
   ids?: number[];
   paths?: string[];
   tags?: string[];
+  liveOnly?: boolean;
 } & PaginationParams;
 
 export type TFeedParams = {
-  subjectType?: TSubjectType;
-  path?: string;
+  subjectType: TSubjectType;
+  path: string;
+  liveOnly?: boolean;
 };
 
 export type TFeed = {
