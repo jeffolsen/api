@@ -147,41 +147,8 @@ describe("POST /api/auth/login", () => {
 
   it("should return 404 when no profile matches the provided email", async () => {
     const WRONG_EMAIL = "wrong@email.com";
-    const mockCode: VerificationCode = {
-      id: 1,
-      profileId: MOCK_PROFILE_ID,
-      type: CodeType.LOGIN,
-      value: "$2b$10$hashedcode",
-      userAgent: MOCK_USER_AGENT,
-      usedAt: null,
-      expiredAt: new Date(Date.now() + 1000 * 60 * 60 * 8),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
 
     prismaMock.profile.findUnique.mockResolvedValue(null as unknown as Profile);
-    prismaMock.session.findMany.mockResolvedValue([]);
-
-    // processVerificationCode transaction
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    prismaMock.$transaction.mockImplementationOnce((callback: any) =>
-      callback({
-        verificationCode: {
-          findFirst: jest
-            .fn<(args: unknown) => Promise<VerificationCode | null>>()
-            .mockResolvedValue(mockCode),
-          update: jest
-            .fn<(args: unknown) => Promise<VerificationCode>>()
-            .mockResolvedValue({ ...mockCode, usedAt: new Date() }),
-        },
-        profileReceipt: { update: jest.fn() },
-        session: {
-          create: jest
-            .fn<(args: unknown) => Promise<Session>>()
-            .mockResolvedValue(mockSession as unknown as Session),
-        },
-      }),
-    );
 
     const response = await request(app)
       .post(ENDPOINT)
@@ -193,18 +160,6 @@ describe("POST /api/auth/login", () => {
   });
 
   it("should return 404 when the profile has not consented to terms", async () => {
-    const mockCode: VerificationCode = {
-      id: 1,
-      profileId: MOCK_PROFILE_ID,
-      type: CodeType.LOGIN,
-      value: "$2b$10$hashedcode",
-      userAgent: MOCK_USER_AGENT,
-      usedAt: null,
-      expiredAt: new Date(Date.now() + 1000 * 60 * 60 * 8),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
     const mockProfileWithoutTerms = {
       ...mockProfileWithReceipt,
       profileReceipt: { ...mockProfileReceipt, consentToTermsAt: undefined },
@@ -212,28 +167,6 @@ describe("POST /api/auth/login", () => {
 
     prismaMock.profile.findUnique.mockResolvedValue(
       mockProfileWithoutTerms as unknown as Profile,
-    );
-    prismaMock.session.findMany.mockResolvedValue([]);
-
-    // processVerificationCode transaction
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    prismaMock.$transaction.mockImplementationOnce((callback: any) =>
-      callback({
-        verificationCode: {
-          findFirst: jest
-            .fn<(args: unknown) => Promise<VerificationCode | null>>()
-            .mockResolvedValue(mockCode),
-          update: jest
-            .fn<(args: unknown) => Promise<VerificationCode>>()
-            .mockResolvedValue({ ...mockCode, usedAt: new Date() }),
-        },
-        profileReceipt: { update: jest.fn() },
-        session: {
-          create: jest
-            .fn<(args: unknown) => Promise<Session>>()
-            .mockResolvedValue(mockSession as unknown as Session),
-        },
-      }),
     );
 
     const response = await request(app)
@@ -246,18 +179,6 @@ describe("POST /api/auth/login", () => {
   });
 
   it("should return 404 when the profile has not consented to privacy policy", async () => {
-    const mockCode: VerificationCode = {
-      id: 1,
-      profileId: MOCK_PROFILE_ID,
-      type: CodeType.LOGIN,
-      value: "$2b$10$hashedcode",
-      userAgent: MOCK_USER_AGENT,
-      usedAt: null,
-      expiredAt: new Date(Date.now() + 1000 * 60 * 60 * 8),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
     const mockProfileWithoutPrivacy = {
       ...mockProfileWithReceipt,
       profileReceipt: { ...mockProfileReceipt, consentToPrivacyAt: undefined },
@@ -265,28 +186,6 @@ describe("POST /api/auth/login", () => {
 
     prismaMock.profile.findUnique.mockResolvedValue(
       mockProfileWithoutPrivacy as unknown as Profile,
-    );
-    prismaMock.session.findMany.mockResolvedValue([]);
-
-    // processVerificationCode transaction
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    prismaMock.$transaction.mockImplementationOnce((callback: any) =>
-      callback({
-        verificationCode: {
-          findFirst: jest
-            .fn<(args: unknown) => Promise<VerificationCode | null>>()
-            .mockResolvedValue(mockCode),
-          update: jest
-            .fn<(args: unknown) => Promise<VerificationCode>>()
-            .mockResolvedValue({ ...mockCode, usedAt: new Date() }),
-        },
-        profileReceipt: { update: jest.fn() },
-        session: {
-          create: jest
-            .fn<(args: unknown) => Promise<Session>>()
-            .mockResolvedValue(mockSession as unknown as Session),
-        },
-      }),
     );
 
     const response = await request(app)
@@ -299,18 +198,6 @@ describe("POST /api/auth/login", () => {
   });
 
   it("should return 404 when the profile has not verified age", async () => {
-    const mockCode: VerificationCode = {
-      id: 1,
-      profileId: MOCK_PROFILE_ID,
-      type: CodeType.LOGIN,
-      value: "$2b$10$hashedcode",
-      userAgent: MOCK_USER_AGENT,
-      usedAt: null,
-      expiredAt: new Date(Date.now() + 1000 * 60 * 60 * 8),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
     const mockProfileWithoutAge = {
       ...mockProfileWithReceipt,
       profileReceipt: { ...mockProfileReceipt, verifiedAgeAt: undefined },
@@ -318,28 +205,6 @@ describe("POST /api/auth/login", () => {
 
     prismaMock.profile.findUnique.mockResolvedValue(
       mockProfileWithoutAge as unknown as Profile,
-    );
-    prismaMock.session.findMany.mockResolvedValue([]);
-
-    // processVerificationCode transaction
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    prismaMock.$transaction.mockImplementationOnce((callback: any) =>
-      callback({
-        verificationCode: {
-          findFirst: jest
-            .fn<(args: unknown) => Promise<VerificationCode | null>>()
-            .mockResolvedValue(mockCode),
-          update: jest
-            .fn<(args: unknown) => Promise<VerificationCode>>()
-            .mockResolvedValue({ ...mockCode, usedAt: new Date() }),
-        },
-        profileReceipt: { update: jest.fn() },
-        session: {
-          create: jest
-            .fn<(args: unknown) => Promise<Session>>()
-            .mockResolvedValue(mockSession as unknown as Session),
-        },
-      }),
     );
 
     const response = await request(app)
@@ -498,44 +363,11 @@ describe("POST /api/auth/login", () => {
   });
 
   it("should return 429 when the session limit has been reached", async () => {
-    const mockCode: VerificationCode = {
-      id: 1,
-      profileId: MOCK_PROFILE_ID,
-      type: CodeType.LOGIN,
-      value: "$2b$10$hashedcode",
-      userAgent: MOCK_USER_AGENT,
-      usedAt: null,
-      expiredAt: new Date(Date.now() + 1000 * 60 * 60 * 8),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
     prismaMock.profile.findUnique.mockResolvedValue(
       mockProfileWithReceipt as unknown as Profile,
     );
     prismaMock.session.findMany.mockResolvedValue(
       Array(MAX_PROFILE_SESSIONS).fill(mockSession as unknown as Session),
-    );
-
-    // processVerificationCode transaction
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    prismaMock.$transaction.mockImplementationOnce((callback: any) =>
-      callback({
-        verificationCode: {
-          findFirst: jest
-            .fn<(args: unknown) => Promise<VerificationCode | null>>()
-            .mockResolvedValue(mockCode),
-          update: jest
-            .fn<(args: unknown) => Promise<VerificationCode>>()
-            .mockResolvedValue({ ...mockCode, usedAt: new Date() }),
-        },
-        profileReceipt: { update: jest.fn() },
-        session: {
-          create: jest
-            .fn<(args: unknown) => Promise<Session>>()
-            .mockResolvedValue(mockSession as unknown as Session),
-        },
-      }),
     );
 
     const response = await request(app)

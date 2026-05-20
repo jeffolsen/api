@@ -44,7 +44,7 @@ export const isDailyEmailLimitReached = async () => {
     where: { createdAt: { gte: oneDayAgo() } },
     take: MAX_DAILY_SYSTEM_EMAILS,
   });
-  return codes.length === MAX_DAILY_SYSTEM_EMAILS;
+  return codes.length >= MAX_DAILY_SYSTEM_EMAILS;
 };
 
 export const requestDeleteProfileCode = async (
