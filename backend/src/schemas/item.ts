@@ -158,24 +158,24 @@ const buildIncludeObject = z
       }
       return [];
     },
-    z.array(z.enum(["tags", "images", "dateRanges"])).transform((fields) => ({
-      ...(fields.includes("tags") && { tags: { include: { tag: true } } }),
-      ...(fields.includes("images") && {
-        images: { include: { image: true } },
-      }),
-      ...(fields.includes("dateRanges") && { dateRanges: true }),
-    })),
+    z.array(z.enum(["tags", "images", "dateRanges"])).transform((fields) => {
+      const includeObj: Record<string, boolean> = {};
+      fields.forEach((field) => {
+        includeObj[field] = true;
+      });
+      return includeObj;
+    }),
   )
   .default({});
 
 export const GetItemByIdSchema = z.object({
   id: idStringSchema,
-  includes: buildIncludeObject,
+  include: buildIncludeObject,
 });
 
 export const GetItemBySlugSchema = z.object({
   slug: z.string(MESSAGE_SLUG),
-  includes: buildIncludeObject,
+  include: buildIncludeObject,
 });
 
 export const GetItemsResourcesSchema = z.object({

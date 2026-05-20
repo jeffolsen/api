@@ -38,6 +38,7 @@ export const feedsSortArraySchema = z
   }, "Sort values must be unique");
 
 export const GetAllFeedsQuerySchema = z.object({
+  liveOnly: z.coerce.boolean().default(false),
   ids: z
     .preprocess((val) => {
       if (typeof val === "string") {
@@ -104,6 +105,7 @@ export const GetAllFeedsQuerySchema = z.object({
 });
 
 export const GetFeedIncludesQuerySchema = z.object({
+  liveOnly: z.coerce.boolean().default(false),
   includes: z
     .preprocess(
       (val) => {

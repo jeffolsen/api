@@ -130,7 +130,7 @@ export const getAllItems: RequestHandler<
 export const getItemById: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {
     const { profileId } = req;
-    const { includes: include, id } = GetItemByIdSchema.parse({
+    const { include, id } = GetItemByIdSchema.parse({
       ...req.query,
       ...req.params,
     });
@@ -148,7 +148,7 @@ export const getItemById: RequestHandler = catchErrors(
 export const getItemBySlug: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {
     const { profileId } = req;
-    const { includes: include, slug } = GetItemBySlugSchema.parse({
+    const { include, slug } = GetItemBySlugSchema.parse({
       ...req.query,
       ...req.params,
     });

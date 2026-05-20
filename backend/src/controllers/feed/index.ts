@@ -26,12 +26,32 @@ type GetFeedsQuery = {
   includes?: string;
   page?: number;
   pageSize?: number;
-  published?: boolean;
+  liveOnly?: boolean;
 };
+
+const getWhereLive = () => ({
+  AND: [
+    {
+      publishedAt: { lte: new Date() },
+      OR: [
+        {
+          expiredAt: {
+            equals: null,
+          },
+        },
+        {
+          expiredAt: {
+            gt: new Date(),
+          },
+        },
+      ],
+    },
+  ],
+});
 
 const buildFeedInclude = (
   includes: FeedIncludeField[],
-  published?: boolean,
+  liveOnly?: boolean,
 ): Prisma.FeedInclude | undefined => {
   if (!includes.length) return undefined;
   return {
@@ -43,16 +63,9 @@ const buildFeedInclude = (
     }),
     ...(includes.includes("components") && {
       components:
-        published === true
+        liveOnly === true
           ? {
-              where: {
-                OR: [
-                  { publishedAt: { lte: new Date() } },
-                  { publishedAt: null },
-                  { expiredAt: { gt: new Date() } },
-                  { expiredAt: null },
-                ],
-              },
+              where: getWhereLive(),
             }
           : true,
     }),
@@ -76,10 +89,12 @@ export const getAllFeeds: RequestHandler<
     pageSize,
     searchPath,
     includes,
+    liveOnly,
   } = GetAllFeedsQuerySchema.parse(req.query);
 
   const where = {
     profileId,
+    ...(liveOnly && getWhereLive()),
     ...(searchPath && {
       path: { contains: searchPath },
     }),
@@ -97,7 +112,7 @@ export const getAllFeeds: RequestHandler<
     }),
   };
 
-  const include = buildFeedInclude(includes);
+  const include = buildFeedInclude(includes, liveOnly);
 
   const [feeds, totalCount] = await prismaClient.$transaction([
     prismaClient.feed.findMany({
@@ -113,7 +128,7 @@ export const getAllFeeds: RequestHandler<
 
 type GetFeedByIdQuery = {
   tags?: string;
-  published?: boolean;
+  liveOnly?: boolean;
   includes?: string;
 };
 
@@ -121,11 +136,11 @@ export const getFeedById: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {
     const { profileId } = req;
     const id = idStringSchema.parse(req.params.id);
-    const { includes } = GetFeedIncludesQuerySchema.parse(req.query);
+    const { includes, liveOnly } = GetFeedIncludesQuerySchema.parse(req.query);
 
     const feed = await prismaClient.feed.findFirst({
-      where: { id, profileId },
-      include: buildFeedInclude(includes),
+      where: { id, profileId, ...(liveOnly && getWhereLive()) },
+      include: buildFeedInclude(includes, liveOnly),
     });
 
     throwError(feed, NOT_FOUND, MESSAGE_FEED_NOT_FOUND);
@@ -137,7 +152,7 @@ type GetFeedByPathQuery = {
   path?: string;
   subjectType?: string;
   tags?: string;
-  published?: boolean;
+  liveOnly?: boolean;
   includes?: string;
 };
 
@@ -149,14 +164,19 @@ export const getFeedByPath: RequestHandler<
 > = catchErrors(async (req: Request, res: Response) => {
   const { profileId } = req;
   const { path, subjectType: st } = req.query;
-  const { includes } = GetFeedIncludesQuerySchema.parse(req.query);
+  const { includes, liveOnly } = GetFeedIncludesQuerySchema.parse(req.query);
 
   const feedPath = typeof path === "string" ? path : undefined;
   const subjectType = st === "SINGLE" ? "SINGLE" : "COLLECTION";
 
   const feed = await prismaClient.feed.findFirst({
-    where: { path: feedPath, profileId, subjectType },
-    include: buildFeedInclude(includes),
+    where: {
+      path: feedPath,
+      profileId,
+      subjectType,
+      ...(liveOnly && getWhereLive()),
+    },
+    include: buildFeedInclude(includes, liveOnly),
   });
 
   throwError(feed, NOT_FOUND, MESSAGE_FEED_NOT_FOUND);

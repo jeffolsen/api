@@ -359,6 +359,7 @@ async function handleAdminBaseContentUpserts(profile: Profile) {
             typeId,
             feedId: upsertedFeed.id,
             order: index + 1,
+            publishedAt: new Date(),
             propertyValues: (component.propertyValues ??
               {}) as Prisma.InputJsonValue,
           },
