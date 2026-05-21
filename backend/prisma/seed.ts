@@ -66,7 +66,7 @@ async function handleCreateApiKeys(profileId: number) {
       where: { profileId, slug: PROD_API_SLUG as string },
       update: {
         value: PROD_API_KEY as string,
-        origin: null, // see env
+        origin: null,
       },
       create: {
         profileId,

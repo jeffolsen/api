@@ -4,7 +4,7 @@ services:
     runtime: node
     region: oregon
     plan: free
-    buildCommand: cd frontend && npm install && npm run build && cd ../backend && yarn install && yarn build
+    buildCommand: mkdir -p ~/.ssh && cp /etc/secrets/deploy_key ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519 && ssh-keyscan github.com >> ~/.ssh/known_hosts && cd frontend && npm install && npm run build && cd ../backend && yarn install && yarn build
     preDeployCommand: cd backend && npx prisma migrate deploy
     startCommand: node backend/dist/server.js
     envVars:
