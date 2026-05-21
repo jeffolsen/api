@@ -2,7 +2,7 @@ import { CodeType } from "@db/client";
 import env from "@config/env";
 import resend from "@config/resend";
 import templates from "./templates";
-import { generateApiKeyValue } from "@/services/apiKey";
+// import { generateApiKeyValue } from "@/services/apiKey";
 
 const getSender = () => "onboarding@resend.dev";
 // env.NODE_ENV !== "production" ? "onboarding@resend.dev" : env.EMAIL_SENDER;

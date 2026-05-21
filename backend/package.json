@@ -9,7 +9,7 @@
     "dev": "prisma generate && nodemon --watch src --ext ts --exec 'ts-node -r tsconfig-paths/register --files src/server.ts'",
     "build": "prisma generate && rimraf dist && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "start": "node dist/server.js",
-    "seed": "yarn add git+ssh://git@github.com/jeffolsen/content.git && tsc && prisma db seed",
+    "seed": "yarn add git+ssh://git@github.com/jeffolsen/content.git && npx prisma generate && prisma db seed",
     "sitemap": "ts-node -r tsconfig-paths/register --project prisma/tsconfig.json prisma/generateSitemap.ts",
     "content": "yarn add git+ssh://git@github.com/jeffolsen/content.git",
     "test": "jest",

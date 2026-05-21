@@ -60,7 +60,7 @@ function Footer() {
                 Privacy
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link to="/privacy" size="lg" linkColor="base">
                 Terms
               </Link>
@@ -69,7 +69,7 @@ function Footer() {
               <Link to="/privacy" size="lg" linkColor="base">
                 Cookies
               </Link>
-            </li>
+            </li> */}
           </ul>
         </div>
         <div
@@ -77,10 +77,15 @@ function Footer() {
             "flex-none flex flex-col gap-4 justify-between text-left lg:text-right w-full lg:w-auto pb-8",
           ])}
         >
-          <Link as="a" href="" size="md" linkColor="base">
-            contact@mysite.com
+          <Link
+            as="a"
+            href="mailto:info@meetjeffolsen.com"
+            size="md"
+            linkColor="base"
+          >
+            info@meetjeffolsen.com
           </Link>
-          <Text textSize="md">© 2026 [Your Name]. All Rights Reserved.</Text>
+          <Text textSize="md">© 2026 Jeff Olsen. All Rights Reserved.</Text>
         </div>
       </footer>
     </HeadingLevelProvider>

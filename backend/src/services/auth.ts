@@ -151,7 +151,7 @@ export const sendVerificationCode = async ({
       userAgent,
     });
 
-  const validEmail = sendEmail(email, code, codeType);
+  const validEmail = await sendEmail(email, code, codeType);
   throwError(validEmail, INTERNAL_SERVER_ERROR, MESSAGE_COULD_NOT_SEND_EMAIL);
 
   return await prismaClient.verificationCode.create({

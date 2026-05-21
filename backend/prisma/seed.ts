@@ -291,6 +291,7 @@ async function handleAdminBaseContentUpserts(profile: Profile) {
           },
         },
         update: {
+          publishedAt: new Date(),
           ...(seoTitle && { seoTitle }),
           ...(seoDescription && { seoDescription }),
           ...(seoImage && { seoImage }),
@@ -304,6 +305,7 @@ async function handleAdminBaseContentUpserts(profile: Profile) {
           profileId: profile.id,
           path,
           subjectType,
+          publishedAt: new Date(),
           ...(seoTitle && { seoTitle }),
           ...(seoDescription && { seoDescription }),
           ...(seoImage && { seoImage }),
