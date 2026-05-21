@@ -2,7 +2,6 @@ import { HeadingLevelProvider } from "@/components/common/Heading";
 import Link from "@/components/common/Link";
 import Text from "../common/Text";
 import clsx from "clsx";
-import resume from "@/assets/pdfs/Resume.pdf";
 import { Download } from "lucide-react";
 
 function Footer() {
@@ -46,7 +45,7 @@ function Footer() {
                 size="lg"
                 as="a"
                 linkColor="base"
-                href={resume}
+                href={"/resume.pdf"}
                 className={"flex gap-2"}
                 target="_blank"
               >
