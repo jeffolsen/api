@@ -130,14 +130,16 @@ export const getAllItems: RequestHandler<
 export const getItemById: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {
     const { profileId } = req;
-    const { include, id } = GetItemByIdSchema.parse({
+    const { includes: include, id } = GetItemByIdSchema.parse({
       ...req.query,
       ...req.params,
     });
 
     const item = await prismaClient.item.findUnique({
       where: { id, OR: [{ isPrivate: false }, { authorId: profileId }] },
-      include,
+      include: Object.keys(include).length
+        ? (include as Prisma.ItemInclude)
+        : undefined,
     });
     throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
 
@@ -148,14 +150,16 @@ export const getItemById: RequestHandler = catchErrors(
 export const getItemBySlug: RequestHandler = catchErrors(
   async (req: Request, res: Response) => {
     const { profileId } = req;
-    const { include, slug } = GetItemBySlugSchema.parse({
+    const { includes: include, slug } = GetItemBySlugSchema.parse({
       ...req.query,
       ...req.params,
     });
 
     const item = await prismaClient.item.findUnique({
       where: { slug, OR: [{ isPrivate: false }, { authorId: profileId }] },
-      include,
+      include: Object.keys(include).length
+        ? (include as Prisma.ItemInclude)
+        : undefined,
     });
     throwError(item, NOT_FOUND, MESSAGE_ITEM_NOT_FOUND);
 

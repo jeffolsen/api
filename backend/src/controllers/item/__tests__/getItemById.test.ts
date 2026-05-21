@@ -130,14 +130,14 @@ describe("GET /api/items/:id", () => {
 
     const response = await request(app)
       .get(`${BASE_API_URL}${ITEM_ROUTES}/${mockItem.id}`)
-      .query({ include: "tags" })
+      .query({ includes: "tags" })
       .set("Cookie", getAuthCookie())
       .set("User-Agent", MOCK_USER_AGENT);
 
     expect(find).toHaveBeenCalledWith(
       expect.objectContaining({
         include: expect.objectContaining({
-          tags: true,
+          tags: { include: { tag: true } },
         }),
       }),
     );
@@ -159,14 +159,14 @@ describe("GET /api/items/:id", () => {
 
     const response = await request(app)
       .get(`${BASE_API_URL}${ITEM_ROUTES}/${mockItem.id}`)
-      .query({ include: "images" })
+      .query({ includes: "images" })
       .set("Cookie", getAuthCookie())
       .set("User-Agent", MOCK_USER_AGENT);
 
     expect(find).toHaveBeenCalledWith(
       expect.objectContaining({
         include: expect.objectContaining({
-          images: true,
+          images: { include: { image: true } },
         }),
       }),
     );
@@ -194,7 +194,7 @@ describe("GET /api/items/:id", () => {
 
     const response = await request(app)
       .get(`${BASE_API_URL}${ITEM_ROUTES}/${mockItem.id}`)
-      .query({ include: "dateRanges" })
+      .query({ includes: "dateRanges" })
       .set("Cookie", getAuthCookie())
       .set("User-Agent", MOCK_USER_AGENT);
 

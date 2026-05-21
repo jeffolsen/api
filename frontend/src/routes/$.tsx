@@ -53,9 +53,15 @@ export const Route = createFileRoute("/$")({
       };
     }
 
+    console.log("failed to get collection feed");
+
     rejectIfNotFound(collectionResult);
 
+    console.log("got past rejectIfNotFound");
+
     if (!path.includes("/")) throw new Response("Not found", { status: 404 });
+
+    console.log("got past path.includes(/)", !path.includes("/"));
 
     const lastSlash = path.lastIndexOf("/");
     const singleSubjectPath = path.substring(0, lastSlash);
