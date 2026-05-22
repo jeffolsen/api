@@ -3,111 +3,117 @@
 <!-- Static routes -->
   <url>
     <loc>http://localhost:5173/privacy</loc>
-    <lastmod>2026-05-18</lastmod>
+    <lastmod>2026-05-22</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>http://localhost:5173/terms</loc>
+    <lastmod>2026-05-22</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>http://localhost:5173/cookies</loc>
+    <lastmod>2026-05-22</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>http://localhost:5173/cms</loc>
-    <lastmod>2026-05-18</lastmod>
+    <lastmod>2026-05-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 <!-- Collection routes -->
   <url>
-    <loc>http://localhost:5173/home</loc>
-    <lastmod>2026-05-17</lastmod>
+    <loc>http://localhost:5173/about</loc>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost:5173/cv</loc>
-    <lastmod>2026-05-17</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://localhost:5173/about</loc>
-    <lastmod>2026-05-17</lastmod>
+    <loc>http://localhost:5173/home</loc>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 <!-- Single item routes -->
   <url>
     <loc>http://localhost:5173/about/about-detail-summary-1</loc>
-    <lastmod>2026-05-17</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>http://localhost:5173/about/about-art-1</loc>
-    <lastmod>2026-05-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>http://localhost:5173/about/weird-test-item-with-no-image-and-a-long-name-68</loc>
-    <lastmod>2026-05-04</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>http://localhost:5173/lorem/ipsum/lorem-8</loc>
-    <lastmod>2026-05-17</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>http://localhost:5173/lorem/ipsum/lorem-9</loc>
-    <lastmod>2026-05-17</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>http://localhost:5173/lorem/ipsum/lorem-10</loc>
-    <lastmod>2026-05-17</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>http://localhost:5173/lorem/ipsum/lorem-1</loc>
-    <lastmod>2026-05-17</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>http://localhost:5173/lorem/ipsum/lorem-3</loc>
-    <lastmod>2026-05-17</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>http://localhost:5173/lorem/ipsum/lorem-4</loc>
-    <lastmod>2026-05-17</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>http://localhost:5173/lorem/ipsum/lorem-5</loc>
-    <lastmod>2026-05-17</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>http://localhost:5173/lorem/ipsum/lorem-6</loc>
-    <lastmod>2026-05-17</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>http://localhost:5173/lorem/ipsum/lorem-7</loc>
-    <lastmod>2026-05-17</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>http://localhost:5173/lorem/ipsum/lorem-2</loc>
-    <lastmod>2026-05-17</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

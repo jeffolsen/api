@@ -25,6 +25,8 @@ type SitemapConfig = {
 const sitemapConfig: SitemapConfig = {
   staticRoutes: [
     { path: "privacy", changefreq: "yearly", priority: 0.3 },
+    { path: "terms", changefreq: "yearly", priority: 0.3 },
+    { path: "cookies", changefreq: "yearly", priority: 0.3 },
     { path: "cms", changefreq: "monthly", priority: 0.7 },
   ],
   defaults: {
