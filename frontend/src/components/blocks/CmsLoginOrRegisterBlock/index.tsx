@@ -68,40 +68,45 @@ function CmsLoginOrRegisterBlock({
   blockProps: UseLoginOrRegisterBlockProps;
   blockData: UseLoginOrRegisterBlockData;
 }) {
-  console.log("CmsLoginOrRegisterBlock", blockProps);
   return (
     <>
       <div className="prose">
+        <Text textSize="lg" className="font-bold uppercase">
+          About This CMS
+        </Text>
         <Text textSize="md">
-          The content, images, and designs displayed on this website are
-          showcased for demonstration and portfolio purposes only and are not
-          for commercial use.
+          This is a demonstration CMS, not a commercial service. By registering
+          you agree to the following:
         </Text>
         <List textSize="md">
           <ListItem>
-            <strong>No Warranties</strong>: All information and features
-            (including authentication) are provided "AS IS" and "AS AVAILABLE"
-            without any guarantees of accuracy, completeness, or reliability.
+            <strong>Accounts are automatically deleted after 7 days</strong>,
+            along with all associated content, regardless of activity.
           </ListItem>
           <ListItem>
-            <strong>Limitation of Liability</strong>: I am not liable for any
-            losses or damages arising from your use of this site.
+            You may delete your account and all your data at any time from your
+            profile dashboard.
           </ListItem>
           <ListItem>
-            <strong>Content Ownership</strong>: Unless otherwise stated, all
-            material is the property of [Your Name] and may not be reproduced
-            without explicit permission.
+            Content you create is only visible to you via the preview page. It
+            is never published publicly.
+          </ListItem>
+          <ListItem>You must be 18 or older to register.</ListItem>
+          <ListItem>
+            Your email address is used only to send one-time login codes. You
+            will not receive marketing emails.
           </ListItem>
           <ListItem>
-            <strong>External Links</strong>: I am not responsible for the
-            content or privacy practices of any linked third-party websites.
+            Your data is never shared with or sold to third parties.
+          </ListItem>
+          <ListItem>
+            We are not liable for any content you create or store.
+          </ListItem>
+          <ListItem>
+            This service may be reset, modified, or discontinued at any time
+            without notice.
           </ListItem>
         </List>
-        <Text textSize="md">
-          If you would like err on the side of caution or remain anonymous there
-          are disposable email account services that you can use to sign in so
-          that you can tour the CMS.
-        </Text>
       </div>
       <Block {...blockProps}>
         <Tabs tabs={tabs} tabListClassName="flex flex-wrap justify-end gap-2" />
