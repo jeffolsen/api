@@ -59,16 +59,16 @@ function Footer() {
                 Privacy
               </Link>
             </li>
-            {/* <li>
-              <Link to="/privacy" size="lg" linkColor="base">
+            <li>
+              <Link to="/terms" size="lg" linkColor="base">
                 Terms
               </Link>
             </li>
             <li>
-              <Link to="/privacy" size="lg" linkColor="base">
+              <Link to="/cookies" size="lg" linkColor="base">
                 Cookies
               </Link>
-            </li> */}
+            </li>
           </ul>
         </div>
         <div

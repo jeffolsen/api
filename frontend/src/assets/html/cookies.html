@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #333;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 2rem 1rem 3rem;
+      background: transparent;
+    }
+    h1 { font-size: 1.4rem; font-weight: 700; margin: 0 0 0.2rem; }
+    h3 { font-size: 0.95rem; font-weight: 700; margin: 1.75rem 0 0.4rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    p { margin: 0.6rem 0; }
+    a { color: #555; }
+    .meta { color: #888; font-size: 13px; margin-bottom: 2rem; }
+    hr { border: none; border-top: 1px solid #e5e5e5; margin: 2rem 0; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 14px; }
+    th { text-align: left; padding: 0.5rem 0.75rem; background: #f5f5f5; border: 1px solid #ddd; font-weight: 600; }
+    td { padding: 0.5rem 0.75rem; border: 1px solid #ddd; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <h1>Cookie Policy</h1>
+  <p class="meta">Last Updated: May 2026</p>
+
+  <p>This Cookie Policy explains the cookies and local browser storage used by meetjeffolsen.com.</p>
+
+  <h3>1. Cookies</h3>
+  <p>This site uses three cookies, all strictly necessary for the service to function. No tracking or advertising cookies are used.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Purpose</th>
+        <th>Duration</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>accessToken</code></td>
+        <td>HTTP-only, Secure</td>
+        <td>JWT used to authenticate API requests</td>
+        <td>Short-lived; refreshed automatically</td>
+      </tr>
+      <tr>
+        <td><code>refreshToken</code></td>
+        <td>HTTP-only, Secure</td>
+        <td>JWT used to issue new access tokens; scoped to the token refresh endpoint only</td>
+        <td>Expires with your session (max 7 days)</td>
+      </tr>
+      <tr>
+        <td><code>authenticated</code></td>
+        <td>Client-readable</td>
+        <td>Boolean flag that tells the frontend whether a session is active. Contains no personal data.</td>
+        <td>Removed on logout</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Because all three cookies are strictly necessary for authentication, they do not require consent under most jurisdictions. No consent banner is shown.</p>
+
+  <h3>2. Local Storage</h3>
+  <p>In addition to cookies, this site uses your browser's <code>localStorage</code> for two purposes:</p>
+  <ul>
+    <li><strong>Query cache</strong> — API responses (content, feeds) are cached locally by TanStack Query to improve page load performance. This data mirrors what the server returns and contains no personal information beyond what is already in your session.</li>
+    <li><strong>Theme preference</strong> — Your light/dark mode selection is stored under the key <code>theme</code>. This contains no personal data.</li>
+  </ul>
+  <p>Both are stored locally on your device only and are never transmitted to any server independently.</p>
+
+  <h3>3. Third-Party Cookies</h3>
+  <p>No third-party cookies are set by this site.</p>
+
+  <h3>4. Managing Cookies</h3>
+  <p>You can clear cookies and local storage at any time through your browser settings. Clearing the authentication cookies will log you out of the CMS.</p>
+</body>
+</html>

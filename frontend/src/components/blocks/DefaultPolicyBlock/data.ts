@@ -16,6 +16,16 @@ const variants = {
     component: "PrivacyComponent",
     width: "md",
   },
+  terms: {
+    variant: "terms",
+    component: "TermsComponent",
+    width: "md",
+  },
+  cookies: {
+    variant: "cookies",
+    component: "CookiesComponent",
+    width: "md",
+  },
 } as const;
 
 function usePolicyBlockData({
@@ -44,7 +54,7 @@ export default usePolicyBlockData;
 
 type VariantNames = keyof typeof variants;
 
-type ValidComponentValues = "privacyComponent" | false;
+type ValidComponentValues = "PrivacyComponent" | "TermsComponent" | "CookiesComponent" | false;
 
 type PropertyValues = {
   variant: VariantNames;

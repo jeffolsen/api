@@ -138,6 +138,24 @@ export const privacyComponent = {
   },
 } as TComponent;
 
+export const termsComponent = {
+  ...genericPolicyComponent,
+  name: "Terms of Service",
+  propertyValues: {
+    ...genericPolicyComponent.propertyValues,
+    variant: "terms",
+  },
+} as TComponent;
+
+export const cookiesComponent = {
+  ...genericPolicyComponent,
+  name: "Cookie Policy",
+  propertyValues: {
+    ...genericPolicyComponent.propertyValues,
+    variant: "cookies",
+  },
+} as TComponent;
+
 // CMS components
 const genericCmsComponent = {
   ...genericPolicyComponent,

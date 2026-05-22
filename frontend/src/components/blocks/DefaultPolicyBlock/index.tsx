@@ -6,11 +6,19 @@ import { lazy, Suspense } from "react";
 import Loading from "@/components/common/Loading";
 
 const LazyLoadedPrivacyPolicy = lazy(
-  () => import("@/components/thirdpartyServices/TermlyPrivacy"),
+  () => import("@/components/legal/PrivacyPolicy"),
+);
+const LazyLoadedTerms = lazy(
+  () => import("@/components/legal/TermsOfService"),
+);
+const LazyLoadedCookies = lazy(
+  () => import("@/components/legal/CookiePolicy"),
 );
 
 const policyMap = {
   PrivacyComponent: LazyLoadedPrivacyPolicy,
+  TermsComponent: LazyLoadedTerms,
+  CookiesComponent: LazyLoadedCookies,
 };
 
 export default function Component(config: BlockComponentStandardProps) {
@@ -29,8 +37,6 @@ function PolicyBlock({ blockProps }: { blockProps: UsePolicyBlockProps }) {
   const Component = policyMap[blockProps.settings.component];
 
   if (!Component) return null;
-
-  console.log("PrivacyPolicy", blockProps, Component);
 
   return (
     <Block {...blockProps}>
