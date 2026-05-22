@@ -4,8 +4,8 @@ import resend from "@config/resend";
 import templates from "./templates";
 // import { generateApiKeyValue } from "@/services/apiKey";
 
-const getSender = () => "onboarding@resend.dev";
-// env.NODE_ENV !== "production" ? "onboarding@resend.dev" : env.EMAIL_SENDER;
+const getSender = () =>
+  env.NODE_ENV !== "production" ? "onboarding@resend.dev" : env.EMAIL_SENDER;
 const getRecipient = (to: string) => to;
 // env.NODE_ENV !== "production" ? env.EMAIL_SENDER : to;
 
