@@ -1,20 +1,21 @@
 import env from "@/config/env";
 import prismaClient from "@/db/client";
 import cron from "node-cron";
+import sendWeeklyReport from "@/util/sendReport";
 
 export const initCronJobs = (): void => {
+  const mondayAt8am = "0 8 * * 1";
   const onceAtLunchOnceAtMidnight = "0 0,12 * * *";
   const onceAnHour = "0 * * * *";
   const onceAMinute = "* * * * *";
 
   cron.schedule(
-    onceAnHour,
+    onceAtLunchOnceAtMidnight,
     async () => {
       console.log("Starting profile cleanup task...");
       try {
         const date = new Date();
         date.setDate(date.getDate() - 7);
-        console.log("one week ago", date.toLocaleString());
 
         if (env.ADMIN_USER?.length) {
           const staleProfileWhere = {
@@ -36,19 +37,26 @@ export const initCronJobs = (): void => {
             const remainingProfiles = await tx.profile.findMany();
             return { profilesReceipts, remainingProfiles };
           });
-          console.log(
-            "profiles receipts for deleted",
-            jobResult.profilesReceipts,
-          );
-          console.log(
-            "remaining profiles in the system",
-            jobResult.remainingProfiles,
-          );
         } else {
           console.warn("Cannot complete profile cleanup without configuration");
         }
       } catch (error) {
         console.error("Error executing cron database query:", error);
+      }
+    },
+    {
+      timezone: "America/New_York",
+    },
+  );
+
+  cron.schedule(
+    mondayAt8am,
+    async () => {
+      try {
+        console.log("sending report");
+        await sendWeeklyReport(prismaClient);
+      } catch (error) {
+        console.error("Error sending weekly report:", error);
       }
     },
     {

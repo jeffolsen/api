@@ -11,6 +11,7 @@ const env = cleanEnv(process.env, {
   EMAIL_SENDER: email(),
   RESEND_API_KEY: str(),
   ADMIN_USER: email(),
+  REPORT_EMAIL: email(),
   FEATURE_API_KEYS: bool({ default: false }),
 });
 
