@@ -53,6 +53,7 @@ function LoggedInSessionSection({
         </SectionHeading>
         {sessions && (
           <Grid
+            className="gap-4"
             columns={{ md: "2", lg: "3" }}
             items={sessions?.map(
               (session: { userAgent: string; createdAt: string }) => (

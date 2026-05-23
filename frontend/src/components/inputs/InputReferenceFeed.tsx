@@ -70,6 +70,7 @@ function ReferenceFeedInput(
         rules={rules as FieldArrayMinMaxRule}
       >
         <Grid
+          className="gap-4"
           items={(fields as FeedPathArrayFields).map((field, index) => (
             <ComponentSchemaArrayOrderable
               key={field.id}

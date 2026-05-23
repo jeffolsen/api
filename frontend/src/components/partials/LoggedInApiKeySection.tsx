@@ -34,6 +34,7 @@ function LoggedInApiKeySection() {
         description="API keys allow you to authenticate a read-only API session for apps."
       />
       <Grid
+        className="gap-4"
         items={apiKeys.map((apiKey: { slug: string; origin: string }) => (
           <ApiKeyCard
             key={apiKey.slug}

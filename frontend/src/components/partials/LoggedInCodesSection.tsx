@@ -70,6 +70,7 @@ function LoggedInCodesSection({
       </SectionHeading>
       {verificationCodes && (
         <Grid
+          className="gap-4"
           columns={{ base: "2", sm: "3", lg: "4", xl: "5" }}
           items={verificationCodes
             ?.filter((code: VerificationCode) => {

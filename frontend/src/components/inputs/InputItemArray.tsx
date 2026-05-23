@@ -73,6 +73,7 @@ function ItemArrayInput(
         rules={rules as FieldArrayMinMaxRule}
       >
         <Grid
+          className="gap-4"
           items={(fields as ItemIdArrayFields).map((field, index) => {
             return {
               content: (

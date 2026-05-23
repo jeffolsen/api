@@ -86,6 +86,7 @@ function CmsItemsListBlock({
           />
           <FetchTransition isFetching={itemsData.isFetching}>
             <Grid
+              className="gap-4"
               items={items.map((item) => {
                 return { content: <ItemCard item={item} />, id: item.id };
               })}

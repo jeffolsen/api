@@ -149,6 +149,7 @@ function CmsFeedUpdateBlock({
       </EmptyCard>
       <SectionHeading text="Components" />
       <Grid
+        className="gap-4"
         items={[
           ...componentsWithTypes
             .sort((a, b) => a.order - b.order)

@@ -10,7 +10,7 @@ import getItemLink, { getLinkLabel } from "@/utils/getItemLink";
 import { TItemWithIncludes } from "@/network/item/types";
 import Link from "@/components/common/Link";
 import { clsx } from "clsx";
-import { smSpacing, xsSpacing } from "@/components/common/helpers/layoutStyles";
+import { smSpacing } from "@/components/common/helpers/layoutStyles";
 import { TImage } from "@/network/image/types";
 import Image from "@/components/common/Image";
 import ScrollInFade from "@/components/common/ScrollInFade";
@@ -340,8 +340,7 @@ function VariantGamma({
       <HeadingLevelProvider>
         <Grid
           className={clsx([
-            "grid-rows-auto",
-            theme === "alpha" && xsSpacing,
+            "grid-rows-auto gap-4",
             theme === "beta" && "bg-base-100 shadow-lg",
           ])}
           items={sortedItems.map((item, index) => ({

@@ -94,6 +94,7 @@ function CmsFeedsListBlock({
           />
           <FetchTransition isFetching={feedData.isFetching}>
             <Grid
+              className="gap-4"
               items={feeds.map((feed: TFeedWithIncludes) => {
                 return { content: <FeedCard feed={feed} />, id: feed.id };
               })}
