@@ -163,13 +163,13 @@ const genericCmsComponent = {
 export const loginOrRegisterComponent = {
   ...genericCmsComponent,
   typeName: "LoginRegister" as TComponent["typeName"],
-  name: "Login or Register",
+  name: "CMS Portal",
 } as TComponent;
 
 export const profileDashBoardComponent = {
   ...genericCmsComponent,
   typeName: "ProfileDashboard" as TComponent["typeName"],
-  name: "Profile Dashboard",
+  name: "CMS Dashboard",
 } as TComponent;
 
 export const feedListComponent = {

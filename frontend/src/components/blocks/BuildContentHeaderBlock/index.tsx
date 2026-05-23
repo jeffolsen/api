@@ -28,7 +28,7 @@ export default function Component(config: BlockComponentStandardProps) {
   return <ContentHeaderBlock blockProps={blockProps} blockData={blockData} />;
 }
 
-function ContentHeaderBlock({
+export function ContentHeaderBlock({
   blockProps,
   blockData,
 }: {
@@ -84,7 +84,10 @@ function VariantAlpha({
   };
 
   return (
-    <Block {...finalBlockProps} settings={finalBlockSettings}>
+    <Block
+      {...finalBlockProps}
+      settings={{ ...finalBlockSettings, width: "xl" }}
+    >
       <AlphaCard item={item} feed={referenceFeedPath} theme={theme} />
     </Block>
   );
@@ -158,7 +161,7 @@ function VariantBeta({
   return (
     <Block
       name={blockProps.name}
-      settings={{ ...blockProps.settings, padded: false }}
+      settings={{ ...blockProps.settings, padded: false, width: "lg" }}
     >
       VariantBeta
     </Block>
@@ -193,7 +196,10 @@ function VariantGamma({
   };
 
   return (
-    <Block {...finalBlockProps} settings={finalBlockSettings}>
+    <Block
+      {...finalBlockProps}
+      settings={{ ...finalBlockSettings, width: "md" }}
+    >
       <GammaCard item={item} feed={referenceFeedPath} theme={theme} />
     </Block>
   );

@@ -35,7 +35,7 @@ export default function Component(config: BlockComponentStandardProps) {
   return <HeroCarouselBlock blockProps={blockProps} blockData={blockData} />;
 }
 
-function HeroCarouselBlock({
+export function HeroCarouselBlock({
   blockProps,
   blockData,
 }: {
@@ -86,6 +86,7 @@ function VariantAlpha({
   const finalBlockSettings = {
     ...blockProps.settings,
     padded: false,
+    width: "xl" as UseHeroCarouselBlockProps["settings"]["width"],
     ...(blockProps.settings.location === "header" && {
       width: "xxl" as UseHeroCarouselBlockProps["settings"]["width"],
       themeCss: "py-0",
@@ -217,6 +218,7 @@ function VariantBeta({
   const finalBlockSettings = {
     ...blockProps.settings,
     padded: false,
+    width: "xl" as UseHeroCarouselBlockProps["settings"]["width"],
     ...(blockProps.settings.location === "header" && {
       width: "xxl" as UseHeroCarouselBlockProps["settings"]["width"],
       themeCss: "py-0",
@@ -307,6 +309,10 @@ function BetaSlide({
       <figure
         className={clsx([
           "flex-1 relative overflow-clip",
+          theme === "alpha" &&
+            "border-0 border-l-[48px] md:border-l-0 border-primary",
+          theme === "beta" &&
+            "border-0 border-l-[48px] md:border-l-0 border-accent",
 
           // theme === "alpha" && "border-r-0 border-[48px] border-primary",
           // theme === "beta" && "border-r-0 border-[48px] border-base-content",
@@ -378,6 +384,7 @@ function VariantGamma({
   const finalBlockSettings = {
     ...blockProps.settings,
     padded: "tablet" as WrapperProps["padded"],
+    width: "xl" as UseHeroCarouselBlockProps["settings"]["width"],
     ...(blockProps.settings.location === "header" && {
       width: "xxl" as UseHeroCarouselBlockProps["settings"]["width"],
       themeCss: "py-0",

@@ -22,6 +22,7 @@ const navItems = [
   { label: "About", to: "/about" },
   { label: "CV", to: "/cv" },
   { label: "CMS", to: "/cms" },
+  { label: "Lib", to: "/cms/lib" },
 ];
 
 function Header() {

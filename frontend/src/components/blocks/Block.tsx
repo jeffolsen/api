@@ -110,7 +110,7 @@ export type BlockComponentStandardProps = {
 export type BlockProps<T> = {
   name: string;
   settings: {
-    width: WrapperProps["width"];
+    width?: WrapperProps["width"];
     isPrimaryContent: boolean;
     critical?: boolean;
   } & T;

@@ -30,7 +30,7 @@ export default function Component(config: BlockComponentStandardProps) {
   return <TeaserGridBlock blockProps={blockProps} blockData={blockData} />;
 }
 
-function TeaserGridBlock({
+export function TeaserGridBlock({
   blockProps,
   blockData,
 }: {
@@ -72,7 +72,10 @@ function VariantAlpha({
   }
 
   return (
-    <BlockWrapper name={blockProps.name} settings={{ ...blockProps.settings }}>
+    <BlockWrapper
+      name={blockProps.name}
+      settings={{ ...blockProps.settings, width: "xl" }}
+    >
       <Grid
         className={clsx([smSpacing])}
         columns={{ lg: "2" }}
@@ -199,7 +202,10 @@ function VariantBeta({
   }
 
   return (
-    <BlockWrapper name={blockProps.name} settings={{ ...blockProps.settings }}>
+    <BlockWrapper
+      name={blockProps.name}
+      settings={{ ...blockProps.settings, width: "lg" }}
+    >
       <Grid
         className={clsx(["gap-0 sm:gap-4 md:gap-12"])}
         columns={{ base: "2", sm: "3", lg: "4" }}
@@ -312,7 +318,10 @@ function VariantGamma({
   }
 
   return (
-    <BlockWrapper name={blockProps.name} settings={{ ...blockProps.settings }}>
+    <BlockWrapper
+      name={blockProps.name}
+      settings={{ ...blockProps.settings, width: "lg" }}
+    >
       <Grid
         className={clsx([xsSpacing])}
         columns={{ base: "2", sm: "3", md: "4", lg: "6" }}

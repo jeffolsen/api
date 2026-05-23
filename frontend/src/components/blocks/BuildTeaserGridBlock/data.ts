@@ -12,15 +12,12 @@ import handleBlockError from "@/utils/handleBlockError";
 const variants = {
   alpha: {
     variant: "alpha",
-    width: "xl",
   },
   beta: {
     variant: "beta",
-    width: "lg",
   },
   gamma: {
     variant: "gamma",
-    width: "lg",
   },
 } as const;
 

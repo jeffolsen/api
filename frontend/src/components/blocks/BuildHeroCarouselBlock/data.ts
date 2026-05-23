@@ -11,17 +11,14 @@ import handleBlockError from "@/utils/handleBlockError";
 const variants = {
   alpha: {
     variant: "alpha",
-    width: "xl",
     pageSize: 5,
   },
   beta: {
     variant: "beta",
-    width: "xl",
     pageSize: 7,
   },
   gamma: {
     variant: "gamma",
-    width: "xl",
     pageSize: 10,
   },
 } as const;

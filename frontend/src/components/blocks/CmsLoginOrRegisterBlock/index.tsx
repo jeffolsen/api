@@ -70,45 +70,43 @@ function CmsLoginOrRegisterBlock({
 }) {
   return (
     <>
-      <div className="prose">
-        <Text textSize="lg" className="font-bold uppercase">
-          About This CMS
-        </Text>
-        <Text textSize="md">
-          This is a demonstration CMS, not a commercial service. By registering
-          you agree to the following:
-        </Text>
-        <List textSize="md">
-          <ListItem>
-            <strong>Accounts are automatically deleted after 7 days</strong>,
-            along with all associated content, regardless of activity.
-          </ListItem>
-          <ListItem>
-            You may delete your account and all your data at any time from your
-            profile dashboard.
-          </ListItem>
-          <ListItem>
-            Content you create is only visible to you via the preview page. It
-            is never published publicly.
-          </ListItem>
-          <ListItem>You must be 18 or older to register.</ListItem>
-          <ListItem>
-            Your email address is used only to send one-time login codes. You
-            will not receive marketing emails.
-          </ListItem>
-          <ListItem>
-            Your data is never shared with or sold to third parties.
-          </ListItem>
-          <ListItem>
-            We are not liable for any content you create or store.
-          </ListItem>
-          <ListItem>
-            This service may be reset, modified, or discontinued at any time
-            without notice.
-          </ListItem>
-        </List>
-      </div>
       <Block {...blockProps}>
+        <div className="prose">
+          <Text textSize="xl">About this CMS</Text>
+          <Text textSize="md">
+            This is a demonstration CMS, not a commercial service. By
+            registering you agree to the following:
+          </Text>
+          <List textSize="md">
+            <ListItem>
+              <strong>Accounts are automatically deleted after 7 days</strong>,
+              along with all associated content, regardless of activity.
+            </ListItem>
+            <ListItem>
+              You may delete your account and all your data at any time from
+              your profile dashboard.
+            </ListItem>
+            <ListItem>
+              Content you create is only visible to you via the preview page. It
+              is never published publicly.
+            </ListItem>
+            <ListItem>You must be 18 or older to register.</ListItem>
+            <ListItem>
+              Your email address is used only to send one-time login codes. You
+              will not receive marketing emails.
+            </ListItem>
+            <ListItem>
+              Your data is never shared with or sold to third parties.
+            </ListItem>
+            <ListItem>
+              We are not liable for any content you create or store.
+            </ListItem>
+            <ListItem>
+              This service may be reset, modified, or discontinued at any time
+              without notice.
+            </ListItem>
+          </List>
+        </div>
         <Tabs tabs={tabs} tabListClassName="flex flex-wrap justify-end gap-2" />
       </Block>
     </>

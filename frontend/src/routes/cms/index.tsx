@@ -25,7 +25,7 @@ function RouteComponent() {
           ...cmsTemplate,
           path: location.pathname,
           seoTitle: "CMS Tech Demo",
-          seoDescription: "The ingress and hub of the CSM tech demonstration.",
+          seoDescription: "The portal and hub for the CSM tech demonstration.",
         }}
       />
       <Suspense fallback={<Loading />}>

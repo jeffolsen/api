@@ -1,5 +1,8 @@
 import BlockWrapper, { BlockComponentStandardProps } from "../Block";
-import useDetailBlockData from "./data";
+import useDetailBlockData, {
+  UseDetailBlockData,
+  UseDetailBlockProps,
+} from "./data";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useDetailBlockData(config);
@@ -10,8 +13,33 @@ export default function Component(config: BlockComponentStandardProps) {
 
   const { blockProps, blockData } = result;
 
+  return <DetailBlock blockData={blockData} blockProps={blockProps} />;
+}
+
+export function DetailBlock({
+  blockProps,
+  blockData,
+}: {
+  blockProps: UseDetailBlockProps;
+  blockData: UseDetailBlockData;
+}) {
+  const variants = {
+    alpha: {
+      width: "xl",
+    },
+    beta: {
+      width: "lg",
+    },
+    gamma: {
+      width: "md",
+    },
+  } as const;
+
   return (
-    <BlockWrapper {...blockProps}>
+    <BlockWrapper
+      {...blockProps}
+      settings={{ ...blockProps.settings, width: variants["alpha"].width }}
+    >
       <code>
         <pre className="w-full p-4 max-w-full whitespace-break-spaces">
           {JSON.stringify(blockData.itemData, null, 2)}

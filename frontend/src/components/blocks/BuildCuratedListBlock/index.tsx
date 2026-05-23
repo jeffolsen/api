@@ -32,7 +32,7 @@ export default function Component(config: BlockComponentStandardProps) {
   return <CuratedListBlock blockProps={blockProps} blockData={blockData} />;
 }
 
-function CuratedListBlock({
+export function CuratedListBlock({
   blockProps,
   blockData,
 }: {
@@ -82,10 +82,13 @@ function VariantAlpha({
   const theme = blockProps.settings.theme;
 
   return (
-    <Block name={blockProps.name} settings={{ ...blockProps.settings }}>
+    <Block
+      name={blockProps.name}
+      settings={{ ...blockProps.settings, width: "xl", padded: false }}
+    >
       <HeadingLevelProvider>
         <Grid
-          className={clsx(["gap-8 sm:gap-10 md:gap-14"])}
+          className={clsx(["gap-14"])}
           items={sortedItems.map((item, index) => ({
             id: item.id,
             content: (
@@ -131,12 +134,12 @@ const AlphaCard = ({
     <ScrollInFade
       className={clsx([
         "flex relative overflow-x-clip",
-        index % 2 === 0 ? "justify-end" : "justify-start",
+        index % 2 === 0 ? "justify-end pl-12" : "justify-start pr-12",
       ])}
     >
       <div
         className={clsx([
-          "card md:card-side md:h-[30rem] w-full max-w-6xl flex-none justify-center",
+          "card md:card-side w-full flex-col-reverse max-w-6xl flex-none justify-center",
           "bg-base-100 shadow-xl",
           index % 2 === 0 ? "text-right" : "text-left md:flex-row-reverse",
         ])}
@@ -169,7 +172,7 @@ const AlphaCard = ({
 
         <figure
           className={clsx([
-            "w-full md:w-1/2 flex flex-none",
+            "w-full md:w-1/2 h-52 md:h-[30rem] flex flex-none",
             index % 2 === 0 && "flex-row-reverse",
           ])}
         >
@@ -222,7 +225,7 @@ function VariantBeta({
   return (
     <Block
       name={blockProps.name}
-      settings={{ ...blockProps.settings, padded: false }}
+      settings={{ ...blockProps.settings, padded: false, width: "md" }}
     >
       <HeadingLevelProvider>
         <Grid
@@ -267,8 +270,16 @@ const BetaCard = ({
       ])}
     >
       <figure className="md:w-72 h-72 md:flex-none">
-        {images.map((img: TImage) => {
-          return <Image src={img.url} alt="" fit="cover" className="!h-full" />;
+        {images.map((img: TImage, i: number) => {
+          return (
+            <Image
+              src={img.url}
+              alt=""
+              fit="cover"
+              className="!h-full"
+              key={i}
+            />
+          );
         })}
       </figure>
       <div className="card-body md:justify-center">
@@ -322,7 +333,10 @@ function VariantGamma({
   };
 
   return (
-    <Block {...finalBlockProps} settings={finalBlockSettings}>
+    <Block
+      {...finalBlockProps}
+      settings={{ ...finalBlockSettings, width: "md" }}
+    >
       <HeadingLevelProvider>
         <Grid
           className={clsx([

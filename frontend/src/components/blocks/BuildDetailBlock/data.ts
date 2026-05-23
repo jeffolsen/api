@@ -10,15 +10,12 @@ import { NotFoundError } from "@/utils/errors";
 const variants = {
   alpha: {
     variant: "alpha",
-    width: "xl",
   },
   beta: {
     variant: "beta",
-    width: "lg",
   },
   gamma: {
     variant: "gamma",
-    width: "md",
   },
 } as const;
 
