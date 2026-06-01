@@ -17,6 +17,7 @@ import { InsetLink } from "@/components/common/Link";
 import getItemLink from "@/utils/getItemLink";
 import getImageByPriority from "@/utils/getImageByPriority";
 import ScrollInFade from "@/components/common/ScrollInFade";
+import ImageCard from "@/components/cards/ImageCard";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useTeaserGridBlockData(config);
@@ -140,7 +141,7 @@ function AlphaCard({
       >
         {image ? (
           <Image
-            src={image?.url || ""}
+            url={image?.url || ""}
             alt={item.name}
             fit={image.type === "ICON" ? "contain" : "cover"}
             className={clsx([
@@ -251,7 +252,7 @@ function BetaCard({
       >
         {image ? (
           <Image
-            src={image?.url || ""}
+            url={image?.url || ""}
             alt={item.name}
             fit={image.type === "ICON" ? "contain" : "cover"}
             className={clsx([
@@ -352,48 +353,5 @@ function GammaCard({
     priority: { ICON: 1, PORTRAIT: 2, LANDSCAPE: 3 },
   });
 
-  return (
-    <ScrollInFade
-      className={clsx([
-        "relative w-full pb-[100%]",
-        "bg-base-100 shadow-xl",
-        "group overflow-hidden",
-      ])}
-    >
-      {image && (
-        <Image
-          src={image?.url || ""}
-          alt={item.name}
-          fit={image.type === "ICON" ? "contain" : "cover"}
-          className={clsx([
-            "absolute inset-0 w-full h-full",
-            "transition-all duration-1000 scale-100 group-hover:scale-110",
-            image.type === "ICON" ? "p-6" : "opacity-50",
-          ])}
-        />
-      )}
-      {image?.type !== "ICON" && (
-        <div
-          className={clsx([
-            "absolute inset-0 flex justify-center items-center p-3",
-            image ? "bg-gradient-to-t from-transparent via-black/80" : "",
-          ])}
-        >
-          <Heading
-            headingSize="xs"
-            headingStyles={clsx([
-              "line-clamp-2 text-center uppercase",
-              "transition-all duration-1000 scale-100 group-hover:scale-110",
-              image
-                ? "drop-shadow-lg shadow-black text-primary-content"
-                : "text-base-content",
-            ])}
-          >
-            {item.name}
-          </Heading>
-        </div>
-      )}
-      {link && <InsetLink to={link} aria-label={item.name} />}
-    </ScrollInFade>
-  );
+  return <ImageCard image={image} link={link} label={item.name} ar="1" />;
 }

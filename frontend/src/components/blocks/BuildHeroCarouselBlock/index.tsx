@@ -158,7 +158,7 @@ function AlphaSlide({
   return (
     <div className="relative w-full h-full text-neutral-content group">
       <Image
-        src={image?.url || ""}
+        url={image?.url || ""}
         alt={item.name}
         className="absolute inset-0 w-full h-full object-cover"
       />
@@ -319,7 +319,7 @@ function BetaSlide({
         ])}
       >
         <Image
-          src={image?.url || ""}
+          url={image?.url || ""}
           alt={item.name}
           className={clsx([
             "absolute inset-0 w-full h-full object-cover",
@@ -472,7 +472,7 @@ function GammaSlide({
   return (
     <div className="relative w-full h-full text-neutral-content">
       <Image
-        src={image?.url || ""}
+        url={image?.url || ""}
         alt={item.name}
         className="absolute inset-0 w-full h-full object-cover"
       />

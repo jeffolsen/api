@@ -180,7 +180,7 @@ const AlphaCard = ({
             return (
               <Image
                 key={i}
-                src={img.url}
+                url={img.url}
                 alt=""
                 fit="cover"
                 className={clsx([
@@ -273,7 +273,7 @@ const BetaCard = ({
         {images.map((img: TImage, i: number) => {
           return (
             <Image
-              src={img.url}
+              url={img.url}
               alt=""
               fit="cover"
               className="!h-full"

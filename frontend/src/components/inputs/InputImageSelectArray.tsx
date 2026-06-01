@@ -52,7 +52,7 @@ function SelectedImage({ image, onClick, className }: SelectImageProps) {
       onClick={onClick}
     >
       <Image
-        src={image.url}
+        url={image.url}
         alt={image.alt}
         {...{ fit: "contain" }}
         className="max-h-full"

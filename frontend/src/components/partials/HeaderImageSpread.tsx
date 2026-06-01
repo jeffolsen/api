@@ -30,7 +30,7 @@ export default function HeaderImageSpread() {
             {images.map((image) => (
               <div key={image.id} className="flex-1 overflow-hidden relative">
                 <Image
-                  src={image.url}
+                  url={image.url}
                   alt={image.alt}
                   className="h-full w-full scale-110 grayscale hue-rotate-60"
                 />
