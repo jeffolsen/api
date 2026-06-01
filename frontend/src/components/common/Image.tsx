@@ -1,31 +1,42 @@
 import clsx, { ClassValue } from "clsx";
+import { aspectRatios, AspectRatio } from "./helpers/aspectRatioStyles";
+
+const hoverEffects = {
+  none: "",
+  zoom: "transition-all duration-1000 scale-100 group-hover:scale-110",
+};
 
 export type ImageProps = {
-  src: string;
+  url: string;
   alt: string;
   fit?: "cover" | "contain";
-  positionX?: "left" | "center" | "right";
-  positionY?: "top" | "center" | "bottom";
-  width?: number;
-  height?: number;
+  ar?: AspectRatio;
+  hover?: "none" | "zoom";
   className?: ClassValue;
 };
 
 export default function Image({
-  src,
+  url,
   alt,
   fit = "cover",
+  ar = "natural",
+  hover = "none",
   className,
 }: ImageProps) {
+  const arStyles = aspectRatios[ar];
+  const hoverStyles = hoverEffects[hover];
+  if (!url) return null;
   return (
-    <img
-      src={src}
-      alt={alt}
-      className={clsx(
-        "w-full h-auto",
-        fit === "cover" ? "object-cover" : "object-contain",
-        className,
-      )}
-    />
+    <div className={clsx("overflow-clip", arStyles, className)}>
+      <img
+        src={url}
+        alt={alt}
+        className={clsx(
+          "w-full h-full",
+          hoverStyles,
+          fit === "cover" ? "object-cover" : "object-contain",
+        )}
+      />
+    </div>
   );
 }
