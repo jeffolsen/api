@@ -276,75 +276,8 @@ function BetaCard({
           </Text>
         </>
       }
+      overLay={<>{link && <InsetLink to={link} aria-label={item.name} />}</>}
     />
-  );
-
-  return (
-    <ScrollInFade
-      className={clsx([
-        "relative card card-compact group w-full h-full",
-        "bg-base-100 shadow-xl items-stretch",
-      ])}
-    >
-      <figure
-        className={clsx([
-          "relative flex-none w-full before:content-[''] before:mt-[133%] before:w-full",
-          "overflow-hidden",
-        ])}
-      >
-        {image ? (
-          <Image
-            url={image?.url || ""}
-            alt={item.name}
-            fit={image.type === "ICON" ? "contain" : "cover"}
-            className={clsx([
-              "absolute inset-0 w-full h-full",
-              "transition-all duration-1000 scale-100 group-hover:scale-110",
-              image.type === "ICON" ? "p-6" : "",
-            ])}
-          />
-        ) : (
-          <div
-            className={clsx([
-              "absolute inset-0 flex justify-center items-center bg-neutral",
-            ])}
-            style={{ containerType: "inline-size" }}
-          >
-            <span
-              className={clsx([
-                "line-clamp-5 text-justify uppercase break-all font-black",
-                "transition-all duration-1000 scale-110 group-hover:scale-125",
-                "text-[15cqi]",
-                "text-secondary mx-6 !leading-snug !tracking-tighter",
-              ])}
-            >
-              {item.name}
-            </span>
-          </div>
-        )}
-      </figure>
-      <div className="card-body text-left gap-4">
-        <Heading
-          headingSize="sm"
-          headingStyles={clsx([
-            "line-clamp-1 uppercase",
-            "transition-all duration-1000 scale-100 group-hover:scale-110",
-          ])}
-        >
-          {item.name}
-        </Heading>
-        <Text
-          textSize="sm"
-          className={clsx([
-            "line-clamp-2 uppercase",
-            "transition-all duration-1000 scale-100 group-hover:scale-110",
-          ])}
-        >
-          {item.description}
-        </Text>
-      </div>
-      {link && <InsetLink to={link} aria-label={item.name} />}
-    </ScrollInFade>
   );
 }
 
