@@ -8,10 +8,9 @@ import Heading, { HeadingLevelProvider } from "@/components/common/Heading";
 import Grid from "@/components/common/Grid";
 import getItemLink, { getLinkLabel } from "@/utils/getItemLink";
 import { TItemWithIncludes } from "@/network/item/types";
-import Link from "@/components/common/Link";
+import Link, { InsetLink } from "@/components/common/Link";
 import { clsx } from "clsx";
 import { smSpacing } from "@/components/common/helpers/layoutStyles";
-import { TImage } from "@/network/image/types";
 import Image from "@/components/common/Image";
 import ScrollInFade from "@/components/common/ScrollInFade";
 import dayjs, { mediumDate } from "@/utils/dayjs";
@@ -19,6 +18,8 @@ import RichContent from "@/components/common/RichContent";
 import { JSONContent } from "@tiptap/react";
 import sortItemALlowList from "@/utils/sortItemAllowList";
 import { MoveRight } from "lucide-react";
+import HorizCard from "@/components/cards/HorizCard";
+import ResponsiveCard from "@/components/cards/ResponsiveCard";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useCuratedListBlockData(config);
@@ -117,97 +118,91 @@ const AlphaCard = ({
   index: number;
   theme: UseCuratedListBlockProps["settings"]["theme"];
 }) => {
-  const maxImages = 3;
   const link = getItemLink(feed, item);
   const linkLabel = getLinkLabel(link);
 
-  const images = item.images
+  const image = item.images
     .map(({ image }) => image)
-    .filter((img) => img.type === "LANDSCAPE" || img.type === "PORTRAIT")
-    .slice(0, maxImages);
+    .filter((img) => img.type === "LANDSCAPE" || img.type === "PORTRAIT")?.[0];
 
-  if (images.length === 0) {
-    return <div className="skeleton w-full h-full" />;
-  }
+  const reverse = index % 2 === 0;
+  const betaTheme = theme === "beta";
+  const gammaTheme = theme === "gamma";
 
   return (
-    <ScrollInFade
+    <div
       className={clsx([
-        "flex relative overflow-x-clip",
-        index % 2 === 0 ? "justify-end pl-12" : "justify-start pr-12",
+        "flex",
+        reverse ? "justify-end pl-14" : "justify-start pr-14",
       ])}
     >
-      <div
-        className={clsx([
-          "card md:card-side w-full flex-col-reverse max-w-6xl flex-none justify-center",
-          "bg-base-100 shadow-xl",
-          index % 2 === 0 ? "text-right" : "text-left md:flex-row-reverse",
-        ])}
-      >
-        <div className="h-full p-6 md:p-12 flex-grow">
-          <div
-            className={clsx([
-              "flex flex-col md:justify-center gap-4 h-full flex-none",
-              index % 2 === 0 ? "items-end" : "items-start",
-            ])}
-          >
-            <Heading headingSize="lg" headingStyles="prose line-clamp-2">
-              {item.name}
-            </Heading>
-            <Text textSize="lg" className="prose line-clamp-3">
-              {item.description}
-            </Text>
-            {link && (
-              <Link
-                to={link}
-                linkColor="accent"
-                size="xl"
-                className={"flex gap-2 items-center uppercase bold flex-none"}
-              >
-                {!linkLabel ? "Go there" : `${linkLabel}`} <MoveRight />
-              </Link>
-            )}
-          </div>
-        </div>
-
-        <figure
+      <div className={clsx(["max-w-6xl w-full"])}>
+        <ResponsiveCard
           className={clsx([
-            "w-full md:w-1/2 h-52 md:h-[30rem] flex flex-none",
-            index % 2 === 0 && "flex-row-reverse",
+            "bg-base-100 shadow-lg card-compact lg:card-normal",
           ])}
-        >
-          {images.map((img: TImage, i: number) => {
-            return (
-              <Image
-                key={i}
-                url={img.url}
-                alt=""
-                fit="cover"
-                className={clsx([
-                  "!h-full",
-                  images.length === 2 && i === 0 && "!w-2/3",
-                  images.length === 2 && i === 1 && "!w-1/3",
-                  images.length === 3 && i === 0 && "!w-[57%]",
-                  images.length === 3 && i === 1 && "!w-[29%]",
-                  images.length === 3 && i === 2 && "!w-[14%]",
-                ])}
-              />
-            );
-          })}
-        </figure>
-
-        {theme === "beta" && (
-          <div
-            className={clsx([
-              "absolute inset-0 top-24 -z-10 bg-primary/90",
-              index % 2 === 0
-                ? "right-1/3 md:right-32 -translate-x-20 translate-y-14 md:translate-y-14"
-                : "left-1/3 md:left-32 translate-x-20 translate-y-14 md:translate-y-14",
-            ])}
-          />
-        )}
+          imagery={
+            <>
+              {image && (
+                <div className="w-screen md:w-[36rem] md:!max-w-[50vw]">
+                  <Image
+                    url={image?.url}
+                    alt=""
+                    fit="cover"
+                    ar="1"
+                    hover="zoom"
+                  />
+                </div>
+              )}
+            </>
+          }
+          passage={
+            <div
+              className={clsx([
+                "flex flex-col md:justify-center h-full flex-none",
+              ])}
+            >
+              <div className={clsx(["flex flex-col gap-4 py-4"])}>
+                <Heading headingSize="lg" headingStyles="prose line-clamp-2">
+                  {item.name}
+                </Heading>
+                <Text textSize="lg" className="prose line-clamp-3">
+                  {item.description}
+                </Text>
+                {link && (
+                  <Link
+                    to={link}
+                    linkColor="accent"
+                    size="xl"
+                    className={
+                      "flex gap-2 items-center uppercase bold flex-none"
+                    }
+                  >
+                    {!linkLabel ? "Go there" : `${linkLabel}`} <MoveRight />
+                  </Link>
+                )}
+              </div>
+            </div>
+          }
+          underLay={
+            <>
+              {(betaTheme || gammaTheme) && (
+                <div
+                  className={clsx([
+                    "w-full h-full translate-y-14",
+                    betaTheme && "bg-primary",
+                    gammaTheme && "bg-accent",
+                    reverse ? " -translate-x-14" : "translate-x-14",
+                  ])}
+                />
+              )}
+            </>
+          }
+          overLay={<>{link && <InsetLink to={link} />}</>}
+          reverseX={reverse}
+        />
       </div>
-    </ScrollInFade>
+    </div>
   );
 };
 
@@ -245,63 +240,55 @@ function VariantBeta({
 const BetaCard = ({
   item,
   feed,
+  index,
 }: {
   item: TItemWithIncludes;
   feed?: string;
   index: number;
 }) => {
-  const maxImages = 1;
   const link = getItemLink(feed, item);
-  const images = item.images
+  const image = item.images
     .map(({ image }) => image)
-    .filter((img) => img.type === "LANDSCAPE" || img.type === "PORTRAIT")
-    .slice(0, maxImages);
-
-  if (images.length === 0) {
-    return <div className="skeleton w-full h-full" />;
-  }
+    .filter((img) => img.type === "LANDSCAPE" || img.type === "PORTRAIT")?.[0];
 
   return (
-    <ScrollInFade
-      className={clsx([
-        "card mx-auto",
-        "w-[32rem] max-w-full md:card-side md:w-full",
-        "bg-base-100 shadow-xl",
-      ])}
-    >
-      <figure className="md:w-72 h-72 md:flex-none">
-        {images.map((img: TImage, i: number) => {
-          return (
-            <Image
-              url={img.url}
-              alt=""
-              fit="cover"
-              className="!h-full"
-              key={i}
-            />
-          );
-        })}
-      </figure>
-      <div className="card-body md:justify-center">
-        <Heading headingSize="md" headingStyles="line-clamp-2 md:line-clamp-1">
-          {item.name}
-        </Heading>
-        <Text textSize="md" className="line-clamp-4 md:line-clamp-2">
-          {item.description}
-        </Text>
-        {link && (
-          <Link
-            as="Link"
-            to={link}
-            linkColor="accent"
-            size="xl"
-            className={"flex gap-2"}
+    <HorizCard
+      className={"bg-base-100 shadow-lg card-compact md:card-normal"}
+      imagery={
+        <>
+          {image && (
+            <div className="w-36 md:w-48">
+              <Image url={image?.url} alt="" fit="cover" ar="1" />
+            </div>
+          )}
+        </>
+      }
+      passage={
+        <>
+          <Heading
+            headingSize="md"
+            headingStyles="line-clamp-1 md:line-clamp-2"
           >
-            Go <MoveRight />
-          </Link>
-        )}
-      </div>
-    </ScrollInFade>
+            {item.name}
+          </Heading>
+          <Text textSize="md" className="line-clamp-2 md:line-clamp-3">
+            {item.description}
+          </Text>
+          {link && (
+            <Link
+              as="Link"
+              to={link}
+              linkColor="accent"
+              size="xl"
+              className={"flex gap-2"}
+            >
+              Go <MoveRight />
+            </Link>
+          )}
+        </>
+      }
+      reverseX={index % 2 === 0}
+    />
   );
 };
 

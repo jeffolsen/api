@@ -18,6 +18,7 @@ import getItemLink from "@/utils/getItemLink";
 import getImageByPriority from "@/utils/getImageByPriority";
 import ScrollInFade from "@/components/common/ScrollInFade";
 import ImageCard from "@/components/cards/ImageCard";
+import VertCard from "@/components/cards/VertCard";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useTeaserGridBlockData(config);
@@ -236,6 +237,47 @@ function BetaCard({
     images,
     priority: { ICON: 3, PORTRAIT: 1, LANDSCAPE: 2 },
   });
+
+  return (
+    <VertCard
+      className="bg-base-100 shadow-lg h-full"
+      imagery={
+        <>
+          {image && (
+            <Image
+              url={image?.url}
+              alt={item.name}
+              fit={image.type === "ICON" ? "contain" : "cover"}
+              ar=".66"
+              hover="zoom"
+            />
+          )}
+        </>
+      }
+      passage={
+        <>
+          <Heading
+            headingSize="sm"
+            headingStyles={clsx([
+              "line-clamp-1 uppercase",
+              "transition-all duration-1000 scale-100 group-hover:scale-110",
+            ])}
+          >
+            {item.name}
+          </Heading>
+          <Text
+            textSize="sm"
+            className={clsx([
+              "line-clamp-2 uppercase",
+              "transition-all duration-1000 scale-100 group-hover:scale-110",
+            ])}
+          >
+            {item.description}
+          </Text>
+        </>
+      }
+    />
+  );
 
   return (
     <ScrollInFade
