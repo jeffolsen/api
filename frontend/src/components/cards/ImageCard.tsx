@@ -29,18 +29,20 @@ export default function ImageCard({
     fit: image?.type === "ICON" ? "contain" : "cover",
   } as ImageProps;
   const arCss = aspectRatios[ar];
+  const contained = img.fit === "contain";
   return (
     <ScrollInFade
       className={clsx(["bg-base-100 border-none shadow-xl", "group", arCss])}
     >
-      <Image
-        {...img}
+      <figure
         className={clsx([
-          "absolute",
-          img.fit === "contain" ? "p-6" : "opacity-50",
+          "w-72 max-w-full absolute inset-0",
+          contained ? "p-3" : "opacity-50 ",
         ])}
-      />
-      {img.fit !== "contain" && (
+      >
+        <Image {...img} />
+      </figure>
+      {!contained && (
         <div
           className={clsx([
             "absolute inset-0 flex justify-center items-center p-3",

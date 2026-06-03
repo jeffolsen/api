@@ -19,20 +19,19 @@ export default function Image({
   url,
   alt,
   fit = "cover",
-  ar = "natural",
+  ar = "none",
   hover = "none",
-  className,
 }: ImageProps) {
   const arStyles = aspectRatios[ar];
   const hoverStyles = hoverEffects[hover];
   if (!url) return null;
   return (
-    <div className={clsx("overflow-clip", arStyles, className)}>
+    <div className={clsx("overflow-clip relative", arStyles)}>
       <img
         src={url}
         alt={alt}
         className={clsx(
-          "w-full h-full",
+          "w-full h-full absolute inset-0",
           hoverStyles,
           fit === "cover" ? "object-cover" : "object-contain",
         )}
