@@ -12,7 +12,6 @@ import Link, { InsetLink } from "@/components/common/Link";
 import { clsx } from "clsx";
 import { smSpacing } from "@/components/common/helpers/layoutStyles";
 import Image from "@/components/common/Image";
-import ScrollInFade from "@/components/common/ScrollInFade";
 import dayjs, { mediumDate } from "@/utils/dayjs";
 import RichContent from "@/components/common/RichContent";
 import { JSONContent } from "@tiptap/react";
@@ -20,6 +19,7 @@ import sortItemALlowList from "@/utils/sortItemAllowList";
 import { MoveRight } from "lucide-react";
 import HorizCard from "@/components/cards/HorizCard";
 import ResponsiveCard from "@/components/cards/ResponsiveCard";
+import VertCard from "@/components/cards/VertCard";
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useCuratedListBlockData(config);
@@ -128,6 +128,7 @@ const AlphaCard = ({
   const reverse = index % 2 === 0;
   const betaTheme = theme === "beta";
   const gammaTheme = theme === "gamma";
+  const alphaTheme = theme === "alpha";
 
   return (
     <div
@@ -186,16 +187,15 @@ const AlphaCard = ({
           }
           underLay={
             <>
-              {(betaTheme || gammaTheme) && (
-                <div
-                  className={clsx([
-                    "w-full h-full translate-y-14",
-                    betaTheme && "bg-primary",
-                    gammaTheme && "bg-accent",
-                    reverse ? " -translate-x-14" : "translate-x-14",
-                  ])}
-                />
-              )}
+              <div
+                className={clsx([
+                  "w-full h-full translate-y-14",
+                  alphaTheme && "bg-neutral",
+                  betaTheme && "bg-primary",
+                  gammaTheme && "bg-accent",
+                  reverse ? " -translate-x-14" : "translate-x-14",
+                ])}
+              />
             </>
           }
           overLay={<>{link && <InsetLink to={link} />}</>}
@@ -327,7 +327,7 @@ function VariantGamma({
       <HeadingLevelProvider>
         <Grid
           className={clsx([
-            "grid-rows-auto gap-4",
+            theme === "alpha" && "grid-rows-auto gap-4",
             theme === "beta" && "bg-base-100 shadow-lg",
           ])}
           items={sortedItems.map((item, index) => ({
@@ -341,7 +341,7 @@ function VariantGamma({
                   theme={theme}
                 />
                 {theme === "beta" && index < sortedItems.length - 1 && (
-                  <div className="absolute bottom-0 left-12 right-12 border-b border-base-content" />
+                  <div className="absolute bottom-0 left-6 right-6 border-b border-base-content" />
                 )}
               </>
             ),
@@ -365,20 +365,22 @@ const GammaCard = ({
   const link = getItemLink(feed, item);
   const date = item.dateRanges?.[0] ?? null;
 
+  const alphaTheme = theme === "alpha";
+  const betaTheme = theme === "beta";
+
   return (
-    <ScrollInFade
+    <VertCard
       className={clsx([
         "card card-compact sm:card-normal w-full flex-none justify-center h-full",
-        theme === "alpha" && "bg-base-100 shadow-xl text-base-content",
-        theme === "beta" && "bg-base-100 text-base-content py-8",
+        alphaTheme && "bg-base-100 shadow-xl text-base-content",
+        betaTheme && "bg-base-100 text-base-content py-8",
       ])}
-    >
-      <div className={clsx(["card-body gap-5"])}>
-        <div className="flex flex-col gap-3">
+      passage={
+        <div className={clsx(["flex flex-col gap-5"])}>
           <Heading
             headingSize="md"
             headingStyles="font-bold"
-            headingDecorator={theme === "alpha" ? "right-strike" : "none"}
+            headingDecorator={alphaTheme ? "right-strike" : "none"}
           >
             {item.name}
           </Heading>
@@ -401,20 +403,25 @@ const GammaCard = ({
               )}
             </div>
           )}
+          {(item.richContent?.content as unknown as JSONContent) ? (
+            <RichContent
+              richContent={item.richContent as Record<string, unknown>}
+            />
+          ) : (
+            item.description && <Text textSize="md">{item.description}</Text>
+          )}
+          {link && (
+            <Link
+              as="Link"
+              to={link}
+              linkColor="accent"
+              className={"flex gap-2"}
+            >
+              Go <MoveRight />
+            </Link>
+          )}
         </div>
-        {(item.richContent?.content as unknown as JSONContent) ? (
-          <RichContent
-            richContent={item.richContent as Record<string, unknown>}
-          />
-        ) : (
-          item.description && <Text textSize="md">{item.description}</Text>
-        )}
-        {link && (
-          <Link as="Link" to={link} linkColor="accent" className={"flex gap-2"}>
-            Go <MoveRight />
-          </Link>
-        )}
-      </div>
-    </ScrollInFade>
+      }
+    />
   );
 };
