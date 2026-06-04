@@ -32,8 +32,8 @@ export default function Image({
         alt={alt}
         className={clsx(
           "w-full h-full absolute inset-0",
+          fit === "cover" ? "object-cover" : "object-contain p-[10%]",
           hoverStyles,
-          fit === "cover" ? "object-cover" : "object-contain",
         )}
       />
     </div>

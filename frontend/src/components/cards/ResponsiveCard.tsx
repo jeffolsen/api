@@ -7,6 +7,7 @@ type ResponsiveCardProps = {
   imagery?: ReactNode;
   overLay?: ReactNode;
   underLay?: ReactNode;
+  changeAt?: "md" | "lg" | "xl";
   reverseX?: boolean;
   reverseY?: boolean;
   className?: ClassValue;
@@ -17,23 +18,34 @@ const ResponsiveCard = ({
   imagery,
   overLay,
   underLay,
+  changeAt = "md",
   reverseX = false,
   reverseY = false,
   className,
 }: ResponsiveCardProps) => {
   return (
-    <ScrollInFade className={clsx(["relative group"])}>
+    <ScrollInFade className={clsx(["relative group h-full"])}>
       <div
         className={clsx([
-          "card md:card-side w-full overflow-clip",
+          "card w-full overflow-clip",
           className,
-          reverseX && "md:flex-row-reverse",
+          changeAt === "md" && "md:card-side",
+          changeAt === "lg" && "lg:card-side",
+          changeAt === "xl" && "xl:card-side",
+          reverseX && changeAt === "md" && "md:flex-row-reverse",
+          reverseX && changeAt === "lg" && "lg:flex-row-reverse",
+          reverseX && changeAt === "xl" && "xl:flex-row-reverse",
           reverseY && "flex-col-reverse",
         ])}
       >
         {imagery && (
           <figure
-            className={!passage ? "w-full" : "w-full flex-none md:w-auto"}
+            className={clsx([
+              passage && changeAt === "md" && "w-full flex-none md:w-auto",
+              passage && changeAt === "lg" && "w-full flex-none lg:w-auto",
+              passage && changeAt === "xl" && "w-full flex-none xl:w-auto",
+              !passage && "w-full",
+            ])}
           >
             {imagery}
           </figure>

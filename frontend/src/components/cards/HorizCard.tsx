@@ -20,7 +20,7 @@ const HorizCard = ({
   className,
 }: HorizCardProps) => {
   return (
-    <ScrollInFade className={clsx(["relative group"])}>
+    <ScrollInFade className={clsx(["relative group h-full"])}>
       <div
         className={clsx([
           "card card-side w-full overflow-clip",
