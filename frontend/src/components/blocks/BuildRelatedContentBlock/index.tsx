@@ -1,8 +1,20 @@
+import Text from "@/components/common/Text";
 import BlockWrapper, { BlockComponentStandardProps } from "../Block";
 import useDetailBlockData, {
   UseRelatedContentBlockData,
   UseRelatedContentBlockProps,
 } from "./data";
+import { lazy, Suspense } from "react";
+
+const VariantAlpha = lazy(
+  () => import("@/components/blocks/BuildTeaserGridBlock/variants/alpha"),
+);
+const VariantBeta = lazy(
+  () => import("@/components/blocks/BuildTeaserGridBlock/variants/beta"),
+);
+const VariantGamma = lazy(
+  () => import("@/components/blocks/BuildTeaserGridBlock/variants/gamma"),
+);
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useDetailBlockData(config);
@@ -23,33 +35,36 @@ export function RelatedContentBlock({
   blockProps: UseRelatedContentBlockProps;
   blockData: UseRelatedContentBlockData;
 }) {
-  const variants = {
-    alpha: {
-      width: "xl",
-    },
-    beta: {
-      width: "lg",
-    },
-    gamma: {
-      width: "md",
-    },
-  } as const;
+  const { settings } = blockProps;
+  const { variant } = settings;
+
+  if (variant === "alpha") {
+    return (
+      <Suspense fallback={<div className="skeleton" />}>
+        <VariantAlpha blockData={blockData} blockProps={blockProps} />
+      </Suspense>
+    );
+  }
+
+  if (variant === "beta") {
+    return (
+      <Suspense fallback={<div className="skeleton" />}>
+        <VariantBeta blockData={blockData} blockProps={blockProps} />
+      </Suspense>
+    );
+  }
+
+  if (variant === "gamma") {
+    return (
+      <Suspense fallback={<div className="skeleton" />}>
+        <VariantGamma blockData={blockData} blockProps={blockProps} />
+      </Suspense>
+    );
+  }
+
   return (
-    <BlockWrapper
-      {...blockProps}
-      settings={{ ...blockProps.settings, width: variants["alpha"].width }}
-    >
-      <code>
-        <pre className="w-full p-4 max-w-full whitespace-break-spaces">
-          {JSON.stringify(blockData.itemsData.data, null, 2)}
-        </pre>
-        <pre className="w-full p-4 max-w-full whitespace-break-spaces">
-          {JSON.stringify(blockData.itemData, null, 2)}
-        </pre>
-        <pre className="w-full p-4 max-w-full whitespace-break-spaces">
-          {JSON.stringify(blockProps, null, 2)}
-        </pre>
-      </code>
+    <BlockWrapper {...blockProps}>
+      <Text textSize="md">Not implemented</Text>
     </BlockWrapper>
   );
 }
