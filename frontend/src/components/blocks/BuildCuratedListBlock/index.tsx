@@ -1,25 +1,16 @@
-import Block, { BlockComponentStandardProps } from "@/components/blocks/Block";
+import BlockWrapper, {
+  BlockComponentStandardProps,
+} from "@/components/blocks/Block";
 import useCuratedListBlockData, {
   UseCuratedListBlockData,
   UseCuratedListBlockProps,
 } from "@/components/blocks/BuildCuratedListBlock/data";
 import Text from "@/components/common/Text";
-import Heading, { HeadingLevelProvider } from "@/components/common/Heading";
-import Grid from "@/components/common/Grid";
-import getItemLink, { getLinkLabel } from "@/utils/getItemLink";
-import { TItemWithIncludes } from "@/network/item/types";
-import Link, { InsetLink } from "@/components/common/Link";
-import { clsx } from "clsx";
-import { smSpacing } from "@/components/common/helpers/layoutStyles";
-import Image from "@/components/common/Image";
-import dayjs, { mediumDate } from "@/utils/dayjs";
-import RichContent from "@/components/common/RichContent";
-import { JSONContent } from "@tiptap/react";
-import sortItemALlowList from "@/utils/sortItemAllowList";
-import { MoveRight } from "lucide-react";
-import HorizCard from "@/components/cards/HorizCard";
-import ResponsiveCard from "@/components/cards/ResponsiveCard";
-import VertCard from "@/components/cards/VertCard";
+import { lazy, Suspense } from "react";
+
+const VariantAlpha = lazy(() => import("./variants/alpha"));
+const VariantBeta = lazy(() => import("./variants/beta"));
+const VariantGamma = lazy(() => import("./variants/gamma"));
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useCuratedListBlockData(config);
@@ -44,384 +35,32 @@ export function CuratedListBlock({
   const { variant } = settings;
 
   if (variant === "alpha") {
-    return <VariantAlpha blockData={blockData} blockProps={blockProps} />;
+    return (
+      <Suspense fallback={<div className="skeleton" />}>
+        <VariantAlpha blockData={blockData} blockProps={blockProps} />
+      </Suspense>
+    );
   }
 
   if (variant === "beta") {
-    return <VariantBeta blockData={blockData} blockProps={blockProps} />;
+    return (
+      <Suspense fallback={<div className="skeleton" />}>
+        <VariantBeta blockData={blockData} blockProps={blockProps} />
+      </Suspense>
+    );
   }
 
   if (variant === "gamma") {
-    return <VariantGamma blockData={blockData} blockProps={blockProps} />;
+    return (
+      <Suspense fallback={<div className="skeleton" />}>
+        <VariantGamma blockData={blockData} blockProps={blockProps} />
+      </Suspense>
+    );
   }
 
   return (
-    <Block {...blockProps}>
+    <BlockWrapper {...blockProps}>
       <Text textSize="md">Not implemented</Text>
-    </Block>
+    </BlockWrapper>
   );
 }
-
-function VariantAlpha({
-  blockData,
-  blockProps,
-}: {
-  blockProps: UseCuratedListBlockProps;
-  blockData: UseCuratedListBlockData;
-}) {
-  const { itemsData, referenceFeedPath } = blockData;
-
-  if (itemsData.isLoading) {
-    return null;
-  }
-
-  const sortedItems = sortItemALlowList({
-    items: itemsData.data?.items ?? [],
-    itemSlugs: blockData.itemOrder,
-  });
-
-  const theme = blockProps.settings.theme;
-
-  return (
-    <Block
-      name={blockProps.name}
-      settings={{ ...blockProps.settings, width: "xl", padded: false }}
-    >
-      <HeadingLevelProvider>
-        <Grid
-          className={clsx(["gap-14"])}
-          items={sortedItems.map((item, index) => ({
-            id: item.id,
-            content: (
-              <AlphaCard
-                index={index}
-                item={item}
-                feed={referenceFeedPath}
-                theme={theme}
-              />
-            ),
-          }))}
-        />
-      </HeadingLevelProvider>
-    </Block>
-  );
-}
-
-const AlphaCard = ({
-  item,
-  feed,
-  index,
-  theme,
-}: {
-  item: TItemWithIncludes;
-  feed?: string;
-  index: number;
-  theme: UseCuratedListBlockProps["settings"]["theme"];
-}) => {
-  const link = getItemLink(feed, item);
-  const linkLabel = getLinkLabel(link);
-
-  const image = item.images
-    .map(({ image }) => image)
-    .filter((img) => img.type === "LANDSCAPE" || img.type === "PORTRAIT")?.[0];
-
-  const reverse = index % 2 === 0;
-  const betaTheme = theme === "beta";
-  const gammaTheme = theme === "gamma";
-  const alphaTheme = theme === "alpha";
-
-  return (
-    <div
-      className={clsx([
-        "flex",
-        reverse ? "justify-end pl-14" : "justify-start pr-14",
-      ])}
-    >
-      <div className={clsx(["max-w-6xl w-full"])}>
-        <ResponsiveCard
-          className={clsx([
-            "bg-base-100 shadow-lg card-compact lg:card-normal",
-          ])}
-          imagery={
-            <>
-              {image && (
-                <div className="w-screen md:w-[36rem] md:!max-w-[50vw]">
-                  <Image
-                    url={image?.url}
-                    alt=""
-                    fit="cover"
-                    ar="1"
-                    hover="zoom"
-                  />
-                </div>
-              )}
-            </>
-          }
-          passage={
-            <div
-              className={clsx([
-                "flex flex-col md:justify-center h-full flex-none",
-              ])}
-            >
-              <div className={clsx(["flex flex-col gap-4 py-4"])}>
-                <Heading headingSize="lg" headingStyles="prose line-clamp-2">
-                  {item.name}
-                </Heading>
-                <Text textSize="lg" className="prose line-clamp-3">
-                  {item.description}
-                </Text>
-                {link && (
-                  <Link
-                    to={link}
-                    linkColor="accent"
-                    size="xl"
-                    className={
-                      "flex gap-2 items-center uppercase bold flex-none"
-                    }
-                  >
-                    {!linkLabel ? "Go there" : `${linkLabel}`} <MoveRight />
-                  </Link>
-                )}
-              </div>
-            </div>
-          }
-          underLay={
-            <>
-              <div
-                className={clsx([
-                  "w-full h-full translate-y-14",
-                  alphaTheme && "bg-neutral",
-                  betaTheme && "bg-primary",
-                  gammaTheme && "bg-accent",
-                  reverse ? " -translate-x-14" : "translate-x-14",
-                ])}
-              />
-            </>
-          }
-          overLay={<>{link && <InsetLink to={link} />}</>}
-          reverseX={reverse}
-        />
-      </div>
-    </div>
-  );
-};
-
-function VariantBeta({
-  blockData,
-  blockProps,
-}: {
-  blockProps: UseCuratedListBlockProps;
-  blockData: UseCuratedListBlockData;
-}) {
-  const { itemsData, referenceFeedPath } = blockData;
-  if (itemsData.isLoading) {
-    return null;
-  }
-  return (
-    <Block
-      name={blockProps.name}
-      settings={{ ...blockProps.settings, padded: false, width: "md" }}
-    >
-      <HeadingLevelProvider>
-        <Grid
-          className={clsx([smSpacing])}
-          items={(itemsData.data?.items ?? []).map((item, index) => ({
-            id: item.id,
-            content: (
-              <BetaCard index={index} item={item} feed={referenceFeedPath} />
-            ),
-          }))}
-        />
-      </HeadingLevelProvider>
-    </Block>
-  );
-}
-
-const BetaCard = ({
-  item,
-  feed,
-  index,
-}: {
-  item: TItemWithIncludes;
-  feed?: string;
-  index: number;
-}) => {
-  const link = getItemLink(feed, item);
-  const image = item.images
-    .map(({ image }) => image)
-    .filter((img) => img.type === "LANDSCAPE" || img.type === "PORTRAIT")?.[0];
-
-  return (
-    <HorizCard
-      className={"bg-base-100 shadow-lg card-compact md:card-normal"}
-      imagery={
-        <>
-          {image && (
-            <div className="w-36 md:w-48">
-              <Image url={image?.url} alt="" fit="cover" ar="1" />
-            </div>
-          )}
-        </>
-      }
-      passage={
-        <>
-          <Heading
-            headingSize="md"
-            headingStyles="line-clamp-1 md:line-clamp-2"
-          >
-            {item.name}
-          </Heading>
-          <Text textSize="md" className="line-clamp-2 md:line-clamp-3">
-            {item.description}
-          </Text>
-          {link && (
-            <Link
-              as="Link"
-              to={link}
-              linkColor="accent"
-              size="xl"
-              className={"flex gap-2"}
-            >
-              Go <MoveRight />
-            </Link>
-          )}
-        </>
-      }
-      reverseX={index % 2 === 0}
-    />
-  );
-};
-
-function VariantGamma({
-  blockData,
-  blockProps,
-}: {
-  blockProps: UseCuratedListBlockProps;
-  blockData: UseCuratedListBlockData;
-}) {
-  const { itemsData, referenceFeedPath } = blockData;
-  if (itemsData.isLoading) {
-    return null;
-  }
-
-  const sortedItems = sortItemALlowList({
-    items: itemsData.data?.items ?? [],
-    itemSlugs: blockData.itemOrder,
-  });
-
-  const theme = blockProps.settings.theme;
-
-  const finalBlockSettings = {
-    ...blockProps.settings,
-  };
-
-  const finalBlockProps = {
-    ...blockProps,
-  };
-
-  return (
-    <Block
-      {...finalBlockProps}
-      settings={{ ...finalBlockSettings, width: "md" }}
-    >
-      <HeadingLevelProvider>
-        <Grid
-          className={clsx([
-            theme === "alpha" && "grid-rows-auto gap-4",
-            theme === "beta" && "bg-base-100 shadow-lg",
-          ])}
-          items={sortedItems.map((item, index) => ({
-            id: item.id,
-            content: (
-              <>
-                <GammaCard
-                  index={index}
-                  item={item}
-                  feed={referenceFeedPath}
-                  theme={theme}
-                />
-                {theme === "beta" && index < sortedItems.length - 1 && (
-                  <div className="absolute bottom-0 left-6 right-6 border-b border-base-content" />
-                )}
-              </>
-            ),
-          }))}
-        />
-      </HeadingLevelProvider>
-    </Block>
-  );
-}
-
-const GammaCard = ({
-  item,
-  feed,
-  theme,
-}: {
-  item: TItemWithIncludes;
-  feed?: string;
-  index: number;
-  theme: UseCuratedListBlockProps["settings"]["theme"];
-}) => {
-  const link = getItemLink(feed, item);
-  const date = item.dateRanges?.[0] ?? null;
-
-  const alphaTheme = theme === "alpha";
-  const betaTheme = theme === "beta";
-
-  return (
-    <VertCard
-      className={clsx([
-        "card card-compact sm:card-normal w-full flex-none justify-center h-full",
-        alphaTheme && "bg-base-100 shadow-xl text-base-content",
-        betaTheme && "bg-base-100 text-base-content py-8",
-      ])}
-      passage={
-        <div className={clsx(["flex flex-col gap-5"])}>
-          <Heading
-            headingSize="md"
-            headingStyles="font-bold"
-            headingDecorator={alphaTheme ? "right-strike" : "none"}
-          >
-            {item.name}
-          </Heading>
-          {date && (
-            <div className="flex flex-col gap-2 md:flex-row md:items-center justify-between flex-wrap">
-              <Text
-                textSize="md"
-                className="text-left text-accent uppercase font-semibold prose"
-              >
-                {date.description}
-              </Text>
-              {date.startAt && date.endAt && (
-                <Text
-                  textSize="md"
-                  className="md:text-right font-bold bg-secondary text-secondary-content py-1 px-3 flex-none"
-                >
-                  {dayjs(date.startAt).format(mediumDate)} ---{" "}
-                  {dayjs(date.endAt).format(mediumDate)}
-                </Text>
-              )}
-            </div>
-          )}
-          {(item.richContent?.content as unknown as JSONContent) ? (
-            <RichContent
-              richContent={item.richContent as Record<string, unknown>}
-            />
-          ) : (
-            item.description && <Text textSize="md">{item.description}</Text>
-          )}
-          {link && (
-            <Link
-              as="Link"
-              to={link}
-              linkColor="accent"
-              className={"flex gap-2"}
-            >
-              Go <MoveRight />
-            </Link>
-          )}
-        </div>
-      }
-    />
-  );
-};
