@@ -6,15 +6,9 @@ import useDetailBlockData, {
 } from "./data";
 import { lazy, Suspense } from "react";
 
-const VariantAlpha = lazy(
-  () => import("@/components/blocks/BuildTeaserGridBlock/variants/alpha"),
-);
-const VariantBeta = lazy(
-  () => import("@/components/blocks/BuildTeaserGridBlock/variants/beta"),
-);
-const VariantGamma = lazy(
-  () => import("@/components/blocks/BuildTeaserGridBlock/variants/gamma"),
-);
+const VariantAlpha = lazy(() => import("./variants/alpha"));
+const VariantBeta = lazy(() => import("./variants/beta"));
+const VariantGamma = lazy(() => import("./variants/gamma"));
 
 export default function Component(config: BlockComponentStandardProps) {
   const result = useDetailBlockData(config);
