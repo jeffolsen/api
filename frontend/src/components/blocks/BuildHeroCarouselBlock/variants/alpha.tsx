@@ -14,6 +14,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Navigation } from "swiper/modules";
 import { NextButton, PrevButton } from "..";
 import getImageByPriority from "@/utils/getImageByPriority";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/effect-fade";
 
 export default function VariantAlpha({
   blockProps,

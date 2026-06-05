@@ -13,6 +13,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Navigation } from "swiper/modules";
 import getImageByPriority from "@/utils/getImageByPriority";
 import { WrapperProps } from "@/components/common/Wrapper";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/effect-fade";
 
 export default function VariantGamma({
   blockData,

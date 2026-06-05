@@ -4,10 +4,6 @@ import useHeroCarouselBlockData, {
   UseHeroCarouselBlockData,
   UseHeroCarouselBlockProps,
 } from "@/components/blocks/BuildHeroCarouselBlock/data";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/effect-fade";
 
 import { CircleArrowLeft, CircleArrowRight } from "lucide-react";
 import { clsx } from "clsx";
