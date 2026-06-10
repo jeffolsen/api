@@ -1,4 +1,5 @@
 import { TImage } from "@/network/image/types";
+import siteIcon from "./siteIcon";
 
 type ImageTypes = "ICON" | "PORTRAIT" | "LANDSCAPE";
 type PriorityValues = 0 | 1 | 2 | 3;
@@ -13,7 +14,7 @@ const getImageByPriority = ({
   priority?: Priority;
 }): TImage | null => {
   return (
-    images
+    [...images, siteIcon()]
       .filter(({ type }: TImage) => {
         return (
           Object.hasOwn(priority, type) && priority[type as ImageTypes] !== 0

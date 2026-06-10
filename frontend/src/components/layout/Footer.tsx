@@ -45,7 +45,7 @@ function Footer() {
                 size="lg"
                 as="a"
                 linkColor="base"
-                href={"/resume.pdf"}
+                href={"/pdfs/resume.pdf"}
                 className={"flex gap-2"}
                 target="_blank"
               >

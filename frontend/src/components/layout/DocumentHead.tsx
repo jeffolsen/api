@@ -80,7 +80,7 @@ export default function DocumentHead({
       priority: { ICON: 3, PORTRAIT: 2, LANDSCAPE: 1 },
     })?.url ||
     feed.seoImage ||
-    `${BASE_URL}/favicon-96x96.png`;
+    `${BASE_URL}/images/favicon-512x512.png`;
 
   const keywords = item?.tags.length
     ? item?.tags.map((t) => t.tag.name)
