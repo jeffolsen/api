@@ -17,6 +17,7 @@ export type BlockWrapperProps<T> = {
     padded?: WrapperProps["padded"];
     isPrimaryContent: boolean;
     themeCss?: ClassValue;
+    textAlign?: "text-center" | "text-left";
   } & T;
 };
 
@@ -60,6 +61,7 @@ function InnerBlockWrapper<T extends Record<string, unknown>>({
   className,
   children,
 }: PropsWithChildren<BlockWrapperProps<T>>) {
+  const align = settings.textAlign || "text-center";
   return (
     <div
       className={clsx([
@@ -68,22 +70,22 @@ function InnerBlockWrapper<T extends Record<string, unknown>>({
         settings?.themeCss ? settings.themeCss : "text-base-content",
       ])}
     >
-      {name && (
-        <ScrollInFade className="mx-auto max-w-screen-lg w-full">
-          <Heading
-            headingSize="xl"
-            headingStyles={clsx(["uppercase font-bold text-center"])}
-            {...headingProps}
-          >
-            {name}
-          </Heading>
-        </ScrollInFade>
-      )}
       <Wrapper
         width={settings.width || "md"}
         padded={settings.padded}
         className={className}
       >
+        {name && (
+          <ScrollInFade className={"mx-auto w-full"}>
+            <Heading
+              headingSize="xl"
+              headingStyles={clsx(["uppercase font-bold pb-4", align])}
+              {...headingProps}
+            >
+              {name}
+            </Heading>
+          </ScrollInFade>
+        )}
         {children}
       </Wrapper>
     </div>

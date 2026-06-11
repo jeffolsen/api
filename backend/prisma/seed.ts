@@ -136,11 +136,15 @@ async function handleLibraryUpserts() {
       where: { url: image.url },
       update: {
         alt: image.alt,
+        attribution: image.attribution,
+        attributionLink: image.attributionLink,
         type: image.type,
       },
       create: {
         url: image.url,
         alt: image.alt,
+        attribution: image.attribution,
+        attributionLink: image.attributionLink,
         type: image.type,
       },
     });

@@ -13,8 +13,10 @@ export type TImageType = (typeof imageTypes)[number];
 export type TImage = {
   id: number;
   url: string;
-  type: TImageType;
   alt: string;
+  attribution: string | null;
+  attributionLink: string | null;
+  type: TImageType;
   createdAt: string;
   updatedAt: string;
 };

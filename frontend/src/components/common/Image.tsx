@@ -8,11 +8,12 @@ const hoverEffects = {
 
 export type ImageProps = {
   url: string;
-  alt: string;
+  alt: string | null;
   fit?: "cover" | "contain";
   ar?: AspectRatio;
   hover?: "none" | "zoom";
   className?: ClassValue;
+  mute?: boolean;
 };
 
 export default function Image({
@@ -21,6 +22,7 @@ export default function Image({
   fit = "cover",
   ar = "none",
   hover = "none",
+  mute = false,
 }: ImageProps) {
   const arStyles = aspectRatios[ar];
   const hoverStyles = hoverEffects[hover];
@@ -29,10 +31,11 @@ export default function Image({
     <div className={clsx("overflow-clip relative", arStyles)}>
       <img
         src={url}
-        alt={alt}
+        alt={alt || ""}
         className={clsx(
           "w-full h-full absolute inset-0",
           fit === "cover" ? "object-cover" : "object-contain p-[10%]",
+          mute && "saturate-0 contrast-50 opacity-75",
           hoverStyles,
         )}
       />

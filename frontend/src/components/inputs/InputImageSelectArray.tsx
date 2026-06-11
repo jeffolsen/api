@@ -91,14 +91,12 @@ function ImageSelectInput(
   const rulesProps = (input?.rules || {}) as FieldArrayMinMaxRule;
 
   const selectedImages = useCallback(() => {
-    const imageIds = (fields as ImageIdArrayFields).map(
-      (field) => field.imageId,
-    );
-    return (
-      images.data?.images.filter((image: Image) =>
-        imageIds.includes(image.id),
-      ) || []
-    );
+    return (fields as ImageIdArrayFields).flatMap((field) => {
+      const image = images.data?.images.find(
+        (img: Image) => img.id === field.imageId,
+      );
+      return image ? [image] : [];
+    });
   }, [fields, images.data]);
 
   const canSelectImages =

@@ -201,7 +201,7 @@ export const IMAGE_IDS_INPUT = {
   componentName: "ImageSelectArrayInput",
   input: {
     rules: {
-      maxLength: { value: 3, message: "You can select up to 3 images" },
+      maxLength: { value: 10, message: "You can select up to 10 images" },
     },
   },
 } as FormComponentProps;
@@ -274,7 +274,7 @@ export const DATE_RANGES_INPUT = {
       },
     },
     rules: {
-      maxLength: { value: 3, message: "You can create up to 3 date ranges" },
+      maxLength: { value: 10, message: "You can create up to 10 date ranges" },
     },
   },
 } as FormComponentProps;

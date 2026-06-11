@@ -15,6 +15,8 @@ const mockImage = (
   id: number,
   type: TImageType,
   label: string,
+  attribution: string | null = null,
+  attributionLink: string | null = null,
 ): TItemWithIncludes["images"][number] => ({
   itemId: id,
   imageId: id,
@@ -22,6 +24,8 @@ const mockImage = (
     id,
     url: `https://placehold.co/600x400?text=${encodeURIComponent(label)}`,
     alt: label,
+    attribution,
+    attributionLink,
     type,
     createdAt: NOW,
     updatedAt: NOW,
@@ -38,7 +42,9 @@ const mockTag = (
   tag: { id: tagId, name },
 });
 
-const mockDateRange = (id: number): TItemWithIncludes["dateRanges"][number] => ({
+const mockDateRange = (
+  id: number,
+): TItemWithIncludes["dateRanges"][number] => ({
   id,
   description: "Mock date range",
   startAt: START,
@@ -63,7 +69,7 @@ export const mockItems: TItemWithIncludes[] = [
     ...mockBase(1, "Landscape Image With Description"),
     description:
       "A short description for this item, useful for teaser cards and related content blocks.",
-    images: [mockImage(1, "LANDSCAPE", "Landscape")],
+    images: [mockImage(1, "LANDSCAPE", "Landscape", "attribution text")],
     tags: [mockTag(1, 1, "ART"), mockTag(1, 2, "DEVELOPMENT")],
     dateRanges: [mockDateRange(1)],
   },
@@ -86,7 +92,11 @@ export const mockItems: TItemWithIncludes[] = [
     description:
       "This item has no image, so blocks should render their fallback state — usually the item name displayed as text inside the figure area.",
     images: [],
-    tags: [mockTag(4, 6, "UX"), mockTag(4, 7, "COLLABORATION"), mockTag(4, 8, "SCRUM")],
+    tags: [
+      mockTag(4, 6, "UX"),
+      mockTag(4, 7, "COLLABORATION"),
+      mockTag(4, 8, "SCRUM"),
+    ],
     dateRanges: [],
   },
   {

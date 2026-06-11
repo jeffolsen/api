@@ -57,6 +57,8 @@ function AlphaCard({
     priority: { ICON: 3, PORTRAIT: 1, LANDSCAPE: 2 },
   });
 
+  console.log("link", link, item, feed);
+
   return (
     <ResponsiveCard
       className="bg-base-100 shadow-lg h-full card-compact md:card-normal"
@@ -69,6 +71,7 @@ function AlphaCard({
               fit={image.type === "ICON" ? "contain" : "cover"}
               ar="1.5"
               hover="zoom"
+              mute={image.type === "ICON"}
             />
           )}
         </div>

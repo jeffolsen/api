@@ -6,6 +6,8 @@ const siteIcon = (): TImage => {
     url: "/images/favicon-512x512.png",
     type: "ICON",
     alt: "meetjeffolsen",
+    attribution: "meetjeffolsen",
+    attributionLink: "meetjeffolsen",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };

@@ -30,7 +30,8 @@ function useRelatedContentBlockData({
 }: BlockComponentStandardProps): UseRelatedContentBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, theme, isPrimaryContent } = propertyValues as PropertyValues;
+  const { variant, theme, referenceFeed, isPrimaryContent } =
+    propertyValues as PropertyValues;
 
   const blockSettings = variants[variant] || variants["alpha"];
 
@@ -65,6 +66,7 @@ function useRelatedContentBlockData({
       id,
       itemData: item,
       itemsData: relatedItems,
+      referenceFeedPath: referenceFeed?.[0],
     },
   };
 }
@@ -82,12 +84,14 @@ type PropertyValues = {
   variant: VariantNames;
   theme: ThemeNames;
   isPrimaryContent: boolean;
+  referenceFeed?: string[];
 };
 
 type BlockSettings = Omit<Variant & Theme, "pageSize">;
 type LocalBlockData = {
   itemData: TItemWithIncludes;
   itemsData: ReturnType<typeof useGetItems>;
+  referenceFeedPath?: string;
 };
 
 export type UseRelatedContentBlockProps = BlockProps<BlockSettings>;
