@@ -4,7 +4,6 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import errorHandler from "@middleware/errorHandler";
-import path from "path";
 import apiRouter, { BASE_API_URL } from "@/api";
 import { globalLimiter } from "@middleware/rateLimit";
 
@@ -23,15 +22,8 @@ app.use(globalLimiter);
 app.use(BASE_API_URL, apiRouter);
 app.use(errorHandler);
 
-if (env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../../frontend/dist")));
-  app.use(/(.*)/, (req, res) => {
-    res.sendFile(path.join(__dirname, "../../frontend", "dist", "index.html"));
-  });
-}
-
 initCronJobs();
 
-app.listen(PORT, () => console.log("server running yo"));
+app.listen(PORT, () => console.log("server running"));
 
 export default app;
