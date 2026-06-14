@@ -6,10 +6,9 @@ import { EMAIL_DEFAULT } from "@/config/inputs";
 
 export const CMS_KEY = "cms" as const;
 // these should match the backend routes, may need website url in front of them in production
-export const BASE_URL =
-  import.meta.env.MODE === "development"
-    ? import.meta.env.VITE_API_BASE_URL + "/api"
-    : "/api";
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL
+  ? import.meta.env.VITE_API_BASE_URL + "/api"
+  : "/api";
 
 export const REFRESH_ENDPOINT = "/auth/refresh";
 export const REGISTER_ENDPOINT = "/auth/register";
