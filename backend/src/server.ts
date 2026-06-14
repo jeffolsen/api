@@ -14,11 +14,10 @@ const PORT = env.PORT || 5001;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-if (env.NODE_ENV !== "production") {
-  app.use(cors({ origin: env.ALLOWED_ORIGIN, credentials: true }));
-} else {
-  app.use(cors({ credentials: true }));
-}
+const allowedOrigins = env.ALLOWED_ORIGIN
+  ? env.ALLOWED_ORIGIN.split(",").map((o) => o.trim())
+  : [];
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(cookieParser());
 app.use(globalLimiter);
 app.use(BASE_API_URL, apiRouter);
