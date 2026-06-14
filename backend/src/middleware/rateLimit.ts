@@ -12,21 +12,20 @@ const defaults = {
 export const globalLimiter = rateLimit({
   ...defaults,
   windowMs: 60 * 1000,
-  limit: 100,
-  // limit: 10,
+  limit: 120,
 });
 
 // Strict limit for unauthenticated sensitive endpoints (login, verification codes)
 export const authLimiter = rateLimit({
   ...defaults,
   windowMs: 60 * 1000,
-  limit: 10,
+  limit: 15,
 });
 
 // Limit write operations on resource routes to prevent rapid-fire updates
 export const mutationLimiter = rateLimit({
   ...defaults,
   windowMs: 60 * 1000,
-  limit: 30,
+  limit: 40,
   skip: (req) => req.method === "GET",
 });
