@@ -19,6 +19,9 @@ export default function Component(config: BlockComponentStandardProps) {
   }
 
   const { blockProps, blockData } = result;
+
+  if (blockData.itemsData.isLoading) return null;
+
   return <TeaserGridBlock blockProps={blockProps} blockData={blockData} />;
 }
 

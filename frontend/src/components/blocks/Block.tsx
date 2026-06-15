@@ -28,9 +28,7 @@ function BlockWrapper<T extends Record<string, unknown>>({
   settings,
   className,
   children,
-  ...props
 }: PropsWithChildren<BlockWrapperProps<T>>) {
-  console.log("block props", props);
   if (settings.isPrimaryContent) {
     return (
       <InnerBlockWrapper
