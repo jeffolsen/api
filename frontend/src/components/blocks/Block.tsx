@@ -17,6 +17,7 @@ export type BlockWrapperProps<T> = {
     padded?: WrapperProps["padded"];
     isPrimaryContent: boolean;
     themeCss?: ClassValue;
+    critical?: boolean;
     textAlign?: "text-center" | "text-left";
   } & T;
 };
@@ -27,7 +28,9 @@ function BlockWrapper<T extends Record<string, unknown>>({
   settings,
   className,
   children,
+  ...props
 }: PropsWithChildren<BlockWrapperProps<T>>) {
+  console.log("block props", props);
   if (settings.isPrimaryContent) {
     return (
       <InnerBlockWrapper
@@ -76,7 +79,10 @@ function InnerBlockWrapper<T extends Record<string, unknown>>({
         className={className}
       >
         {name && (
-          <ScrollInFade className={"mx-auto w-full"}>
+          <ScrollInFade
+            className={"mx-auto w-full"}
+            critical={settings.critical}
+          >
             <Heading
               headingSize="xl"
               headingStyles={clsx(["uppercase font-bold pb-4", align])}

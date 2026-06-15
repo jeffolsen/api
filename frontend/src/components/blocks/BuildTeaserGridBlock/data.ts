@@ -23,12 +23,11 @@ const variants = {
 
 function useTeaserGridBlockData({
   component,
-  critical,
   renderFor = "app",
 }: BlockComponentStandardProps): UseTeaserGridBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, tagAllowList, referenceFeed, isPrimaryContent } =
+  const { variant, tagAllowList, referenceFeed, isPrimaryContent, critical } =
     propertyValues as PropertyValues;
 
   const { ...blockSettings } = variants[variant] || variants["alpha"];
@@ -72,6 +71,7 @@ type PropertyValues = {
   isPrimaryContent: boolean;
   tagAllowList: TTagName[];
   referenceFeed?: string[];
+  critical?: boolean;
 };
 
 type BlockSettings = Omit<(typeof variants)[VariantNames], "pageSize">;

@@ -22,11 +22,11 @@ const variants = {
 function useDetailBlockData({
   component,
   item,
-  critical,
 }: BlockComponentStandardProps): UseDetailBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, theme, isPrimaryContent } = propertyValues as PropertyValues;
+  const { variant, theme, isPrimaryContent, critical } =
+    propertyValues as PropertyValues;
 
   const blockSettings = variants[variant] || variants["alpha"];
 
@@ -65,6 +65,7 @@ type PropertyValues = {
   variant: VariantNames;
   theme: ThemeNames;
   isPrimaryContent: boolean;
+  critical?: boolean;
 };
 
 type BlockSettings = Omit<Variant & Theme, "pageSize">;

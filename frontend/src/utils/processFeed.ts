@@ -13,9 +13,10 @@ const processFeed = (feed: TFeedWithIncludes): ProcessedFeedAndHeaderHero => {
   // ie, ensureOnlyCurrentAuthStateComponents(feed.components)
   const firstHeaderComponent = ensureOnlyOneHeaderComponent(feed.components);
   const bodyComponents = ensureOnlyBodyComponents(feed.components);
-  const components = ensureSinglePrimaryContent(bodyComponents).sort(
+  const sortedComponents = ensureSinglePrimaryContent(bodyComponents).sort(
     (a, b) => a.order - b.order,
   );
+  const components = ensureFirstComponentIsCritical(sortedComponents);
 
   return {
     processedFeed: { ...feed, components },
@@ -30,7 +31,12 @@ const ensureOnlyOneHeaderComponent = (components: TComponent[]) => {
       component.typeName === "HeroCarousel" &&
       component.propertyValues.location === "header",
   );
-  return headerHero ? { ...headerHero } : null;
+  return headerHero
+    ? {
+        ...headerHero,
+        propertyValues: { ...headerHero.propertyValues, critical: true },
+      }
+    : null;
 };
 
 const ensureOnlyBodyComponents = (components: TComponent[]) => {
@@ -73,6 +79,19 @@ const ensureSinglePrimaryContent = (components: TComponent[]) => {
     }
     return component;
   });
+};
+
+const ensureFirstComponentIsCritical = (components: TComponent[]) => {
+  if (!components.length) return components;
+
+  const firstComponent = { ...components[0] };
+  return [
+    {
+      ...firstComponent,
+      propertyValues: { ...firstComponent.propertyValues, critical: true },
+    },
+    ...components.slice(1),
+  ];
 };
 
 export default processFeed;

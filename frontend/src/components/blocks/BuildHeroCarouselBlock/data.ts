@@ -25,7 +25,6 @@ const variants = {
 
 function useHeroCarouselBlockData({
   component,
-  critical,
   renderFor = "app",
 }: BlockComponentStandardProps): UseHeroCarouselBlockDataReturnType {
   const { id, name, propertyValues } = component;
@@ -37,6 +36,7 @@ function useHeroCarouselBlockData({
     itemAllowList,
     referenceFeed,
     isPrimaryContent,
+    critical,
   } = propertyValues as PropertyValues;
 
   const { pageSize, ...blockSettings } = variants[variant] || variants["alpha"];
@@ -92,6 +92,7 @@ type PropertyValues = {
   isPrimaryContent: boolean;
   itemAllowList: string[];
   referenceFeed?: string[];
+  critical?: boolean;
 } & Location;
 
 type BlockSettings = Omit<Variant & Theme & Location, "pageSize">;

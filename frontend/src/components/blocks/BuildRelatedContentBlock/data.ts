@@ -25,12 +25,11 @@ const variants = {
 function useRelatedContentBlockData({
   component,
   item,
-  critical,
   renderFor = "app",
 }: BlockComponentStandardProps): UseRelatedContentBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, theme, referenceFeed, isPrimaryContent } =
+  const { variant, theme, referenceFeed, isPrimaryContent, critical } =
     propertyValues as PropertyValues;
 
   const blockSettings = variants[variant] || variants["alpha"];
@@ -85,6 +84,7 @@ type PropertyValues = {
   theme: ThemeNames;
   isPrimaryContent: boolean;
   referenceFeed?: string[];
+  critical?: boolean;
 };
 
 type BlockSettings = Omit<Variant & Theme, "pageSize">;

@@ -22,13 +22,18 @@ const variants = {
 
 function useContentHeaderBlockData({
   component,
-  critical,
   renderFor = "app",
 }: BlockComponentStandardProps): UseContentHeaderBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, theme, itemAllowList, referenceFeed, isPrimaryContent } =
-    propertyValues as PropertyValues;
+  const {
+    variant,
+    theme,
+    itemAllowList,
+    referenceFeed,
+    critical,
+    isPrimaryContent,
+  } = propertyValues as PropertyValues;
 
   const blockSettings = variants[variant] || variants["alpha"];
 
@@ -76,6 +81,7 @@ type PropertyValues = {
   variant: VariantNames;
   theme: ThemeNames;
   isPrimaryContent: boolean;
+  critical: boolean;
   itemAllowList: string[];
   referenceFeed?: string[];
 };
