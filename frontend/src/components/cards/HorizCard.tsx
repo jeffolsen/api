@@ -8,6 +8,7 @@ type HorizCardProps = {
   overLay?: ReactNode;
   underLay?: ReactNode;
   reverseX?: boolean;
+  critical?: boolean;
   className?: ClassValue;
 };
 
@@ -17,10 +18,14 @@ const HorizCard = ({
   overLay,
   underLay,
   reverseX = false,
+  critical = false,
   className,
 }: HorizCardProps) => {
   return (
-    <ScrollInFade className={clsx(["relative group h-full"])}>
+    <ScrollInFade
+      className={clsx(["relative group h-full"])}
+      critical={critical}
+    >
       <div
         className={clsx([
           "card card-side w-full overflow-clip",

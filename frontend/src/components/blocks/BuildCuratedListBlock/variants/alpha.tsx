@@ -48,6 +48,7 @@ export default function VariantAlpha({
                 item={item}
                 feed={referenceFeedPath}
                 theme={theme}
+                critical={blockProps.settings.critical && index === 0}
               />
             ),
           }))}
@@ -62,11 +63,13 @@ const AlphaCard = ({
   feed,
   index,
   theme,
+  critical,
 }: {
   item: TItemWithIncludes;
   feed?: string;
   index: number;
   theme: UseCuratedListBlockProps["settings"]["theme"];
+  critical?: boolean;
 }) => {
   const link = getItemLink(feed, item);
   const linkLabel = getLinkLabel(link);
@@ -89,6 +92,7 @@ const AlphaCard = ({
     >
       <div className={clsx(["max-w-6xl w-full"])}>
         <ResponsiveCard
+          critical={critical}
           className={clsx([
             "bg-base-100 shadow-lg card-compact lg:card-normal",
           ])}

@@ -10,6 +10,7 @@ type ResponsiveCardProps = {
   changeAt?: "md" | "lg" | "xl";
   reverseX?: boolean;
   reverseY?: boolean;
+  critical?: boolean;
   className?: ClassValue;
 };
 
@@ -21,10 +22,14 @@ const ResponsiveCard = ({
   changeAt = "md",
   reverseX = false,
   reverseY = false,
+  critical = false,
   className,
 }: ResponsiveCardProps) => {
   return (
-    <ScrollInFade className={clsx(["relative group h-full"])}>
+    <ScrollInFade
+      className={clsx(["relative group h-full"])}
+      critical={critical}
+    >
       <div
         className={clsx([
           "card w-full overflow-clip",

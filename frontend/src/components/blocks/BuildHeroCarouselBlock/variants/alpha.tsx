@@ -27,7 +27,7 @@ export default function VariantAlpha({
   blockData: UseHeroCarouselBlockData;
 }) {
   const { itemsData, referenceFeedPath } = blockData;
-  const critical = blockProps.settings;
+  const critical = blockProps.settings.critical;
 
   if (itemsData.isLoading) {
     return null;

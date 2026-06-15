@@ -44,7 +44,12 @@ export default function VariantGamma({
       {...finalBlockProps}
       settings={{ ...finalBlockSettings, width: "md" }}
     >
-      <GammaCard item={item} feed={referenceFeedPath} theme={theme} />
+      <GammaCard
+        item={item}
+        feed={referenceFeedPath}
+        theme={theme}
+        critical={blockProps.settings.critical}
+      />
     </Block>
   );
 }
@@ -53,10 +58,12 @@ const GammaCard = ({
   item,
   feed,
   theme,
+  critical,
 }: {
   item: TItemWithIncludes;
-  feed?: string;
   theme: UseContentHeaderBlockProps["settings"]["theme"];
+  feed?: string;
+  critical?: boolean;
 }) => {
   const link = getItemLink(feed, item);
   const tags = item?.tags.map(({ tag }) => tag) ?? [];
@@ -68,6 +75,7 @@ const GammaCard = ({
         "card card-compact sm:card-normal w-full flex-none justify-center h-full text-left",
         theme === "alpha" && "bg-base-100 shadow-xl",
       ])}
+      critical={critical}
     >
       <div
         className={clsx([

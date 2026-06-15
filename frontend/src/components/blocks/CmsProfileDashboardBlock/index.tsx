@@ -47,7 +47,7 @@ function CmsProfileDashboardBlock({
       <HeadingLevelProvider>
         <DashBoardLayout profile={profile}>
           <HeadingLevelProvider>
-            <ScrollInFade className="w-full">
+            <ScrollInFade className="w-full" critical={true}>
               <LoggedInSessionSection sessionsData={sessionsData} />
             </ScrollInFade>
             <ScrollInFade className="w-full">

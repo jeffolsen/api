@@ -40,7 +40,12 @@ export default function VariantAlpha({
       {...finalBlockProps}
       settings={{ ...finalBlockSettings, width: "xl" }}
     >
-      <AlphaCard item={item} feed={referenceFeedPath} theme={theme} />
+      <AlphaCard
+        item={item}
+        feed={referenceFeedPath}
+        theme={theme}
+        critical={blockProps.settings.critical}
+      />
     </Block>
   );
 }
@@ -49,10 +54,12 @@ const AlphaCard = ({
   item,
   feed,
   theme,
+  critical,
 }: {
   item: TItemWithIncludes;
-  feed?: string;
   theme: UseContentHeaderBlockProps["settings"]["theme"];
+  feed?: string;
+  critical?: boolean;
 }) => {
   const link = getItemLink(feed, item);
   const linkLabel = getLinkLabel(link);
@@ -65,6 +72,7 @@ const AlphaCard = ({
         theme === "beta" && "bg-transparent text-base-content font-extrabold",
         // theme === "alpha" && "bg-base-100 shadow-xl",
       ])}
+      critical={critical}
     >
       <div className="card-body gap-8  text-center items-center">
         <Heading

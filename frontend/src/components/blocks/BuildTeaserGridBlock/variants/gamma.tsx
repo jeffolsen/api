@@ -34,7 +34,12 @@ export default function VariantGamma({
         items={(itemsData.data?.items ?? []).map((item, index) => ({
           id: item.id,
           content: (
-            <GammaCard index={index} item={item} feed={referenceFeedPath} />
+            <GammaCard
+              index={index}
+              item={item}
+              feed={referenceFeedPath}
+              critical={blockProps.settings.critical && index < 6}
+            />
           ),
         }))}
       />
@@ -45,10 +50,12 @@ export default function VariantGamma({
 function GammaCard({
   item,
   feed,
+  critical,
 }: {
   index: number;
   item: TItemWithIncludes;
   feed: string | undefined;
+  critical?: boolean;
 }) {
   const link = getItemLink(feed, item);
   const images = item.images.map(({ image }) => image);
@@ -60,6 +67,7 @@ function GammaCard({
 
   return (
     <VertCard
+      critical={critical}
       className="bg-base-100 shadow-lg h-full card-compact"
       imagery={
         <>

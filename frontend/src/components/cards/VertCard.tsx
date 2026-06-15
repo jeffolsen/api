@@ -8,6 +8,7 @@ type VertCardProps = {
   overLay?: ReactNode;
   underLay?: ReactNode;
   reverseY?: boolean;
+  critical?: boolean;
   className?: ClassValue;
 };
 
@@ -17,10 +18,14 @@ const VertCard = ({
   overLay,
   underLay,
   reverseY = false,
+  critical = false,
   className,
 }: VertCardProps) => {
   return (
-    <ScrollInFade className={clsx(["relative group h-full"])}>
+    <ScrollInFade
+      className={clsx(["relative group h-full"])}
+      critical={critical}
+    >
       <div
         className={clsx([
           "card w-full overflow-clip",

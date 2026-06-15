@@ -4,7 +4,6 @@ import dayjs, { longDatetime, techDatetime } from "@/utils/dayjs";
 import { TProfile } from "@/network/profile/types";
 import { PropsWithChildren } from "react";
 import CmsSubNav from "./CmsSubNav";
-import ScrollInFade from "../common/ScrollInFade";
 
 type DashBoardLayoutProps = PropsWithChildren<{
   profile: TProfile;
@@ -13,7 +12,7 @@ type DashBoardLayoutProps = PropsWithChildren<{
 function DashBoardLayout({ profile, children }: DashBoardLayoutProps) {
   return (
     <>
-      <ScrollInFade className="w-full">
+      <div className="w-full">
         <Heading
           headingSize="lg"
           headingDecorator="none"
@@ -30,7 +29,7 @@ function DashBoardLayout({ profile, children }: DashBoardLayoutProps) {
           </Text>
         </div>
         <CmsSubNav />
-      </ScrollInFade>
+      </div>
       {children}
     </>
   );

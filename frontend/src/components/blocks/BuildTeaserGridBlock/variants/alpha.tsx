@@ -33,7 +33,12 @@ export default function VariantAlpha({
         items={(itemsData.data?.items ?? []).map((item, index) => ({
           id: item.id,
           content: (
-            <AlphaCard index={index} item={item} feed={referenceFeedPath} />
+            <AlphaCard
+              index={index}
+              item={item}
+              feed={referenceFeedPath}
+              critical={blockProps.settings.critical && index < 3}
+            />
           ),
         }))}
       />
@@ -44,10 +49,12 @@ export default function VariantAlpha({
 function AlphaCard({
   item,
   feed,
+  critical,
 }: {
   index: number;
   item: TItemWithIncludes;
   feed: string | undefined;
+  critical?: boolean;
 }) {
   const link = getItemLink(feed, item);
   const images = item.images.map(({ image }) => image);
@@ -57,11 +64,10 @@ function AlphaCard({
     priority: { ICON: 3, PORTRAIT: 1, LANDSCAPE: 2 },
   });
 
-  console.log("link", link, item, feed);
-
   return (
     <ResponsiveCard
       className="bg-base-100 shadow-lg h-full card-compact md:card-normal"
+      critical={critical}
       imagery={
         <div className="w-full xl:w-72 from-base-100 to-base-300 bg-gradient-to-b">
           {image && (

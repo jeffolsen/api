@@ -33,7 +33,12 @@ export default function VariantBeta({
         items={(itemsData.data?.items ?? []).map((item, index) => ({
           id: item.id,
           content: (
-            <BetaCard index={index} item={item} feed={referenceFeedPath} />
+            <BetaCard
+              index={index}
+              item={item}
+              feed={referenceFeedPath}
+              critical={blockProps.settings.critical && index < 4}
+            />
           ),
         }))}
       />
@@ -45,10 +50,12 @@ function BetaCard({
   item,
   feed,
   index,
+  critical,
 }: {
   index: number;
   item: TItemWithIncludes;
   feed: string | undefined;
+  critical?: boolean;
 }) {
   const link = getItemLink(feed, item);
   const images = item.images.map(({ image }) => image);
@@ -62,6 +69,7 @@ function BetaCard({
 
   return (
     <VertCard
+      critical={critical}
       className="bg-base-100 shadow-lg h-full card-compact"
       imagery={
         <div
