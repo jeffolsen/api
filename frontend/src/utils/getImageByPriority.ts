@@ -13,8 +13,11 @@ const getImageByPriority = ({
   images: TImage[];
   priority?: Priority;
 }): TImage | null => {
+  const sIcon = siteIcon();
+  if (priority.ICON > 0) images.push(sIcon);
   return (
-    [...images, siteIcon()]
+    [...images]
+      .filter(Boolean)
       .filter(({ type }: TImage) => {
         return (
           Object.hasOwn(priority, type) && priority[type as ImageTypes] !== 0

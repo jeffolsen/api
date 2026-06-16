@@ -7,7 +7,6 @@ import RichContent from "@/components/common/RichContent";
 import { useState } from "react";
 // Import Swiper React components
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
-
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/free-mode";
@@ -116,8 +115,6 @@ function DetailGallery({
 
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass | null>(null);
 
-  console.log("thumbsSwiper", thumbsSwiper);
-
   return (
     <Block
       {...blockProps}
@@ -128,7 +125,10 @@ function DetailGallery({
         ...blockProps.settings,
       }}
     >
-      <ScrollInFade className="w-full h-full flex gap-2 items-stretch">
+      <ScrollInFade
+        className="w-full h-full flex gap-2 items-stretch"
+        critical={blockProps.settings.critical}
+      >
         {/* <PrevButton /> */}
         <Swiper
           spaceBetween={10}
@@ -159,7 +159,10 @@ function DetailGallery({
         </Swiper>
         {/* <NextButton /> */}
       </ScrollInFade>
-      <ScrollInFade className="h-20 w-full">
+      <ScrollInFade
+        className="h-20 w-full"
+        critical={blockProps.settings.critical}
+      >
         <Swiper
           onSwiper={setThumbsSwiper}
           loop={true}
