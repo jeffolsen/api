@@ -223,7 +223,7 @@ const ImageSelector = ({
       {canSelectImages && (
         <>
           <input
-            className="flex-grow input input-bordered border-gray-400/50 w-full bg-base-300"
+            className="flex-grow input input-bordered w-full bg-base-300"
             type="text"
             placeholder="Search images..."
             value={searchTerm}

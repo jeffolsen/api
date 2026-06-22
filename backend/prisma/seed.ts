@@ -54,11 +54,18 @@ async function main() {
 
 async function handleCreateApiKeys(profileId: number) {
   const {
+    // app key
     PROD_API_KEY,
     PROD_API_SLUG,
+    PROD_API_ORIGIN,
+    // dev key
     DEV_API_KEY,
     DEV_API_SLUG,
     DEV_API_ORIGIN,
+    // side project keys
+    PROJ_ONE_API_KEY,
+    PROJ_ONE_API_SLUG,
+    PROJ_ONE_API_ORIGIN,
   } = process.env;
 
   if (!!PROD_API_KEY && !!PROD_API_SLUG) {
@@ -66,29 +73,52 @@ async function handleCreateApiKeys(profileId: number) {
       where: { profileId, slug: PROD_API_SLUG as string },
       update: {
         value: PROD_API_KEY as string,
-        origin: null,
+        origin: PROD_API_ORIGIN || null,
       },
       create: {
         profileId,
         slug: PROD_API_SLUG as string,
         value: PROD_API_KEY as string,
+        origin: PROD_API_ORIGIN || null,
       },
     });
   }
-  if (!!DEV_API_KEY && !!DEV_API_SLUG && !!DEV_API_ORIGIN) {
+  await handleApiKey(
+    profileId,
+    DEV_API_SLUG || "",
+    DEV_API_KEY || "",
+    DEV_API_ORIGIN || "",
+  );
+  await handleApiKey(
+    profileId,
+    PROJ_ONE_API_SLUG || "",
+    PROJ_ONE_API_KEY || "",
+    PROJ_ONE_API_ORIGIN || "",
+  );
+}
+
+async function handleApiKey(
+  profileId: number,
+  slug: string,
+  value: string,
+  origin: string,
+) {
+  if (slug && value) {
     await prismaClient.apiKey.upsert({
-      where: { profileId, slug: DEV_API_SLUG as string },
+      where: { profileId, slug },
       update: {
-        value: DEV_API_KEY as string,
-        origin: DEV_API_ORIGIN as string,
+        value,
+        origin: origin || null,
       },
       create: {
         profileId,
-        slug: DEV_API_SLUG as string,
-        value: DEV_API_KEY as string,
-        origin: DEV_API_ORIGIN as string,
+        slug,
+        value,
+        origin: origin || null,
       },
     });
+  } else if (slug && !value) {
+    await prismaClient.apiKey.deleteMany({ where: { profileId, slug } });
   }
 }
 
