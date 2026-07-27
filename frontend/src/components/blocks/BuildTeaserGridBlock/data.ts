@@ -27,8 +27,14 @@ function useTeaserGridBlockData({
 }: BlockComponentStandardProps): UseTeaserGridBlockDataReturnType {
   const { id, name, propertyValues } = component;
 
-  const { variant, tagAllowList, referenceFeed, isPrimaryContent, critical } =
-    propertyValues as PropertyValues;
+  const {
+    variant,
+    tagAllowList,
+    referenceFeed,
+    isPrimaryContent,
+    critical,
+    theme,
+  } = propertyValues as PropertyValues;
 
   const { ...blockSettings } = variants[variant] || variants["alpha"];
 
@@ -49,6 +55,7 @@ function useTeaserGridBlockData({
     blockProps: {
       settings: {
         ...blockSettings,
+        theme,
         critical,
         isPrimaryContent,
       },
@@ -64,17 +71,23 @@ function useTeaserGridBlockData({
 
 export default useTeaserGridBlockData;
 
+type ThemeNames = "alpha" | "beta" | "gamma";
+type Theme = {
+  theme: ThemeNames;
+};
 type VariantNames = keyof typeof variants;
+type Variant = (typeof variants)[VariantNames];
 
 type PropertyValues = {
   variant: VariantNames;
+  theme: ThemeNames;
   isPrimaryContent: boolean;
   tagAllowList: TTagName[];
   referenceFeed?: string[];
   critical?: boolean;
 };
 
-type BlockSettings = Omit<(typeof variants)[VariantNames], "pageSize">;
+type BlockSettings = Omit<Variant & Theme, "pageSize">;
 type LocalBlockData = {
   itemsData: ReturnType<typeof useGetItems>;
   referenceFeedPath?: string;
