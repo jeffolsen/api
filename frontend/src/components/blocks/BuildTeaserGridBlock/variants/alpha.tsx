@@ -18,6 +18,7 @@ export default function VariantAlpha({
   blockProps: UseTeaserGridBlockProps;
 }) {
   const { itemsData, referenceFeedPath } = blockData;
+  const theme = blockProps.settings.theme;
   if (itemsData.isLoading) {
     return null;
   }
@@ -37,6 +38,7 @@ export default function VariantAlpha({
               index={index}
               item={item}
               feed={referenceFeedPath}
+              theme={theme}
               critical={blockProps.settings.critical && index < 3}
             />
           ),
@@ -49,11 +51,13 @@ export default function VariantAlpha({
 function AlphaCard({
   item,
   feed,
+  theme,
   critical,
 }: {
   index: number;
   item: TItemWithIncludes;
   feed: string | undefined;
+  theme: UseTeaserGridBlockProps["settings"]["theme"];
   critical?: boolean;
 }) {
   const link = getItemLink(feed, item);
@@ -64,9 +68,18 @@ function AlphaCard({
     priority: { ICON: 3, PORTRAIT: 1, LANDSCAPE: 2 },
   });
 
+  const alphaTheme = theme === "alpha";
+  const betaTheme = theme === "beta";
+  const gammaTheme = theme === "gamma";
+
   return (
     <ResponsiveCard
-      className="bg-base-100 shadow-lg h-full card-compact md:card-normal"
+      className={clsx([
+        "bg-base-100 shadow-lg h-full card-compact md:card-normal",
+        alphaTheme && "border-neutral border-r-[24px] border-b-[24px]",
+        betaTheme && "border-primary border-r-[24px] border-b-[24px]",
+        gammaTheme && "border-accent border-r-[24px] border-b-[24px]",
+      ])}
       critical={critical}
       imagery={
         <div className="w-full xl:w-72 from-base-100 to-base-300 bg-gradient-to-b">
@@ -92,6 +105,9 @@ function AlphaCard({
           >
             {item.name}
           </Heading>
+          <p>
+            Theme: {theme}, {betaTheme}
+          </p>
         </div>
       }
       overLay={<>{link && <InsetLink to={link} aria-label={item.name} />}</>}

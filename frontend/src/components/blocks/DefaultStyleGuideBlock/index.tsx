@@ -76,6 +76,7 @@ function teaserGridEntry(variant: Variant, theme: Theme) {
       <TeaserGridBlock
         blockProps={makeProps<UseTeaserGridBlockProps>("TeaserGrid", {
           variant,
+          theme,
         })}
         blockData={{ id: MOCK_ID, itemsData: mockItemsData }}
       />
@@ -198,7 +199,10 @@ function StyleGuideBlock() {
       {blockEntries.flatMap((entry) =>
         VARIANTS.flatMap((variant) =>
           THEMES.map((theme) => (
-            <Suspense key={`${entry.name}-${variant}-${theme}`} fallback={<Loading />}>
+            <Suspense
+              key={`${entry.name}-${variant}-${theme}`}
+              fallback={<Loading />}
+            >
               {entry(variant, theme)}
             </Suspense>
           )),

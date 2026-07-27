@@ -22,6 +22,8 @@ export default function VariantBeta({
     return null;
   }
 
+  const theme = blockProps.settings.theme;
+
   return (
     <BlockWrapper
       name={blockProps.name}
@@ -37,6 +39,7 @@ export default function VariantBeta({
               index={index}
               item={item}
               feed={referenceFeedPath}
+              theme={theme}
               critical={blockProps.settings.critical && index < 4}
             />
           ),
@@ -50,11 +53,13 @@ function BetaCard({
   item,
   feed,
   index,
+  theme,
   critical,
 }: {
   index: number;
   item: TItemWithIncludes;
   feed: string | undefined;
+  theme: UseTeaserGridBlockProps["settings"]["theme"];
   critical?: boolean;
 }) {
   const link = getItemLink(feed, item);
@@ -66,11 +71,19 @@ function BetaCard({
   });
 
   const reverse = index % 2 === 0;
+  const alphaTheme = theme === "alpha";
+  const betaTheme = theme === "beta";
+  const gammaTheme = theme === "gamma";
 
   return (
     <VertCard
       critical={critical}
-      className="bg-base-100 shadow-lg h-full card-compact"
+      className={clsx([
+        "bg-base-100 shadow-lg h-full card-compact",
+        alphaTheme && "border-neutral border-r-[16px] border-b-[16px]",
+        betaTheme && "border-primary border-r-[16px] border-b-[16px]",
+        gammaTheme && "border-accent border-r-[16px] border-b-[16px]",
+      ])}
       imagery={
         <div
           className={clsx([
