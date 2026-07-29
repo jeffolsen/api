@@ -23,6 +23,8 @@ export default function VariantGamma({
     return null;
   }
 
+  const theme = blockProps.settings.theme;
+
   return (
     <BlockWrapper
       name={blockProps.name}
@@ -38,6 +40,7 @@ export default function VariantGamma({
               index={index}
               item={item}
               feed={referenceFeedPath}
+              theme={theme}
               critical={blockProps.settings.critical && index < 6}
             />
           ),
@@ -50,11 +53,13 @@ export default function VariantGamma({
 function GammaCard({
   item,
   feed,
+  theme,
   critical,
 }: {
   index: number;
   item: TItemWithIncludes;
   feed: string | undefined;
+  theme: UseTeaserGridBlockProps["settings"]["theme"];
   critical?: boolean;
 }) {
   const link = getItemLink(feed, item);
@@ -65,10 +70,19 @@ function GammaCard({
     priority: { ICON: 1, PORTRAIT: 2, LANDSCAPE: 3 },
   });
 
+  const alphaTheme = theme === "alpha";
+  const betaTheme = theme === "beta";
+  const gammaTheme = theme === "gamma";
+
   return (
     <VertCard
       critical={critical}
-      className="bg-base-100 shadow-lg h-full card-compact"
+      className={clsx([
+        "bg-base-100 shadow-lg h-full card-compact",
+        alphaTheme && "border-neutral border-r-[16px] border-b-[16px]",
+        betaTheme && "border-primary border-r-[16px] border-b-[16px]",
+        gammaTheme && "border-accent border-r-[16px] border-b-[16px]",
+      ])}
       imagery={
         <>
           {image && (
