@@ -105,9 +105,6 @@ function AlphaCard({
           >
             {item.name}
           </Heading>
-          <p>
-            Theme: {theme}, {betaTheme}
-          </p>
         </div>
       }
       overLay={<>{link && <InsetLink to={link} aria-label={item.name} />}</>}
