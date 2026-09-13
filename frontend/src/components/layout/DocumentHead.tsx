@@ -16,12 +16,16 @@ export default function DocumentHead({
   feed,
   item,
   renderFor,
+  omit = true,
 }: {
   feed: TFeedWithIncludes;
   item?: TItemWithIncludes;
   renderFor?: ClientTypeName;
+  omit?: boolean;
 }) {
   const { pathname } = useLocation();
+
+  if (omit) return <></>;
 
   if (renderFor === "user") {
     return (
