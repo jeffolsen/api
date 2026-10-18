@@ -112,7 +112,7 @@ function BetaCard({
           </Heading>
         </>
       }
-      overLay={<>{link && <InsetLink to={link} aria-label={item.name} />}</>}
+      overLay={<>{link && <InsetLink to={link} text={item.name} />}</>}
       reverseY={!reverse}
     />
   );

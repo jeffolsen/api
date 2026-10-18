@@ -181,7 +181,7 @@ function BetaSlide({
           ])}
         />
 
-        {link && <InsetLink to={link} aria-label={item.name} />}
+        {link && <InsetLink to={link} text={item.name} />}
       </div>
     </div>
   );

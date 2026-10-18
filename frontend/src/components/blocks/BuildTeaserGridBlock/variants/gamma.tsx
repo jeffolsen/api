@@ -108,7 +108,7 @@ function GammaCard({
               </Heading>
             </div>
           )}
-          {link && <InsetLink to={link} aria-label={item.name} />}
+          {link && <InsetLink to={link} text={item.name} />}
         </>
       }
     />

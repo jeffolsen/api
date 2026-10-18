@@ -18,7 +18,7 @@ function Logo() {
       <span>{"<"}</span>
       <span className="mt-0.5">{`Jeff Olsen`}</span>
       <span>{" />"}</span>
-      <InsetLink to="/" aria-label="home" />
+      <InsetLink to="/" text="home" />
     </div>
   );
 }

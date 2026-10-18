@@ -117,7 +117,13 @@ export const XButton = forwardRef<HTMLButtonElement, ButtonProps>(
       className || "absolute right-2 top-2 btn-xs",
     );
     return (
-      <Button as="button" ref={ref} className={classes} {...restProps}>
+      <Button
+        as="button"
+        ref={ref}
+        className={classes}
+        {...restProps}
+        aria-label="close"
+      >
         ✕
       </Button>
     );
@@ -133,7 +139,13 @@ export const PlusButton = forwardRef<HTMLButtonElement, ButtonProps>(
       className,
     ]);
     return (
-      <Button as="button" ref={ref} className={classes} {...restProps}>
+      <Button
+        as="button"
+        ref={ref}
+        className={classes}
+        {...restProps}
+        aria-label="Add one more"
+      >
         +
       </Button>
     );

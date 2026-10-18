@@ -67,7 +67,7 @@ function DetailHeader({
           {itemData.description && <Text>{itemData.description}</Text>}
 
           {itemData.tags.length > 0 && (
-            <div className="flex gap-3">
+            <div className="flex gap-3 flex-wrap">
               {itemData.tags.map((t) => (
                 <div
                   className="badge badge-secondary badge-lg text-secondary-content"

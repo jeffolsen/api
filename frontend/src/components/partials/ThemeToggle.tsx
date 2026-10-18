@@ -54,13 +54,16 @@ export default function ThemeToggle() {
     return () => systemPreference.removeEventListener("change", handler);
   }, [theme]);
 
+  const isDark = resolvedDaisyTheme(theme) === DAISY_THEME.dark;
+
   return (
     <div className="flex items-center gap-2 pr-4 sm:pr-6">
       <SunIcon className="inline-block w-4 h-4" />
       <input
         type="checkbox"
         className="toggle toggle-sm"
-        checked={resolvedDaisyTheme(theme) === DAISY_THEME.dark}
+        aria-label={isDark ? "toggle light mode" : "toggle dark mode"}
+        checked={isDark}
         onChange={(e) => setTheme(e.target.checked ? "dark" : "light")}
       />
       <MoonIcon className="inline-block w-4 h-4" />

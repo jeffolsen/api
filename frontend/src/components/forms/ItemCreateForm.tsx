@@ -245,6 +245,7 @@ function ItemDeleteButton({
   return (
     <Button
       color="accent"
+      aria-label="delete"
       onClick={() =>
         confirm("Are you sure you want to delete this item?") &&
         withFormHandling(async () => {

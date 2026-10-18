@@ -216,6 +216,7 @@ function ComponentModifyOrderControls({
         color="primary"
         size="xs"
         disabled={order < 2}
+        aria-label="Move component up"
         onClick={() =>
           modifyComponent.mutate({
             id,
@@ -230,6 +231,7 @@ function ComponentModifyOrderControls({
         color="primary"
         size="xs"
         disabled={order >= feedLength}
+        aria-label="Move component down"
         onClick={() =>
           modifyComponent.mutate({
             id,
@@ -306,6 +308,7 @@ function ComponentDeleteButton({
   return (
     <Button
       color="accent"
+      aria-label="delete"
       onClick={() =>
         confirm("Are you sure you want to delete this component?") &&
         withFormHandling(async () => {

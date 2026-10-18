@@ -137,7 +137,7 @@ function GammaSlide({
           {item.name}
         </Heading>
       </div>
-      {link && <InsetLink to={link} aria-label={item.name} />}
+      {link && <InsetLink to={link} text={item.name} />}
     </div>
   );
 }

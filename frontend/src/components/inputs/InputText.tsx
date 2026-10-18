@@ -23,7 +23,10 @@ export const TextInput = (props: TextInputProps) => {
   const registerProps = input?.registerOpts || {};
   return (
     <>
-      <label className={clsx(["form-control relative"])}>
+      <label
+        className={clsx(["form-control relative"])}
+        aria-label={elementProps.placeholder}
+      >
         <RequiredLabel
           watchedValue={watchedValue}
           required={required}

@@ -24,6 +24,7 @@ export default function ComponentSchemaArrayOrderable<
             color="primary"
             disabled={index === 0}
             onClick={() => swap(index, Math.max(0, index - 1))}
+            aria-label="Move component up"
             size="xs"
           >
             <ChevronUp />
@@ -32,6 +33,7 @@ export default function ComponentSchemaArrayOrderable<
             color="primary"
             disabled={index === fields.length - 1}
             onClick={() => swap(index, Math.min(index + 1, fields.length - 1))}
+            aria-label="Move component down"
             size="xs"
           >
             <ChevronDown />

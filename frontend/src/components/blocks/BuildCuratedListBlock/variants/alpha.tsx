@@ -152,7 +152,7 @@ const AlphaCard = ({
               />
             </>
           }
-          overLay={<>{link && <InsetLink to={link} />}</>}
+          overLay={<>{link && <InsetLink to={link} text={`to ${link}`} />}</>}
           reverseX={reverse}
         />
       </div>

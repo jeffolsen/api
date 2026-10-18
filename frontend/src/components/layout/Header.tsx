@@ -90,7 +90,10 @@ function MobileNav() {
   const isLoggedIn = isAuthenticated();
   return (
     <Popover>
-      <PopoverButton className="btn btn-ghost btn-lg lg:hidden">
+      <PopoverButton
+        className="btn btn-ghost btn-lg lg:hidden"
+        aria-label="open navigation"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5"
