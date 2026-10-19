@@ -16,7 +16,7 @@ function BadgeList({
   return (
     <div {...props} className={clsx("flex gap-3 flex-wrap", className)}>
       {badges.map((badge: TBadge) => (
-        <Badge {...badge} />
+        <Badge key={badge.key} text={badge.text} />
       ))}
     </div>
   );
