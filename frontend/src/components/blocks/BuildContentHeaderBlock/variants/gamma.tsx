@@ -11,6 +11,7 @@ import RichContent from "@/components/common/RichContent";
 import { JSONContent } from "@tiptap/react";
 import { TTag } from "@/network/tag/types";
 import CustomLink from "@/components/common/Link";
+import BadgeList from "@/components/common/BadgeList";
 
 export default function VariantGamma({
   blockData,
@@ -115,21 +116,14 @@ const GammaCard = ({
           <RichContent richContent={item.richContent} />
         )}
 
-        <div
+        <BadgeList
           className={clsx([
-            "flex flex-wrap gap-3",
             (theme === "alpha" || theme === "beta") && "justify-start",
           ])}
-        >
-          {tags.map((tag: TTag) => (
-            <div
-              key={tag.id}
-              className="badge badge-secondary badge-lg text-secondary-content"
-            >
-              {tag.name}
-            </div>
-          ))}
-        </div>
+          badges={tags.map((tag: TTag) => {
+            return { text: tag.name, key: tag.id };
+          })}
+        />
 
         {link && (
           <div className="card-actions">

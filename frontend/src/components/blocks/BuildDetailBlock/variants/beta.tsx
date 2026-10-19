@@ -9,6 +9,7 @@ import { TDateRange } from "@/network/dateRange/types";
 import dayjs from "@/utils/dayjs";
 import Grid from "@/components/common/Grid";
 import clsx from "clsx";
+import BadgeList from "@/components/common/BadgeList";
 
 export default function VariantBeta({
   blockProps,
@@ -59,16 +60,11 @@ function DetailHeader({
         <div className="flex flex-col gap-4">
           {itemData.description && <Text>{itemData.description}</Text>}
           {itemData.tags.length > 0 && (
-            <div className="flex gap-3 flex-wrap">
-              {itemData.tags.map((t) => (
-                <div
-                  className="badge badge-secondary badge-lg text-secondary-content"
-                  key={t.tagId}
-                >
-                  {t.tag.name}
-                </div>
-              ))}
-            </div>
+            <BadgeList
+              badges={itemData.tags.map((t) => {
+                return { text: t.tag.name, key: t.tag.id };
+              })}
+            />
           )}
         </div>
       </div>

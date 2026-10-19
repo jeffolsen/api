@@ -14,6 +14,7 @@ import { Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/thumbs";
+import BadgeList from "@/components/common/BadgeList";
 
 export default function VariantGamma({
   blockProps,
@@ -67,16 +68,11 @@ function DetailHeader({
           {itemData.description && <Text>{itemData.description}</Text>}
 
           {itemData.tags.length > 0 && (
-            <div className="flex gap-3 flex-wrap">
-              {itemData.tags.map((t) => (
-                <div
-                  className="badge badge-secondary badge-lg text-secondary-content"
-                  key={t.tagId}
-                >
-                  {t.tag.name}
-                </div>
-              ))}
-            </div>
+            <BadgeList
+              badges={itemData.tags.map((t) => {
+                return { text: t.tag.name, key: t.tag.id };
+              })}
+            />
           )}
         </div>
       </div>

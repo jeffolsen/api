@@ -21,6 +21,7 @@ import clsx from "clsx";
 import { TDateRange } from "@/network/dateRange/types";
 import dayjs from "@/utils/dayjs";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import BadgeList from "@/components/common/BadgeList";
 
 export default function VariantAlpha({
   blockProps,
@@ -56,16 +57,11 @@ function DetailHeader({
     >
       {itemData.description && <Text>{itemData.description}</Text>}
       {itemData.tags.length > 0 && (
-        <div className="flex gap-3 flex-wrap">
-          {itemData.tags.map((t) => (
-            <div
-              className="badge badge-secondary badge-lg text-secondary-content"
-              key={t.tagId}
-            >
-              {t.tag.name}
-            </div>
-          ))}
-        </div>
+        <BadgeList
+          badges={itemData.tags.map((t) => {
+            return { text: t.tag.name, key: t.tag.id };
+          })}
+        />
       )}
     </Block>
   );
